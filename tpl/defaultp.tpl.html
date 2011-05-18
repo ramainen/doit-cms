@@ -1,0 +1,31 @@
+<h1>{title}{{editbutton}}</h1>
+{text}
+<hidden>
+
+	<fragment red>
+	<div style="border:1px solid red">{title}</div>
+	</fragment>
+	<fragment green>
+	<div style="border:1px solid green">{title}</div>
+	</fragment>
+	
+	 
+</hidden>
+ 
+<?php
+
+function testme()
+{
+	return array(array('title'=>'Гусь','override'=>'red'),array('title'=>'Фазан' ),array('title'=>'Утка','override'=>'green'));
+	
+}
+
+$str='testme';
+ print $this->{$str}();
+?>
+<hr>
+<foreach testme()>
+
+Ура! — {title}
+<br>
+</foreach>

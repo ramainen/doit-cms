@@ -1,0 +1,16 @@
+     /*
+				 
+				      template_external_list_url : "lists/template_list.js",
+                        external_link_list_url : "lists/link_list.js",
+                        external_image_list_url : "lists/image_list.js",
+                        media_external_list_url : "lists/media_list.js",*/
+
+						<a href="javascript:;" onmousedown="$('#content').tinymce().show();">[Show]</a>
+        <a href="javascript:;" onmousedown="$('#content').tinymce().hide();">[Hide]</a>
+        <a href="javascript:;" onmousedown="$('#content').tinymce().execCommand('Bold');">[Bold]</a>
+        <a href="javascript:;" onmousedown="alert($('#content').html());">[Get contents]</a>
+        <a href="javascript:;" onmousedown="alert($('#content').tinymce().selection.getContent());">[Get selected HTML]</a>
+        <a href="javascript:;" onmousedown="alert($('#content').tinymce().selection.getContent({format : 'text'}));">[Get selected text]</a>
+        <a href="javascript:;" onmousedown="alert($('#content').tinymce().selection.getNode().nodeName);">[Get selected element]</a>
+        <a href="javascript:;" onmousedown="$('#content').tinymce().execCommand('mceInsertContent',false,'<b>Hello world!!</b>');">[Insert HTML]</a>
+        <a href="javascript:;" onmousedown="$('#content').tinymce().execCommand('mceReplaceContent',false,'<b>{$selection}</b>');">[Replace selection]</a>

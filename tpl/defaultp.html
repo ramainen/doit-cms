@@ -1,0 +1,14 @@
+<?php
+$this->table='text';
+//1. Определение ID страницы по url, получение всех свойств
+$result=mysql_query("select * from `".$this->table."` where `url`='". mysql_real_escape_string ($_SERVER['REQUEST_URI'])."'");
+if($line=mysql_fetch_array($result)){
+       print $this->defaultp($line);
+}else
+{
+print "Страница не существует";
+$this->newurl=$_SERVER['REQUEST_URI'];
+
+    print $this->addbutton();
+}
+?>

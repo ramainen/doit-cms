@@ -1,0 +1,411 @@
+<hidden>
+<fragment adminform>
+<form method="POST">
+<?php if($this->notice) { ?>
+<div style="border:1px solid lightblue;padding:6px;">{notice}</div>
+<?php } ?>
+	<input type="hidden" name="action" value="admin_login">
+	<input type="text" name="login"><br>
+	<input type="password" name="password"><br>
+	<input type="submit" value="Отправить">
+</form>
+</fragment>
+<fragment editbutton> 
+<?php
+if(!isset($_SESSION['admin'])) {
+	return ""; //Проверка на права администратора
+}	
+?>
+<a href="/admin/edit/{table}/{id}" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>
+</fragment>
+<fragment addbutton> 
+<?php
+
+ if(false)return ""; //Проверка на права администратора
+?>
+<a href="/admin/edit/{table}/add?url={newurl}" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>
+</fragment>
+    
+<fragment admintable>
+<input type="hidden" name="element_id" value="<?php print htmlspecialchars($_URL[3]); ?>">
+	<table class="admin_table" width=100%>
+	<tr>
+			<td colspan=2><h2 class="admin_h2">{tabletitle}</h2></td>
+			
+			</tr>
+ 		<fragment tablerow>
+		<type small>
+			<tr>
+			<td>{title}</td>
+			<td><input type="text" name="{name}" value="<?php print htmlspecialchars($this->value); ?>" class="admin_input ui-widget-content ui-corner-all" style="width:500px;"></td>
+			</tr>
+		</type>	
+		<type rich>
+		
+			<tr>
+				<td>{title}</td>
+				<td> <textarea  name="{name}" class="tinymce ui-widget-content ui-corner-all" style="width:500px;"><?php print htmlspecialchars($this->value); ?></textarea>
+				</td>
+			</tr>
+		</type>
+			
+		</fragment>
+			<tr>
+				<td colspan="2"><input type="submit"   value="Отправить" class="admin_button" ></td>
+			</tr>
+		
+	</table>
+</fragment>
+<fragment adminobjectlist>
+
+	<table class="admin_table"  width=100%>
+	<tr>
+			<td width=50>ID</td>
+			<td>Заголовок</td>
+			<td>url</td>
+			<td>Действие
+			
+			</td>
+</tr>
+ 		<fragment objectrow>
+
+			<tr>
+			<td>{id}</td>
+			<td>{title}</td>
+			<td>{url}</td>
+			<td><a href="/admin/edit/<?php print $_URL[2]; ?>/{id}" class="admin_button">Править</a></td>
+			</tr>
+		</fragment>
+			<tr>
+				<td colspan="4"><a class="admin_button" href="/admin/edit/<?php print $_URL[2]; ?>/add">Добавить</a></td>
+			</tr>
+		
+	</table>
+</fragment>
+
+</hidden><!doctype html>
+<html>
+<head>
+<title>DoIt CMS</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="/cms/external/fixed960.css" />
+<link rel="stylesheet" type="text/css" href="/cms/external/jqueryui/jquery-ui-1.8.10.custom.css" />
+<link rel="stylesheet" type="text/css" href="/cms/external/jqueryui/fg.menu.css" />
+<script type="text/javascript" src="/cms/external/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="/cms/external/jqueryui/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="/cms/external/jqueryui/fg.menu.js"></script>
+<script type="text/javascript" src="/cms/external/tiny_mce/jquery.tinymce.js"></script>
+<style type="text/css">
+ body
+ {
+ font-size:11px;
+ background:#E7F1FC;
+ font-family:Tahoma;
+ }
+ input
+ {
+ font-family:Tahoma;
+ }
+ .admin_header
+ {
+ font-size:14px;
+ }
+ .admin_input
+ {
+	padding:3px;
+	
+ }
+ .admin_h2
+ {
+ font-size:16px;
+ 
+ }
+ .admin_table
+ {
+ border-collapse:collapse;
+ }
+ .admin_table td
+ {
+ /*background:#D4E6FA;*/
+	padding:4px;
+	/*border:1px solid #769CB7;*/
+ }
+.admin_icons {margin: 0; padding: 0; display:none;}
+.admin_icons  li {margin: 2px; position: relative; padding: 0px; cursor: pointer; list-style: none;}
+.admin_icons span.ui-icon {margin: 0 1px; float:left;}
+.menulinks{
+	position:absolute;
+ left:0px;
+ top:0px;
+ 
+	z-index:2;
+	width:150px;
+	
+}
+.menulinks a
+{
+width:150px;
+}
+</style>
+<style type="text/css">
+	 
+	 
+	.hidden { position:absolute; top:0; left:-9999px; width:1px; height:1px; overflow:hidden; }
+	
+	.fg-button { clear:left;  text-decoration:none !important; cursor:pointer; position: relative; text-align: center; zoom: 1; }
+	.fg-button .ui-icon { position: absolute; top: 50%; margin-top: -8px; left: 50%; margin-left: -8px; }
+	 
+	button.fg-button { width:auto; overflow:visible; } /* removes extra button width in IE */
+	
+	 
+	.fg-button-icon-left .ui-icon { right: auto; left: .2em; margin-left: 0; }
+	.fg-button-icon-right .ui-icon { left: auto; right: .1em; margin-left: 0;   }
+	.fg-button-icon-solo { display:block; width:8px; text-indent: -9999px; }	 
+	.topline
+	{
+	border-top:1px solid red;
+	}
+	.fg-button.ui-state-loading .ui-icon { background: url(spinner_bar.gif) no-repeat 0 0; }
+	
+	.top_header
+	{
+	height:50px;
+	background:#17395C;
+	border-bottom:1px solid white;
+	}
+	
+	.admin_header
+	
+	{
+	position:relative;
+	top:-7px;
+	 
+	}
+	.admin_header .ui-button
+	{
+	background:none;
+	border:none;
+ 
+		color:#ffffff;
+		text-shadow: black 0px 1px 1px; 
+  
+ 
+  font-weight:normal;
+  font-size:13px;
+	}
+ .whitelogo
+ {
+ font-size:30px;
+ font-family:Georgia;
+ line-height:50px;
+ color:#E4F1FF;
+ text-shadow: black 0px 1px 0px;
+ }
+	.ui-button:hover
+	{
+/*		box-shadow: 0 0 7px #1A3457; /* Каноническое задание */
+  -webkit-box-shadow: 0 0 7px #1A3457; /* Safari, Chrome */
+  -moz-box-shadow: 0 0 7px #1A3457; /* Firefox */*/
+	}
+	.admin_header .ui-button:hover
+	
+	{
+
+	color:white;
+ 
+		background:#333333;
+		background:#0F4160;
+	}
+	.admin_header .ui-state-active
+	  { 	color:white; }
+	.admin_header .ui-state-active a  { color:white; text-decoration: none; }
+	.admin-list b
+	{
+		display:block;
+		line-height:18px;
+		padding:2px;
+		text-decoration:none;
+		border-bottom:1px solid #808080;
+	}
+	.admin_block
+	{
+	
+		display:block;
+	}
+	.admin-list .admin-link	
+	{
+	
+		line-height:18px;
+		padding:2px;
+		text-decoration:none;
+		border:none;
+	}
+	.admin-list
+	{
+	box-shadow: 0 0 2px #1A3457;
+  -webkit-box-shadow: 0 0 2px #1A3457;
+  -moz-box-shadow: 0 0 2px #1A3457;
+		border:1px solid gray;
+		padding:4px;
+		background:#F8F8F8;
+	}
+	</style>
+	
+
+<script type="text/javascript">
+        $(function() {
+	 
+ $('.closewindow').bind('click',function(){
+window.open('','_self','');
+	window.close();
+ });
+  $('.admin_table tr:odd td').css('background','#E3F9FF');
+	// BUTTONS
+     
+    	
+    	// MENUS    	
+	 
+		$('.hierarchy').each(function(){ $(this).menu({
+			content: $(this).next().html() ,showSpeed: 00 ,crossSpeed:0,flyOut: true
+		})
+		});
+		
+		 	$('.fg-button').hover(
+    		function(){ $(this).removeClass('ui-state-default').addClass('ui-state-focus'); },
+    		function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
+    	);
+		
+		 
+		 	$('.admin-link').hover(
+    		function(){ $(this).removeClass('ui-state-default').addClass('ui-state-focus'); },
+    		function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
+    	);
+		// or from an external source
+	 
+	
+		$('.admin_button').button();
+                $('.tinymce').tinymce({
+                        script_url : '/cms/external/tiny_mce/tiny_mce_gzip.php',
+						language : "ru",
+                        theme : "advanced",
+						skin : "o2k7",
+                        plugins : "pagebreak,style,table,save,advhr,advimage,advlink,emotions,inlinepopups,preview,media,contextmenu,paste,directionality,fullscreen,noneditable,nonbreaking,xhtmlxtras",
+                        theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,fontselect,fontsizeselect",
+                        theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+                        theme_advanced_buttons3 : "tablecontrols,|,removeformat,visualaid,|,sub,sup,|,charmap,emotions,media,styleprops,|,nonbreaking,pagebreak",
+                        theme_advanced_toolbar_location : "top",
+ 
+                       theme_advanced_toolbar_align : "left",
+                        theme_advanced_statusbar_location : "bottom",
+                        theme_advanced_resizing : true
+                });
+        });
+</script>
+ 
+</head>
+<body>
+
+<div class="top_header" >
+	<div class="container_12" >
+<div class="grid_12 whitelogo">
+Do It CMS
+</div></div>
+</div>
+
+<div class="container_12" >
+<div class="grid_12 admin_header">
+<div class="ui-widget-header ui-corner-all">
+
+<a href="javascript:;" title="Закрыть" class="closewindow admin_button ui-widget  .fg-button-icon-solo fg-button  ui-state-default" style="float:right;" ><span class="ui-icon ui-icon-closethick"></span>&nbsp;</a>
+ <a href="/" class="admin_button"  >На сайт</a>
+ <?php /*
+ <a href="/sad" class="admin_button"  >Опции</a>
+<a href="/sad" class="admin_button ui-widget  fg-button-icon-right  fg-button  ui-state-default hierarchy"  ><span class="ui-icon ui-icon-triangle-1-s"></span>Данные</a>
+<div  class=" news-items hidden">
+    <ul>
+
+        <li><a href="#">Блоки данных</a></li>
+        <li><a href="#">Добавить блок</a>
+            <ul>
+                <li><a href="#">Новый</a></li>
+                <li><a href="#">Из заготовки</a>
+                    <ul>
+                        <li><a href="#">Каталог</a></li>
+                        <li><a href="#">Товар</a></li>
+                        <li><a href="#">Новость</a></li>
+                        <li><a href="#">Изображение</a></li>
+                        <li><a href="#">Комментарий</a></li>
+                        <li><a href="#">Вопрос-ответ</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Копированием</a></li>
+                <li><a href="#">Только таблицу</a></li>
+            </ul>
+        </li>
+        <li><a href="#">Типы полей</a></li>
+        <li><a href="#">Таблицы</a></li>
+        <li><a href="#">Связи</a></li>
+
+
+    </ul>
+</div>
+  <a href="/sad" class="admin_button" > Модули</a>
+  
+  
+  
+  <a href="/sad" class="admin_button ui-widget  fg-button-icon-right  fg-button  ui-state-default hierarchy"  ><span class="ui-icon ui-icon-triangle-1-s"></span>Просмотр</a>
+<div  class=" news-items hidden">
+<ul>
+	 
+	
+	 	<li><a href="#">Заказы</a>	</li>
+	<li><a href="#">Пользователи</a></li>
+	<li><a href="#">Сообщения</a>	</li>
+	<li><a href="#">Цвета маек</a>	</li>
+	<li><a href="#">Баннеры</a>	</li> 
+ 
+ 
+		 
+	</ul>
+	
+	
+</div>
+
+*/ ?>
+
+  </div>
+ 
+</div>
+<div class="clear"></div>
+</div>
+<div>
+<div class="container_12" >
+<div class="grid_2">
+
+<div class="admin-list   ui-corner-all" >
+   <b>Блоки данных</b>
+	<?php
+ 
+	foreach ($this->admin['leftmenu'] as $_value) { ?>
+		<a href="/admin/list/<?php print $_value[0]; ?>" class="admin-link admin_block ui-corner-all ui-state-default" ><?php print $_value[1]; ?></a>
+	<?php } ?>
+    
+</div>
+ 
+</div>
+<div class="grid_10">
+
+		<div class="content" style="">
+		<div class="admin-list   ui-corner-all" >
+{{content}}
+</div></div>
+
+
+</div>
+
+ 
+</div>
+<div class="clear"></div>
+</div>
+</body>
+</html>

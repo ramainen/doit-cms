@@ -1,0 +1,12 @@
+<?php /* Страница администрирования - выводит список полей из некоей таблицы для последующей обработки */ ?>
+<h1>Список объектов из таблицы <?php print $_URL[2]; ?></h1>
+<?php
+
+$result=mysql_query('select * from '.$_URL[2]);
+$data=array();
+while ($line=mysql_fetch_array($result))
+{
+	$data[]=$line;
+}
+print $this->adminobjectlist(array('objectrow'=>$data));
+?>

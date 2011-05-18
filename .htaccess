@@ -1,0 +1,14 @@
+php_flag	upload_max_filesize	15M
+php_value upload_max_filesize 15M
+php_value post_max_size 20M
+php_flag magic_quotes_gpc off 
+php_flag magic_quotes_runtime off
+RewriteEngine On
+
+
+RewriteRule  !\.jpg$|\.jpeg$|\.xlsx?$|\.pptx?$|\.docx?$|\.gif$|\.bmp$|\.jpeg$|\.zip$|\.tar.gz$|\.swf$|\.pdf$|\.rar$|\.js$|\.css$|\.ico$|\.php$|^cms/|^storage/(.*)        index.php   [L]
+
+
+
+      
+
