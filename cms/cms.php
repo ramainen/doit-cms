@@ -69,26 +69,45 @@ class doitClass
 		self::$instance = $this;
 		$_fragmentslist=array();
 		$_handle = opendir('tpl');
+		$_files=array();
+		$_files['/']=array();
 		while (false !== ($_file = readdir($_handle))) {
-			if (substr($_file,-5)=='.html' && substr($_file,-10)!='.func.html') {
-				$_fragmentslist[str_replace('.','_',substr($_file,0,-5))]=file_get_contents('tpl/'.$_file);
-			}
-			//Модель - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
-			if (substr($_file,-10)=='.func.html' || substr($_file,-9)=='.func.php') {
-				include ('tpl/'.$_file);
-			}
-			//Обработка факта наличия .ini-файлов
-			if (substr($_file,-4)=='.ini') {
-				//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
-				//Хранит адрес ini-файла, запускаемого перед определённой функцией
-				$this->iniDatabase[substr($_file,0,-4)]='tpl/'.$_file;
-				//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
-				if (substr($_file,-8)=='init.ini') {
-					$this->loadAndParseIniFile ('tpl/'.$_file);
+			 if(substr($_file,0,4)=='mod_')
+			 {
+				$_subhandle = opendir('tpl/'.$_file);
+				$_files['/'.$_file.'/']=array();
+				while (false !== ($_subfile = readdir($_subhandle))) {
+					$_files['/'.$_file.'/'][]=$_subfile;
+				}
+				closedir($_subhandle);
+			 } else {
+				$_files['/'][]=$_file;
+			 }
+		}
+		closedir($_handle);
+		
+		foreach($_files as $_dir => $_subfiles) {
+			foreach($_subfiles as $_file) {
+				if (substr($_file,-5)=='.html' && substr($_file,-10)!='.func.html') {
+					$_fragmentslist[str_replace('.','_',substr($_file,0,-5))]=file_get_contents('tpl'.$_dir.$_file);
+				}
+				//Модель - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
+				if (substr($_file,-10)=='.func.html' || substr($_file,-9)=='.func.php') {
+					include ('tpl'.$_dir.$_file);
+				}
+				//Обработка факта наличия .ini-файлов
+				if (substr($_file,-4)=='.ini') {
+					//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
+					//Хранит адрес ini-файла, запускаемого перед определённой функцией
+					$this->iniDatabase[substr($_file,0,-4)]='tpl'.$_dir.$_file;
+					//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
+					if (substr($_file,-8)=='init.ini') {
+						$this->loadAndParseIniFile ('tpl'.$_dir.$_file);
+					}
 				}
 			}
 		}
-		closedir($_handle);
+		
 		$this->fragmentslist = $_fragmentslist;
 		$_newfragmentist=array();
 		//Поиск и объявление фрагментов, объявленных внутри шаблонов, подготовка массива с подфрагментами
