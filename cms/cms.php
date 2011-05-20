@@ -1,6 +1,5 @@
 <?php
 /*
-
 DoIt! CMS and VarVar framework
 Copyright (C) 2011 Fahrutdinov Ainu Damir
 
@@ -18,7 +17,6 @@ Copyright (C) 2011 Fahrutdinov Ainu Damir
 *      along with this program; if not, write to the Free Software
 *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 *      MA 02110-1301, USA.
-
 
 
 0.9 *.ini файлы с данными и опциями.
@@ -111,8 +109,55 @@ class doitClass
 		$this->fragmentslist = $_fragmentslist;
 		$_newfragmentist=array();
 		//Поиск и объявление фрагментов, объявленных внутри шаблонов, подготовка массива с подфрагментами
-		foreach($this->fragmentslist as $_key=>$_value) {
-			$this->parsesubfragments($_value,$_newfragmentist,$_key);
+		foreach($this->fragmentslist as $_parentfile=>$_text) {
+			$_a1=array();
+			$f=strpos($_text,'<fragment');
+			while($f!==false) {
+				$_a1[]=$f;
+				$f=strpos($_text,'<fragment',$f+1);
+			}
+			$_a2=array();
+			$f=strpos($_text,'</fragment');
+			while($f!==false) {
+				$_a2[]=$f;
+				$f=strpos($_text,'</fragment',$f+1);
+			}
+			if (count($_a1)==0) continue;	
+			if (count($_a1)!=count($_a2)) continue;
+			while (count($_a1)>1) {
+				$i=1;
+				$founded=false;
+				while (false == $founded && $i <= count($_a1)-1) {
+					if($_a1[$i]>$_a2[$i-1]) {
+						$res1=$_a1[0];
+						$res2=$_a2[$i-1];
+						unset($_a1[0]);
+						unset($_a2[$i-1]);
+						$_a1 = array_values ($_a1);
+						$_a2 = array_values ($_a2);
+						$founded=true;
+					}
+					$i++;
+				}
+				if ($founded == false) {
+					$res1 = $_a1[0];
+					$res2 = $_a2[$i - 1];
+					unset($_a1[0]);
+					unset($_a2[$i - 1]);
+					$_a1 = array_values($_a1);
+					$_a2 = array_values($_a2);
+				}
+				$res0=$res1+9;
+				$res1=strpos($_text,'>',$res1)+1;
+				$this->whereIsSubFragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
+				$this->subFragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
+			}
+			$res1=$_a1[0];
+			$res2=$_a2[0];
+			$res0=$res1+9;
+			$res1=strpos($_text,'>',$res1)+1;
+			$this->whereIsSubFragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
+			$this->subFragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
 		}
 
 	 	foreach ($this->fragmentslist as $_key=>$_value) { 
@@ -241,63 +286,6 @@ foreach($tmparr as $key=>$subval)
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\}}/','<'.'?php print $this->$1(); ?'.'>',$_str);
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1; ?'.'>',$_str);
 		return  $_str;
-	}
-/* ================================================================================= */	
-	function parsesubfragments($_text,&$_newfragmentist,$_parentfile)
-	{
-		$_a1=array();
-		$f=strpos($_text,'<fragment');
-		while($f!==false) {
-			$_a1[]=$f;
-			$f=strpos($_text,'<fragment',$f+1);
-		}
-		
-		$_a2=array();
-		$f=strpos($_text,'</fragment');
-		while($f!==false) {
-			$_a2[]=$f;
-			$f=strpos($_text,'</fragment',$f+1);
-		}
-		
-		if (count($_a1)==0) return;	
-		if (count($_a1)!=count($_a2)) return;
-		
-		while (count($_a1)>1) {
-			$i=1;
-			$founded=false;
-			while (false == $founded && $i <= count($_a1)-1) {
-				if($_a1[$i]>$_a2[$i-1]) {
-					$res1=$_a1[0];
-					$res2=$_a2[$i-1];
-					unset($_a1[0]);
-					unset($_a2[$i-1]);
-					$_a1 = array_values ($_a1);
-					$_a2 = array_values ($_a2);
-					$founded=true;
-				}
-				$i++;
-			}
-			if ($founded == false) {
-				$res1 = $_a1[0];
-				$res2 = $_a2[$i - 1];
-				unset($_a1[0]);
-				unset($_a2[$i - 1]);
-				$_a1 = array_values($_a1);
-				$_a2 = array_values($_a2);
-			}
-			$res0=$res1+9;
-			$res1=strpos($_text,'>',$res1)+1;
-		//	$_newfragmentist[trim(substr($_text,$res0,$res1-$res0-1))]=substr($_text,$res1,$res2-$res1);
-			$this->whereIsSubFragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
-			$this->subFragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
-		}
-		$res1=$_a1[0];
-		$res2=$_a2[0];
-		$res0=$res1+9;
-		$res1=strpos($_text,'>',$res1)+1;
-		//$_newfragmentist[trim(substr($_text,$res0,$res1-$res0-1))]=substr($_text,$res1,$res2-$res1);
-		$this->whereIsSubFragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
-		$this->subFragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
 	}
 /* ============================================================================== */
 
