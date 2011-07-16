@@ -43,7 +43,7 @@ url()
 _default.html внутри папки mod_admin подразумевает имя файла admin_default.html
 admin_ объявляет префикс admin_
 tpl_green / top_shiny
-
+{{korzina:overridetemplate=newkorzina.tpl.html}}
 
 admin/list/text/123  -- список объектов дочерних к 123, дочерних по свйоству parent
 admin/te
