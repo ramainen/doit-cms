@@ -35,6 +35,7 @@ $_URL			Массив фрагментов пути, включающий в се
 
 
 */
+
 //FIXME: бяка Определение текущего url
 session_start();
 $_URL=$_SERVER['REQUEST_URI'];
