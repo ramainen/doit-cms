@@ -1,8 +1,79 @@
 <?php
 $this->table='text';
-//1. Определение ID страницы по url, получение всех свойств
-$result=mysql_query("select * from `".$this->table."` where `url`='". mysql_real_escape_string ($_SERVER['REQUEST_URI'])."'");
-if ($line=mysql_fetch_array($result)){
+
+//1. Определение ID страницы по url, получение всех свойств	
+//$result=mysql_query("select * from `".$this->table."` where `url`='". mysql_real_escape_string ($_SERVER['REQUEST_URI'])."'");
+
+ 
+//print $this->Parent();
+//ORM-обработчик для текстовых страниц
+function Page()
+{
+	return new ar(array('table'=>'text','idfield'=>'url'));
+}
+ 
+ /*
+ 
+ 
+ header
+ default
+ footer
+ 
+ 
+ leftmenu
+ rightmenu
+ 
+ 
+ 
+ /news/ =>  default default 
+
+ 
+ 
+//$page=d()->Page;
+ 
+render(d()->Page->order('title')->all)
+render(d()->Page->find(1)->all)
+render(d()->Page->find('/pagename')->comments)
+*/
+//свойства по умолчанию можно взять в инишках
+
+//$page->options['table']=>'blablalla';
+//Pages
+//News
+
+/*
+
+$page->find(1)
+$page->title
+$page->all
+$page->comment->author
+
+
+
+$page=Page->first
+$page=Page->last
+
+
+
+$page=Page()->where('url = ?','/catalog');
+$page=Page()
+$page->where('url = ?','/catalog');
+$page->limit(10);
+$page.all
+
+$page->order('desc');
+
+$page->author
+
+
+
+
+
+*/
+
+$page=doit()->Page();
+$line=$page->getRow($_SERVER['REQUEST_URI']);
+if ($line){
        print $this->default($line);
 } else {
 	print "Страница не существует";

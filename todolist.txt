@@ -6,6 +6,41 @@
 +Роутеры в ini-файле
 +foreach и функции
 +Авторизация разработчика/администратора
+
+ORM: Если переменная начинается с большой буквы, то она, вероятно, генератор ORM-объекта
+ORM: получение свойств и передача их в шаблон
+ORM: получение списка в виде переменной и передача его в шаблон
+ORM: фильтрация, сортировка
+
+
+Четыре элемента
+/news/   (list) select
+/news/add   form
+/news/1/edit  form
+/news/1     view select   
+
+Адреса:
+/catalog/books/russian/fantasticks/oldi
+/catalog/create/red/big/12
+/catalog/create/green/small/14
+/catalog/sanyo/news
+/catalog/last
+
+Параметры
+/news/page/1/order/date
+/register/user/ainu/step/2
+
+Смешанные
+/catalog/last/order/title
+/catalog/user/ainu/approved
+
+
+
+Статические
+/about/company/now
+/contacts/nijnijnovgorod/director
+
+
 ini-файлы, редактируемые администратором.
 Удаление объектов двумя способами (иконка/админка)
 Псевдосвойства, начиная от приписанных и заканчивая префиксами свойств, например magic_title
@@ -125,7 +160,7 @@ TODO:
 
 тип поля выбирается из большо йбазы существующих полей
 
-
+\
 wiki
 создание дерева из информаионных страниц
 

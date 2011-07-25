@@ -52,6 +52,15 @@ function doit()
 	return doitClass::$instance;
 }
 
+//Псевдоним для более быстрого доступа
+function d()
+{
+	if (!isset(doitClass::$instance)) {
+		new doitClass();
+	}
+	return doitClass::$instance;
+}
+
 class doitClass
 {
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
@@ -183,45 +192,51 @@ class doitClass
 				$this->datapool[$key]=$value;
 			}
 		}
-		
-		$_newname = $this->getFunctionAlias($name);
-		if($name!=$_newname) {
-			if (isset($this->iniDatabase[$_newname])) {
-				$this->loadAndParseIniFile($this->iniDatabase[$_newname]);
-				unset ($this->iniDatabase[$_newname]);
+		$_result_end='';
+		$_newnames = $this->getFunctionAlias($name);
+		foreach ($_newnames as $_newname) {
+			if($name!=$_newname) {
+				if (isset($this->iniDatabase[$_newname])) {
+					$this->loadAndParseIniFile($this->iniDatabase[$_newname]);
+					unset ($this->iniDatabase[$_newname]);
+				}
 			}
-		}
-		$name=$_newname;
-		//Проверка на существование fragment_tpl, если в вызове есть параметры
-		if ((count($arguments)!=0) && (count($arguments[0])!=0) && (isset( $this->fragmentslist[$name."_tpl"]))) { 
-			$name = $name."_tpl";
-		}
-		//Активация подфрагментов перед вызовом родительской функции
-		if (isset($this->subFragments[$name])) {
-			foreach($this->subFragments[$name] as $_key=>$_value) {	
-				$this->fragmentslist[$_key]=$_value;
+			$name=$_newname;
+			//Проверка на существование fragment_tpl, если в вызове есть параметры
+			if ((count($arguments)!=0) && (count($arguments[0])!=0) && (isset( $this->fragmentslist[$name."_tpl"]))) { 
+				$name = $name."_tpl";
 			}
+			//Активация подфрагментов перед вызовом родительской функции
+			if (isset($this->subFragments[$name])) {
+				foreach($this->subFragments[$name] as $_key=>$_value) {	
+					$this->fragmentslist[$_key]=$_value;
+				}
+			}
+			
+			//Если в дальнейшем ожидается ошибка по причине вызова внешнего фрагмента, провести его инициацию
+			if(!isset($this->fragmentslist[$name]) && isset($this->whereIsSubFragments[$name])) {
+				$this->fragmentslist[$name]= $this->subFragments[$this->whereIsSubFragments[$name]][$name];
+			}
+			//Тут вызываются предопределённые и пользовательские функции
+			ob_start();
+			if (function_exists($name)) {
+				$_executionResult=call_user_func($name, $arguments);
+			}else{
+				$_executionResult=eval('?'.'>'.$this->fragmentslist[$name].'<'.'?php ;');
+			}
+			$_end = ob_get_contents();
+			ob_end_clean();
+			
+			if (!is_null($_executionResult)) {
+				$_end = $_executionResult;
+			}
+			if (count($_newnames)==1){
+				return $_end;
+			} else {
+				$_result_end .= $_end;
+			}			
 		}
-		
-		//Если в дальнейшем ожидается ошибка по причине вызова внешнего фрагмента, провести его инициацию
-		if(!isset($this->fragmentslist[$name]) && isset($this->whereIsSubFragments[$name])) {
-			$this->fragmentslist[$name]= $this->subFragments[$this->whereIsSubFragments[$name]][$name];
-		}
-		//Тут вызываются предопределённые и пользовательские функции
-		ob_start();
-		if (function_exists($name)) {
-			$_executionResult=call_user_func($name, $arguments);
-		}else{
-			$_executionResult=eval('?'.'>'.$this->fragmentslist[$name].'<'.'?php ;');
-		}
-		$_end = ob_get_contents();
-		ob_end_clean();
-		
-		if (!is_null($_executionResult)) {
-			$_end = $_executionResult;
-		}
-		
-		return $_end;
+		return $_result_end;
 	}
 /* ================================================================================= */	
 	function __set($name,$value)
@@ -234,6 +249,7 @@ class doitClass
 		if(isset($this->datapool[$name])) {
 			return $this->datapool[$name];
 		}
+		
 		//$this->caller=$name;
 		return '';
 	}
@@ -247,17 +263,20 @@ class doitClass
 			$url_list_size = 0;
 		}
 		$_matches=array();
-		$matched=$name;
+		$matched=array('','',$name);
 		$longest_url='';
 		$ruleslist = $this->datapool['urls'];
 		foreach($ruleslist as $key=>$value) {
 			if($value[1] == $name && ($_SERVER['REQUEST_URI']==$value[0] || substr($_SERVER['REQUEST_URI'],0,strlen($value[0]))==$value[0] || preg_match('/'.str_replace('//','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_SERVER['REQUEST_URI']))) {
 				if(strlen($value[0]) > strlen($longest_url)) {
-					$matched=$value[2];
+					$matched=$value;
 					$longest_url=$value[0];
 				}
 			}
 		}
+		unset($matched[0]);
+		unset($matched[1]);
+		$matched=array_values($matched);
 		return $matched;
 	}
 /* ================================================================================= */
@@ -361,7 +380,7 @@ foreach($tmparr as $key=>$subval)
 			}
 			
 			if (strpos($subject,'.')===false) {
-				$res=array_merge_recursive($res,array($subject=>$value));
+				$res=array_merge_recursive ($res,array($subject=>$value));
 			} else {
 				$tmpvalue=$value;
 				$tmparr=array_reverse(explode('.',$subject));
