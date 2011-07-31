@@ -7,10 +7,8 @@ $this->table='text';
  
 //print $this->Parent();
 //ORM-обработчик для текстовых страниц
-function Page()
-{
-	return new ar(array('table'=>'text','idfield'=>'url'));
-}
+
+ 
  
  /*
  
@@ -67,17 +65,35 @@ $page->author
 
 
 
+таблица: users
+класс: User
+массив users
+ссылка /users/
+элемент (user)
+
+
 
 
 */
 
-$page=doit()->Page();
-$line=$page->getRow($_SERVER['REQUEST_URI']);
-if ($line){
-       print $this->default($line);
+
+
+
+//var_dump (d()->User);
+ 
+ 
+$page=d()->Text->find_by_url($_SERVER['REQUEST_URI'])->one;
+    
+	//FIXME:	print $this->default($page[0]); в случае 404
+	//print $this->default($page[0]);
+	 
+if ($page){
+       print $this->default($page);
 } else {
 	print "Страница не существует";
 	$this->newurl=$_SERVER['REQUEST_URI'];
     print $this->addbutton();
 }
+
+
 ?>

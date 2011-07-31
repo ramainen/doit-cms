@@ -7,17 +7,119 @@
 +foreach и функции
 +Авторизация разработчика/администратора
 
+Привязывание регулярного выражения в функции
+Например:
+[A-Z][a-z0-9]+ -> activerecord
+property_[a-z0-9_] -> property
+
+
+префиксы для таблиц определённого модуля
+/catalog/1
+/anothercatalog/1
+a3_anothetcatalog_catalog
+a3_catalog_catalog
+
+
+Если всё перенаправляется классу (с большой буквы), то случается Чудо.
+Например,
+/users/ -> Users.php
+либо 
+Users.class.php
+
+Все функции внутри автоматически становятся методами класса User и только
+Во втором случае просто используется класс
+
+Готовые модули для каждого из возможных Web 2.0 проектов
+
+d()->Users
+d("Users") одно и тоже
+
+Модель, вид, контроллер
+
+Модель - функции для работы с данными, функции вспомогательные, опции. ActiveRecord User->find()
+Контроллер - функция, которая срабатывает на какой-либо URL. Вызывает view, получает данные на основе опций.
+Вид - HTML-шаблон.
+
+/catalog/1
+
+function get_order{}
+срабаывает когда пришёл $_GET['order'];
+
+/catalogs/index     REST:catalog
+
+REST_catalog  - функция, которая смотрит GET и POST запросы и вызывает подфункции, ежели они есть.
+
+Консоль: отладка PHP создание баз данных создание моделей, вспомогательные операции (phpinfo, chmod), бекапы, создание и развёртывание проектов и так далее.
+
+
 ORM: Если переменная начинается с большой буквы, то она, вероятно, генератор ORM-объекта
 ORM: получение свойств и передача их в шаблон
 ORM: получение списка в виде переменной и передача его в шаблон
 ORM: фильтрация, сортировка
+ORM: валидация
+/3/2/1
+/users/ainu/add/comments/12
+/catalog/news/news/12/23
+$_URL['3'];
 
+$_URL['news'];
+url('news')
+
+$_URL['4'];
+/user/23
+/news/23
+/catalog/23
+/catalog/goods/23
+/users/ainu
+$name
+
+find(array('user_id'=>true))
+ 
+
+/users/34/comments/32
+
+/users/ainu
+
+/about
+/
+
+$user=>d()->Users->find();
+$comments=>d()->Comments->find();
+
+$user=>d()->Users->find(url('users'));
+/goods/23
+$goods=>d()->Goods->find(url('goods'));
+
+<input name="user[title]">
+<input name="user[password]">
+
+Users->create($_POST[user])
+ 
+
+
+<input name="good[categories][2]" type="checkbox">Аксессуары
+<input name="good[categories][3]" type="checkbox">Новинки
+<input name="good[categories][5]" type="checkbox">Велосипедные насосы
+<input name="good[categories][6]" type="checkbox">Спортивное снаряжение
+<input name="good[categories][7]" type="checkbox">Туристическое снаряжение
+
+
+Каждая форма обязана уметь делать тоже самое, но в Ajax итемплетации
 
 Четыре элемента
 /news/   (list) select
 /news/add   form
 /news/1/edit  form
 /news/1     view select   
+
+/news/sort/title/page/23
+/news/page/23/sort/title
+
+news.php?sort=title&page=1
+news.php?page=1&sort=title
+
+$_get['page+
+url('page')-=p[]2l;
 
 Адреса:
 /catalog/books/russian/fantasticks/oldi
@@ -39,6 +141,17 @@ ORM: фильтрация, сортировка
 Статические
 /about/company/now
 /contacts/nijnijnovgorod/director
+
+ 
+url(2 [,1])
+url('user',0)
+url('page',2)
+url('page',-1)
+
+/?catalog=2
+/?news
+/?news=2&edit
+
 
 
 ini-файлы, редактируемые администратором.
@@ -167,3 +280,39 @@ wiki
 загрузка и инициализация функций из определённых файлов. при загрузке функции сохранять её местоположение, затеп при первом запросе сразу искать в файле. Если не найдено, сканировать всё.
 
 В случае проблем с выводом списка в админке (например, сложный каталог), этот список не выводится, но созадётся шаблон для редактирования. ПОльзователь щёлкает по иконке редактирования, редактирует страницу, попадает обратно на страницу.
+
+
+
+
+
+
+/catalogs/index     REST:catalog
+Catalog_index
+Catalog_index
+
+_index
+_show
+_new
+_add
+_replace
+
+mod_User
+User_index
+
+
+/users/ User
+
+
+
+Дерево:
+21/42/22
+123
+12/12
+nil
+
+
+
+
+
+
+

@@ -186,15 +186,19 @@ class doitClass
 			$this->loadAndParseIniFile($this->iniDatabase[$name]);
 			unset ($this->iniDatabase[$name]);
 		}
-		
+		 
 		if (count($arguments)!=0) {
-			foreach($arguments[0] as $key=>$value) {
-				$this->datapool[$key]=$value;
+			if(is_array($arguments[0])){
+				foreach($arguments[0] as $key=>$value) {
+					$this->datapool[$key]=$value;
+				}
 			}
 		}
 		$_result_end='';
 		$_newnames = $this->getFunctionAlias($name);
+		$_currentname=$name;
 		foreach ($_newnames as $_newname) {
+			$name=$_currentname;
 			if($name!=$_newname) {
 				if (isset($this->iniDatabase[$_newname])) {
 					$this->loadAndParseIniFile($this->iniDatabase[$_newname]);
@@ -250,6 +254,12 @@ class doitClass
 			return $this->datapool[$name];
 		}
 		
+		//Проверка префиксов
+		foreach ($this->prefixes as $_one_prefix) {
+			if(preg_match($_one_prefix[0], $name)) {
+				return $this->{$_one_prefix[1]}($name);
+			}
+		}
 		//$this->caller=$name;
 		return '';
 	}
