@@ -44,21 +44,29 @@ if(strpos($_URL,'?')!==false)$_URL=substr($_URL,0,strpos($_URL,'?'));
 $_URL=explode('/',substr($_URL,1));
 $GLOBALS['_URL']=$_URL; //Для того случая, если текущий контекст выполняется изнутри другий функции
 
-function doit()
+function doit($object='')
 {
-	if (!isset(doitClass::$instance)) {
+		if (!isset(doitClass::$instance)) {
 		new doitClass();
 	}
-	return doitClass::$instance;
+	if($object=='') {
+		return doitClass::$instance;
+	} else {
+		return doitClass::$instance->$object;
+	}
 }
 
 //Псевдоним для более быстрого доступа
-function d()
+function d($object='')
 {
 	if (!isset(doitClass::$instance)) {
 		new doitClass();
 	}
-	return doitClass::$instance;
+	if($object=='') {
+		return doitClass::$instance;
+	} else {
+		return doitClass::$instance->$object;
+	}
 }
 
 class doitClass

@@ -197,6 +197,11 @@ tpl_green / top_shiny
 admin/list/text/123  -- список объектов дочерних к 123, дочерних по свйоству parent
 admin/te
 
+edit_wiki_button (wiki.id)
+add_user_button (wiki)
+edit_user_button
+
+
 магические свойства (при редактировании объекта)
 url - адрес
 parent - родительская страница (объект)
@@ -311,7 +316,7 @@ User_index
 nil
 
 
-
+link_for_admin_edit
 
 
 
