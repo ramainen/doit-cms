@@ -191,6 +191,7 @@ class doitClass
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
 		if (isset($this->iniDatabase[$name])) {
+
 			$this->loadAndParseIniFile($this->iniDatabase[$name]);
 			unset ($this->iniDatabase[$name]);
 		}

@@ -1,74 +1,92 @@
 <?php
 
+	
+	
+	
+//Функция определения множественной формы написания слова на основе написания единственной.
+	
+	
+	
+	
 //Класс Active Record, обеспечивающий простую добычу данных
 class ar
 {
 	public $options;
 	private $_data;
-	static $_p_to_o=array(
-		'men' => 'man',
-		'women' =>	'woman',
-		'mice' =>'mouse',
-		'teeth' =>	'tooth',
-		'feet' => 'foot',
-		'children' =>'child',
-		'oxen' => 'ox',
-		'geese' =>	'goose',
-		'sheep' =>	'sheep',
-		'deer' => 'deer',
-		'swine' => 'swine'
-	);
-	static $_o_to_p=array(
-		'man' => 'men',
-		'woman' => 'women',
-		'mouse' => 'mice',
-		'tooth' => 'teeth',
-		'foot' => 'feet',
-		'child' => 'children',
-		'ox' => 'oxen',
-		'goose' => 'geese',
-		'sheep' => 'sheep',
-		'deer' => 'deer',
-		'swine' => 'swine'
-	);
-
-	//Преобразование множественного числа в единственное
-	/*
-		Существительные, оканчивающиеся на "-f/-fe", во множественном числе пишутся с "-ves".
-		Если слово в единственном числе оканчивается на "-о", то к нему во множественном числе прибавляется суффикс "-es".
-		Если слово оканчивается на "-y" с предшествующим согласным, то во множественном числе к нему прибавляется суффикс "-es", а буква "y" переходит в "i" 
-		
-		
-		lea f - lea ves 
-		лист - листья 
-
-		lif e - li ves 
-		
-		
-		жизнь - жизни 
-
-		tomato - tomatoes 
-		помидор - помидоры 
-
-		Negro - Negroes 
-		негр - негры 
-
-		army - armies 
-		армия - армии 
-
-		family - families 
-		семья - семьи.
-		
-	*/
+	private $_known_columns=array();
 	
-	//Функция определение единсвенного числа на основе написания множественного.
-	function plural_to_one ($string)
+	
+	//Выполняет limit 1 SQL запрос
+	function first()
 	{
-		//Слова - исключения
-		if(isset($_p_to_o[$string])) {
-			return $_p_to_o[$string];
-		}
+		return $this;
 	}
+	
+	//<< Получение дочерних элементов (comments)
+	
+	
+	static function one_to_plural ($string)
+	{
+		$_p_to_o=array(
+			'men' => 'man',
+			'women' =>	'woman',
+			'mice' =>'mouse',
+			'teeth' =>	'tooth',
+			'feet' => 'foot',
+			'children' =>'child',
+			'oxen' => 'ox',
+			'geese' =>	'goose',
+			'sheep' =>	'sheep',
+			'deer' => 'deer',
+			'swine' => 'swine'
+		);
+		$_o_to_p=array(
+			'man' => 'men',
+			'pike' => 'pike',
+			'woman' => 'women',
+			'mouse' => 'mice',
+			'tooth' => 'teeth',
+			'foot' => 'feet',
+			'child' => 'children',
+			'ox' => 'oxen',
+			'goose' => 'geese',
+			'sheep' => 'sheep',
+			'deer' => 'deer',
+			'swine' => 'swine'
+		);
+		$_arr_p=array(
+			'/(^.*)x$/'=>'$1xes',
+			'/(^.*)ch$/'=>'$1ches',
+			'/(^.*)ss$/'=>'$1sses',
+			'/(^.*)quy$/'=>'$1quies',
+			'/(^.*[bcdfghklmnpqrstvxz])y$/'=>'$1ies',
+			'/(^.*)fe$/'=>'$1ves',
+			'/(^.*)lf$/'=>'$1lves',
+			'/(^.*)rf$/'=>'$1rves',
+			'/(^.+)person$/'=>'$1people',
+			'/(^.*)man$/'=>'$1man',
+			'/(^.*)sis$/'=>'$1ses',
+			'/(^.*)tum$/'=>'$1ta',
+			'/(^.*)ium$/'=>'$1ia',
+			'/(^.*)child$/'=>'$1children',
+			'/(^.*)$/'=>'$1s'
+		);
+		
+		//Слова - исключения
+		if(isset($_o_to_p[$string])) {
+			return $_o_to_p[$string];
+		}
+
+		//TODO: (.*s) -> $1;
+		foreach($_arr_p as $key=>$value) {
+			$new=preg_replace($key,$value,$string);
+			if($new != $string) {
+				break;
+			}
+		}
+		return $new;
+	}
+	
 	
 	function __construct($options=array())
 	{
@@ -76,9 +94,11 @@ class ar
 		//Опции по умолчанию и переданные
 		$this->options=$options;
 		$this->options['queryready']=false;  //Сбрасывается при смене параметров запроса, при true запросы не выполняются
-		//поле, по которому получаем данные. Для текттовых страниц это URL, для товаров это id, для пользователей это username или login и так далее.
-		//в подавляющем случае это автоинкрементное числовое поле id
+		
 		$this->options['onerow']=true;
+		
+		//поле, по которому получаем данные. Для текстовых страниц это URL, для товаров это id, для пользователей это username или login и так далее.
+		//в подавляющем случае это автоинкрементное числовое поле id
 		if(!isset($this->options['idfield'])) {
 			$this->options['idfield']='id';
 		}
@@ -99,7 +119,7 @@ class ar
 	//альтернативная функция бстрого получения данных
 	public function getRow($id)
 	{
-		if($_line = mysql_fetch_array(mysql_query("select * from `".$this->options['table']."` where `".$this->options['idfield']."`='". mysql_real_escape_string ($id)."' limit 1"))) {
+		if ($_line = mysql_fetch_array(mysql_query("select * from `".$this->options['table']."` where `".$this->options['idfield']."`='". mysql_real_escape_string ($id)."' limit 1"))) {
 			return $_line;
 		} else {
 			return false;
@@ -128,6 +148,7 @@ class ar
 	
 	public function where()
 	{
+		//TODO: переписать на preg_replace с исполльзованием последнего параметра
 		$this->options['queryready']=false;
 		$args = func_get_args();
 		$_condition=$args[0];
@@ -158,29 +179,50 @@ class ar
 	
 	function __get($name)
 	{
+		//Item.all            //Получение массива с элементами
 		if($name=='all') {
 			if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
 			}
 			return $this->_data;
 		}
+		//Item.one           //Получение одного элемента
 		if($name=='one') {
 		 
 			if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
 			}
 			if(isset($this->_data[0])) {
-				
 				return $this->_data[0];
 			}
 			return array();
 		}
 		
+		if ($this->options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		
+		//Item.title         //Получение одного свойства
+		if (isset($this->_data[0][$name])) {
+			return $this->_data[0][$name];
+		}
+		
+		//Item.user          //Получение связанного объекта
+		if (isset($this->_data[0][$name.'_id'])) {
+			$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
+			return $_tmp->find($this->_data[0][$name.'_id']);
+		}
+		
+		//Item.ramambaharum_mambu_rum
+		return '';
 	}
 }
 
 function activerecordwrapper($_modelname)
 {
-	return new ar(array('table'=>strtolower($_modelname)));
+	if(is_array($_modelname)) {
+		$_modelname=$_modelname[0];
+	}
+	return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
 }
 

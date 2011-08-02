@@ -1,9 +1,14 @@
 <?php
 $this->table='text';
 
-$wiki=d('Wiki')->all;
 
-$page=d('Text')->find_by_url($_SERVER['REQUEST_URI'])->one;
+
+//$wiki=d('Wiki')->all;
+
+ $page=d('Text')->find_by_url($_SERVER['REQUEST_URI'])->one;
+ var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->login);
+  var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->all);
+ 
  
 if ($page){
 	print $this->default_tpl($page);
@@ -12,6 +17,6 @@ if ($page){
 	$this->newurl=$_SERVER['REQUEST_URI'];
 	print $this->addbutton();
 }
-
+ 
 
 ?>
