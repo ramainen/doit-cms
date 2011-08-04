@@ -1,2 +1,15 @@
+<h1>{page.title}{{editbutton}}</h1>
+{page.text}
+
+
+
+
+
+<?php
+	// Необязательная часть
+	d()->page->expand;
+?>
+
 <h1>{title}{{editbutton}}</h1>
 {text}
+<br>Автор: <i>{page.user.login}</i>

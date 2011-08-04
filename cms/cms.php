@@ -324,6 +324,13 @@ foreach($tmparr as $key=>$subval)
 		$_str=str_replace('<hidden>','<'.'?php if(false){ ?'.'>',$_str);
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\}}/','<'.'?php print $this->$1(); ?'.'>',$_str);
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1; ?'.'>',$_str);
+		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2; ?'.'>',$_str);
+		
+		/* FIXME:Бяка*/
+		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2->$3; ?'.'>',$_str);
+		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2->$3->$4; ?'.'>',$_str);
+		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2->$3->$4->$5; ?'.'>',$_str);
+		/* /FIXME:Бяка*/
 		return  $_str;
 	}
 /* ============================================================================== */

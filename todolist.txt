@@ -1,4 +1,5 @@
-﻿+Перевести систему на UTF-8
+﻿<?php
++Перевести систему на UTF-8
 +Система хранения полей в .ini файлах. Загрузка fileds/catalog.ini.
 +Кавычки в ini-перечислениях
 +Хранение левого меню в отдельном init-файле.
@@ -118,7 +119,7 @@ Users->create($_POST[user])
 news.php?sort=title&page=1
 news.php?page=1&sort=title
 
-$_get['page+
+ 
 url('page')-=p[]2l;
 
 Адреса:
@@ -201,6 +202,13 @@ edit_wiki_button (wiki.id)
 add_user_button (wiki)
 edit_user_button
 
+{{{ admin_helper('sd'sd,sad'asdas,d'asdasd',asd'''asd,) }}}
+
+<?php print 2+2; ?>
+{{{ 2+2 }}}
+
+<?php print d()->adminium(2+2) ?>
+{{{ adminium(2+2) }}}
 
 магические свойства (при редактировании объекта)
 url - адрес
@@ -318,6 +326,38 @@ nil
 
 link_for_admin_edit
 
+
+Параметры опций AR
+:uniq
+:validate
+:readonly
+
+
+
+Цепочки запускаемых функций
+clients_model.php
+
+clients_router.tpl.html
+
+clients_default.html
+d()->client.find();
+
+clients_default.tpl.html
+
+
+nextstep('clients.index');
+nextstep('clients.error');
+/clients/     clients_index.html clients_index.tpl.html 
+
+
+function clients_show()
+{
+	d()->client = d()->Client->find(url('clients'));
+}
+
+<div class="magic users">
+	 
+</div>
 
 
 

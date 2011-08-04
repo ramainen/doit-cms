@@ -5,18 +5,18 @@ $this->table='text';
 
 //$wiki=d('Wiki')->all;
 
- $page=d('Text')->find_by_url($_SERVER['REQUEST_URI'])->one;
- var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->login);
-  var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->all);
+ //d()->page=d('Text')->find_by_url($_SERVER['REQUEST_URI']);
+ //var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->login);
+  //var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->all);
+ d('Text')->find_by_url($_SERVER['REQUEST_URI'])->expand_to_page;
  
  
-if ($page){
-	print $this->default_tpl($page);
-} else {
+//if (false === (d('Text')->find_by_url($_SERVER['REQUEST_URI'])->expand)) {
+if (d()->page->is_empty) {
+
 	print "Страница не существует";
 	$this->newurl=$_SERVER['REQUEST_URI'];
 	print $this->addbutton();
-}
- 
 
+}
 ?>

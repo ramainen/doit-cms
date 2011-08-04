@@ -5,7 +5,49 @@
 	
 //Функция определения множественной формы написания слова на основе написания единственной.
 	
-	
+/*
+
+find_by_name_or_author
+find_by_name_and_author
+search_by_author
+search_by_title
+
+search_in_text_or_title
+
+new
+create(attributes)
+find(id_or_array)
+destroy(id_or_array)
+destroy_all
+delete(id_or_array)
+delete_all
+update(ids, updates)
+update_all(updates)
+exists?
+where (:conditions)
+having (:conditions)
+select // select author,comments - соединения разных форм и моделей
+group
+order
+limit
+offset
+joins
+includes (:include)
+lock
+readonly
+from
+first
+last
+all
+preload
+eager_load
+average
+minimum
+maximum
+sum
+calculate
+
+*/	
 	
 	
 //Класс Active Record, обеспечивающий простую добычу данных
@@ -14,7 +56,7 @@ class ar
 	public $options;
 	private $_data;
 	private $_known_columns=array();
-	
+	private $_future_data=array();
 	
 	//Выполняет limit 1 SQL запрос
 	function first()
@@ -38,7 +80,8 @@ class ar
 			'geese' =>	'goose',
 			'sheep' =>	'sheep',
 			'deer' => 'deer',
-			'swine' => 'swine'
+			'swine' => 'swine',
+			'news' => 'news'
 		);
 		$_o_to_p=array(
 			'man' => 'men',
@@ -52,7 +95,8 @@ class ar
 			'goose' => 'geese',
 			'sheep' => 'sheep',
 			'deer' => 'deer',
-			'swine' => 'swine'
+			'swine' => 'swine',
+			'news' => 'news'
 		);
 		$_arr_p=array(
 			'/(^.*)x$/'=>'$1xes',
@@ -105,6 +149,10 @@ class ar
 		
 		if(!isset($this->options['condition'])) {
 			$this->options['condition']='';
+		}
+		
+		if(!isset($this->options['new'])) {
+			$this->options['new']=false;
 		}
 		
 		if(!isset($this->options['table'])) {
@@ -176,9 +224,77 @@ class ar
 			$this->_data[]=$line;
 		}
 	}
+	public function save()
+	{
+		print "!!!";
+		return $this;
+	}
+	public function is_empty()
+	{
+		if ($this->options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		if(isset($this->_data[0])) {
+			return false;
+		}
+		return true;
+	}
+	
+	public function expand()
+	{
+		if ($this->options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		if(isset($this->_data[0])) {
+			foreach( $this->_data[0] as $_key=>$_value) {
+				d()->{$_key} = $_value;
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public function expand_to($varname)
+	{
+		d()->{$varname} = $this;
+		return $this;
+	}
+	
+	function __set($name,$value)
+	{
+		$_future_data=array();
+	}
 	
 	function __get($name)
 	{
+	
+		//Item.new
+		if($name=='new') {
+			$this->options['new']=true;
+			$_future_data=array();
+			return $this;
+		}
+		
+		//Item.expand
+		if($name=='expand') {
+			return $this->expand();
+		}
+		
+		//Item.is_empty
+		if($name=='is_empty') {
+			return $this->is_empty();
+		}
+		
+		//Item.expand_to_page
+		if(substr($name,0,10)=='expand_to_') {
+			return $this->expand_to(substr($name,10));
+		}
+		
+		//Item.save
+		if($name=='save') {
+			return $this->save();
+		}
+		
 		//Item.all            //Получение массива с элементами
 		if($name=='all') {
 			if ($this->options['queryready']==false) {
@@ -202,6 +318,7 @@ class ar
 				$this->fetch_data_now();
 		}
 		
+
 		//Item.title         //Получение одного свойства
 		if (isset($this->_data[0][$name])) {
 			return $this->_data[0][$name];
