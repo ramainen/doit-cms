@@ -338,7 +338,7 @@ link_for_admin_edit
 clients_model.php
 
 clients_router.tpl.html
-
+ 
 clients_default.html
 d()->client.find();
 
@@ -360,4 +360,10 @@ function clients_show()
 </div>
 
 
+addnext
+replacenext
+addlast
+repeat
+
+chain->addnext
 

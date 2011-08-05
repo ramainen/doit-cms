@@ -44,9 +44,15 @@ if(strpos($_URL,'?')!==false)$_URL=substr($_URL,0,strpos($_URL,'?'));
 $_URL=explode('/',substr($_URL,1));
 $GLOBALS['_URL']=$_URL; //Для того случая, если текущий контекст выполняется изнутри другий функции
 
+//Определение адреса и параметров.
+//вырезает параметры страницы
+function url($param='', $length=1)
+{
+	return d()->url($param,$length);
+}
 function doit($object='')
 {
-		if (!isset(doitClass::$instance)) {
+	if (!isset(doitClass::$instance)) {
 		new doitClass();
 	}
 	if($object=='') {
@@ -78,18 +84,28 @@ class doitClass
 	private $iniDatabase=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $subFragments=array(); //Подфрагменты, подготовыленные для использования
 	private $whereIsSubFragments=array(); //В каком родителе можно найти конкретный подфрагмент
+	private $urlArray=array();
+	
 	public static $instance;
 /* ================================================================================= */	
 	function __construct()
 	{
 		self::$instance = $this;
+		$_tmpurl=$_SERVER['REQUEST_URI'];
+		$_wherequestionsign = strpos($_tmpurl,'?');
+		if($_wherequestionsign !== false) {
+			$_tmpurl = substr($_tmpurl, 0, $_wherequestionsign); //Обрезка GET-параметров
+		}
+		if(substr($_tmpurl,-1)=='/')$_tmpurl=$_tmpurl."index";
+		$this->urlArray=explode('/',substr($_tmpurl,1));
+				
+
 		$_fragmentslist=array();
 		$_handle = opendir('tpl');
 		$_files=array();
 		$_files['/']=array();
 		while (false !== ($_file = readdir($_handle))) {
-			 if(substr($_file,0,4)=='mod_')
-			 {
+			 if(substr($_file,0,4)=='mod_') {
 				$_subhandle = opendir('tpl/'.$_file);
 				$_files['/'.$_file.'/']=array();
 				while (false !== ($_subfile = readdir($_subhandle))) {
@@ -183,6 +199,44 @@ class doitClass
 		}
 	 
 	}
+	
+	
+/* ================================================================================= */	
+	public function url($param='',$length=1)
+	{
+		if($param=='') {
+			$param = 1;
+			$length = count($this->urlArray);
+		}
+		if($length<=0) {
+			$length = count($this->urlArray) + $length - 1;
+		}
+		if(!is_numeric($param)) { //url('users')
+			$readyindex=false;
+			$i=0;
+			foreach ($this->urlArray as $key => $value) {
+				$i++;
+				if($key==$param) {
+					$readyindex = $i;
+					break;
+				}
+			}
+			if ($readyindex === false) {
+				return false;
+			}
+			$param = $readyindex + 1; 
+		}
+		//TODO: возвращать false	
+		$tmpstr = '';
+		for($i=0;$i<=$length-1;$i++) {
+			if ($i > 0) {
+				$tmpstr.= '/';
+			}
+			$tmpstr.= $this->urlArray[$param + $i - 1];
+		}
+		return $tmpstr;
+	}
+
 /* ================================================================================= */	
 	public function __call($name, $arguments)
 	{
@@ -206,6 +260,7 @@ class doitClass
 		$_result_end='';
 		$_newnames = $this->getFunctionAlias($name);
 		$_currentname=$name;
+		$_continuechain = true;
 		foreach ($_newnames as $_newname) {
 			$name=$_currentname;
 			if($name!=$_newname) {
@@ -240,14 +295,18 @@ class doitClass
 			$_end = ob_get_contents();
 			ob_end_clean();
 			
-			if (!is_null($_executionResult)) {
+			if (!is_null($_executionResult) && $_executionResult!==false ) {
 				$_end = $_executionResult;
 			}
+			
 			if (count($_newnames)==1){
 				return $_end;
 			} else {
 				$_result_end .= $_end;
-			}			
+			}
+			if ($_executionResult ===false ) {
+				return $_result_end;
+			}
 		}
 		return $_result_end;
 	}
