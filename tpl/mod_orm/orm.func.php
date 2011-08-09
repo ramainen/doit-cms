@@ -1,7 +1,60 @@
 <?php
+/*
 
-	
-	
+На будущее - итератор объектов и объект-массив
+	class ResultIterator extends ArrayIterator {
+	private $count=3;
+		function key()
+		{
+			return  "!!";
+		}
+		function append ($str)
+		{
+			print "#".$str;
+		}
+		function offsetGet ($str)
+		{
+			print "#".$str;
+		}
+		
+		function count()
+		{
+			return 3;
+		}
+		function next()
+		{
+		print "2";
+		return "2";
+		}
+		function valid()
+		{
+			print "1";
+			$this->count--;
+			if($this->count > 0){
+				return true;
+			}
+		}
+	}
+	class ResultElement extends ArrayObject {
+		private $linktoobject;
+		function __construct(&$object)
+		{
+			$this->linktoobject = &$object;
+		}
+		public function getIterator()
+		{
+			return new ResultIterator(    );
+		}
+		function offsetGet($index) {		
+			return $this->linktoobject->shift_to($index);
+		}
+		function count()
+		{
+			return $this->linktoobject->size();
+		}
+	}
+ 
+*/
 	
 //Функция определения множественной формы написания слова на основе написания единственной.
 	
@@ -53,8 +106,10 @@ calculate
 //Класс Active Record, обеспечивающий простую добычу данных
 class ar
 {
+	public $edit_button;
 	public $options;
-	private $_data;
+	public $_data;
+	private $_shift = 0;
 	private $_known_columns=array();
 	private $_future_data=array();
 	
@@ -134,10 +189,20 @@ class ar
 	
 	function __construct($options=array())
 	{
-		$this->_data=array();
-		//Опции по умолчанию и переданные
+		
+		//Опции по умолчанию и переменные
 		$this->options=$options;
-		$this->options['queryready']=false;  //Сбрасывается при смене параметров запроса, при true запросы не выполняются
+		
+		if(isset($this->options['data'])) {
+		 
+			$this->options['queryready']=true;
+			$this->_data=$this->options['data'];
+		} else {
+			$this->options['queryready']=false;
+			$this->_data=array();	
+		}
+		
+	//	$this->options['queryready']=false;  //Сбрасывается при смене параметров запроса, при true запросы не выполняются
 		
 		$this->options['onerow']=true;
 		
@@ -181,6 +246,12 @@ class ar
 		$this->options['queryready']=false;
 		$id = 1 * $id;
 		$this->options['condition'] = ' id = '.$id.' ';
+		if(isset($_SESSION['admin'])) {
+			$this->edit_button = '<a href="/admin/edit/'.$this->options['table'].'/'.$this->options['id'].'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+		}
+		
+		
+		
 		return $this;
 	}
 	
@@ -223,6 +294,11 @@ class ar
 		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
 			$this->_data[]=$line;
 		}
+		
+		//Говнокодик
+		if(count($this->_data)>0) {
+			$this->edit_button = '<a href="/admin/edit/'.$this->options['table'].'/'.$this->_data[0]['id'].'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+		}
 	}
 	public function save()
 	{
@@ -239,6 +315,14 @@ class ar
 		}
 		return true;
 	}
+	//Возвращает размер массива
+	public function size()
+	{
+		if ($this->options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		return count($this->_data);
+	}
 	
 	public function expand()
 	{
@@ -253,10 +337,23 @@ class ar
 		}
 		return false;
 	}
+
+	
+	public function shift_to($_shift)
+	{
+		$this->_shift=$_shift;
+		return $this;
+	}
+	
+	public function expand_all_to($varname)
+	{
+		d()->{$varname} = $this->all;
+		return $this;
+	}
 	
 	public function expand_to($varname)
 	{
-		d()->{$varname} = $this;
+		d()->{$varname} = $this->one;
 		return $this;
 	}
 	
@@ -280,6 +377,13 @@ class ar
 			return $this->expand();
 		}
 		
+		
+		//Item.size
+		if($name=='size') {
+			return $this->size();
+		}
+		
+		
 		//Item.is_empty
 		if($name=='is_empty') {
 			return $this->is_empty();
@@ -289,6 +393,12 @@ class ar
 		if(substr($name,0,10)=='expand_to_') {
 			return $this->expand_to(substr($name,10));
 		}
+		
+		//Item.expand_all_to_pages
+		if(substr($name,0,14)=='expand_all_to_') {
+			return $this->expand_all_to(substr($name,14));
+		}
+		
 		
 		//Item.save
 		if($name=='save') {
@@ -300,19 +410,33 @@ class ar
 			if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
 			}
-			return $this->_data;
+	
+			$_tmparr=array();
+			
+			foreach($this->_data as $element){
+				$_tmparr[] = new ar(array('table'=>$this->options['table'], 'data'=>array( $element ) ));
+			}
+			  
+			return $_tmparr;
+			
+			//Старый подход
+			foreach($this->_data as $_key => $_value) {
+				return $this->_data;
+			}
+			
 		}
 		//Item.one           //Получение одного элемента
 		if($name=='one') {
-		 
 			if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
 			}
-			if(isset($this->_data[0])) {
-				return $this->_data[0];
+			if(isset($this->_data[$this->_shift])) {
+				return $this->_data[$this->_shift];
 			}
 			return array();
 		}
+
+		
 		
 		if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
@@ -321,6 +445,7 @@ class ar
 
 		//Item.title         //Получение одного свойства
 		if (isset($this->_data[0][$name])) {
+		
 			return $this->_data[0][$name];
 		}
 		

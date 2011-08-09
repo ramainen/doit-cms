@@ -18,25 +18,17 @@ Copyright (C) 2011 Fahrutdinov Ainu Damir
 *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 *      MA 02110-1301, USA.
 
-
-0.9 *.ini файлы с данными и опциями.
-0.8 *.func.{html|php} - прослойка с моделью, не шаблонизируется, не eval-ится
+0.11 ActiveRecord и foreach для объектов 07.08.2011 
 0.7 переписано на ООП.
-...
-0.2 фрагменты как шаблоны. Вложенные фрагменты. 06.02.2011
-0.1 работающий шаблонизатор. Умеет выводить переменные, фрагменты со значениями по-умолчанию, списки,
-	шаблонизировать внутри списков. 31.01.2011
 0.0 Нулевая версия do it CMS
 	Рабочее название фреймворка Var(Var) Framework
 	Система названа в честь статьи Variable Variables http://php.net/manual/en/language.variables.variable.php 26.01.2011
   
-Ключевые переменные:
-$_URL			Массив фрагментов пути, включающий в себя названия директорий и конечный файл
-
 
 */
-
+define('conts',12);
 //FIXME: бяка Определение текущего url
+//FIXED: исправлено, см. d()->url('pagename');
 session_start();
 $_URL=$_SERVER['REQUEST_URI'];
 if(substr($_URL,-1)=='/')$_URL=$_URL."index";
@@ -46,10 +38,23 @@ $GLOBALS['_URL']=$_URL; //Для того случая, если текущий 
 
 //Определение адреса и параметров.
 //вырезает параметры страницы
+/*
+	Пример использования:
+	Допустим, URL страницы /users/ainu/comments/13/14/52/page/4/edit?yes=no
+	print url() 				# users/ainu/comments/13/14/52/page/4/edit
+	print url(1) 				# users
+	print url(2) 				# ainu
+	print url('users') 			# ainu
+	print url('page') 			# 4
+	print url('comments',3) 	# 13/14/52
+	print url('comments',-2) 		# 13/14/52/page
+*/
 function url($param='', $length=1)
 {
+	
 	return d()->url($param,$length);
 }
+/**********************************************************************************************/
 function doit($object='')
 {
 	if (!isset(doitClass::$instance)) {
@@ -85,11 +90,16 @@ class doitClass
 	private $subFragments=array(); //Подфрагменты, подготовыленные для использования
 	private $whereIsSubFragments=array(); //В каком родителе можно найти конкретный подфрагмент
 	private $urlArray=array();
-	
+	private $call_chain=array(); //Цепь вызовов
+	private $call_chain_current_link=array(); //Текущий элемент цепочки
+	private $call_chain_level=0; //текущий уровень, стек для комманд
 	public static $instance;
 /* ================================================================================= */	
 	function __construct()
 	{
+		
+	 
+		
 		self::$instance = $this;
 		$_tmpurl=$_SERVER['REQUEST_URI'];
 		$_wherequestionsign = strpos($_tmpurl,'?');
@@ -261,7 +271,8 @@ class doitClass
 		$_newnames = $this->getFunctionAlias($name);
 		$_currentname=$name;
 		$_continuechain = true;
-		foreach ($_newnames as $_newname) {
+		for($i=0;$i<=count($_newnames)-1;$i++){
+		$_newname = $_newnames[$i];
 			$name=$_currentname;
 			if($name!=$_newname) {
 				if (isset($this->iniDatabase[$_newname])) {
@@ -285,6 +296,12 @@ class doitClass
 			if(!isset($this->fragmentslist[$name]) && isset($this->whereIsSubFragments[$name])) {
 				$this->fragmentslist[$name]= $this->subFragments[$this->whereIsSubFragments[$name]][$name];
 			}
+			
+			$this->call_chain_level++; //поднимаем уровень текущего стека очереди
+			//Сохраняем текущую цепочку команд
+			$this->call_chain[$this->call_chain_level] = $_newnames;
+			$this->call_chain_current_link[$this->call_chain_level]=$i;
+			
 			//Тут вызываются предопределённые и пользовательские функции
 			ob_start();
 			if (function_exists($name)) {
@@ -298,13 +315,16 @@ class doitClass
 			if (!is_null($_executionResult) && $_executionResult!==false ) {
 				$_end = $_executionResult;
 			}
-			
+			//Загружаем актуальную цепочку команд. call_chain могла измениться
+			$_newnames = $this->call_chain[$this->call_chain_level]; 
+			$i = $this->call_chain_current_link[$this->call_chain_level];
+			$this->call_chain_level--; //опускаем уровень текущего стека очереди
 			if (count($_newnames)==1){
 				return $_end;
 			} else {
 				$_result_end .= $_end;
 			}
-			if ($_executionResult ===false ) {
+			if ($_executionResult === false ) {
 				return $_result_end;
 			}
 		}
@@ -331,6 +351,29 @@ class doitClass
 		//$this->caller=$name;
 		return '';
 	}
+	
+/* ================================================================================= */
+	//Меняет следующий элемент в очереди-цепи
+	public function set_next_chain($chainname)
+	{
+		$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]+1] = $chainname;
+	}
+
+/* ================================================================================= */
+	//Останавливает всю следующую цепочку
+	public function stop_next_chains()
+	{
+		$this->call_chain_current_link[$this->call_chain_level] = count($this->call_chain[$this->call_chain_level])+1;
+	}
+	
+/* ================================================================================= */
+	//Вставляет элемент в цепь после текущего
+	public function insert_next_chain($chainname)
+	{
+		//$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]+1] = $chainname;
+	}
+	
+	
 /* ================================================================================= */
 	//Проверяет URL и анализирует текущий массив, при подходящем, возвращает псевдоним
 	function getFunctionAlias($name)
@@ -344,8 +387,11 @@ class doitClass
 		$matched=array('','',$name);
 		$longest_url='';
 		$ruleslist = $this->datapool['urls'];
-		foreach($ruleslist as $key=>$value) {
-			if($value[1] == $name && ($_SERVER['REQUEST_URI']==$value[0] || substr($_SERVER['REQUEST_URI'],0,strlen($value[0]))==$value[0] || preg_match('/'.str_replace('//','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_SERVER['REQUEST_URI']))) {
+		$_requri = '/'.$this->url();
+		//Определение наиболее подхходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
+		foreach($ruleslist as $key=>$value) {			
+		
+			if($value[1] == $name && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
 				if(strlen($value[0]) > strlen($longest_url)) {
 					$matched=$value;
 					$longest_url=$value[0];
@@ -368,22 +414,40 @@ foreach($tmparr as $key=>$subval)
 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 		
-		$_str=preg_replace('/<foreach\s+(.*)>/','<'.'?php $tmparr= $this->$1;
+		
+		$_str=preg_replace('/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/','<'.'?php $tmparr= $this->$1;
+if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
+foreach($tmparr as $key=>$subval)
+	if(is_string($subval)) print $subval;else {
+		$this->datapool["override"]="";
+		if(is_object($subval)){
+			 $this->datapool[\'$2\']=$subval; 
+		}else{
+			foreach($subval as $subkey=>$subvalue) $this->datapool[\'$2\'][$subkey]=$subvalue; 
+		}
+		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
+		
+		
+		$_str=preg_replace('/<foreach\s+(.*?)>/','<'.'?php $tmparr= $this->$1;
 if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
 		$this->datapool["override"]="";
 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
+		
+		
+		
 		$_str=preg_replace('/<type\s+([a-zA-Z0-9_-]+)>/','<'.'?php if($this->type=="$1"){ ?'.'>',$_str);
 		$_str=str_replace('</fragment>','<'.'?php } } ?'.'>',$_str);
-		$_str=str_replace('</foreach>','<'.'?php } } ?'.'>',$_str);
+		$_str=str_replace('</foreach>' ,'<'.'?php } } ?'.'>',$_str);
 		$_str=str_replace('</type>','<'.'?php } ?'.'>',$_str);	
 		$_str=str_replace('</hidden>','<'.'?php } ?'.'>',$_str);
 		$_str=str_replace('<hidden>','<'.'?php if(false){ ?'.'>',$_str);
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\}}/','<'.'?php print $this->$1(); ?'.'>',$_str);
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1; ?'.'>',$_str);
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2; ?'.'>',$_str);
+		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\'];
+		}else{ print  $this->$1->$2; } ?'.'>',$_str);
 		
 		/* FIXME:Бяка*/
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2->$3; ?'.'>',$_str);
