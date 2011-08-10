@@ -1,0 +1,15 @@
+<?php
+	d()->texts=d()->User->find(2)->texts;
+	
+ 
+	
+?>
+
+<foreach texts as text>
+	<li><b>{text.title}</b>
+	<br>
+	{text.text}
+	</li>
+	
+	<br>
+</foreach>

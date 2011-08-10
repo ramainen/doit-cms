@@ -250,7 +250,7 @@ class doitClass
 /* ================================================================================= */	
 	public function __call($name, $arguments)
 	{
-		global $_URL; //FIXME: нахрен GLOBAL
+	
 		
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
@@ -305,7 +305,7 @@ class doitClass
 			//Тут вызываются предопределённые и пользовательские функции
 			ob_start();
 			if (function_exists($name)) {
-				$_executionResult=call_user_func($name, $arguments);
+				$_executionResult=call_user_func_array($name, $arguments);
 			}else{
 				$_executionResult=eval('?'.'>'.$this->fragmentslist[$name].'<'.'?php ;');
 			}
@@ -406,6 +406,7 @@ class doitClass
 /* ================================================================================= */
 	function shablonize($_str)
 	{
+	
 		$_str=preg_replace('/<fragment\s+([a-zA-Z0-9_]+)>/','<'.'?php $tmparr= $this->$1;
 if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
@@ -427,7 +428,7 @@ foreach($tmparr as $key=>$subval)
 		}
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 		
-		
+		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
 		$_str=preg_replace('/<foreach\s+(.*?)>/','<'.'?php $tmparr= $this->$1;
 if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
@@ -445,6 +446,10 @@ foreach($tmparr as $key=>$subval)
 		$_str=str_replace('</hidden>','<'.'?php } ?'.'>',$_str);
 		$_str=str_replace('<hidden>','<'.'?php if(false){ ?'.'>',$_str);
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\}}/','<'.'?php print $this->$1(); ?'.'>',$_str);
+		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\s+(.*?)\}}/', '<'.'?php print $this->$1(array($2)); ?'.'>',$_str);
+		
+		
+		
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1; ?'.'>',$_str);
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\'];
 		}else{ print  $this->$1->$2; } ?'.'>',$_str);
@@ -460,6 +465,7 @@ foreach($tmparr as $key=>$subval)
 
 	//получение данных из .ini файла
 	function loadAndParseIniFile($filename){
+	
 		$res=array();
 		if(!$ini=file_get_contents($filename)) return false;
 		$ini=explode("\n",$ini);

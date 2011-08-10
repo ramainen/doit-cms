@@ -13,9 +13,10 @@ if(isset($_POST['element_id'])) {
 		$elemid=mysql_insert_id();
 	}
 
-	if($_POST['url']=='')$_POST['url']='/page'.$elemid;
+	if($_POST['url']=='')$_POST['url']='page'.$elemid;
 
-	if(substr($_POST['url'],0,1)!='/')$_POST['url']='/'.$_POST['url'];
+	if(substr($_POST['url'],0,1)=='/')$_POST['url']=substr($_POST['url'],1);
+	$_POST['url']=str_replace('/','_',$_POST['url']);
 	$data=$this->adminFields();
     $result_str="update `".$_URL[2]."` set  ";
     for($i=0; $i<=count($data)-1; $i++) {

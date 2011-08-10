@@ -121,8 +121,7 @@ class ar
 	
 	//<< Получение дочерних элементов (comments)
 	
-	
-	static function one_to_plural ($string)
+	static function plural_to_one ($string)
 	{
 		$_p_to_o=array(
 			'men' => 'man',
@@ -138,6 +137,41 @@ class ar
 			'swine' => 'swine',
 			'news' => 'news'
 		);
+		$_arr_p=array(
+			'/(^.*)xes$/'=>'$1x',
+			'/(^.*)ches$/'=>'$1ch',
+			'/(^.*)sses$/'=>'$1ss',
+			'/(^.*)quies$/'=>'$1quy',
+			'/(^.*)ies$/'=>'$1y',
+			'/(^.*)lves$/'=>'$1lf',
+			'/(^.*)rves$/'=>'$1rf',
+			'/(^.*)ves$/'=>'$1fe',
+			'/(^.*)men$/'=>'$1man',
+			'/(^.+)people$/'=>'$1person',
+			'/(^.*)ses$/'=>'$1sis',
+			'/(^.*)ta$/'=>'$1tum',
+			'/(^.*)ia$/'=>'$1ium',
+			'/(^.*)children$/'=>'$1child',
+			'/(^.*)s$/'=>'$1'
+		);
+		
+		//Слова - исключения
+		if(isset($_p_to_o[$string])) {
+			return $_p_to_o[$string];
+		}
+
+		//TODO: (.*s) -> $1;
+		foreach($_arr_p as $key=>$value) {
+			$new=preg_replace($key,$value,$string);
+			if($new != $string) {
+				break;
+			}
+		}
+		return $new;
+	}
+	
+	static function one_to_plural ($string)
+	{
 		$_o_to_p=array(
 			'man' => 'men',
 			'pike' => 'pike',
@@ -163,7 +197,7 @@ class ar
 			'/(^.*)lf$/'=>'$1lves',
 			'/(^.*)rf$/'=>'$1rves',
 			'/(^.+)person$/'=>'$1people',
-			'/(^.*)man$/'=>'$1man',
+			'/(^.*)man$/'=>'$1men',
 			'/(^.*)sis$/'=>'$1ses',
 			'/(^.*)tum$/'=>'$1ta',
 			'/(^.*)ium$/'=>'$1ia',
@@ -224,8 +258,12 @@ class ar
 			if(doit()->table!='') {
 				$this->options['table']=doit()->table;
 			} else {
-				$this->options['table']='data';
+				$this->options['table']='datas';
 			}
+		}
+		
+		if(!isset($this->options['plural_to_one'])) {
+			$this->options['plural_to_one']=self::plural_to_one($this->options['table']);
 		}
 	}
 	
@@ -430,10 +468,7 @@ class ar
 			if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
 			}
-			if(isset($this->_data[$this->_shift])) {
-				return $this->_data[$this->_shift];
-			}
-			return array();
+			return $this;
 		}
 
 		
@@ -442,21 +477,44 @@ class ar
 				$this->fetch_data_now();
 		}
 		
-
-		//Item.title         //Получение одного свойства
-		if (isset($this->_data[0][$name])) {
-		
-			return $this->_data[0][$name];
+		if(isset($this->_data[0])) {
+			//Item.title         //Получение одного свойства
+			if (isset($this->_data[0][$name])) {
+				return $this->_data[0][$name];
+			}
+			
+			//Item.user          //Получение связанного объекта
+			if (isset($this->_data[0][$name.'_id'])) {
+				$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
+				return $_tmp->find($this->_data[0][$name.'_id']);
+			}
+			
+			//Item.users
+			//1. Поиск альтернативных подходищх столбцов
+			$foundedfield = false;
+			//ищем поле item_id в таблице users
+			$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
+			while(($_tmpline = mysql_fetch_array($_res) )&& ($foundedfield == false)){
+				if ($_tmpline[0]== $this->options['plural_to_one']."_id") {
+					$foundedfield = true;
+				}
+			}
+			if($foundedfield==true) {
+				$_tmpael  = new ar(array('table'=>$name));
+				
+				return $_tmpael->where($this->options['plural_to_one']."_id = ?",$this->_data[0]['id'])->all;
+					
+			}
+			return '';
+		} else {
+			//Item.ramambaharum_mambu_rum
+			return '';
 		}
 		
-		//Item.user          //Получение связанного объекта
-		if (isset($this->_data[0][$name.'_id'])) {
-			$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
-			return $_tmp->find($this->_data[0][$name.'_id']);
-		}
 		
-		//Item.ramambaharum_mambu_rum
-		return '';
+		
+		 
+		
 	}
 }
 
@@ -468,3 +526,14 @@ function activerecordwrapper($_modelname)
 	return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
 }
 
+
+
+/*==================================================================================*/
+/*
+Объектно-ориентированный helper input
+*/
+class ar_input
+{
+
+
+}

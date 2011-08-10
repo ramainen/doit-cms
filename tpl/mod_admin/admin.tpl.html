@@ -14,7 +14,9 @@
 <?php
 if(!isset($_SESSION['admin'])) {
 	return ""; //Проверка на права администратора
-}	
+}
+
+//Далее идёт махровый быдлокод
 ?>
 <a href="/admin/edit/{table}/{id}" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>
 </fragment>

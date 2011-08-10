@@ -1,26 +1,17 @@
 <?php
-$this->table='text';
 
 
-
-
-
-
-//$wiki=d('Wiki')->all;
-
- //d()->page=d('Text')->find_by_url($_SERVER['REQUEST_URI']);
- //var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->login);
-  //var_dump(d()->Text->find_by_url($_SERVER['REQUEST_URI'])->user->all);
-  
-  
- d('Text')->find_by_url($_SERVER['REQUEST_URI'])->expand_to_page;
+d()->page = d('Text')->find_by_url(url(1))->one;
  
- 
-//if (false === (d('Text')->find_by_url($_SERVER['REQUEST_URI'])->expand)) {
-if (d()->page->is_empty) {
+  
+if (!d()->page) {
 	print "Страница не существует";
-	$this->newurl=$_SERVER['REQUEST_URI'];
+	$this->newurl=url(1);
+	$this->table='texts';
 	print $this->addbutton();
-	return false;
+	d()->stop_next_chains();
+	
 }
+
+ 
 ?>
