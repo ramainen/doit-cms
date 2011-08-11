@@ -345,6 +345,8 @@ class User extends ActiveRecord
 User
 id title
 
+Good->catalogs_of_gcconnects
+
 Good
 id title   user_id
 
@@ -353,6 +355,32 @@ id title
 
 Gcconnect
 id catalog_id good_id
+
+User
+id title username
+
+Razdel
+id title
+
+$user->razdels_of_posts
+
+
+$post->urls_of_comments
+
+
+Good->catalogs_of_gfcomments
+
+Good->catalogs
+
+
+Хранение кешированной структуры базы данных (миграции).
+
+
+
+Post
+id user_id razdel_id
+
+
 
 $catalogs = $good->gconnects->catalogs
 
@@ -375,3 +403,74 @@ $good->catalogs
 	2. определяем единственную форму слова (catalog), получем массив catalog каждого из $good->goods_to_catalogs
 		1. смот
 	3. возвращаем полученный массив
+
+	
+	
+Валидация работает по принципу расширенной (кастомизированной) валидации в rails
+validate() - возвращает true или false
+errors() - возвращает ошибки
+ 
+	
+	
+	Администратор сайта может редактировать ini-файлы.
+	Администратор сайта может добавлять свои, дополнительные поля
+	Администратор сайта может определять их обязательность
+	Администратор сайта может определять дополнительные требования (уникальность, необходимость подтверждения, возможные варианты, тип)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	form_for 'sendmail':
+	Actions:
+		action_sendemail
+		action_user_authorise
+		action_account_setoptions
+		action_pages_search
+		action_pages_change_sort
+		action_user_logout
+		action_catalog_add_filter
+		action_user_update
+		action_user_delete
+		action_user_create
+		action_show_page
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+ 
+
+
+
+

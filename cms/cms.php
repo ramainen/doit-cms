@@ -207,10 +207,35 @@ class doitClass
 	 	foreach ($this->fragmentslist as $_key=>$_value) { 
 			$this->fragmentslist[$_key]=$this->shablonize($this->fragmentslist[$_key]);
 		}
-	 
+		
+		//Обработка actions. Ничего не выводится.
+		if(isset($_POST) && isset($_POST['_action'])) {
+			if($this->validate_action($_POST['_action'],$_POST[$_POST['_element']])) {
+				$this->{'action_'.$_POST['_action']}($_POST[$_POST['_element']]); 
+			}
+		}
+		
 	}
 	
 	
+/* ================================================================================= */	
+	public function validate_action($validator_name,$params) //todo: сделать пользователезаменяемой штукой
+	{
+		$rules=$this->datapool['validator'][$validator_name];
+		if(!isset($this->datapool['notice'])) {
+			$this->datapool['notice']=array();
+		}
+		$is_ok=true;
+		
+		foreach($rules as $key=>$value) {
+			if(isset($value['required']) && (!isset ($params[$key]) || $params[$key]=='')) {
+				$this->datapool['notice'][] = $value['required']['message'];
+				$is_ok=false;
+			}
+		}		
+		
+		return $is_ok;
+	}
 /* ================================================================================= */	
 	public function url($param='',$length=1)
 	{
@@ -445,6 +470,7 @@ foreach($tmparr as $key=>$subval)
 		$_str=str_replace('</type>','<'.'?php } ?'.'>',$_str);	
 		$_str=str_replace('</hidden>','<'.'?php } ?'.'>',$_str);
 		$_str=str_replace('<hidden>','<'.'?php if(false){ ?'.'>',$_str);
+		$_str=preg_replace('/\{{\/([a-zA-Z0-9_]+)\}}/','</$1>',$_str);//Синтаксический сахар
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\}}/','<'.'?php print $this->$1(); ?'.'>',$_str);
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\s+(.*?)\}}/', '<'.'?php print $this->$1(array($2)); ?'.'>',$_str);
 		

@@ -501,9 +501,7 @@ class ar
 			}
 			if($foundedfield==true) {
 				$_tmpael  = new ar(array('table'=>$name));
-				
 				return $_tmpael->where($this->options['plural_to_one']."_id = ?",$this->_data[0]['id'])->all;
-					
 			}
 			return '';
 		} else {
