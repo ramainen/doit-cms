@@ -307,13 +307,24 @@ function clients_show()
 </div>
 
   
-
+Относительные, влияющие на очередь, вызываем изнутри очереди
 +set_next_chain
-stop_next_chain
+remove_next_chain
 +stop_next_chains
 insert_next_chain 
 repeat_next_chain
+replace_next_chain
 
+Именные, ждущие имени, вызываемые снаружи очереди:
+run_after_chain
+replace_chain
+remove_chain
+insert_after_chain
+insert_before_chain
+insert_at_end_of_chain
+
+Управление url
+set_virtual_url
 
 
 Хелперы
@@ -442,35 +453,43 @@ errors() - возвращает ошибки
 		action_user_create
 		action_show_page
 		
+		{{button_for 'send_email', 'value'=>'отправить емейл'}}
+		{{link_for 'send_email', 'value'=>'отправить емейл'}}
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
- 
+	проверка
+например action на удаление объекта может запустить только администратор
+/ action_sendemail         onlyadmin action_sedemail
+
+
+условный роутер
+
+is_admin()    button	superbutton
+true	link	superlink
 
 
 
+123  button superbutton
+900  button superlist
+true button adminium
 
+/httygb
+1
+2
+3
+true
+
+1. если при поиске URL наткнулись на функцию, вернувшую число, то в дальнейшем игнорируем URL
+2. если при поиске URL наткнулись на *, то останавливаем поиск
+3. если при поиске URL наткнулись на функцию, вернувшую true, то останавливаем поиск
+
+*
+userfunc = true
+userfunc = 12
+
+userfunc()
+{
+	return preg_match('/[0-9*/sd627F^*sd{}]/',$request_uri);
+}
+
+/*
