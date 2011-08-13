@@ -1,7 +1,7 @@
 <?php
 /*
 DoIt! CMS and VarVar framework
-Copyright (C) 2011 Fahrutdinov Ainu Damir
+Copyright (C) 2011 Fahrutdinov Damir (aka Ainu)
 
 *      This program is free software; you can redistribute it and/or modify
 *      it under the terms of the GNU General Public License as published by
@@ -23,35 +23,11 @@ Copyright (C) 2011 Fahrutdinov Ainu Damir
 0.0 Нулевая версия do it CMS
 	Рабочее название фреймворка Var(Var) Framework
 	Система названа в честь статьи Variable Variables http://php.net/manual/en/language.variables.variable.php 26.01.2011
-  
-
 */
-define('conts',12);
-//FIXME: бяка Определение текущего url
-//FIXED: исправлено, см. d()->url('pagename');
+
 session_start();
-$_URL=$_SERVER['REQUEST_URI'];
-if(substr($_URL,-1)=='/')$_URL=$_URL."index";
-if(strpos($_URL,'?')!==false)$_URL=substr($_URL,0,strpos($_URL,'?'));
-$_URL=explode('/',substr($_URL,1));
-$GLOBALS['_URL']=$_URL; //Для того случая, если текущий контекст выполняется изнутри другий функции
-
-//Определение адреса и параметров.
-//вырезает параметры страницы
-/*
-	Пример использования:
-	Допустим, URL страницы /users/ainu/comments/13/14/52/page/4/edit?yes=no
-	print url() 				# users/ainu/comments/13/14/52/page/4/edit
-	print url(1) 				# users
-	print url(2) 				# ainu
-	print url('users') 			# ainu
-	print url('page') 			# 4
-	print url('comments',3) 	# 13/14/52
-	print url('comments',-2) 		# 13/14/52/page
-*/
 function url($param='', $length=1)
-{
-	
+{	
 	return d()->url($param,$length);
 }
 /**********************************************************************************************/
@@ -86,10 +62,10 @@ class doitClass
 	private $replacements=array(); //Массив подмены шабонов при вызове
 	private $caller=""; //Хранит название последней вызванной пользовательской функции.
 	private $datapool=array(); //Большой массив всех опций, данных и переменных
-	private $iniDatabase=array(); //Названия существующих ini-файлов, а также факт их использования
-	private $subFragments=array(); //Подфрагменты, подготовыленные для использования
-	private $whereIsSubFragments=array(); //В каком родителе можно найти конкретный подфрагмент
-	private $urlArray=array();
+	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
+	private $sub_fragments=array(); //Подфрагменты, подготовыленные для использования
+	private $where_is_sub_fragments=array(); //В каком родителе можно найти конкретный подфрагмент
+	private $url_parts=array();
 	private $call_chain=array(); //Цепь вызовов
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
 	private $call_chain_level=0; //текущий уровень, стек для комманд
@@ -97,59 +73,60 @@ class doitClass
 /* ================================================================================= */	
 	function __construct()
 	{
-		
-	 
-		
 		self::$instance = $this;
 		$_tmpurl=$_SERVER['REQUEST_URI'];
 		$_wherequestionsign = strpos($_tmpurl,'?');
 		if($_wherequestionsign !== false) {
 			$_tmpurl = substr($_tmpurl, 0, $_wherequestionsign); //Обрезка GET-параметров
 		}
-		if(substr($_tmpurl,-1)=='/')$_tmpurl=$_tmpurl."index";
-		$this->urlArray=explode('/',substr($_tmpurl,1));
-				
-
+		if(substr($_tmpurl,-1)=='/') {
+			$_tmpurl=$_tmpurl."index";
+		}	
+		$this->url_parts=explode('/',substr($_tmpurl,1));
+		$dirlist=array('cms','app');
 		$_fragmentslist=array();
-		$_handle = opendir('app');
-		$_files=array();
-		$_files['/']=array();
-		while (false !== ($_file = readdir($_handle))) {
-			 if(substr($_file,0,4)=='mod_') {
-				$_subhandle = opendir('app/'.$_file);
-				$_files['/'.$_file.'/']=array();
-				while (false !== ($_subfile = readdir($_subhandle))) {
-					$_files['/'.$_file.'/'][]=$_subfile;
-				}
-				closedir($_subhandle);
-			 } else {
-				$_files['/'][]=$_file;
-			 }
-		}
-		closedir($_handle);
+		foreach($dirlist as $dirname){ 
 		
-		foreach($_files as $_dir => $_subfiles) {
-			foreach($_subfiles as $_file) {
-				if (substr($_file,-5)=='.html' && substr($_file,-10)!='.func.html') {
-					$_fragmentslist[str_replace('.','_',substr($_file,0,-5))]=file_get_contents('app'.$_dir.$_file);
-				}
-				//Модель - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
-				if (substr($_file,-10)=='.func.html' || substr($_file,-9)=='.func.php') {
-					include ('app'.$_dir.$_file);
-				}
-				//Обработка факта наличия .ini-файлов
-				if (substr($_file,-4)=='.ini') {
-					//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
-					//Хранит адрес ini-файла, запускаемого перед определённой функцией
-					$this->iniDatabase[substr($_file,0,-4)]='app'.$_dir.$_file;
-					//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
-					if (substr($_file,-8)=='init.ini') {
-						$this->loadAndParseIniFile ('app'.$_dir.$_file);
+			
+			$_handle = opendir($dirname);
+			$_files=array();
+			$_files['/']=array();
+			while (false !== ($_file = readdir($_handle))) {
+				 if(substr($_file,0,4)=='mod_') {
+					$_subhandle = opendir($dirname.'/'.$_file);
+					$_files['/'.$_file.'/']=array();
+					while (false !== ($_subfile = readdir($_subhandle))) {
+						$_files['/'.$_file.'/'][]=$_subfile;
+					}
+					closedir($_subhandle);
+				 } else {
+					$_files['/'][]=$_file;
+				 }
+			}
+			closedir($_handle);
+			
+			foreach($_files as $_dir => $_subfiles) {
+				foreach($_subfiles as $_file) {
+					if (substr($_file,-5)=='.html' && substr($_file,-10)!='.func.html') {
+						$_fragmentslist[str_replace('.','_',substr($_file,0,-5))]=file_get_contents($dirname.$_dir.$_file);
+					}
+					//Модель - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
+					if (substr($_file,-10)=='.func.html' || substr($_file,-9)=='.func.php') {
+						include ($dirname.$_dir.$_file);
+					}
+					//Обработка факта наличия .ini-файлов
+					if (substr($_file,-4)=='.ini') {
+						//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
+						//Хранит адрес ini-файла, запускаемого перед определённой функцией
+						$this->ini_database[substr($_file,0,-4)]=$dirname.$_dir.$_file;
+						//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
+						if (substr($_file,-8)=='init.ini') {
+							$this->load_and_parse_ini_file ($dirname.$_dir.$_file);
+						}
 					}
 				}
 			}
 		}
-		
 		$this->fragmentslist = $_fragmentslist;
 		$_newfragmentist=array();
 		//Поиск и объявление фрагментов, объявленных внутри шаблонов, подготовка массива с подфрагментами
@@ -193,15 +170,15 @@ class doitClass
 				}
 				$res0=$res1+9;
 				$res1=strpos($_text,'>',$res1)+1;
-				$this->whereIsSubFragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
-				$this->subFragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
+				$this->where_is_sub_fragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
+				$this->sub_fragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
 			}
 			$res1=$_a1[0];
 			$res2=$_a2[0];
 			$res0=$res1+9;
 			$res1=strpos($_text,'>',$res1)+1;
-			$this->whereIsSubFragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
-			$this->subFragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
+			$this->where_is_sub_fragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
+			$this->sub_fragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
 		}
 
 	 	foreach ($this->fragmentslist as $_key=>$_value) { 
@@ -241,15 +218,15 @@ class doitClass
 	{
 		if($param=='') {
 			$param = 1;
-			$length = count($this->urlArray);
+			$length = count($this->url_parts);
 		}
 		if($length<=0) {
-			$length = count($this->urlArray) + $length - 1;
+			$length = count($this->url_parts) + $length - 1;
 		}
 		if(!is_numeric($param)) { //url('users')
 			$readyindex=false;
 			$i=0;
-			foreach ($this->urlArray as $key => $value) {
+			foreach ($this->url_parts as $key => $value) {
 				$i++;
 				if($key==$param) {
 					$readyindex = $i;
@@ -267,7 +244,7 @@ class doitClass
 			if ($i > 0) {
 				$tmpstr.= '/';
 			}
-			$tmpstr.= $this->urlArray[$param + $i - 1];
+			$tmpstr.= $this->url_parts[$param + $i - 1];
 		}
 		return $tmpstr;
 	}
@@ -275,34 +252,30 @@ class doitClass
 /* ================================================================================= */	
 	public function __call($name, $arguments)
 	{
-	
-		
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
-		if (isset($this->iniDatabase[$name])) {
+		if (isset($this->ini_database[$name])) {
 
-			$this->loadAndParseIniFile($this->iniDatabase[$name]);
-			unset ($this->iniDatabase[$name]);
+			$this->load_and_parse_ini_file($this->ini_database[$name]);
+			unset ($this->ini_database[$name]);
 		}
 		 
-		if (count($arguments)!=0) {
-			if(is_array($arguments[0])){
-				foreach($arguments[0] as $key=>$value) {
-					$this->datapool[$key]=$value;
-				}
+		if (count($arguments)!=0 && is_array($arguments[0])) {
+			foreach($arguments[0] as $key=>$value) {
+				$this->datapool[$key]=$value;
 			}
 		}
 		$_result_end='';
-		$_newnames = $this->getFunctionAlias($name);
+		$_newnames = $this->get_function_alias($name);
 		$_currentname=$name;
 		$_continuechain = true;
 		for($i=0;$i<=count($_newnames)-1;$i++){
 		$_newname = $_newnames[$i];
 			$name=$_currentname;
 			if($name!=$_newname) {
-				if (isset($this->iniDatabase[$_newname])) {
-					$this->loadAndParseIniFile($this->iniDatabase[$_newname]);
-					unset ($this->iniDatabase[$_newname]);
+				if (isset($this->ini_database[$_newname])) {
+					$this->load_and_parse_ini_file($this->ini_database[$_newname]);
+					unset ($this->ini_database[$_newname]);
 				}
 			}
 			$name=$_newname;
@@ -311,15 +284,15 @@ class doitClass
 				$name = $name."_tpl";
 			}
 			//Активация подфрагментов перед вызовом родительской функции
-			if (isset($this->subFragments[$name])) {
-				foreach($this->subFragments[$name] as $_key=>$_value) {	
+			if (isset($this->sub_fragments[$name])) {
+				foreach($this->sub_fragments[$name] as $_key=>$_value) {	
 					$this->fragmentslist[$_key]=$_value;
 				}
 			}
 			
 			//Если в дальнейшем ожидается ошибка по причине вызова внешнего фрагмента, провести его инициацию
-			if(!isset($this->fragmentslist[$name]) && isset($this->whereIsSubFragments[$name])) {
-				$this->fragmentslist[$name]= $this->subFragments[$this->whereIsSubFragments[$name]][$name];
+			if(!isset($this->fragmentslist[$name]) && isset($this->where_is_sub_fragments[$name])) {
+				$this->fragmentslist[$name]= $this->sub_fragments[$this->where_is_sub_fragments[$name]][$name];
 			}
 			
 			$this->call_chain_level++; //поднимаем уровень текущего стека очереди
@@ -398,9 +371,8 @@ class doitClass
 	
 /* ================================================================================= */
 	//Проверяет URL и анализирует текущий массив, при подходящем, возвращает псевдоним
-	function getFunctionAlias($name)
+	function get_function_alias($name)
 	{
-		global $_URL;
 		static $url_list_size;
 		if (!isset($url_list_size)) {
 			$url_list_size = 0;
@@ -412,7 +384,7 @@ class doitClass
 		$_requri = '/'.$this->url();
 		//Определение наиболее подхходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
 		foreach($ruleslist as $key=>$value) {			
-		
+			//TODO: объединить два if
 			if($value[1] == $name && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
 				if(strlen($value[0]) > strlen($longest_url)) {
 					$matched=$value;
@@ -458,9 +430,7 @@ foreach($tmparr as $key=>$subval)
 		$this->datapool["override"]="";
 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
-		
-		
-		
+	
 		$_str=preg_replace('/<type\s+([a-zA-Z0-9_-]+)>/','<'.'?php if($this->type=="$1"){ ?'.'>',$_str);
 		$_str=str_replace('</fragment>','<'.'?php } } ?'.'>',$_str);
 		$_str=str_replace('</foreach>' ,'<'.'?php } } ?'.'>',$_str);
@@ -470,8 +440,6 @@ foreach($tmparr as $key=>$subval)
 		$_str=preg_replace('/\{{\/([a-zA-Z0-9_]+)\}}/','</$1>',$_str);//Синтаксический сахар
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\}}/','<'.'?php print $this->$1(); ?'.'>',$_str);
 		$_str=preg_replace('/\{{([a-zA-Z0-9_]+)\s+(.*?)\}}/', '<'.'?php print $this->$1(array($2)); ?'.'>',$_str);
-		
-		
 		
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1; ?'.'>',$_str);
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\'];
@@ -487,7 +455,7 @@ foreach($tmparr as $key=>$subval)
 /* ============================================================================== */
 
 	//получение данных из .ini файла
-	function loadAndParseIniFile($filename){
+	function load_and_parse_ini_file($filename){
 	
 		$res=array();
 		if(!$ini=file_get_contents($filename)) return false;

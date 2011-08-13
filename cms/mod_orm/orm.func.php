@@ -258,11 +258,7 @@ class ar
 			if(self::$default_table!='') {
 				$this->options['table']=self::$default_table;
 			} else {
-				if(doit()->table != '') {
-					$this->options['table']=doit()->table;
-				} else {
-					$this->options['table']='client';
-				}
+					$this->options['table']=self::one_to_plural(strtolower(get_class($this)));
 			}
 		}
 		

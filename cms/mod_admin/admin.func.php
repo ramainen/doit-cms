@@ -14,8 +14,7 @@ function edit($params){
 function adminFields()
 {
 	
-	
-	doit()->loadAndParseIniFile('app/fields/'.url(3).'.ini');
+	doit()->load_and_parse_ini_file('app/fields/'.url(3).'.ini');
     $_rows = doit()->admin['fields'];
  	foreach ($_rows as $_key=>$_value)
 	{	
@@ -28,7 +27,6 @@ function adminFields()
 //Открытие шаблона либо вывод формы авторизации
 function admin()
 {
-
 	if(isset($_POST['action']) && $_POST['action']=='admin_login'){
 		if(doit()->admin['editor']['login'] == $_POST['login'] && doit()->admin['editor']['password'] == md5($_POST['password'])) {
 			$_SESSION['admin']=$_POST['login'];
