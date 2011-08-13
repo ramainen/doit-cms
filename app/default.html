@@ -4,7 +4,7 @@
 d()->page = d('Text')->find_by_url(url(1))->one;
  
   
-if (!d()->page) {
+if (d()->page->is_empty) {
 	print "Страница не существует";
 	$this->newurl=url(1);
 	$this->table='texts';

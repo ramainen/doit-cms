@@ -17,6 +17,8 @@ function input ($params=array())
 	
 	if(isset($params['id'])) {
 		$attr .= ' id="'.$params['id'].'" ';
+	}else{
+		$attr .= ' id="'.$cfo.'_'.$params[0].'" ';		
 	}
 	
 	if(isset($params['attr'])) {

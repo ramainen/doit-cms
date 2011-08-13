@@ -353,25 +353,6 @@ class User extends ActiveRecord
 Тонкое место - роутер
 
 
-User
-id title
-
-Good->catalogs_of_gcconnects
-
-Good
-id title   user_id
-
-Catalog
-id title 
-
-Gcconnect
-id catalog_id good_id
-
-User
-id title username
-
-Razdel
-id title
 
 $user->razdels_of_posts
 
@@ -492,4 +473,73 @@ userfunc()
 	return preg_match('/[0-9*/sd627F^*sd{}]/',$request_uri);
 }
 
-/*
+
+система автоматичесого определения полей при редактировании на основе базы данных
+система автоматичесого определения дчеорних элементов при выводе списка на основе базы данных
+
+
+[structure]
+[users]
+title
+text
+login
+
+
+videorolik->video->url
+
+[posts]
+type:topic,translate,link,opros,videorolik
+title
+text
+user_id
+catalog_id
+post_id
+video_id
+
+[voproses]
+title
+opros_id
+
+
+[videos]
+url
+
+
+
+
+user.comments = commentable.comments
+
+commentable.type
+user page admin
+
+comment commentable.id
+
+sushnost.type=user
+sushnost.magaproperty=ХАХА
+
+автоматическая расстановка внешних ключей
+
+
+fill_clients_from_url_1
+fill_client_by_name_from_url_2
+fill_clients_by_client_id_from_url_2
+
+
+
+
+Валидатор проверяет надичие небезопасных INPUT параметров, и не пропускает их до создания строки
+Если в опциях есть параметр unsafe, он допускается, но не передаётся в создаваемый объект
+Если в опциях есть параметр safe, он допускается, при этом поля, помеченные как safe помещяются в ассоциативный массив ключ-значение
+
+<div id="client_12">
+
+</div>
+
+
+
+
+
+
+Массовые присваивания - это плохо, потому что всгда нужны проверки по каждому полю, что даёт уязвимость при невнимательности.
+
+

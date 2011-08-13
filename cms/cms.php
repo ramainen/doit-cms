@@ -337,7 +337,7 @@ class doitClass
 			$_end = ob_get_contents();
 			ob_end_clean();
 			
-			if (!is_null($_executionResult) && $_executionResult!==false ) {
+			if (!is_null($_executionResult)) {
 				$_end = $_executionResult;
 			}
 			//Загружаем актуальную цепочку команд. call_chain могла измениться
@@ -348,9 +348,6 @@ class doitClass
 				return $_end;
 			} else {
 				$_result_end .= $_end;
-			}
-			if ($_executionResult === false ) {
-				return $_result_end;
 			}
 		}
 		return $_result_end;

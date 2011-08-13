@@ -106,13 +106,13 @@ calculate
 //Класс Active Record, обеспечивающий простую добычу данных
 class ar
 {
+	public static $default_table='';
 	public $edit_button;
 	public $options;
 	public $_data;
 	private $_shift = 0;
 	private $_known_columns=array();
 	private $_future_data=array();
-	
 	//Выполняет limit 1 SQL запрос
 	function first()
 	{
@@ -255,10 +255,14 @@ class ar
 		}
 		
 		if(!isset($this->options['table'])) {
-			if(doit()->table!='') {
-				$this->options['table']=doit()->table;
+			if(self::$default_table!='') {
+				$this->options['table']=self::$default_table;
 			} else {
-				$this->options['table']='datas';
+				if(doit()->table != '') {
+					$this->options['table']=doit()->table;
+				} else {
+					$this->options['table']='client';
+				}
 			}
 		}
 		
@@ -343,6 +347,33 @@ class ar
 		print "!!!";
 		return $this;
 	}
+	public function one()
+	{
+		if ($this->options['queryready']==false) {
+				$this->fetch_data_now();
+			}
+		return $this;
+	}
+	public function all()
+	{
+		if ($this->options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+
+		$_tmparr=array();
+		
+		foreach($this->_data as $element){
+			$_tmparr[] = new ar(array('table'=>$this->options['table'], 'data'=>array( $element ) ));
+		}
+		  
+		return $_tmparr;
+		
+		//Старый подход
+		foreach($this->_data as $_key => $_value) {
+			return $this->_data;
+		}
+	}
+	
 	public function is_empty()
 	{
 		if ($this->options['queryready']==false) {
@@ -360,6 +391,11 @@ class ar
 			$this->fetch_data_now();
 		}
 		return count($this->_data);
+	}
+	
+	public function table()
+	{
+		return $this->options['table'];
 	}
 	
 	public function expand()
@@ -403,81 +439,34 @@ class ar
 	function __get($name)
 	{
 	
+		//Item.something
+		if (method_exists($this,$name)) {
+			return $this->{$name}();
+		}
 		//Item.new
-		if($name=='new') {
+		if ($name=='new') {
 			$this->options['new']=true;
 			$_future_data=array();
 			return $this;
 		}
-		
-		//Item.expand
-		if($name=='expand') {
-			return $this->expand();
-		}
-		
-		
-		//Item.size
-		if($name=='size') {
-			return $this->size();
-		}
-		
-		
-		//Item.is_empty
-		if($name=='is_empty') {
-			return $this->is_empty();
-		}
-		
+		 
+		 
+		  		
 		//Item.expand_to_page
-		if(substr($name,0,10)=='expand_to_') {
+		if (substr($name,0,10)=='expand_to_') {
 			return $this->expand_to(substr($name,10));
 		}
 		
 		//Item.expand_all_to_pages
-		if(substr($name,0,14)=='expand_all_to_') {
+		if (substr($name,0,14)=='expand_all_to_') {
 			return $this->expand_all_to(substr($name,14));
 		}
-		
-		
-		//Item.save
-		if($name=='save') {
-			return $this->save();
-		}
-		
-		//Item.all            //Получение массива с элементами
-		if($name=='all') {
-			if ($this->options['queryready']==false) {
-				$this->fetch_data_now();
-			}
-	
-			$_tmparr=array();
-			
-			foreach($this->_data as $element){
-				$_tmparr[] = new ar(array('table'=>$this->options['table'], 'data'=>array( $element ) ));
-			}
-			  
-			return $_tmparr;
-			
-			//Старый подход
-			foreach($this->_data as $_key => $_value) {
-				return $this->_data;
-			}
-			
-		}
-		//Item.one           //Получение одного элемента
-		if($name=='one') {
-			if ($this->options['queryready']==false) {
-				$this->fetch_data_now();
-			}
-			return $this;
-		}
-
-		
-		
+ 		
 		if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
 		}
 		
-		if(isset($this->_data[0])) {
+		if (isset($this->_data[0])) {
 			//Item.title         //Получение одного свойства
 			if (isset($this->_data[0][$name])) {
 				return $this->_data[0][$name];
@@ -494,12 +483,15 @@ class ar
 			$foundedfield = false;
 			//ищем поле item_id в таблице users
 			$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
-			while(($_tmpline = mysql_fetch_array($_res) )&& ($foundedfield == false)){
+			if ($_res===false) {
+				return '';
+			}
+			while (($_tmpline = mysql_fetch_array($_res) )&& ($foundedfield == false)) {
 				if ($_tmpline[0]== $this->options['plural_to_one']."_id") {
 					$foundedfield = true;
 				}
 			}
-			if($foundedfield==true) {
+			if ($foundedfield==true) {
 				$_tmpael  = new ar(array('table'=>$name));
 				return $_tmpael->where($this->options['plural_to_one']."_id = ?",$this->_data[0]['id'])->all;
 			}
@@ -514,6 +506,15 @@ class ar
 		 
 		
 	}
+	
+	/* { тестирование механизма наследования  */
+		function damir()
+		{
+			print 2+2;
+		}
+		
+		
+	/* } тестирование механизма наследования */
 }
 
 function activerecordwrapper($_modelname)
@@ -524,7 +525,11 @@ function activerecordwrapper($_modelname)
 	return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
 }
 
-
+// Автоматический создатель классов
+function __autoload($class_name) {
+	 eval ("class ".$class_name." extends ar {}");
+	$class_name::$default_table=ar::one_to_plural(strtolower($class_name));
+}
 
 /*==================================================================================*/
 /*
