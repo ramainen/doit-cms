@@ -1,6 +1,6 @@
 <?php
 
-//helper input для отображения текстового поля
+//helper input РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ С‚РµРєСЃС‚РѕРІРѕРіРѕ РїРѕР»СЏ
 function input ($params=array())
 {
 
@@ -10,7 +10,7 @@ function input ($params=array())
 		$attr .= ' style="'.$params['style'].'" ';
 	}
 	
-	//TODO: проверка на класс error
+	//TODO: РїСЂРѕРІРµСЂРєР° РЅР° РєР»Р°СЃСЃ error
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
 	}
