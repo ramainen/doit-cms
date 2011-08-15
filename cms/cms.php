@@ -307,8 +307,15 @@ class doitClass
 			ob_start();
 			if (function_exists($name)) {
 				$_executionResult=call_user_func_array($name, $arguments);
-			}else{
-				$_executionResult=eval('?'.'>'.$this->fragmentslist[$name].'<'.'?php ;');
+			} else {
+				$_fsym=strpos($name,'#');
+				if($_fsym !== false) {
+					$_classname=substr($name,0,$_fsym).'_controller';
+					$_methodname=substr($name,$_fsym+1);
+					$_executionResult=call_user_func_array(array($this->{$_classname}, $_methodname), $arguments);
+				} else {
+					$_executionResult=eval('?'.'>'.$this->fragmentslist[$name].'<'.'?php ;');
+				}
 			}
 			$_end = ob_get_contents();
 			ob_end_clean();
@@ -329,10 +336,23 @@ class doitClass
 		return $_result_end;
 	}
 /* ================================================================================= */	
+	//Фабрика экземпляров контроллеров
+	function universal_controller_factory($name)
+	{	
+		static $controllers=false;
+		if ($controllers===false) {
+			$controllers=array();
+		}
+		if (! isset ($controllers[$name])) {
+			$controllers[$name] = new  $name();
+		}
+		return $controllers[$name];
+	}
+/* ================================================================================= */	
 	function __set($name,$value)
 	{
 		$this->datapool[$name]=$value;
-	}
+	}	
 /* ================================================================================= */	
 	function __get($name)
 	{
@@ -340,6 +360,11 @@ class doitClass
 			return $this->datapool[$name];
 		}
 		
+		$fl=substr($name,0,1);
+		if ($fl != strtoupper($fl) && class_exists($name)) {
+			return $this->universal_controller_factory($name);
+		}
+		 
 		//Проверка префиксов
 		foreach ($this->prefixes as $_one_prefix) {
 			if(preg_match($_one_prefix[0], $name)) {

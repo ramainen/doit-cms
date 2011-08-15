@@ -530,6 +530,10 @@ function activerecord_factory($_modelname)
 
 // Автоматический создатель классов
 function __autoload($class_name) {
+	$fl=substr($class_name,0,1);
+	if(	$fl != strtoupper($fl)) {
+		return false;
+	}
 	 eval ("class ".$class_name." extends ar {}");
 	$class_name::$default_table=ar::one_to_plural(strtolower($class_name));
 }

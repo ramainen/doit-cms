@@ -13,5 +13,5 @@ $end_time = microtime();
 $end_array = explode(" ",$end_time);
 $end_time = $end_array[1] + $end_array[0];
 $time = $end_time - $start_time;
-  printf("<br>Страница сгенерирована за %f секунд, памяь: %f и запросов было %f",$time, memory_get_usage(),$countq);
+  printf("<br>Страница сгенерирована за %f секунд, память: %f и запросов было %f",$time, memory_get_usage(),$countq);
 ?>
