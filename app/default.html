@@ -1,17 +1,5 @@
 <?php
 
 
-d()->page = d('Text')->find_by_url(url(1))->one;
- 
-  
-if (d()->page->is_empty) {
-	print "Страница не существует";
-	$this->newurl=url(1);
-	$this->table='texts';
-	print $this->addbutton();
-	d()->stop_next_chains();
-	
-}
-
  
 ?>

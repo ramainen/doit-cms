@@ -357,9 +357,10 @@ class ar
 		}
 
 		$_tmparr=array();
-		
+		$_class_name = get_class($this);
 		foreach($this->_data as $element){
-			$_tmparr[] = new ar(array('table'=>$this->options['table'], 'data'=>array( $element ) ));
+			//TODO: Вот тут особенно важно возвращать правильное имя, хотя имеено тут всё верно
+			$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ) ));
 		}
 		  
 		return $_tmparr;
@@ -393,7 +394,10 @@ class ar
 	{
 		return $this->options['table'];
 	}
-	
+	public function override()
+	{
+		return '';
+	}
 	public function expand()
 	{
 		if ($this->options['queryready']==false) {
@@ -470,6 +474,7 @@ class ar
 			
 			//Item.user          //Получение связанного объекта
 			if (isset($this->_data[0][$name.'_id'])) {
+				//TODO: вот тут возвращать User
 				$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
 				return $_tmp->find($this->_data[0][$name.'_id']);
 			}
@@ -488,6 +493,7 @@ class ar
 				}
 			}
 			if ($foundedfield==true) {
+				//TODDO: вот тут возвращать правльное имя
 				$_tmpael  = new ar(array('table'=>$name));
 				return $_tmpael->where($this->options['plural_to_one']."_id = ?",$this->_data[0]['id'])->all;
 			}
@@ -513,26 +519,17 @@ class ar
 	/* } тестирование механизма наследования */
 }
 
-function activerecordwrapper($_modelname)
+function activerecord_factory($_modelname)
 {
 	if(is_array($_modelname)) {
 		$_modelname=$_modelname[0];
 	}
-	return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
+	return new $_modelname ();
+	//return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
 }
 
 // Автоматический создатель классов
 function __autoload($class_name) {
 	 eval ("class ".$class_name." extends ar {}");
 	$class_name::$default_table=ar::one_to_plural(strtolower($class_name));
-}
-
-/*==================================================================================*/
-/*
-Объектно-ориентированный helper input
-*/
-class ar_input
-{
-
-
 }

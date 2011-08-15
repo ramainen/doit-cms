@@ -38,9 +38,8 @@ function doit($object='')
 	}
 	if($object=='') {
 		return doitClass::$instance;
-	} else {
-		return doitClass::$instance->$object;
 	}
+	return doitClass::$instance->$object;
 }
 
 //Псевдоним для более быстрого доступа
@@ -51,9 +50,8 @@ function d($object='')
 	}
 	if($object=='') {
 		return doitClass::$instance;
-	} else {
-		return doitClass::$instance->$object;
 	}
+	return doitClass::$instance->$object;
 }
 
 class doitClass
@@ -65,7 +63,7 @@ class doitClass
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $sub_fragments=array(); //Подфрагменты, подготовыленные для использования
 	private $where_is_sub_fragments=array(); //В каком родителе можно найти конкретный подфрагмент
-	private $url_parts=array();
+	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $call_chain=array(); //Цепь вызовов
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
 	private $call_chain_level=0; //текущий уровень, стек для комманд
@@ -81,13 +79,11 @@ class doitClass
 		}
 		if(substr($_tmpurl,-1)=='/') {
 			$_tmpurl=$_tmpurl."index";
-		}	
+		}
 		$this->url_parts=explode('/',substr($_tmpurl,1));
 		$dirlist=array('cms','app');
 		$_fragmentslist=array();
-		foreach($dirlist as $dirname){ 
-		
-			
+		foreach($dirlist as $dirname) { //сначала инициализируются файлы из ./cms, затем из ./app
 			$_handle = opendir($dirname);
 			$_files=array();
 			$_files['/']=array();
@@ -107,11 +103,18 @@ class doitClass
 			
 			foreach($_files as $_dir => $_subfiles) {
 				foreach($_subfiles as $_file) {
-					if (substr($_file,-5)=='.html' && substr($_file,-10)!='.func.html') {
-						$_fragmentslist[str_replace('.','_',substr($_file,0,-5))]=file_get_contents($dirname.$_dir.$_file);
+					$_fragmentname = str_replace('.','_',substr($_file,0,-5));
+					if (substr($_fragmentname,0,1)=='_') {
+						$_fragmentname=substr($_dir,5,-1).$_fragmentname;
+					}
+					if (substr($_file,-5)=='.html' && substr($_file,-9)!='.tpl.html') {
+						$_fragmentname .= '_tpl';
+					}
+					if (substr($_file,-5)=='.html') {
+						$_fragmentslist[$_fragmentname]=file_get_contents($dirname.$_dir.$_file);
 					}
 					//Модель - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
-					if (substr($_file,-10)=='.func.html' || substr($_file,-9)=='.func.php') {
+					if (substr($_file,-9)=='.func.php') {
 						include ($dirname.$_dir.$_file);
 					}
 					//Обработка факта наличия .ini-файлов
@@ -279,8 +282,8 @@ class doitClass
 				}
 			}
 			$name=$_newname;
-			//Проверка на существование fragment_tpl, если в вызове есть параметры
-			if ((count($arguments)!=0) && (count($arguments[0])!=0) && (isset( $this->fragmentslist[$name."_tpl"]))) { 
+			//Проверка на существование фрагмента fragment_tpl, если самой функции нет
+			if ( (!function_exists($name)) && (isset( $this->fragmentslist[$name."_tpl"]))) { 
 				$name = $name."_tpl";
 			}
 			//Активация подфрагментов перед вызовом родительской функции
@@ -289,7 +292,7 @@ class doitClass
 					$this->fragmentslist[$_key]=$_value;
 				}
 			}
-			
+			//TODO: Отказаться от субфрагментов в пользу helper-ов
 			//Если в дальнейшем ожидается ошибка по причине вызова внешнего фрагмента, провести его инициацию
 			if(!isset($this->fragmentslist[$name]) && isset($this->where_is_sub_fragments[$name])) {
 				$this->fragmentslist[$name]= $this->sub_fragments[$this->where_is_sub_fragments[$name]][$name];
@@ -373,10 +376,7 @@ class doitClass
 	//Проверяет URL и анализирует текущий массив, при подходящем, возвращает псевдоним
 	function get_function_alias($name)
 	{
-		static $url_list_size;
-		if (!isset($url_list_size)) {
-			$url_list_size = 0;
-		}
+		static $url_list_size = 0;
 		$_matches=array();
 		$matched=array('','',$name);
 		$longest_url='';
@@ -384,12 +384,10 @@ class doitClass
 		$_requri = '/'.$this->url();
 		//Определение наиболее подхходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
 		foreach($ruleslist as $key=>$value) {			
-			//TODO: объединить два if
-			if($value[1] == $name && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
-				if(strlen($value[0]) > strlen($longest_url)) {
-					$matched=$value;
-					$longest_url=$value[0];
-				}
+			//TODO: документация к следующей конструкции
+			if(( $value[1] == $name && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) && (strlen($value[0]) > strlen($longest_url))) {
+				$matched=$value;
+				$longest_url=$value[0];
 			}
 		}
 		unset($matched[0]);
@@ -417,6 +415,7 @@ foreach($tmparr as $key=>$subval)
 		$this->datapool["override"]="";
 		if(is_object($subval)){
 			 $this->datapool[\'$2\']=$subval; 
+			 $this->datapool[\'override\']=$subval->override; 
 		}else{
 			foreach($subval as $subkey=>$subvalue) $this->datapool[\'$2\'][$subkey]=$subvalue; 
 		}
