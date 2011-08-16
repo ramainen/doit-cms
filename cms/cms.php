@@ -251,9 +251,8 @@ class doitClass
 		}
 		return $tmpstr;
 	}
-
 /* ================================================================================= */	
-	public function __call($name, $arguments)
+	public function call($name, $arguments=array())
 	{
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
@@ -273,7 +272,7 @@ class doitClass
 		$_currentname=$name;
 		$_continuechain = true;
 		for($i=0;$i<=count($_newnames)-1;$i++){
-		$_newname = $_newnames[$i];
+			$_newname = $_newnames[$i];
 			$name=$_currentname;
 			if($name!=$_newname) {
 				if (isset($this->ini_database[$_newname])) {
@@ -312,7 +311,7 @@ class doitClass
 				if($_fsym !== false) {
 					$_classname=substr($name,0,$_fsym).'_controller';
 					$_methodname=substr($name,$_fsym+1);
-					$_executionResult=call_user_func_array(array($this->{$_classname}, $_methodname), $arguments);
+					$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
 				} else {
 					$_executionResult=eval('?'.'>'.$this->fragmentslist[$name].'<'.'?php ;');
 				}
@@ -336,11 +335,20 @@ class doitClass
 		return $_result_end;
 	}
 /* ================================================================================= */	
+	//вызов передаётся функции call().
+	//сама функция более гибкая, и умеет выполнять запросы вроде call('clients#show');
+	public function __call($name, $arguments)
+	{
+		return $this->call($name, $arguments);
+	}
+/* ================================================================================= */	
 	//Фабрика экземпляров контроллеров
-	function universal_controller_factory($name)
+	//universal_controller_factory('clients_controller') вернёт экземпляр класса clients_controller, или создаст его и вернёт.
+	public function universal_controller_factory($name)
 	{	
-		static $controllers=false;
-		if ($controllers===false) {
+		static $controllers;
+	 
+		if (! isset($controllers)) {
 			$controllers=array();
 		}
 		if (! isset ($controllers[$name])) {
@@ -359,10 +367,14 @@ class doitClass
 		if(isset($this->datapool[$name])) {
 			return $this->datapool[$name];
 		}
-		
+		/*
 		$fl=substr($name,0,1);
 		if ($fl != strtoupper($fl) && class_exists($name)) {
 			return $this->universal_controller_factory($name);
+		}
+		 */
+		if(substr($name,-11)=='_controller') {
+			return  doit_caller_factory($name);
 		}
 		 
 		//Проверка префиксов
@@ -563,4 +575,43 @@ foreach($tmparr as $key=>$subval)
 		$this->datapool=array_merge_recursive ($this->datapool,$res);
 	}
 /* ============================================================================== */	
+}
+
+function doit_caller_factory($controllername)
+{
+	static $callers;
+	if(!isset ($callers)) {
+		$callers=array();
+	}
+	if(!isset ($callers[$controllername])) {
+		$callers[$controllername] = new doitCaller($controllername);
+	}
+	return $callers[$controllername];
+}
+
+/*
+класс doitCaller создаёт универсальный прокси-объект. При вызове его метода  вызов передаётся в основной объект системы.
+конструкция $caller=doitCaller('clients_controller'); $caller->show();
+перенаправит вызов универсальному запускателю d()->call('clients#show');
+doitCaller использует основной объект системы при попытке получить переменную - объект d()->*_controller 
+
+таким образом, запросы вида  d()->clients_controller->show(); перенаправляются в  d()->call('clients#show');
+Это позволяет при необходимости переопределять поведение при помощи роутера.
+*/
+class doitCaller
+{
+	private $_classname;
+	function __call($name,$params)
+	{
+		return d()->call($this->_classname."#".$name,$params);
+	}
+	function __construct($controllername) {
+		$this->_classname = substr($controllername,0,-11);
+	}
+	function __get ($name) {
+		return d()->universal_controller_factory($this->_classname.'_controller')->$name;
+	}
+	function __set ($name,$value) {
+		d()->universal_controller_factory($this->_classname.'_controller')->$name = $value;
+	}
 }
