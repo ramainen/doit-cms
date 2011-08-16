@@ -523,3 +523,13 @@ clients_show.html
 
 
 Если при вызову функции сама функция отсуствует, то вызывается её tpl - аналог
+
+1. файл "users#close.html"
+2. файл "users.func.php"
+class users
+{
+	function show()
+	{
+		d($this)->close();
+	}
+}

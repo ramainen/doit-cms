@@ -36,6 +36,9 @@ function doit($object='')
 	if (!isset(doitClass::$instance)) {
 		new doitClass();
 	}
+	
+	return doitClass::$instance;
+	
 	if($object=='') {
 		return doitClass::$instance;
 	}
@@ -48,6 +51,10 @@ function d($object='')
 	if (!isset(doitClass::$instance)) {
 		new doitClass();
 	}
+	
+	return doitClass::$instance;
+	
+	
 	if($object=='') {
 		return doitClass::$instance;
 	}
@@ -257,18 +264,22 @@ class doitClass
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
 		if (isset($this->ini_database[$name])) {
-
 			$this->load_and_parse_ini_file($this->ini_database[$name]);
 			unset ($this->ini_database[$name]);
 		}
-		 
 		if (count($arguments)!=0 && is_array($arguments[0])) {
 			foreach($arguments[0] as $key=>$value) {
 				$this->datapool[$key]=$value;
 			}
 		}
 		$_result_end='';
-		$_newnames = $this->get_function_alias($name);
+		
+		if (!is_array($arguments)) {
+			$_newnames = func_get_args();
+			$arguments=array();
+		} else {
+			$_newnames = $this->get_function_alias($name);
+		}
 		$_currentname=$name;
 		$_continuechain = true;
 		for($i=0;$i<=count($_newnames)-1;$i++){
@@ -339,18 +350,14 @@ class doitClass
 	//сама функция более гибкая, и умеет выполнять запросы вроде call('clients#show');
 	public function __call($name, $arguments)
 	{
-		return $this->call($name, $arguments);
+		return 	$this->call($name, $arguments);
 	}
 /* ================================================================================= */	
 	//Фабрика экземпляров контроллеров
-	//universal_controller_factory('clients_controller') вернёт экземпляр класса clients_controller, или создаст его и вернёт.
+	//universal_controller_factory('clients_controller') вернёт существующий экземпляр класса clients_controller, или создаст его и вернёт.
 	public function universal_controller_factory($name)
 	{	
-		static $controllers;
-	 
-		if (! isset($controllers)) {
-			$controllers=array();
-		}
+		static $controllers =array(); //Склад контроллеров
 		if (! isset ($controllers[$name])) {
 			$controllers[$name] = new  $name();
 		}
@@ -367,23 +374,18 @@ class doitClass
 		if(isset($this->datapool[$name])) {
 			return $this->datapool[$name];
 		}
-		/*
-		$fl=substr($name,0,1);
-		if ($fl != strtoupper($fl) && class_exists($name)) {
-			return $this->universal_controller_factory($name);
-		}
-		 */
+
 		if(substr($name,-11)=='_controller') {
 			return  doit_caller_factory($name);
 		}
 		 
-		//Проверка префиксов
+		//Проверка префиксов для модулей
+		//позволяет перенаправлять запросы из перменных в функции
 		foreach ($this->prefixes as $_one_prefix) {
 			if(preg_match($_one_prefix[0], $name)) {
 				return $this->{$_one_prefix[1]}($name);
 			}
 		}
-		//$this->caller=$name;
 		return '';
 	}
 	
@@ -410,7 +412,7 @@ class doitClass
 	
 	
 /* ================================================================================= */
-	//Проверяет URL и анализирует текущий массив, при подходящем, возвращает псевдоним
+	//Проверяет URL и анализирует текущий массив правил, при наличии подходящего, возвращает массив всевдонимов (цепочку)
 	function get_function_alias($name)
 	{
 		static $url_list_size = 0;
@@ -576,13 +578,14 @@ foreach($tmparr as $key=>$subval)
 	}
 /* ============================================================================== */	
 }
-
+/*
+фабрика и хранилище для doitCaller
+при запросе doit_caller_factory('clients_controller') создаёт (если нет) и возвращает экземпляр 
+прокси - объекта doitCaller, способного выполнять методы.
+*/
 function doit_caller_factory($controllername)
 {
-	static $callers;
-	if(!isset ($callers)) {
-		$callers=array();
-	}
+	static $callers = array();
 	if(!isset ($callers[$controllername])) {
 		$callers[$controllername] = new doitCaller($controllername);
 	}
