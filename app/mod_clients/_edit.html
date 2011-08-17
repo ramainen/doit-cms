@@ -1,18 +1,16 @@
 <h2>Редактирование клиента {client.title}:</h2>
-<pre>
+ 
 <?php // var_dump($_POST); ?>
 
-</pre>
+{{form 'client' , 'clients#update' }} 
+{{notice}}
+	Заголовок {{input 'title', 'default'=>'имя_пользовталя'}} <br>				
+	Описание {{input 'text'}} <br>
 
-<?php
+	<input type="submit">
+
+{{/form}}
  
-print "<br>";
-print d('client')->damir;
-
-
-?>
-
-
 
 <h2>Форма обратной связи</h2>
  

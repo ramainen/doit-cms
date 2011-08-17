@@ -18,6 +18,7 @@ Copyright (C) 2011 Fahrutdinov Damir (aka Ainu)
 *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 *      MA 02110-1301, USA.
 
+0.12 Объекты в контроллере
 0.11 ActiveRecord и foreach для объектов 07.08.2011 
 0.7 переписано на ООП.
 0.0 Нулевая версия do it CMS
@@ -135,7 +136,16 @@ class doitClass
 		//Обработка actions. Ничего не выводится.
 		if(isset($_POST) && isset($_POST['_action'])) {
 			if($this->validate_action($_POST['_action'],$_POST[$_POST['_element']])) {
-				$this->{'action_'.$_POST['_action']}($_POST[$_POST['_element']]); 
+				$action = $_POST['_action']; //action - функция или метод объекта
+				$_fsym=strpos($action,'#');
+				if($_fsym !== false) {
+					$_classname=substr($action,0,$_fsym);
+					$_methodname='action_'.substr($action,$_fsym+1);
+					$this->call($_classname.'#'.$_methodname, array($_POST[$_POST['_element']])); 
+				}else{	
+					$this->{'action_'.$action}($_POST[$_POST['_element']]); 
+				}
+				
 			}
 		}
 	}

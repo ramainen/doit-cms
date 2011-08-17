@@ -1,8 +1,8 @@
 <?php
-$hostname = "localhost";
+$hostname = "127.0.0.1";
 $database = "varvar";
 $username = "root";
-$password = "root";
+$password = "";
 $prefix="vv_";
 
     mysql_connect($hostname,$username,$password);
