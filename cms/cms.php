@@ -36,11 +36,8 @@ function doit($object='')
 	if (!isset(doitClass::$instance)) {
 		new doitClass();
 	}
-	
-	return doitClass::$instance;
-	
 	if($object=='') {
-		return doitClass::$instance;
+		return doitClass::$instance; 
 	}
 	return doitClass::$instance->$object;
 }
@@ -51,10 +48,6 @@ function d($object='')
 	if (!isset(doitClass::$instance)) {
 		new doitClass();
 	}
-	
-	return doitClass::$instance;
-	
-	
 	if($object=='') {
 		return doitClass::$instance;
 	}
@@ -68,8 +61,6 @@ class doitClass
 	private $caller=""; //Хранит название последней вызванной пользовательской функции.
 	private $datapool=array(); //Большой массив всех опций, данных и переменных
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
-	private $sub_fragments=array(); //Подфрагменты, подготовыленные для использования
-	private $where_is_sub_fragments=array(); //В каком родителе можно найти конкретный подфрагмент
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $call_chain=array(); //Цепь вызовов
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
@@ -138,73 +129,17 @@ class doitClass
 			}
 		}
 		$this->fragmentslist = $_fragmentslist;
-		$_newfragmentist=array();
-		//Поиск и объявление фрагментов, объявленных внутри шаблонов, подготовка массива с подфрагментами
-		foreach($this->fragmentslist as $_parentfile=>$_text) {
-			$_a1=array();
-			$f=strpos($_text,'<fragment');
-			while($f!==false) {
-				$_a1[]=$f;
-				$f=strpos($_text,'<fragment',$f+1);
-			}
-			$_a2=array();
-			$f=strpos($_text,'</fragment');
-			while($f!==false) {
-				$_a2[]=$f;
-				$f=strpos($_text,'</fragment',$f+1);
-			}
-			if (count($_a1)==0) continue;	
-			if (count($_a1)!=count($_a2)) continue;
-			while (count($_a1)>1) {
-				$i=1;
-				$founded=false;
-				while (false == $founded && $i <= count($_a1)-1) {
-					if($_a1[$i]>$_a2[$i-1]) {
-						$res1=$_a1[0];
-						$res2=$_a2[$i-1];
-						unset($_a1[0]);
-						unset($_a2[$i-1]);
-						$_a1 = array_values ($_a1);
-						$_a2 = array_values ($_a2);
-						$founded=true;
-					}
-					$i++;
-				}
-				if ($founded == false) {
-					$res1 = $_a1[0];
-					$res2 = $_a2[$i - 1];
-					unset($_a1[0]);
-					unset($_a2[$i - 1]);
-					$_a1 = array_values($_a1);
-					$_a2 = array_values($_a2);
-				}
-				$res0=$res1+9;
-				$res1=strpos($_text,'>',$res1)+1;
-				$this->where_is_sub_fragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
-				$this->sub_fragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
-			}
-			$res1=$_a1[0];
-			$res2=$_a2[0];
-			$res0=$res1+9;
-			$res1=strpos($_text,'>',$res1)+1;
-			$this->where_is_sub_fragments[trim(substr($_text,$res0,$res1-$res0-1))]=$_parentfile;
-			$this->sub_fragments[$_parentfile][trim(substr($_text,$res0,$res1-$res0-1))]=$this->shablonize(substr($_text,$res1,$res2-$res1));
-		}
-
 	 	foreach ($this->fragmentslist as $_key=>$_value) { 
 			$this->fragmentslist[$_key]=$this->shablonize($this->fragmentslist[$_key]);
 		}
-		
 		//Обработка actions. Ничего не выводится.
 		if(isset($_POST) && isset($_POST['_action'])) {
 			if($this->validate_action($_POST['_action'],$_POST[$_POST['_element']])) {
 				$this->{'action_'.$_POST['_action']}($_POST[$_POST['_element']]); 
 			}
 		}
-		
 	}
-	
-	
+
 /* ================================================================================= */	
 	public function validate_action($validator_name,$params) //todo: сделать пользователезаменяемой штукой
 	{
@@ -213,14 +148,12 @@ class doitClass
 			$this->datapool['notice']=array();
 		}
 		$is_ok=true;
-		
 		foreach($rules as $key=>$value) {
 			if(isset($value['required']) && (!isset ($params[$key]) || $params[$key]=='')) {
 				$this->datapool['notice'][] = $value['required']['message'];
 				$is_ok=false;
 			}
 		}		
-		
 		return $is_ok;
 	}
 /* ================================================================================= */	
@@ -273,7 +206,6 @@ class doitClass
 			}
 		}
 		$_result_end='';
-		
 		if (!is_array($arguments)) {
 			$_newnames = func_get_args();
 			$arguments=array();
@@ -296,18 +228,6 @@ class doitClass
 			if ( (!function_exists($name)) && (isset( $this->fragmentslist[$name."_tpl"]))) { 
 				$name = $name."_tpl";
 			}
-			//Активация подфрагментов перед вызовом родительской функции
-			if (isset($this->sub_fragments[$name])) {
-				foreach($this->sub_fragments[$name] as $_key=>$_value) {	
-					$this->fragmentslist[$_key]=$_value;
-				}
-			}
-			//TODO: Отказаться от субфрагментов в пользу helper-ов
-			//Если в дальнейшем ожидается ошибка по причине вызова внешнего фрагмента, провести его инициацию
-			if(!isset($this->fragmentslist[$name]) && isset($this->where_is_sub_fragments[$name])) {
-				$this->fragmentslist[$name]= $this->sub_fragments[$this->where_is_sub_fragments[$name]][$name];
-			}
-			
 			$this->call_chain_level++; //поднимаем уровень текущего стека очереди
 			//Сохраняем текущую цепочку команд
 			$this->call_chain[$this->call_chain_level] = $_newnames;
@@ -356,7 +276,7 @@ class doitClass
 	//Фабрика экземпляров контроллеров
 	//universal_controller_factory('clients_controller') вернёт существующий экземпляр класса clients_controller, или создаст его и вернёт.
 	public function universal_controller_factory($name)
-	{	
+	{
 		static $controllers =array(); //Склад контроллеров
 		if (! isset ($controllers[$name])) {
 			$controllers[$name] = new  $name();
@@ -367,20 +287,17 @@ class doitClass
 	function __set($name,$value)
 	{
 		$this->datapool[$name]=$value;
-	}	
+	}
 /* ================================================================================= */	
 	function __get($name)
 	{
 		if(isset($this->datapool[$name])) {
 			return $this->datapool[$name];
 		}
-
 		if(substr($name,-11)=='_controller') {
 			return  doit_caller_factory($name);
 		}
-		 
-		//Проверка префиксов для модулей
-		//позволяет перенаправлять запросы из перменных в функции
+		//Проверка префиксов для модулей для модулей и расширений
 		foreach ($this->prefixes as $_one_prefix) {
 			if(preg_match($_one_prefix[0], $name)) {
 				return $this->{$_one_prefix[1]}($name);
@@ -395,22 +312,18 @@ class doitClass
 	{
 		$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]+1] = $chainname;
 	}
-
 /* ================================================================================= */
 	//Останавливает всю следующую цепочку
 	public function stop_next_chains()
 	{
 		$this->call_chain_current_link[$this->call_chain_level] = count($this->call_chain[$this->call_chain_level])+1;
 	}
-	
 /* ================================================================================= */
 	//Вставляет элемент в цепь после текущего
 	public function insert_next_chain($chainname)
 	{
 		//$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]+1] = $chainname;
 	}
-	
-	
 /* ================================================================================= */
 	//Проверяет URL и анализирует текущий массив правил, при наличии подходящего, возвращает массив всевдонимов (цепочку)
 	function get_function_alias($name)
@@ -437,16 +350,6 @@ class doitClass
 /* ================================================================================= */
 	function shablonize($_str)
 	{
-	
-		$_str=preg_replace('/<fragment\s+([a-zA-Z0-9_]+)>/','<'.'?php $tmparr= $this->$1;
-if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
-foreach($tmparr as $key=>$subval)
-	if(is_string($subval)) print $subval;else {
-		$this->datapool["override"]="";
-		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
-		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
-		
-		
 		$_str=preg_replace('/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/','<'.'?php $tmparr= $this->$1;
 if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
@@ -455,9 +358,7 @@ foreach($tmparr as $key=>$subval)
 		if(is_object($subval)){
 			 $this->datapool[\'$2\']=$subval; 
 			 $this->datapool[\'override\']=$subval->override; 
-		}else{
-			foreach($subval as $subkey=>$subvalue) $this->datapool[\'$2\'][$subkey]=$subvalue; 
-		}
+		}else{  foreach($subval as $subkey=>$subvalue) $this->datapool[\'$2\'][$subkey]=$subvalue;  }
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 		
 		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
@@ -470,7 +371,6 @@ foreach($tmparr as $key=>$subval)
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 	
 		$_str=preg_replace('/<type\s+([a-zA-Z0-9_-]+)>/','<'.'?php if($this->type=="$1"){ ?'.'>',$_str);
-		$_str=str_replace('</fragment>','<'.'?php } } ?'.'>',$_str);
 		$_str=str_replace('</foreach>' ,'<'.'?php } } ?'.'>',$_str);
 		$_str=str_replace('</type>','<'.'?php } ?'.'>',$_str);	
 		$_str=str_replace('</hidden>','<'.'?php } ?'.'>',$_str);
@@ -494,7 +394,6 @@ foreach($tmparr as $key=>$subval)
 
 	//получение данных из .ini файла
 	function load_and_parse_ini_file($filename){
-	
 		$res=array();
 		if(!$ini=file_get_contents($filename)) return false;
 		$ini=explode("\n",$ini);

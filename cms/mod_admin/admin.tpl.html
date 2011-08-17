@@ -1,88 +1,19 @@
 <hidden>
 <fragment adminform>
-<form method="POST">
-<?php if($this->notice) { ?>
-<div style="border:1px solid lightblue;padding:6px;">{notice}</div>
-<?php } ?>
-	<input type="hidden" name="action" value="admin_login">
-	<input type="text" name="login"><br>
-	<input type="password" name="password"><br>
-	<input type="submit" value="Отправить">
-</form>
+
 </fragment>
 <fragment editbutton> 
-<?php
-if(!isset($_SESSION['admin'])) {
-	return ""; //Проверка на права администратора
-}
 
-//Далее идёт махровый быдлокод
-?>
-<a href="/admin/edit/{table}/{id}" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>
 </fragment>
 <fragment addbutton> 
-<?php
 
- if(false)return ""; //Проверка на права администратора
-?>
-<a href="/admin/edit/{table}/add?url={newurl}" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>
 </fragment>
     
 <fragment admintable>
-<input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
-	<table class="admin_table" width=100%>
-	<tr>
-			<td colspan=2><h2 class="admin_h2">{tabletitle}</h2></td>
-			
-			</tr>
- 		<fragment tablerow>
-		<type small>
-			<tr>
-			<td>{title}</td>
-			<td><input type="text" name="{name}" value="<?php print htmlspecialchars($this->value); ?>" class="admin_input ui-widget-content ui-corner-all" style="width:500px;"></td>
-			</tr>
-		</type>	
-		<type rich>
-		
-			<tr>
-				<td>{title}</td>
-				<td> <textarea  name="{name}" class="tinymce ui-widget-content ui-corner-all" style="width:500px;"><?php print htmlspecialchars($this->value); ?></textarea>
-				</td>
-			</tr>
-		</type>
-			
-		</fragment>
-			<tr>
-				<td colspan="2"><input type="submit"   value="Отправить" class="admin_button" ></td>
-			</tr>
-		
-	</table>
+
 </fragment>
 <fragment adminobjectlist>
 
-	<table class="admin_table"  width=100%>
-	<tr>
-			<td width=50>ID</td>
-			<td>Заголовок</td>
-			<td>url</td>
-			<td>Действие
-			
-			</td>
-</tr>
- 		<fragment objectrow>
-
-			<tr>
-			<td>{id}</td>
-			<td>{title}</td>
-			<td>{url}</td>
-			<td><a href="/admin/edit/<?php print url(3); ?>/{id}" class="admin_button">Править</a></td>
-			</tr>
-		</fragment>
-			<tr>
-				<td colspan="4"><a class="admin_button" href="/admin/edit/<?php print url(3); ?>/add">Добавить</a></td>
-			</tr>
-		
-	</table>
 </fragment>
 
 </hidden><!doctype html>

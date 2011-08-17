@@ -1,0 +1,9 @@
+<form method="POST">
+<?php if($this->notice) { ?>
+<div style="border:1px solid lightblue;padding:6px;">{notice}</div>
+<?php } ?>
+	<input type="hidden" name="action" value="admin_login">
+	<input type="text" name="login"><br>
+	<input type="password" name="password"><br>
+	<input type="submit" value="Отправить">
+</form>
