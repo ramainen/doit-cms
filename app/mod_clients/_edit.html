@@ -11,7 +11,7 @@
 
 {{/form}}
  
-
+{{clients#test}}
 <h2>Форма обратной связи</h2>
  
 {{notice}}
@@ -19,7 +19,7 @@
 {{form 'mail' , 'mailer' }} Значение по-умолчанию вместо 'mail' -  'data'
 
 	Заголовок письма {{input 'title', 'default'=>'имя_пользовталя'}} <br>				
-	Ваше имя {{input 'name'}} <br>
+	Ваше имя {{input 'name', 'style'=>"color:red"}} <br>
 	Электронная почта {{input 'email'}} <br>
 	<input type="submit">
 	 
