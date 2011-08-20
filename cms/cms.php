@@ -141,6 +141,7 @@ class doitClass
 	}
 
 /* ================================================================================= */	
+  //Проверяет параметры в соотвествии с правилами, в случае ошибки возвращает false
 	public function validate_action($validator_name,$params)
 	{
 		$rules=$this->datapool['validator'][$validator_name];
