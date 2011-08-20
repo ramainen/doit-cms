@@ -254,7 +254,7 @@ class doitClass
 			$_end = ob_get_contents();
 			ob_end_clean();
 			
-			if (!is_null($_executionResult)) {
+			if (!is_null($_executionResult)) { //В случае использования return 'Строка';
 				$_end = $_executionResult;
 			}
 			//Загружаем актуальную цепочку команд. call_chain могла измениться
@@ -270,7 +270,7 @@ class doitClass
 		return $_result_end;
 	}
 /* ================================================================================= */
-	//ленивая загрузка и шаблонизация
+	//Ленивая загрузка и шаблонизация
 	function get_compiled_code($fragmentname)
 	{
 		if(!isset ($this->compiled_fragments[$fragmentname])) {
@@ -522,7 +522,6 @@ function doit_caller_factory($controllername)
 конструкция $caller=doitCaller('clients_controller'); $caller->show();
 перенаправит вызов универсальному запускателю d()->call('clients#show');
 doitCaller использует основной объект системы при попытке получить переменную - объект d()->*_controller 
-
 таким образом, запросы вида  d()->clients_controller->show(); перенаправляются в  d()->call('clients#show');
 Это позволяет при необходимости переопределять поведение при помощи роутера.
 */
