@@ -543,3 +543,27 @@ class users
 
 инициализация шаблона только при запросе (shablonize и $_fragmentslist)
 
+
+if (validate('sendemail')) {
+	sendemail()
+} else {
+	print d()->fosv_tpl();
+}
+
+
+runaction('client#update');
+runaction('mailer');
+
+if (validate('clients_update')) {
+	Client->update();
+} else {
+	print d()->client_update_tpl();
+}
+
+
+
+if (validate('clients_search')) {
+	Client->order();
+}
+
+

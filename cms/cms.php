@@ -54,7 +54,11 @@ function d($object='')
 	}
 	return doitClass::$instance->$object;
 }
-
+// Запуск валидатора и обработка действий
+function action($action_name)
+{
+	return d()->action($action_name);
+}
 class doitClass
 {
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
@@ -63,9 +67,11 @@ class doitClass
 	private $datapool=array(); //Большой массив всех опций, данных и переменных
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
+	private $url_string=''; //Сформированная строка URL без GET параметров
 	private $call_chain=array(); //Цепь вызовов
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
 	private $call_chain_level=0; //текущий уровень, стек для комманд
+	private $compiled_fragments=array();
 	public static $instance;
 /* ================================================================================= */	
 	function __construct()
@@ -79,10 +85,9 @@ class doitClass
 		if(substr($_tmpurl,-1)=='/') {
 			$_tmpurl=$_tmpurl."index";
 		}
+		$this->url_string = $_tmpurl;
 		$this->url_parts=explode('/',substr($_tmpurl,1));
-		$dirlist=array('cms','app');
-		$_fragmentslist=array();
-		foreach($dirlist as $dirname) { //сначала инициализируются файлы из ./cms, затем из ./app
+		foreach(array('cms','app') as $dirname) { //сначала инициализируются файлы из ./cms, затем из ./app
 			$_handle = opendir($dirname);
 			$_files=array();
 			$_files['/']=array();
@@ -106,52 +111,37 @@ class doitClass
 					if (substr($_fragmentname,0,1)=='_') {
 						$_fragmentname=substr($_dir,5,-1).$_fragmentname;
 					}
-					if (substr($_file,-5)=='.html' && substr($_file,-9)!='.tpl.html') {
-						$_fragmentname .= '_tpl';
-					}
 					if (substr($_file,-5)=='.html') {
-						$_fragmentslist[$_fragmentname]=file_get_contents($dirname.$_dir.$_file);
+						if (substr($_file,-9)!='.tpl.html') {
+							$_fragmentname .= '_tpl';
+						}	
+						$this->fragmentslist[$_fragmentname] = $dirname.$_dir.$_file;
+						continue;
 					}
 					//Модель - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
 					if (substr($_file,-9)=='.func.php') {
 						include ($dirname.$_dir.$_file);
+						continue;
 					}
 					//Обработка факта наличия .ini-файлов
 					if (substr($_file,-4)=='.ini') {
-						//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
-						//Хранит адрес ini-файла, запускаемого перед определённой функцией
-						$this->ini_database[substr($_file,0,-4)]=$dirname.$_dir.$_file;
 						//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
 						if (substr($_file,-8)=='init.ini') {
 							$this->load_and_parse_ini_file ($dirname.$_dir.$_file);
+						} else {
+							//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
+							//Хранит адрес ini-файла, запускаемого перед определённой функцией
+							$this->ini_database[substr($_file,0,-4)]=$dirname.$_dir.$_file;
 						}
+						continue;
 					}
 				}
-			}
-		}
-		$this->fragmentslist = $_fragmentslist;
-	 	foreach ($this->fragmentslist as $_key=>$_value) { 
-			$this->fragmentslist[$_key]=$this->shablonize($this->fragmentslist[$_key]);
-		}
-		//Обработка actions. Ничего не выводится.
-		if(isset($_POST) && isset($_POST['_action'])) {
-			if($this->validate_action($_POST['_action'],$_POST[$_POST['_element']])) {
-				$action = $_POST['_action']; //action - функция или метод объекта
-				$_fsym=strpos($action,'#');
-				if($_fsym !== false) {
-					$_classname=substr($action,0,$_fsym);
-					$_methodname='action_'.substr($action,$_fsym+1);
-					$this->call($_classname.'#'.$_methodname, array($_POST[$_POST['_element']])); 
-				}else{	
-					$this->{'action_'.$action}($_POST[$_POST['_element']]); 
-				}
-				
 			}
 		}
 	}
 
 /* ================================================================================= */	
-	public function validate_action($validator_name,$params) //todo: сделать пользователезаменяемой штукой
+	public function validate_action($validator_name,$params)
 	{
 		$rules=$this->datapool['validator'][$validator_name];
 		if(!isset($this->datapool['notice'])) {
@@ -165,6 +155,14 @@ class doitClass
 			}
 		}		
 		return $is_ok;
+	}
+/* ================================================================================= */	
+	public function action($action_name)
+	{
+		//Обработка actions. Ничего не выводится.
+		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']]))) {
+			$this->call($_POST['_action'],array($_POST[$_POST['_element']]));
+		}
 	}
 /* ================================================================================= */	
 	public function url($param='',$length=1)
@@ -217,32 +215,28 @@ class doitClass
 		}
 		$_result_end='';
 		if (!is_array($arguments)) {
-			$_newnames = func_get_args();
+			$_newnames = func_get_args();  //d()->call('first','second','clients#edit','clients_tpl');
 			$arguments=array();
 		} else {
 			$_newnames = $this->get_function_alias($name);
 		}
 		$_currentname=$name;
 		$_continuechain = true;
-		for($i=0;$i<=count($_newnames)-1;$i++){
+		for($i=0;$i<=count($_newnames)-1;$i++) {
 			$_newname = $_newnames[$i];
-			$name=$_currentname;
-			if($name!=$_newname) {
-				if (isset($this->ini_database[$_newname])) {
-					$this->load_and_parse_ini_file($this->ini_database[$_newname]);
-					unset ($this->ini_database[$_newname]);
-				}
-			}
+			if (isset($this->ini_database[$_newname])) {
+				$this->load_and_parse_ini_file($this->ini_database[$_newname]);
+				unset ($this->ini_database[$_newname]);
+			}		
 			$name=$_newname;
 			//Проверка на существование фрагмента fragment_tpl, если самой функции нет
-			if ( (!function_exists($name)) && (isset( $this->fragmentslist[$name."_tpl"]))) { 
+			if ( (!function_exists($name)) && (isset( $this->fragmentslist[$name."_tpl"]))) {
 				$name = $name."_tpl";
 			}
 			$this->call_chain_level++; //поднимаем уровень текущего стека очереди
 			//Сохраняем текущую цепочку команд
 			$this->call_chain[$this->call_chain_level] = $_newnames;
 			$this->call_chain_current_link[$this->call_chain_level]=$i;
-			
 			//Тут вызываются предопределённые и пользовательские функции
 			ob_start();
 			if (function_exists($name)) {
@@ -254,7 +248,7 @@ class doitClass
 					$_methodname=substr($name,$_fsym+1);
 					$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
 				} else {
-					$_executionResult=eval('?'.'>'.$this->fragmentslist[$name].'<'.'?php ;');
+					$_executionResult=eval('?'.'>'.$this->get_compiled_code($name).'<'.'?php ;');
 				}
 			}
 			$_end = ob_get_contents();
@@ -274,6 +268,15 @@ class doitClass
 			}
 		}
 		return $_result_end;
+	}
+/* ================================================================================= */
+	//ленивая загрузка и шаблонизация
+	function get_compiled_code($fragmentname)
+	{
+		if(!isset ($this->compiled_fragments[$fragmentname])) {
+			$this->compiled_fragments[$fragmentname]=$this->shablonize(file_get_contents($this->fragmentslist[$fragmentname]));
+		}
+		return $this->compiled_fragments[$fragmentname];
 	}
 /* ================================================================================= */	
 	//вызов передаётся функции call().
@@ -308,6 +311,7 @@ class doitClass
 			return  doit_caller_factory($name);
 		}
 		//Проверка префиксов для модулей для модулей и расширений
+		//TODO: это слишком медленно
 		foreach ($this->prefixes as $_one_prefix) {
 			if(preg_match($_one_prefix[0], $name)) {
 				return $this->{$_one_prefix[1]}($name);
@@ -339,15 +343,29 @@ class doitClass
 	function get_function_alias($name)
 	{
 		static $url_list_size = 0;
+		static $cache_ansver=array();
+		static $rules_list=array();
+		static $booleanvalues=array(); //true или false в звсисимости от того, подходит регулрное выражение или нет
 		$_matches=array();
 		$matched=array('','',$name);
 		$longest_url='';
 		$ruleslist = $this->datapool['urls'];
-		$_requri = '/'.$this->url();
+		$_requri = $this->url_string;
+		if(isset($cache_ansver[$name])) {
+			return $cache_ansver[$name];
+		}
+		//1. получаем из кеша массив правил для данной функции. Если кеша нет, то создаём его
+		 
+		/*
+		ТУТ:
+		lazy проверка всех spreg_replace и установка булевых выражений (совпадение/несовпадение)
+		*/
 		//Определение наиболее подхходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
 		foreach($ruleslist as $key=>$value) {			
 			//TODO: документация к следующей конструкции
-			if(( $value[1] == $name && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) && (strlen($value[0]) > strlen($longest_url))) {
+			//if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
+			if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
+			
 				$matched=$value;
 				$longest_url=$value[0];
 			}
@@ -355,6 +373,7 @@ class doitClass
 		unset($matched[0]);
 		unset($matched[1]);
 		$matched=array_values($matched);
+		$cache_ansver[$name] = $matched;
 		return $matched;
 	}
 /* ================================================================================= */
@@ -401,7 +420,6 @@ foreach($tmparr as $key=>$subval)
 		return  $_str;
 	}
 /* ============================================================================== */
-
 	//получение данных из .ini файла
 	function load_and_parse_ini_file($filename){
 		$res=array();
@@ -421,8 +439,7 @@ foreach($tmparr as $key=>$subval)
 			if($delimeterPos===false) {
 				//Если тип строки - неименованный массив, разделённый пробелами
 				$subject=$currentGroup;
-				$row=str_replace("\t",' ',$row);
-				$tmparr = explode(' ',$row);
+				$tmparr = explode(' ',str_replace("\t",' ',$row));
 				$value=array();
 				$quoteflag=false;
 				$tmpstr="";
@@ -471,7 +488,6 @@ foreach($tmparr as $key=>$subval)
 					$value=ltrim(substr($row,$delimeterPos+1));
 				}
 			}
-			
 			if (strpos($subject,'.')===false) {
 				$res=array_merge_recursive ($res,array($subject=>$value));
 			} else {

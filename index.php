@@ -7,7 +7,8 @@ include_once ('config.php');
 include_once ('cms/cms.php');
 header('Content-type: text/html; Charset=UTF-8');
 
-print doit()->main();
+print doit()->main(); 
+
 
 $end_time = microtime();
 $end_array = explode(" ",$end_time);
