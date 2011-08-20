@@ -42,7 +42,6 @@ function doit($object='')
 	}
 	return doitClass::$instance->$object;
 }
-
 //Псевдоним для более быстрого доступа
 function d($object='')
 {
@@ -280,8 +279,7 @@ class doitClass
 		return $this->compiled_fragments[$fragmentname];
 	}
 /* ================================================================================= */	
-	//вызов передаётся функции call().
-	//сама функция более гибкая, и умеет выполнять запросы вроде call('clients#show');
+	//вызов call(), эта функция более гибкая, и умеет выполнять запросы вроде call('clients#show');
 	public function __call($name, $arguments)
 	{
 		return 	$this->call($name, $arguments);
@@ -366,7 +364,6 @@ class doitClass
 			//TODO: документация к следующей конструкции
 			//if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
 			if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
-			
 				$matched=$value;
 				$longest_url=$value[0];
 			}

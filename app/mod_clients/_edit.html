@@ -11,6 +11,12 @@
 
 {{/form}}
  
+ <ul>
+	<foreach User->all as user>
+	<li>{user.login}</li>
+	</foreach>
+ </ul>
+ 
 {{clients#test}}
 <h2>Форма обратной связи</h2>
  

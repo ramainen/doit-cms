@@ -258,7 +258,7 @@ class ar
 			if(self::$default_table!='') {
 				$this->options['table']=self::$default_table;
 			} else {
-					$this->options['table']=self::one_to_plural(strtolower(get_class($this)));
+				$this->options['table']=self::one_to_plural(strtolower(get_class($this)));
 			}
 		}
 		
@@ -266,7 +266,6 @@ class ar
 			$this->options['plural_to_one']=self::plural_to_one($this->options['table']);
 		}
 	}
-	
 	//альтернативная функция бстрого получения данных
 	public function getRow($id)
 	{
@@ -276,20 +275,17 @@ class ar
 			return false;
 		}
 	}
-	
 	//Функция find указывает на то, что необходимо искать нечто по полю ID
 	public function find($id)
 	{
-		$this->options['id']=$id;
+		$this->options['id']=(int)$id;
 		$this->options['queryready']=false;
 		$id = 1 * $id;
-		$this->options['condition'] = ' id = '.$id.' ';
+		$this->options['condition'] = ' id = '.(int)$id.' ';
+		//Удалить со временем
 		if(isset($_SESSION['admin'])) {
 			$this->edit_button = '<a href="/admin/edit/'.$this->options['table'].'/'.$this->options['id'].'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 		}
-		
-		
-		
 		return $this;
 	}
 	
@@ -299,8 +295,8 @@ class ar
 			$by=substr($name,8);
 			$this->options['queryready']=false;
 			$this->options['condition'] = " `".$by."` = '".mysql_real_escape_string($arguments[0])."' ";
-			return $this;
 		}
+		return $this;
 	}
 	
 	public function where()
@@ -312,7 +308,7 @@ class ar
 		$_conditions=explode('?',' '.$_condition.' ');
 		$_condition='';
 		for ($i=1; $i<= count($_conditions)-1; $i++) {
-			$_condition .= $_conditions[$i-1].   " '".mysql_real_escape_string($args[$i])."' "  ;
+			$_condition .= $_conditions[$i-1]. " '".mysql_real_escape_string($args[$i])."' "  ;
 		}
 		$_condition .= $_conditions[$i-1];
 		$this->options['condition'] = $_condition.' ';
@@ -338,9 +334,33 @@ class ar
 			$this->edit_button = '<a href="/admin/edit/'.$this->options['table'].'/'.$this->_data[0]['id'].'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 		}
 	}
-	public function save()
+	//CRUD
+	public function save()  //CrUd - Create & Update
 	{
-		print "!!!";
+		if($this->options['new']==true) {
+			//Тут идёт вставка
+			if(count($this->_future_data)>0) {
+				$fields=array();
+				$values=array();
+				foreach($this->_future_data as $key => $value) {
+					$fields[]=" `$key` ";
+					$values[]=" '".mysql_real_escape_string($value)."' ";
+				}
+				$fields_string=implode (',',$fields);
+				$values_string=implode (',',$values);
+				$_query_string='insert into `'.$this->options['table'].'` ('.$fields_string.') values ('.$values_string.')';
+				mysql_query($_query_string);
+			}
+		} else {
+			//Тут проверка на апдейт
+			$attributes=array();
+			foreach($this->_future_data as $key => $value) {
+				$attributes[]=" `$key` = '".mysql_real_escape_string($value)."' ";
+			}
+			$attribute_string=implode (',',$attributes);
+			$_query_string='update `'.$this->options['table'].'` set '.$attribute_string;	
+			print $_query_string;
+		}
 		return $this;
 	}
 	public function one()
@@ -412,7 +432,6 @@ class ar
 		return false;
 	}
 
-	
 	public function shift_to($_shift)
 	{
 		$this->_shift=$_shift;
@@ -432,8 +451,10 @@ class ar
 	}
 	
 	function __set($name,$value)
-	{
-		$_future_data=array();
+	{	
+		//Если создаём, то проверяем, был ли уже new
+		//Если редактируем, то предварительно надо сбрасывать в ноль
+		$this->_future_data[$name]=$value;
 	}
 	
 	function __get($name)
@@ -444,14 +465,11 @@ class ar
 			return $this->{$name}();
 		}
 		//Item.new
-		if ($name=='new') {
+		if ($name=='new') { // Crud - create
 			$this->options['new']=true;
-			$_future_data=array();
+			$this->_future_data = array();
 			return $this;
 		}
-		 
-		 
-		  		
 		//Item.expand_to_page
 		if (substr($name,0,10)=='expand_to_') {
 			return $this->expand_to(substr($name,10));
@@ -501,22 +519,8 @@ class ar
 		} else {
 			//Item.ramambaharum_mambu_rum
 			return '';
-		}
-		
-		
-		
-		 
-		
+		}	
 	}
-	
-	/* { тестирование механизма наследования  */
-		function damir()
-		{
-			print 2+2;
-		}
-		
-		
-	/* } тестирование механизма наследования */
 }
 
 function activerecord_factory($_modelname)
@@ -534,6 +538,6 @@ function __autoload($class_name) {
 	if(	$fl != strtoupper($fl)) {
 		return false;
 	}
-	 eval ("class ".$class_name." extends ar {}");
+	eval ("class ".$class_name." extends ar {}");
 	$class_name::$default_table=ar::one_to_plural(strtolower($class_name));
 }
