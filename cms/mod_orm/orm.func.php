@@ -353,13 +353,15 @@ class ar
 			}
 		} else {
 			//Тут проверка на апдейт
-			$attributes=array();
-			foreach($this->_future_data as $key => $value) {
-				$attributes[]=" `$key` = '".mysql_real_escape_string($value)."' ";
+			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
+				$attributes=array();
+				foreach($this->_future_data as $key => $value) {
+					$attributes[]=" `$key` = '".mysql_real_escape_string($value)."' ";
+				}
+				$attribute_string=implode (',',$attributes);
+				$_query_string='update `'.$this->options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
+				mysql_query($_query_string);
 			}
-			$attribute_string=implode (',',$attributes);
-			$_query_string='update `'.$this->options['table'].'` set '.$attribute_string;	
-			print $_query_string;
 		}
 		return $this;
 	}
