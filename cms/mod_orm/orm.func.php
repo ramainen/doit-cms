@@ -335,6 +335,14 @@ class ar
 		}
 	}
 	//CRUD
+	public function delete()
+	{
+		if(isset($this->_data[0])){
+			$_query_string='delete from `'.$this->options['table'] . "` where `id` = '".$this->_data[0]['id']."'";
+			mysql_query($_query_string);
+		}
+		return $this;
+	}
 	public function save()  //CrUd - Create & Update
 	{
 		if($this->options['new']==true) {
