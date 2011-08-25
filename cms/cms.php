@@ -149,7 +149,7 @@ class doitClass
 		}
 		$is_ok=true;
 		foreach($rules as $key=>$value) {
-			if(isset($value['required']) && (!isset ($params[$key]) || $params[$key]=='')) {
+			if(isset($value['required']) && (!isset ($params[$key]) || trim($params[$key])=='')) {
 				$this->datapool['notice'][] = $value['required']['message'];
 				$is_ok=false;
 			}
