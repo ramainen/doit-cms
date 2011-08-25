@@ -337,6 +337,10 @@ class ar
 	//CRUD
 	public function delete()
 	{
+		if ($this->options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+			
 		if(isset($this->_data[0])){
 			$_query_string='delete from `'.$this->options['table'] . "` where `id` = '".$this->_data[0]['id']."'";
 			mysql_query($_query_string);
@@ -360,6 +364,9 @@ class ar
 				mysql_query($_query_string);
 			}
 		} else {
+			if ($this->options['queryready']==false) {
+				$this->fetch_data_now();
+			}
 			//Тут проверка на апдейт
 			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
 				$attributes=array();
@@ -377,7 +384,7 @@ class ar
 	{
 		if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
-			}
+		}
 		return $this;
 	}
 	public function all()

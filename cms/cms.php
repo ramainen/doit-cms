@@ -153,6 +153,11 @@ class doitClass
 				$this->datapool['notice'][] = $value['required']['message'];
 				$is_ok=false;
 			}
+			if(isset($value['confirmation']) && (!isset ($params[$key.'_confirmation']) || $params[$key.'_confirmation']!=$params[$key])) {
+				$this->datapool['notice'][] = $value['confirmation']['message'];
+				$is_ok=false;
+			}
+			
 		}		
 		return $is_ok;
 	}

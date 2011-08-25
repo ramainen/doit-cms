@@ -14,7 +14,7 @@ a3_catalog_catalog
 Если всё перенаправляется классу (с большой буквы), то случается Чудо.
 Например,
 /users/ -> Users.php
-либо 
+либо
 Users.class.php
 
 Все функции внутри автоматически становятся методами класса User и только
@@ -22,17 +22,8 @@ Users.class.php
 
 Готовые модули для каждого из возможных Web 2.0 проектов
 
- 
-Модель, вид, контроллер
-
-Модель - функции для работы с данными, функции вспомогательные, опции. ActiveRecord User->find()
-Контроллер - функция, которая срабатывает на какой-либо URL. Вызывает view, получает данные на основе опций.
-Вид - HTML-шаблон.
-
 /catalog/1
 
-function get_order{}
-срабаывает когда пришёл $_GET['order'];
 
 /catalogs/index     REST:catalog
 
@@ -40,7 +31,7 @@ REST_catalog  - функция, которая смотрит GET и POST зап
 
 Консоль: отладка PHP создание баз данных создание моделей, вспомогательные операции (phpinfo, chmod), бекапы, создание и развёртывание проектов и так далее.
 
- 
+
 $user=>d()->Users->find();
 $comments=>d()->Comments->find();
 
@@ -52,7 +43,7 @@ $goods=>d()->Goods->find(url('goods'));
 <input name="user[password]">
 
 Users->create($_POST[user])
- 
+
 
 
 <input name="good[categories][2]" type="checkbox">Аксессуары
@@ -68,7 +59,7 @@ Users->create($_POST[user])
 /news/   (list) select
 /news/add   form
 /news/1/edit  form
-/news/1     view select   
+/news/1     view select
 
 /news/sort/title/page/23
 /news/page/23/sort/title
@@ -76,26 +67,26 @@ Users->create($_POST[user])
 news.php?sort=title&page=1
 news.php?page=1&sort=title
 
-  
+
 
 
 Статические
 /about/company/now
 /contacts/nijnijnovgorod/director
 
-  
+
 /?catalog=2
 /?news
 /?news=2&edit
 
- 
+
 ini-файлы, редактируемые администратором.
 Удаление объектов двумя способами (иконка/админка)
 Псевдосвойства, начиная от приписанных и заканчивая префиксами свойств, например magic_title
 Псевдосвойства: проверка на случай, если и переменная, и фрагмент отсуствуют
 Кеширование в getFunctionAlias
 shablonize: сделать массив str_replace-ов для скорости и поддержки плагинов
-<function fields>	</function> Не срабатывает. Игнорится. Создаёт функцию-фрагмент 
+<function fields>	</function> Не срабатывает. Игнорится. Создаёт функцию-фрагмент
 Приписывание необязательного параметра namespace для loadandparseini
 Функция (команда) специального подавления последнего вывода.
 Свойство Parent, связанные списки, подменю
@@ -174,7 +165,7 @@ TODO: функция поглотить()
 $users[0].username='ainu';
 $users[1].username='anonymous';
 $users[1].username='cooler';
-	
+
 foreach users as user {
 	поглотить (user)
 	print $do->username
@@ -262,12 +253,12 @@ link_for_admin_edit
 clients_model.php
 
 clients_router.tpl.html
- 
+
 clients_default.html
 d()->client.find();
 
-clients_default.tpl.html 
-/clients/     clients_index.html clients_index.tpl.html 
+clients_default.tpl.html
+/clients/     clients_index.html clients_index.tpl.html
 
 
 function clients_show()
@@ -276,15 +267,15 @@ function clients_show()
 }
 
 <div class="magic users">
-	 
+
 </div>
 
-  
+
 Относительные, влияющие на очередь, вызываем изнутри очереди
 +set_next_chain
 remove_next_chain
 +stop_next_chains
-insert_next_chain 
+insert_next_chain
 repeat_next_chain
 replace_next_chain
 
@@ -303,7 +294,7 @@ set_virtual_url
 Хелперы
 
 edit_button(page)
- 
+
 
 + class User extends ActiveRecord {}
 
@@ -364,24 +355,24 @@ $good->catalogs
 		1. смот
 	3. возвращаем полученный массив
 
-	
-	
+
+
 
 validate() - возвращает true или false
 errors() - возвращает ошибки
- 
-	
-	
+
+
+
 	Администратор сайта может редактировать ini-файлы.
 	Администратор сайта может добавлять свои, дополнительные поля
 	Администратор сайта может определять их обязательность
 	Администратор сайта может определять дополнительные требования (уникальность, необходимость подтверждения, возможные варианты, тип)
-	
-	
+
+
 		{{button_for 'send_email', 'value'=>'отправить емейл'}}
 		{{link_for 'send_email', 'value'=>'отправить емейл'}}
-		
-		
+
+
 	проверка
 например action на удаление объекта может запустить только администратор
 / action_sendemail         onlyadmin action_sedemail
@@ -509,7 +500,7 @@ main.html
 footer.html
 
 
-2. 
+2.
 clients_show()
 clients_show.html
 
@@ -566,4 +557,16 @@ if (validate('clients_search')) {
 	Client->order();
 }
 
+
+db()->query();
+
+
+
+
+wiki система
+1. регистрация авторизация, карма
+2. аккаунты, гостевой анонимный доступны
+3. зашифрованные страницы и разделы
+4. каждый может редактировать разделы и страницы
+Страница шифруется при помощи пароля, введённого ранее для доступа в раздел.
 

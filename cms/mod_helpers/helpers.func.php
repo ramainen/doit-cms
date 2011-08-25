@@ -59,7 +59,11 @@ function input ($params=array())
 function form ($params=array()) 
 {
 	$attr="";
-	d()->current_form_object = $params[0];
+	if (isset($params[1])) {
+		d()->current_form_object = $params[1];
+	} else {
+		d()->current_form_object = 'data';
+	}
 	
 	if(isset($params['action'])) {
 		$attr .= ' action="'.$params['action'].'" ';
@@ -67,11 +71,10 @@ function form ($params=array())
 	
 	
 	$result =  "<form method='POST' ".$attr.">";
-	$result .= ' <input type="hidden" name="_element" value="'.$params[0].'" >';
-	if(isset($params[1])) {
-		$result .= ' <input type="hidden" name="_action" value="'.$params[1].'" >';
-	}
+	$result .= ' <input type="hidden" name="_element" value="' . d()->current_form_object .'" >';
+	$result .= ' <input type="hidden" name="_action" value="'.$params[0].'" >';
 	return $result;
+	
 }
 
 
