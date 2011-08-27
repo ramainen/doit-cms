@@ -1,6 +1,9 @@
 <?php
 
 function edit($params){
+	if(!is_array($params)) {
+		$params=array($params);	
+	}
 		
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
