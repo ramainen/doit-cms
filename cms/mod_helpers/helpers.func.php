@@ -94,4 +94,7 @@ function notice()
 	$str .= '</ul>';
 	return $str;
 }
-
+function h($html)
+{
+	return htmlspecialchars($html);
+}
