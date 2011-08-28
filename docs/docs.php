@@ -7,7 +7,7 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="http://yandex.st/highlightjs/6.0/highlight.min.js"></script>
-	<link rel="stylesheet" href="http://yandex.st/highlightjs/6.0/styles/default.min.css">
+	<link rel="stylesheet" href="http://yandex.st/highlightjs/6.0/styles/github.min.css">
 	<script>hljs.initHighlightingOnLoad();</script>
 	<title>Документация по системе doit cms</title>
 	<style>
