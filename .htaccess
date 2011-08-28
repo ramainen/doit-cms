@@ -7,8 +7,3 @@ RewriteEngine On
 
 
 RewriteRule  !\.jpg$|\.jpeg$|\.xlsx?$|\.pptx?$|\.docx?$|\.gif$|\.bmp$|\.jpeg$|\.zip$|\.tar.gz$|\.swf$|\.pdf$|\.rar$|\.js$|\.css$|\.ico$|\.php$|^cms/|^storage/(.*)        index.php   [L]
-
-
-
-      
-
