@@ -21,5 +21,6 @@ function pages_show()
 // возвращает двухуровневый массив страниц для меню
 function pages_list()
 {
-	return d()->Text->where("text_id = 0 or text_id is NULL")->all;
+	$retarray =  d()->Text->where("text_id = 0 or text_id is NULL")->all;
+	return $retarray;
 }

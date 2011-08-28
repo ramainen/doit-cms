@@ -11,10 +11,10 @@
 
 <div class="content" style="border:1px dotted gray;padding:6px;">
 <foreach pages_list() as menu>
-	<li>	<a href="{.url}">{.title}</a>
+	<li>	<a href="{menu.url}">{menu.title}</a>
 		<ul >
-		<foreach this->texts as submenu>
-			<li><a href="{.url}">{.title}</a></li>
+		<foreach menu->texts as submenu>
+			<li><a href="{submenu.url}">{submenu.title}</a></li>
 		</foreach>	
 		</ul>
 	</li>
