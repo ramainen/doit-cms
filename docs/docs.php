@@ -3,6 +3,7 @@ include('markdown.php');
 $content =  Markdown(file_get_contents('about.md')); ?><!doctype html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>Документация по системе doit cms</title>
 <style>
 html
