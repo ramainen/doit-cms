@@ -6,6 +6,9 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<script src="http://yandex.st/highlightjs/6.0/highlight.min.js"></script>
+	<link rel="stylesheet" href="http://yandex.st/highlightjs/6.0/styles/default.min.css">
+	<script>hljs.initHighlightingOnLoad();</script>
 	<title>Документация по системе doit cms</title>
 	<style>
 	html
@@ -21,8 +24,22 @@
 		width:800px;
 		margin:auto;
 		color: black;
-		font-family: Palatino, "Palatino Linotype", "URW Palladio L", "Book Antiqua", Georgia, serif;
-		line-height: 1.45;
+		font-family:   Georgia, serif;
+		line-height: 1.5em;
+		font-size: 17px;
+	}
+	pre
+	{
+				line-height: 1.3em;
+		background-color: #F6F6F6;
+		overflow: auto;
+ 
+		border: #CCC solid 1px;
+
+	}
+	code
+	{
+		font-size: .8em;
 	}
 	</style>
 </head>
