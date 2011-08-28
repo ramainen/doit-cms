@@ -1,7 +1,28 @@
 <?php 
 	header('Content-type: text/html; Charset=UTF-8');
+	$content = "<ul>";
+	$f = opendir('.');
+	while($file = readdir($f)) {
+		if (substr($file,-3) == '.md') {
+			$link = '?file=' . substr($file,0,-3);
+			$title = file($file);
+			$title=$title[0];
+			$content .= "<li><a href='{$link}'>{$title}</a></li>";
+		}
+	}
+	$content .= "</ul>";
+	
+	$file='about';
+	if (isset($_GET['file'])) {
+		$file = str_replace('/','',$_GET['file']);
+		$file = str_replace('.','',$file);	
+	}
+	if(!file_exists($file.".md")) {
+		$file='about';
+	}
 	include('markdown.php');
-	$content =  Markdown(file_get_contents('about.md'));
+	$content .=  Markdown(file_get_contents($file.'.md'));
+
 ?><!doctype html>
 <html>
 <head>
