@@ -389,8 +389,12 @@ foreach($tmparr as $key=>$subval)
 		$this->datapool["override"]="";
 		if(is_object($subval)){
 			 $this->datapool[\'$2\']=$subval; 
+			 $this->datapool[\'this\']=$subval; 
 			 $this->datapool[\'override\']=$subval->override; 
-		}else{  foreach($subval as $subkey=>$subvalue) $this->datapool[\'$2\'][$subkey]=$subvalue;  }
+		}else{  foreach($subval as $subkey=>$subvalue) { 
+		$this->datapool[\'$2\'][$subkey]=$subvalue;
+		$this->datapool[\'this\'][$subkey]=$subvalue;
+		}   }
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 		
 		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
