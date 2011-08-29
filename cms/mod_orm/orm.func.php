@@ -254,6 +254,10 @@ class ar
 			$this->options['new']=false;
 		}
 		
+		if(!isset($this->options['tree'])) {
+			$this->options['tree']=false;
+		}
+		
 		if(!isset($this->options['table'])) {
 			if(self::$default_table!='') {
 				$this->options['table']=self::$default_table;
@@ -329,10 +333,7 @@ class ar
 			$this->_data[]=$line;
 		}
 		
-		//Говнокодик
-		if(count($this->_data)>0) {
-			$this->edit_button = '<a href="/admin/edit/'.$this->options['table'].'/'.$this->_data[0]['id'].'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
-		}
+		 
 	}
 	//CRUD
 	public function delete()
@@ -383,7 +384,7 @@ class ar
 	public function one()
 	{
 		if ($this->options['queryready']==false) {
-				$this->fetch_data_now();
+			$this->fetch_data_now();
 		}
 		return $this;
 	}
@@ -406,6 +407,41 @@ class ar
 		foreach($this->_data as $_key => $_value) {
 			return $this->_data;
 		}
+	}
+	
+	//Рекурсивная функция для быстрой сортировки дерева
+	private function get_subtree($id)
+	{
+		$_tmparr=array();
+		$_class_name = get_class($this);
+		foreach($this->_data as $element){
+ 			if(isset($element[$this->options['plural_to_one']."_id"]) && $element[$this->options['plural_to_one']."_id"] == $id) {
+ 				$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+ 			}
+		}
+		return $_tmparr;
+	}
+	public function tree()
+	{
+		//Если ленивый запрос ещё не произошёл - самое время.
+		if ($this->options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		
+		//Если при создании объекта заранее указали его дерево - возвращаем его
+		if ($this->options['tree']!==false) {
+			return $this->options['tree'];
+		}		
+		$_tmparr=array();
+		$_class_name = get_class($this);
+		foreach($this->_data as $element){
+			//Если данный элемент корневой, родительских элементов нет, поле element_id пустое
+ 			if(!isset($element[$this->options['plural_to_one']."_id"])) {
+ 				//В опцию tree записываем рекурсивно полученные дочерние элементы
+ 				$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+ 			}
+		}
+		return $_tmparr;
 	}
 	
 	public function is_empty()

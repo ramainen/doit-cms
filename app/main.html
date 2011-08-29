@@ -19,6 +19,29 @@
 		</ul>
 	</li>
 </foreach>
+
+<hr>
+<foreach pages_tree() as menu>
+	<li>	{menu.id}
+		<ul >
+		<foreach menu->tree as submenu>
+			<li>{submenu.id}
+			
+		        <ul >
+		     
+		        <foreach submenu->tree as subsubmenu>
+			        <li>{subsubmenu.id}  </li>
+		        </foreach>	
+		        </ul>
+			
+			</li>
+		</foreach>	
+		</ul>
+	</li>
+</foreach>
+
+
+
 {{content}}
 <br>
  

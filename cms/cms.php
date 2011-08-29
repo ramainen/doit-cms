@@ -383,7 +383,7 @@ class doitClass
 	function shablonize($_str)
 	{
 		$_str=preg_replace('/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/','<'.'?php $tmparr= $this->$1;
-if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
+if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
 		$this->datapool["override"]="";
@@ -399,7 +399,7 @@ foreach($tmparr as $key=>$subval)
 		
 		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
 		$_str=preg_replace('/<foreach\s+(.*?)>/','<'.'?php $tmparr= $this->$1;
-if(is_string($tmparr) || (is_array($tmparr) &&  !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
+if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
 		$this->datapool["override"]="";

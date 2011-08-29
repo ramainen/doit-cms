@@ -24,3 +24,9 @@ function pages_list()
 	$retarray =  d()->Text->where("text_id = 0 or text_id is NULL")->all;
 	return $retarray;
 }
+
+function pages_tree()
+{
+	$retarray =  d()->Text->tree;
+	return $retarray;
+}
