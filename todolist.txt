@@ -565,10 +565,12 @@ wiki система
 
 h
 
+=======
 
 Рассмотреть записи вида:
 {{clients.show}}
 /clietns//   content    clients.edit
+
 
 
 

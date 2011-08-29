@@ -389,8 +389,12 @@ foreach($tmparr as $key=>$subval)
 		$this->datapool["override"]="";
 		if(is_object($subval)){
 			 $this->datapool[\'$2\']=$subval; 
+			 $this->datapool[\'this\']=$subval; 
 			 $this->datapool[\'override\']=$subval->override; 
-		}else{  foreach($subval as $subkey=>$subvalue) $this->datapool[\'$2\'][$subkey]=$subvalue;  }
+		}else{  foreach($subval as $subkey=>$subvalue) { 
+		$this->datapool[\'$2\'][$subkey]=$subvalue;
+		$this->datapool[\'this\'][$subkey]=$subvalue;
+		}   }
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 		
 		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
@@ -415,7 +419,8 @@ foreach($tmparr as $key=>$subval)
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\'];
 		}else{ print  $this->$1->$2; } ?'.'>',$_str);
 		
-		
+		$_str=preg_replace('/\{\.([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->this)) {  print  $this->this[\'$1\'];
+		}else{ print  $this->this->$1; } ?'.'>',$_str);
 		
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$2($this->$1); ?'.'>',$_str);
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->$1)) {  print  $this->$3($this->$1[\'$2\']);
