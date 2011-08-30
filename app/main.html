@@ -10,35 +10,16 @@
  
 
 <div class="content" style="border:1px dotted gray;padding:6px;">
-<foreach pages_list() as menu>
+<foreach pages_tree() as menu>
 	<li>	<a href="{menu.url}">{menu.title}</a>
 		<ul >
-		<foreach menu->texts as submenu>
+		<foreach menu->tree as submenu>
 			<li><a href="{submenu.url}">{submenu.title}</a></li>
 		</foreach>	
 		</ul>
 	</li>
 </foreach>
 
-<hr>
-<foreach pages_tree() as menu>
-	<li>	{menu.id}
-		<ul >
-		<foreach menu->tree as submenu>
-			<li>{submenu.id}
-			
-		        <ul >
-		     
-		        <foreach submenu->tree as subsubmenu>
-			        <li>{subsubmenu.id}  </li>
-		        </foreach>	
-		        </ul>
-			
-			</li>
-		</foreach>	
-		</ul>
-	</li>
-</foreach>
 
 
 

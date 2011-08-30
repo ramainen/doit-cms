@@ -27,6 +27,5 @@ function pages_list()
 
 function pages_tree()
 {
-	$retarray =  d()->Text->tree;
-	return $retarray;
+	return d()->Text->tree;
 }
