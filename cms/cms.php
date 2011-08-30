@@ -409,10 +409,17 @@ foreach($tmparr as $key=>$subval)
 		$_str=preg_replace('/<type\s+([a-zA-Z0-9_-]+)>/','<'.'?php if($this->type=="$1"){ ?'.'>',$_str);
 		$_str=str_replace('</foreach>' ,'<'.'?php } } ?'.'>',$_str);
 		$_str=str_replace('</type>','<'.'?php } ?'.'>',$_str);	
+		
+		//TODO: deprecated
 		$_str=str_replace('</hidden>','<'.'?php } ?'.'>',$_str);
+		//TODO: deprecated
 		$_str=str_replace('<hidden>','<'.'?php if(false){ ?'.'>',$_str);
+		//			{{/form}}
 		$_str=preg_replace('/\{{\/([a-zA-Z0-9_]+)\}}/','</$1>',$_str);//Синтаксический сахар
 		$_str=preg_replace('/\{{([#a-zA-Z0-9_]+)\}}/','<'.'?php print $this->call("$1"); ?'.'>',$_str);
+		//			{{helper param}}
+		$_str=preg_replace('/\{{([#a-zA-Z0-9_]+)\s+([a-zA-Z0-9_]+)\}}/', '<'.'?php print $this->call("$1", array(d()->$2));  ?'.'>',$_str);
+		//{{helper 'parame','param2'=>'any'}}
 		$_str=preg_replace('/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/', '<'.'?php print $this->call("$1",array(array($2))); ?'.'>',$_str);
 		
 		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1; ?'.'>',$_str);

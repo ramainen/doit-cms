@@ -594,6 +594,8 @@ jevix (md5, база данных для кеширования)
 {{edit d()->page}}
 {{edit 'page'}}
 
+{{edit page}}
+
 {{add 'text'}}
 {{add 'text', 'url'=>url(1)}}
 {{add 'text', 'text_id'=>d()->submenu->id}}
@@ -601,3 +603,5 @@ jevix (md5, база данных для кеширования)
 http://guides.pagodabox.com/general/url-rewrites
 http://doit-cms.pagodabox.com/docs/docs.php?file=recepies
 Добавить .box
+
+{foreach 'users', 'user', 'showuser'}
