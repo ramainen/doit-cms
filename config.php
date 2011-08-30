@@ -1,8 +1,8 @@
 <?php
-$hostname = "127.0.0.1";
-$database = "varvar";
-$username = "root";
-$password = "";
+$hostname = "localhost:/tmp/mysql/saturnina.sock";
+$database = "saturnina";
+$username = "phuong";
+$password = "X2O347vP";
 $prefix="vv_";
 
     mysql_connect($hostname,$username,$password);
