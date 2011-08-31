@@ -79,7 +79,7 @@ $time = $end_time - $start_time;
 	
 
 	
-  printf("<!-- %f seconds -->",$time, );
+  printf("<!-- %f seconds -->",$time );
 	?>
 </body>
 </html>
