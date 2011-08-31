@@ -10,8 +10,9 @@
  
 
 <div class="content" style="border:1px dotted gray;padding:6px;">
+{{add 'texts'}}
 <foreach pages_tree() as menu>
-	<li>	<a href="{menu.url}">{menu.title}</a>
+	<li>	<a href="{menu.url}">{menu.title}</a> {{add 'texts', 'text_id'=>d()->menu->id}}
 		<ul >
 		<foreach menu->tree as submenu>
 			<li><a href="{submenu.url}">{submenu.title}</a></li>

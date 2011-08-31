@@ -10,9 +10,7 @@ function pages_show()
 	  
 	if (d()->page->is_empty) {
 		print "Страница не существует";
-		d()->newurl=url(1);
-		d()->table='texts';
-		print d()->addbutton();
+		print d()->add(array('texts','url'=>url(1)));
 		d()->stop_next_chains();
 		
 	}

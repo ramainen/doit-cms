@@ -12,7 +12,7 @@ if(isset($_POST['element_id'])) {
 		$result=mysql_query("insert into `".mysql_real_escape_string(url(3))."`  () values ()");
 		$elemid=mysql_insert_id();
 	}
-
+//FIXME: костыль
 	if($_POST['url']=='')$_POST['url']='page'.$elemid;
 
 	if(substr($_POST['url'],0,1)=='/')$_POST['url']=substr($_POST['url'],1);
