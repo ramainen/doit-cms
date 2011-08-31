@@ -13,6 +13,31 @@ function edit($params){
 	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 }
 
+function add($params){
+	if(!is_array($params)) {
+		$params=array($params);	
+	}
+		
+	if(!isset($_SESSION['admin'])) {
+		return ""; //Проверка на права администратора
+	}
+	$params_string='';
+	
+
+	foreach($params as $key=>$value){
+		if(!is_numeric($key)) {
+			if ($params_string=='') {
+				$params_string='?';
+			} else {
+				$params_string='&';
+			}
+			$params_string.= $key.'='.$value;
+		}	
+	}
+	
+	print '<a href="/admin/edit/'.$params[0].'/add'.$params_string.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
+}
+
 //Функция возвращает массив возможных полей
 function adminFields()
 {
