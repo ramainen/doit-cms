@@ -1,7 +1,5 @@
 <?php 
-$start_time = microtime();
-$start_array = explode(" ",$start_time);
-$start_time = $start_array[1] + $start_array[0];
+	$start_time = microtime(true);
 
 	header('Content-type: text/html; Charset=UTF-8');
 	$content = "<ul>";
@@ -55,12 +53,10 @@ $start_time = $start_array[1] + $start_array[0];
 	}
 	pre
 	{
-				line-height: 1.3em;
+		line-height: 1.3em;
 		background-color: #F6F6F6;
 		overflow: auto;
- 
 		border: #CCC solid 1px;
-
 	}
 	code
 	{
@@ -71,15 +67,8 @@ $start_time = $start_array[1] + $start_array[0];
 <body>
 	<?=$content ?>
 	<?php 
-
-$end_time = microtime();
-$end_array = explode(" ",$end_time);
-$end_time = $end_array[1] + $end_array[0];
-$time = $end_time - $start_time;
-	
-
-	
-  printf("<!-- %f seconds -->",$time );
+$exec_time = microtime(true) - $start_time;
+printf("<!-- %f seconds -->",$exec_time );
 	?>
 </body>
 </html>
