@@ -1,0 +1,24 @@
+{{form 'admin_save_data'}}
+<?php if(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],'/admin/')===false) { ?>
+<input type="hidden" name="admin_command_redirect_close" value="yes">
+<?php } ?>
+
+<input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
+<table class="admin_table" width=100%>
+<tr>
+	<td colspan=2><h2 class="admin_h2">{tabletitle}</h2></td>
+</tr>
+
+<foreach tablerow>
+<tr>
+	<td>{title}</td>
+	<td><input type="text" name="{name}" value="{value|h}" class="admin_input ui-widget-content ui-corner-all" style="width:500px;"></td>
+</tr>
+</foreach>
+
+<tr>
+	<td colspan="2"><input type="submit"   value="Отправить" class="admin_button" ></td>
+</tr>
+
+</table>
+{{/form}}

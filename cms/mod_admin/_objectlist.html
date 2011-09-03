@@ -1,0 +1,24 @@
+<h1>Список объектов из таблицы <?= url(3) ?></h1>
+<table class="admin_table"  width=100%>
+	<tr>
+		<td width=50>ID</td>
+		<td>Заголовок</td>
+		<td>url</td>
+		<td>Действие</td>
+	</tr>
+
+	<foreach objectrow>
+	<tr>
+		<td>{id}</td>
+		<td>{title}</td>
+		<td>{url}</td>
+		<td><a href="/admin/edit/<?= url(3) ?>/{id}" class="admin_button">Править</a></td>
+	</tr>
+	</foreach>
+
+	<tr>
+		<td colspan="4">
+			<a class="admin_button" href="/admin/edit/<?= url(3) ?>/add">Добавить</a>
+		</td>
+	</tr>	
+</table>

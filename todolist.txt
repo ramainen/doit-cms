@@ -605,3 +605,16 @@ http://doit-cms.pagodabox.com/docs/docs.php?file=recepies
 Добавить .box
 
 {foreach 'users', 'user', 'showuser'}
+
+
+
+Модуль numeric_helpers
+d(time)->russian_time()
+d(5)->times(d()->admin())
+d(5)->years->ago
+
+
+
+сделать параметры шаблонов deprecated
+
+

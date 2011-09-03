@@ -21,7 +21,7 @@ Copyright (C) 2011 Fahrutdinov Damir (aka Ainu)
 0.12 Объекты в контроллере
 0.11 ActiveRecord и foreach для объектов 07.08.2011 
 0.7 переписано на ООП.
-0.0 Нулевая версия do it CMS
+0.0 Нулевая версия DoIt CMS
 	Рабочее название фреймворка Var(Var) Framework
 	Система названа в честь статьи Variable Variables http://php.net/manual/en/language.variables.variable.php 26.01.2011
 */
@@ -31,7 +31,7 @@ function url($param='', $length=1)
 {	
 	return d()->url($param,$length);
 }
-/**********************************************************************************************/
+
 function doit($object='')
 {
 	if (!isset(doitClass::$instance)) {
@@ -62,7 +62,7 @@ class doitClass
 {
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	private $replacements=array(); //Массив подмены шабонов при вызове
-	private $caller=""; //Хранит название последней вызванной пользовательской функции.
+	private $caller=""; //Хранит название последней вызванной пользовательской функции. //DEPRECATED
 	private $datapool=array(); //Большой массив всех опций, данных и переменных
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
@@ -70,7 +70,7 @@ class doitClass
 	private $call_chain=array(); //Цепь вызовов
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
 	private $call_chain_level=0; //текущий уровень, стек для комманд
-	private $compiled_fragments=array();
+	private $compiled_fragments=array(); //Кеш шаблонов
 	public static $instance;
 /* ================================================================================= */	
 	function __construct()
@@ -117,7 +117,7 @@ class doitClass
 						$this->fragmentslist[$_fragmentname] = $dirname.$_dir.$_file;
 						continue;
 					}
-					//Модель - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
+					//Контроллер - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
 					if (substr($_file,-9)=='.func.php') {
 						include ($dirname.$_dir.$_file);
 						continue;
@@ -129,7 +129,7 @@ class doitClass
 							$this->load_and_parse_ini_file ($dirname.$_dir.$_file);
 						} else {
 							//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
-							//Хранит адрес ini-файла, запускаемого перед определённой функцией
+							//Хранит адрес ini-файла, запускаемого перед определённой функцией //DEPRECATED
 							$this->ini_database[substr($_file,0,-4)]=$dirname.$_dir.$_file;
 						}
 						continue;
@@ -157,8 +157,7 @@ class doitClass
 				$this->datapool['notice'][] = $value['confirmation']['message'];
 				$is_ok=false;
 			}
-			
-		}		
+		}	
 		return $is_ok;
 	}
 /* ================================================================================= */	
@@ -170,6 +169,7 @@ class doitClass
 		}
 	}
 /* ================================================================================= */	
+//TODO: оптимизировать функцию url как частозапускаемую
 	public function url($param='',$length=1)
 	{
 		if($param=='') {
@@ -209,15 +209,20 @@ class doitClass
 	{
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
+		//DEPRECATED - сделать явные вызовы
 		if (isset($this->ini_database[$name])) {
 			$this->load_and_parse_ini_file($this->ini_database[$name]);
 			unset ($this->ini_database[$name]);
 		}
+		
+		//DEPRECATED, отмена использования конструкции
+		/*
 		if (count($arguments)!=0 && is_array($arguments[0])) {
 			foreach($arguments[0] as $key=>$value) {
 				$this->datapool[$key]=$value;
 			}
 		}
+		*/
 		$_result_end='';
 		if (!is_array($arguments)) {
 			$_newnames = func_get_args();  //d()->call('first','second','clients#edit','clients_tpl');
@@ -229,10 +234,11 @@ class doitClass
 		$_continuechain = true;
 		for($i=0;$i<=count($_newnames)-1;$i++) {
 			$_newname = $_newnames[$i];
+			//DEPRECATED - сделать явные вызовы
 			if (isset($this->ini_database[$_newname])) {
 				$this->load_and_parse_ini_file($this->ini_database[$_newname]);
 				unset ($this->ini_database[$_newname]);
-			}		
+			}
 			$name=$_newname;
 			//Проверка на существование фрагмента fragment_tpl, если самой функции нет
 			if ( (!function_exists($name)) && (isset( $this->fragmentslist[$name."_tpl"]))) {
@@ -263,10 +269,10 @@ class doitClass
 				$_end = $_executionResult;
 			}
 			//Загружаем актуальную цепочку команд. call_chain могла измениться
-			$_newnames = $this->call_chain[$this->call_chain_level]; 
+			$_newnames = $this->call_chain[$this->call_chain_level];
 			$i = $this->call_chain_current_link[$this->call_chain_level];
 			$this->call_chain_level--; //опускаем уровень текущего стека очереди
-			if (count($_newnames)==1){
+			if (count($_newnames)==1) {
 				return $_end;
 			} else {
 				$_result_end .= $_end;
@@ -368,10 +374,13 @@ class doitClass
 		foreach($ruleslist as $key=>$value) {			
 			//TODO: документация к следующей конструкции
 			//if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
-			if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
-				$matched=$value;
-				$longest_url=$value[0];
-			}
+			if ($value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && (
+					$_requri==$value[0]
+					|| substr($_requri,0,strlen($value[0]))==$value[0] 
+					|| preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
+					$matched=$value;
+					$longest_url=$value[0];
+				}
 		}
 		unset($matched[0]);
 		unset($matched[1]);
@@ -382,6 +391,7 @@ class doitClass
 /* ================================================================================= */
 	function shablonize($_str)
 	{
+		//TODO: сделать два массива
 		$_str=preg_replace('/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/','<'.'?php $tmparr= $this->$1;
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
@@ -398,6 +408,8 @@ foreach($tmparr as $key=>$subval)
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 		
 		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
+		/* TODO: 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
+			возможно, убрать эту конструкцию	*/
 		$_str=preg_replace('/<foreach\s+(.*?)>/','<'.'?php $tmparr= $this->$1;
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
@@ -406,14 +418,10 @@ foreach($tmparr as $key=>$subval)
 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
 	
+		//DEPRECATED type
 		$_str=preg_replace('/<type\s+([a-zA-Z0-9_-]+)>/','<'.'?php if($this->type=="$1"){ ?'.'>',$_str);
 		$_str=str_replace('</foreach>' ,'<'.'?php } } ?'.'>',$_str);
 		$_str=str_replace('</type>','<'.'?php } ?'.'>',$_str);	
-		
-		//TODO: deprecated
-		$_str=str_replace('</hidden>','<'.'?php } ?'.'>',$_str);
-		//TODO: deprecated
-		$_str=str_replace('<hidden>','<'.'?php if(false){ ?'.'>',$_str);
 		//			{{/form}}
 		$_str=preg_replace('/\{{\/([a-zA-Z0-9_]+)\}}/','</$1>',$_str);//Синтаксический сахар
 		$_str=preg_replace('/\{{([#a-zA-Z0-9_]+)\}}/','<'.'?php print $this->call("$1"); ?'.'>',$_str);
@@ -443,17 +451,15 @@ foreach($tmparr as $key=>$subval)
 /* ============================================================================== */
 	//получение данных из .ini файла
 	function load_and_parse_ini_file($filename){
+		if(!$ini=file($filename)) return false;
 		$res=array();
-		if(!$ini=file_get_contents($filename)) return false;
-		$ini=explode("\n",$ini);
 		$currentGroup='';
 		$arrayKeys=array();
 		foreach($ini as $row) {
 			$row=trim($row);
-			if($row=='')continue; //Пустые строки игнорируются
-			if (substr($row,0,1)==';') continue; //Комментарий
+			if($row=='' || substr($row,0,1)==';') continue; //Пустые строки игнорируются
 			if (substr($row,0,1)=='[') { //Начало новой группы [group]
-				$currentGroup=substr($row,1,-1);		
+				$currentGroup=substr($row,1,-1);
 				continue;
 			}
 			$delimeterPos=strpos($row,'=');
@@ -564,3 +570,4 @@ class doitCaller
 		d()->universal_controller_factory($this->_classname.'_controller')->$name = $value;
 	}
 }
+
