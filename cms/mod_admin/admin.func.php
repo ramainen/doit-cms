@@ -32,7 +32,7 @@ function add($params){
 				$params_string='&';
 			}
 			$params_string.= $key.'='.$value;
-		}	
+		}
 	}
 	
 	print '<a href="/admin/edit/'.$params[0].'/add'.$params_string.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
@@ -67,6 +67,10 @@ function admin_edit()
 	foreach ($fields as $field) {
 		d()->title=$field['title'];
 		d()->name='data['.$field['name'].']';
+		d()->value='';
+		if (url(4)=='add' && isset($_GET[$field['name']])) {
+			d()->value=$_GET[$field['name']];
+		}
 		if (isset($line[$field['name']])) {
 			d()->value=$line[$field['name']];
 		}

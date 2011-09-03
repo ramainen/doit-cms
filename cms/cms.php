@@ -18,7 +18,7 @@ Copyright (C) 2011 Fahrutdinov Damir (aka Ainu)
 *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 *      MA 02110-1301, USA.
 
-0.12 Объекты в контроллере
+0.13 ->tree в orm
 0.11 ActiveRecord и foreach для объектов 07.08.2011 
 0.7 переписано на ООП.
 0.0 Нулевая версия DoIt CMS
