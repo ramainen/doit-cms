@@ -1,5 +1,5 @@
 {{form 'admin_save_data'}}
-<?php if(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],'/admin/')===false) { ?>
+<?php if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/')===false) { ?>
 <input type="hidden" name="admin_command_redirect_close" value="yes">
 <?php } ?>
 

@@ -165,7 +165,7 @@ class doitClass
 	{
 		//Обработка actions. Ничего не выводится.
 		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']]))) {
-			$this->call($_POST['_action'],array($_POST[$_POST['_element']]));
+			return $this->call($_POST['_action'],array($_POST[$_POST['_element']]));
 		}
 	}
 /* ================================================================================= */	

@@ -52,7 +52,7 @@ function admin_list()
 //	Основная функция редактирования, которая получает данные, выводит форму, обрабатывает действия, перезагружает страницу
 function admin_edit()
 {
-	action('admin_save_data');
+	print action('admin_save_data');
 	$rows=array();
 	$fields=d()->admin_get_fields();
 	if (url(4)!='add') {
