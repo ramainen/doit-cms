@@ -340,11 +340,11 @@ TODO:
 
 Вызываются они следующим образом:
 
-	print d()->clients_show.html
-	print d()->clients_edit.html
-	print d()->clients_list.html
-	print d()->clients_new.html
-	print d()->clients_search.html
+	print d()->clients_show()
+	print d()->clients_edit()
+	print d()->clients_list()
+	print d()->clients_new()
+	print d()->clients_search()
 	
 Или, в шаблонах:
 	
