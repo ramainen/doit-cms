@@ -62,6 +62,10 @@
 	{
 		font-size: .8em;
 	}
+	h2
+	{
+		border-bottom:1px solid #ccc;
+	}
 	</style>
 </head>
 <body>

@@ -14,15 +14,15 @@ function edit($params){
 }
 
 function add($params){
+	if(!isset($_SESSION['admin'])) {
+		return ""; //Проверка на права администратора
+	}
+	
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
 		
-	if(!isset($_SESSION['admin'])) {
-		return ""; //Проверка на права администратора
-	}
 	$params_string='';
-	
 
 	foreach($params as $key=>$value){
 		if(!is_numeric($key)) {
@@ -63,10 +63,15 @@ function admin_edit()
 	} else {
 		$line=array();
 	}
-
+	
+	//список элементов, для которых переопределелили скрытые параметры
+	//при помощи GET. Если их нет, то создаются новые скрытые е параметры.
+	$setted_flag=array();
+	
 	foreach ($fields as $field) {
 		d()->title=$field['title'];
 		d()->name='data['.$field['name'].']';
+		$setted_flag[$field['name']]=true;
 		d()->value='';
 		if (url(4)=='add' && isset($_GET[$field['name']])) {
 			d()->value=$_GET[$field['name']];
@@ -76,6 +81,17 @@ function admin_edit()
 		}
 		$rows[]=d()->call('admin_'.$field['type']);
 	}	
+	
+	if(url(4)=='add') {
+		//Установка скрытых полей
+		foreach($_GET as $key=>$value) {
+			if (!isset($setted_flag[$key])) {
+				d()->name = 'data['.$key.']';		
+				d()->value = $value;
+				$rows[]=d()->call('admin_hidden');
+			}
+		}
+	}
 	
 	d()->tabletitle = 'Редактирование элемента';
 	if(url(4)=='add') {
@@ -99,20 +115,23 @@ function admin_save_data($params)
 		$params['url']='page'.$elemid;
 	}
 
-
-
 	if(substr($params['url'],0,1)=='/') {
 		$params['url']=substr($params['url'],1);
 	}
 	
 	$params['url']=str_replace('/','_',$params['url']);
 	
-//	$data=$this->adminFields();
     $result_str="update `".url(3)."` set  ";
     $i=0;
+	
+	
 	foreach($params as $key=>$value) {
 		$i++;
-        $result_str.=" `" . $key . "`= '".mysql_real_escape_string($value)."' ";
+		if (substr($key,-3)=='_id' && $value == '') {
+			$result_str.=" `" . $key . "`= NULL ";
+		} else {
+			$result_str.=" `" . $key . "`= '".mysql_real_escape_string($value)."' ";
+		}
         if ($i<count($params)) $result_str.=', ';
     }
     
