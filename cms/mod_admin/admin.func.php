@@ -40,7 +40,25 @@ function add($params){
 
 function admin_list()
 {
-	$result=mysql_query('select * from '.mysql_real_escape_string(url(3)));
+	if (url(4)=='') {
+		//list/goods     просто список всех полей
+		$query='select * from '.mysql_real_escape_string(url(3));
+	} else {
+		if(url(5) == '') {
+			if(url(4)=='index') {
+				//list/goods/    список полей с goods_id = NULL
+				$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3))).'_id` is NULL';
+			} else {
+				//list/goods/4    список полей с goods_id = 4
+				$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3)))."_id` = '".e(url(4))."' ";
+			}
+		} else {
+			//list/goods/catalog_id/4             список полей с catalog_id = 4
+			$query='select * from `'.e(url(3)).'` where `'.e(url(4))."` = '".e(url(5))."' ";	
+		}
+	}
+	print '<!-- '.$query.' -->';
+	$result=mysql_query($query);
 	$data=array();
 	while ($line=mysql_fetch_array($result)) {
 		$data[]=$line;

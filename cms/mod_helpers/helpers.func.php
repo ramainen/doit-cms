@@ -98,3 +98,18 @@ function h($html)
 {
 	return htmlspecialchars($html);
 }
+
+function e($string)
+{
+	return mysql_real_escape_string($string);
+}
+//получение множественного числа
+function to_o($plural)
+{
+	return ar::plural_to_one($plural);
+}
+//Получение единственного числа
+function to_p($one)
+{
+	return ar::one_to_plural($one);
+}
