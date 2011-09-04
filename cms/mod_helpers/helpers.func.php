@@ -94,6 +94,52 @@ function notice()
 	$str .= '</ul>';
 	return $str;
 }
+
+function link_to($params)
+{
+	
+	$href = path_to(array($params[0]));
+	
+	$attr='';
+	
+	if(isset($params['style'])) {
+		$attr .= ' style="'.$params['style'].'" ';
+	}
+	
+	//TODO: проверка на класс error
+	if(isset($params['class'])) {
+		$attr .= ' class="'.$params['class'].'" ';
+	}
+	
+	if(isset($params['id'])) {
+		$attr .= ' id="'.$params['id'].'" ';
+	}
+	
+	if(isset($params['attr'])) {
+		$attr .= ' '.$params['attr'].' ';
+	}
+	
+	return '<a href= "' . $href . '" ' . $attr . '>'.$params[1].'</a>';
+	
+}
+
+function path_to($params)
+{
+	$result='/';
+	foreach (d()->urls as $rules) {
+		foreach($rules as $rule) {
+			if ($rule == $params[0]) {
+				$result = $rules[0];
+			}
+		}
+	}
+	if(substr($result,-6)=='/index') {
+		$result = substr($result,0,-5);
+	}
+	return $result;
+	
+}
+
 function h($html)
 {
 	return htmlspecialchars($html);
