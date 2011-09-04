@@ -42,7 +42,7 @@ function admin_list()
 {
 	if (url(4)=='') {
 		//list/goods     просто список всех полей
-		$query='select * from '.mysql_real_escape_string(url(3));
+		$query='select * from '.e(url(3));
 	} else {
 		if(url(5) == '') {
 			if(url(4)=='index') {
@@ -58,9 +58,22 @@ function admin_list()
 		}
 	}
 	print '<!-- '.$query.' -->';
+	//Опредление дополнительных кнопок
+	
+
+	$addbuttons = array();
+	d()->load_and_parse_ini_file('app/fields/'.url(3).'.ini');
+	if(isset(d()->admin['addbuttons'])) {
+		$addbuttons=d()->admin['addbuttons'];
+	}
+	
 	$result=mysql_query($query);
 	$data=array();
 	while ($line=mysql_fetch_array($result)) {
+		$line['addbuttons']='';
+		foreach($addbuttons as $key=>$value) {
+			$line['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
+		}
 		$data[]=$line;
 	}
 	d()->objectrow = $data;
