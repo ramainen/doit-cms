@@ -43,22 +43,28 @@ function admin_list()
 	if (url(4)=='') {
 		//list/goods     просто список всех полей
 		$query='select * from '.e(url(3));
+		d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. url(3) .'/add">Добавить</a>';
 	} else {
 		if(url(5) == '') {
 			if(url(4)=='index') {
 				//list/goods/    список полей с goods_id = NULL
 				$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3))).'_id` is NULL';
+				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. url(3) .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3)))."_id` = '".e(url(4))."' ";
+				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h(url(3)) .'/add?'.h(to_o(url(3))).'_id='.h(url(4)).'">Добавить</a>';
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
-			$query='select * from `'.e(url(3)).'` where `'.e(url(4))."` = '".e(url(5))."' ";	
+			$query='select * from `'.e(url(3)).'` where `'.e(url(4))."` = '".e(url(5))."' ";
+			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h(url(3)) .'/add?'.e(url(4)).'='.h(url(5)).'">Добавить</a>';
 		}
 	}
 	print '<!-- '.$query.' -->';
-	//Опредление дополнительных кнопок
+	//Определение дополнительных кнопок
+	
+	print '<!-- '.$query.' -->';
 	
 
 	$addbuttons = array();
