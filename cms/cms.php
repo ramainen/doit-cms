@@ -371,10 +371,10 @@ class doitClass
 		lazy проверка всех spreg_replace и установка булевых выражений (совпадение/несовпадение)
 		*/
 		//Определение наиболее подхходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
-		foreach($ruleslist as $key=>$value) {			
+		foreach($ruleslist as $key=>$value) {
 			//TODO: документация к следующей конструкции
 			//if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
-			if ($value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && (
+			if (is_numeric($key) && $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && (
 					$_requri==$value[0]
 					|| substr($_requri,0,strlen($value[0]))==$value[0] 
 					|| preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
@@ -494,10 +494,23 @@ foreach($tmparr as $key=>$subval)
 						}
 					}
 				}
+				
 				if (!isset($arrayKeys[$currentGroup])) {
 					$arrayKeys[$currentGroup]=0;
 				}
-				$value=array($arrayKeys[$currentGroup]=>$value);
+				
+				//Разбор пар ключ-значение
+				$founded = false;
+				$value2=$value;
+				foreach($value as $number => $element) {
+					if(substr($element,-1,1)==':') {
+						$value2[substr($element,0,-1)] = $value[$number+1];
+						unset($value2[$number]);
+						unset($value2[$number+1]);						
+					}
+				}
+				
+				$value=array($arrayKeys[$currentGroup]=>$value2);
 				$arrayKeys[$currentGroup]++; //Генерация номера элемента массива, массив нельзя перемешивать с обычными данными
 			} else {
 				if (substr($row,0,1)=='$') { //Если опция начинается на "$", то её значение - выражение на PHP (например, дата или md5-хеш).
