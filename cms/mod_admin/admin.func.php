@@ -91,7 +91,7 @@ function admin_edit()
 {
 	print action('admin_save_data');
 	$rows=array();
-	$fields=d()->admin_get_fields();
+	$tableortype = url(3);
 	if (url(4)!='add') {
 		//TODO: db()->sql();
 		if (!($line=mysql_fetch_array(mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `id` = '".mysql_real_escape_string(url(4))."'")))) {
@@ -100,7 +100,10 @@ function admin_edit()
 	} else {
 		$line=array();
 	}
-	
+	if(isset($line['type']) && $line['type']!='') {
+		$tableortype = to_p($line['type']);
+	}
+	$fields=d()->admin_get_fields($tableortype);
 	//список элементов, для которых переопределелили скрытые параметры
 	//при помощи GET. Если их нет, то создаются новые скрытые е параметры.
 	$setted_flag=array();
@@ -185,10 +188,14 @@ function admin_save_data($params)
 
 
 //Функция возвращает массив возможных полей
-function admin_get_fields()
+function admin_get_fields($tableortype='')
 {
 	$data=array();
-	doit()->load_and_parse_ini_file('app/fields/'.url(3).'.ini');
+	if ($tableortype=='') {
+		$tableortype=url(3);
+	}
+	
+	d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');
 	$rows = doit()->admin['fields'];
 	foreach ($rows as $key=>$value) {
 		$data[]=array('name'=>$value[1],'type'=>$value[0],'title'=>$value[2]);
