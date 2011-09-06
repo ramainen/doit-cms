@@ -40,10 +40,23 @@ function add($params){
 
 function admin_list()
 {
+	d()->load_and_parse_ini_file('app/fields/'.url(3).'.ini');
+	
 	if (url(4)=='') {
 		//list/goods     просто список всех полей
 		$query='select * from '.e(url(3));
-		d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. url(3) .'/add">Добавить</a>';
+		d()->list_addbutton='';
+		d()->list_addbutton.='<a class="admin_button" href="/admin/edit/'. url(3) .'/add">Добавить</a>';
+		
+		if(isset(d()->admin['bottombuttons'])) {
+		$bottombuttons=d()->admin['bottombuttons'];
+
+		foreach($bottombuttons as $bottombutton) {
+			d()->list_addbutton.=' <a class="admin_button" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
+		}
+	}
+		
+		
 	} else {
 		if(url(5) == '') {
 			if(url(4)=='index') {
@@ -64,11 +77,10 @@ function admin_list()
 	print '<!-- '.$query.' -->';
 	//Определение дополнительных кнопок
 	
-	print '<!-- '.$query.' -->';
-	
+	 
 
 	$addbuttons = array();
-	d()->load_and_parse_ini_file('app/fields/'.url(3).'.ini');
+	
 	if(isset(d()->admin['addbuttons'])) {
 		$addbuttons=d()->admin['addbuttons'];
 	}
@@ -102,6 +114,10 @@ function admin_edit()
 	}
 	if(isset($line['type']) && $line['type']!='') {
 		$tableortype = to_p($line['type']);
+	}
+	
+	if(isset($_GET['type']) && $_GET['type']!='') {
+		$tableortype = to_p($_GET['type']);
 	}
 	$fields=d()->admin_get_fields($tableortype);
 	//список элементов, для которых переопределелили скрытые параметры

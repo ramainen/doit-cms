@@ -462,8 +462,8 @@ foreach($tmparr as $key=>$subval)
 				$currentGroup=substr($row,1,-1);
 				continue;
 			}
-			$delimeterPos=strpos($row,'=');
-			if($delimeterPos===false) {
+			if(preg_match('/^[a-zA-Z0-9_\.]+\s*\=/',$row)!=1) {
+				$delimeterPos=strpos($row,'=');
 				//Если тип строки - неименованный массив, разделённый пробелами
 				$subject=$currentGroup;
 				$tmparr = explode(' ',str_replace("\t",' ',$row));
