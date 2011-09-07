@@ -463,7 +463,7 @@ foreach($tmparr as $key=>$subval)
 				continue;
 			}
 			if(preg_match('/^[a-zA-Z0-9_\.]+\s*\=/',$row)!=1) {
-				$delimeterPos=strpos($row,'=');
+				
 				//Если тип строки - неименованный массив, разделённый пробелами
 				$subject=$currentGroup;
 				$tmparr = explode(' ',str_replace("\t",' ',$row));
@@ -513,6 +513,7 @@ foreach($tmparr as $key=>$subval)
 				$value=array($arrayKeys[$currentGroup]=>$value2);
 				$arrayKeys[$currentGroup]++; //Генерация номера элемента массива, массив нельзя перемешивать с обычными данными
 			} else {
+				$delimeterPos=strpos($row,'=');
 				if (substr($row,0,1)=='$') { //Если опция начинается на "$", то её значение - выражение на PHP (например, дата или md5-хеш).
 					$subject= rtrim(substr($row,1,$delimeterPos-1));
 					if ($currentGroup!='') {
