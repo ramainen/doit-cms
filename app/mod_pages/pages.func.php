@@ -11,10 +11,17 @@ function pages_show()
 	if (d()->page->is_empty) {
 		print "Страница не существует";
 		print d()->add(array('texts','url'=>url(1)));
-		d()->stop_next_chains();
-		
+	} else {
+		d()->route_to('/clients//edit');
+		// print d()->pages_show_tpl();
 	}
 
+}
+
+
+function pages_two_columns()
+{
+	print "Два столбца";
 }
 // возвращает двухуровневый массив страниц для меню
 function pages_list()

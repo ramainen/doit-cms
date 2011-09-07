@@ -68,6 +68,7 @@ class doitClass
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
 	private $call_chain=array(); //Цепь вызовов
+	private $call_chain_start=array(); //Текущая функция, корень цепочки
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
 	private $call_chain_level=0; //текущий уровень, стек для комманд
 	private $compiled_fragments=array(); //Кеш шаблонов
@@ -247,6 +248,7 @@ class doitClass
 			$this->call_chain_level++; //поднимаем уровень текущего стека очереди
 			//Сохраняем текущую цепочку команд
 			$this->call_chain[$this->call_chain_level] = $_newnames;
+			$this->call_chain_start[$this->call_chain_level]=$_currentname;
 			$this->call_chain_current_link[$this->call_chain_level]=$i;
 			//Тут вызываются предопределённые и пользовательские функции
 			ob_start();
@@ -347,6 +349,28 @@ class doitClass
 	public function insert_next_chain($chainname)
 	{
 		//$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]+1] = $chainname;
+	}
+/* ================================================================================= */	
+	//Устанавливает правила для дальнейшего анализа	цепочки
+	function route_to($routename='')
+	{
+		if($routename=='') {
+			return;
+		}
+		$parent_root = $this->call_chain_start[$this->call_chain_level];
+		
+		$addition_array=array();
+		foreach($this->datapool['urls'] as $rule) {
+			if (($rule[0]==$routename) && ($rule[1]==$parent_root)) {
+				unset($rule[1]);
+				unset($rule[0]);
+				$addition_array = $rule;
+				foreach($addition_array as $element) {
+					array_push ($this->call_chain[$this->call_chain_level],$element);
+				}
+				break;
+			}
+		}
 	}
 /* ================================================================================= */
 	//Проверяет URL и анализирует текущий массив правил, при наличии подходящего, возвращает массив всевдонимов (цепочку)
