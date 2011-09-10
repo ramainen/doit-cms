@@ -293,6 +293,14 @@ class ar
 		return $this;
 	}
 	
+	public function find_by($by,$what)
+	{
+	
+		$this->options['queryready']=false;
+		$this->options['condition'] = " `".mysql_real_escape_string($by)."` = '".mysql_real_escape_string($what)."' ";
+		return $this;
+	}
+	
 	function __call($name,$arguments)
 	{
 		if(substr($name,0,8)=='find_by_') {
