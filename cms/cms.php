@@ -54,9 +54,9 @@ function d($object='')
 	return doitClass::$instance->$object;
 }
 // Запуск валидатора и обработка действий
-function action($action_name)
+function action()
 {
-	return d()->action($action_name);
+	return call_user_func_array(array(d(),'action'), func_get_args());
 }
 class doitClass
 {
@@ -219,8 +219,9 @@ foreach($tmparr as $key=>$subval)
 
 /* ================================================================================= */	
   //Проверяет параметры в соотвествии с правилами, в случае ошибки возвращает false
-	public function validate_action($validator_name,$params)
+	public function validate_action($validator_name,$params,$additional_funcs)
 	{
+		unset($additional_funcs[0]);
 		$rules=$this->datapool['validator'][$validator_name];
 		if(!isset($this->datapool['notice'])) {
 			$this->datapool['notice']=array();
@@ -235,14 +236,43 @@ foreach($tmparr as $key=>$subval)
 				$this->datapool['notice'][] = $value['confirmation']['message'];
 				$is_ok=false;
 			}
-		}	
+			if(isset($value['unique'])) {
+				if(isset($value['unique']['table'])) {
+					$table=$value['unique']['table'];
+					$model=ucfirst(d()->to_o($table));
+				}
+				if(isset($value['unique']['model'])) {
+					$model =ucfirst($value['unique']['model']);
+					$table = d()->to_p(strtolower($value['unique']['model']));
+				}
+				
+			 	
+ 				if (! d()->$model->find_by($key,$params[$key])->is_empty){
+
+					$this->datapool['notice'][] = $value['unique']['message'];
+					$is_ok=false;
+				}
+			}
+		}
+		foreach($additional_funcs as $func) {
+			$this->call($func,array($params));
+		}
+		if (count($this->datapool['notice'])!=0){
+			$is_ok=false;
+		}
+		
 		return $is_ok;
 	}
+/* ================================================================================= */	
+	public function add_notice($text)
+	{
+		$this->datapool['notice'][] = $text;
+	}	
 /* ================================================================================= */	
 	public function action($action_name)
 	{
 		//Обработка actions. Ничего не выводится.
-		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']]))) {
+		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']], func_get_args()))) {
 			return $this->call($_POST['_action'],array($_POST[$_POST['_element']]));
 		}
 	}
