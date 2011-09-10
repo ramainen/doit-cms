@@ -1,8 +1,9 @@
 <?php
-	$start_time = microtime(true);
+	
 	error_reporting(E_ALL + E_NOTICE);
 	
 	include_once ('config.php');
+	$start_time = microtime(true);
 	include_once ('cms/cms.php');
 	
 	$status = explode('  ', mysql_stat());
@@ -11,7 +12,7 @@
 	
 	header('Content-type: text/html; Charset=UTF-8');
 
-	print doit()->main(); 
+	print d()->main(); 
 
 	
 	$exec_time = microtime(true) - $start_time;

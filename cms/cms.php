@@ -72,11 +72,88 @@ class doitClass
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
 	private $call_chain_level=0; //текущий уровень, стек для комманд
 	private $compiled_fragments=array(); //Кеш шаблонов
+	private $template_patterns=array(); //Теги шаблонизатора
+	private $template_replacements=array(); //Значения тегов шаблонизатора
 	public static $instance;
 /* ================================================================================= */	
 	function __construct()
 	{
 		self::$instance = $this;
+		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
+		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
+if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
+foreach($tmparr as $key=>$subval)
+	if(is_string($subval)) print $subval;else {
+		$this->datapool["override"]="";
+		if(is_object($subval)){
+			 $this->datapool[\'$2\']=$subval; 
+			 $this->datapool[\'this\']=$subval; 
+			 $this->datapool[\'override\']=$subval->override; 
+		}else{  foreach($subval as $subkey=>$subvalue) { 
+		$this->datapool[\'$2\'][$subkey]=$subvalue;
+		$this->datapool[\'this\'][$subkey]=$subvalue;
+		}   }
+		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>';
+
+		
+		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
+		// TODO: 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
+		//	возможно, убрать эту конструкцию	
+		
+		$this->template_patterns[]='/<foreach\s+(.*?)>/';
+		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
+if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
+foreach($tmparr as $key=>$subval)
+	if(is_string($subval)) print $subval;else {
+		$this->datapool["override"]="";
+		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
+		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>';
+	
+		 
+		$this->template_patterns[]='/<type\s+([a-zA-Z0-9_-]+)>/';
+		$this->template_replacements[]='<'.'?php if($this->type=="$1"){ ?'.'>';
+		$this->template_patterns[]='/<\/foreach>/' ;
+		$this->template_replacements[]='<'.'?php } } ?'.'>';
+		$this->template_patterns[]='/<\/type>/';
+		$this->template_replacements[]='<'.'?php } ?'.'>';
+		//			{{/form}}
+		$this->template_patterns[]='/\{{\/([a-zA-Z0-9_]+)\}}/';
+		$this->template_replacements[]='</$1>';//Синтаксический сахар
+		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\}}/';
+		$this->template_replacements[]='<'.'?php print $this->call("$1"); ?'.'>';
+		//			{{helper param}}
+		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+([a-zA-Z0-9_]+)\}}/';
+		$this->template_replacements[]= '<'.'?php print $this->call("$1", array(d()->$2));  ?'.'>';
+		//{{helper 'parame','param2'=>'any'}}
+		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
+		$this->template_replacements[]='<'.'?php print $this->call("$1",array(array($2))); ?'.'>';
+		
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php print  $this->$1; ?'.'>';
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\'];
+		}else{ print  $this->$1->$2; } ?'.'>';
+		
+		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php if(is_array($this->this)) {  print  $this->this[\'$1\'];
+		}else{ print  $this->this->$1; } ?'.'>';
+		
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php print  $this->$2($this->$1); ?'.'>';
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$3($this->$1[\'$2\']);
+		}else{ print  $this->$3($this->$1->$2); } ?'.'>';
+		
+		
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3; ?'.'>';
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3->$4; ?'.'>';
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3->$4->$5; ?'.'>';
+		
+		
+		
 		$_tmpurl=$_SERVER['REQUEST_URI'];
 		$_wherequestionsign = strpos($_tmpurl,'?');
 		if($_wherequestionsign !== false) {
@@ -376,9 +453,11 @@ class doitClass
 	//Проверяет URL и анализирует текущий массив правил, при наличии подходящего, возвращает массив всевдонимов (цепочку)
 	function get_function_alias($name)
 	{
+		
 		static $url_list_size = 0;
 		static $cache_ansver=array();
 		static $rules_list=array();
+		static $mached_list=false;
 		static $booleanvalues=array(); //true или false в звсисимости от того, подходит регулрное выражение или нет
 		$_matches=array();
 		$matched=array('','',$name);
@@ -388,6 +467,17 @@ class doitClass
 		if(isset($cache_ansver[$name])) {
 			return $cache_ansver[$name];
 		}
+		if($mached_list===false) {
+			$mached_list = array();
+			foreach($ruleslist as $rule) {
+				$mached_list[$rule[1]] = true;
+			}
+		}
+		
+		if(!isset($mached_list[$name])) {
+			return array($name);
+		}
+		
 		//1. получаем из кеша массив правил для данной функции. Если кеша нет, то создаём его
 		 
 		/*
@@ -415,63 +505,9 @@ class doitClass
 /* ================================================================================= */
 	function shablonize($_str)
 	{
-		//TODO: сделать два массива
-		$_str=preg_replace('/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/','<'.'?php $tmparr= $this->$1;
-if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
-foreach($tmparr as $key=>$subval)
-	if(is_string($subval)) print $subval;else {
-		$this->datapool["override"]="";
-		if(is_object($subval)){
-			 $this->datapool[\'$2\']=$subval; 
-			 $this->datapool[\'this\']=$subval; 
-			 $this->datapool[\'override\']=$subval->override; 
-		}else{  foreach($subval as $subkey=>$subvalue) { 
-		$this->datapool[\'$2\'][$subkey]=$subvalue;
-		$this->datapool[\'this\'][$subkey]=$subvalue;
-		}   }
-		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
-		
-		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
-		/* TODO: 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
-			возможно, убрать эту конструкцию	*/
-		$_str=preg_replace('/<foreach\s+(.*?)>/','<'.'?php $tmparr= $this->$1;
-if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
-foreach($tmparr as $key=>$subval)
-	if(is_string($subval)) print $subval;else {
-		$this->datapool["override"]="";
-		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
-		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>',$_str);
-	
-		//DEPRECATED type
-		$_str=preg_replace('/<type\s+([a-zA-Z0-9_-]+)>/','<'.'?php if($this->type=="$1"){ ?'.'>',$_str);
-		$_str=str_replace('</foreach>' ,'<'.'?php } } ?'.'>',$_str);
-		$_str=str_replace('</type>','<'.'?php } ?'.'>',$_str);	
-		//			{{/form}}
-		$_str=preg_replace('/\{{\/([a-zA-Z0-9_]+)\}}/','</$1>',$_str);//Синтаксический сахар
-		$_str=preg_replace('/\{{([#a-zA-Z0-9_]+)\}}/','<'.'?php print $this->call("$1"); ?'.'>',$_str);
-		//			{{helper param}}
-		$_str=preg_replace('/\{{([#a-zA-Z0-9_]+)\s+([a-zA-Z0-9_]+)\}}/', '<'.'?php print $this->call("$1", array(d()->$2));  ?'.'>',$_str);
-		//{{helper 'parame','param2'=>'any'}}
-		$_str=preg_replace('/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/', '<'.'?php print $this->call("$1",array(array($2))); ?'.'>',$_str);
-		
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1; ?'.'>',$_str);
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\'];
-		}else{ print  $this->$1->$2; } ?'.'>',$_str);
-		
-		$_str=preg_replace('/\{\.([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->this)) {  print  $this->this[\'$1\'];
-		}else{ print  $this->this->$1; } ?'.'>',$_str);
-		
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$2($this->$1); ?'.'>',$_str);
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/','<'.'?php if(is_array($this->$1)) {  print  $this->$3($this->$1[\'$2\']);
-		}else{ print  $this->$3($this->$1->$2); } ?'.'>',$_str);
-		
-		/* FIXME:Бяка*/
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2->$3; ?'.'>',$_str);
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2->$3->$4; ?'.'>',$_str);
-		$_str=preg_replace('/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/','<'.'?php print  $this->$1->$2->$3->$4->$5; ?'.'>',$_str);
-		/* /FIXME:Бяка*/
-		return  $_str;
+		return  preg_replace($this->template_patterns,$this->template_replacements,$_str);	
 	}
+	
 /* ============================================================================== */
 	//получение данных из .ini файла
 	function load_and_parse_ini_file($filename){
@@ -480,7 +516,7 @@ foreach($tmparr as $key=>$subval)
 		$currentGroup='';
 		$arrayKeys=array();
 		foreach($ini as $row) {
-			$row=trim($row);
+			$row=rtrim($row);
 			if($row=='' || substr($row,0,1)==';') continue; //Пустые строки игнорируются
 			if (substr($row,0,1)=='[') { //Начало новой группы [group]
 				$currentGroup=substr($row,1,-1);

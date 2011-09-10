@@ -13,7 +13,7 @@ function pages_show()
 		print d()->add(array('texts','url'=>url(1)));
 	} else {
 		d()->route_to('/clients//edit');
-		// print d()->pages_show_tpl();
+		print d()->pages_show_tpl();
 	}
 
 }
