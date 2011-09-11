@@ -248,10 +248,7 @@ foreach($tmparr as $key=>$subval)
 					$model =ucfirst($value['unique']['model']);
 					$table = d()->to_p(strtolower($value['unique']['model']));
 				}
-				
-			 	
  				if (! d()->$model->find_by($key,$params[$key])->is_empty){
-
 					$this->datapool['notice'][] = $value['unique']['message'];
 					$is_ok=false;
 				}
@@ -265,12 +262,24 @@ foreach($tmparr as $key=>$subval)
 				$rules['function']=array($rules['function']);
 			}
 			foreach($rules['function'] as $func) {
-				$this->call($func,array($params));
+				$rez = $this->call($func,array($params));
+				if($rez===false){
+					if (count($this->datapool['notice'])!=0){
+						$is_ok=false;
+						return $is_ok;
+					}	
+				}
 			}
 		}
 
 		foreach($additional_funcs as $func) {
-			$this->call($func,array($params));
+			$rez = $this->call($func,array($params));
+			if($rez===false){
+				if (count($this->datapool['notice'])!=0){
+					$is_ok=false;
+					return $is_ok;
+				}	
+			}
 		}		
 		foreach($additional_funcs as $func) {
 			$this->call($func,array($params));
