@@ -219,15 +219,18 @@ foreach($tmparr as $key=>$subval)
 
 /* ================================================================================= */	
   //Проверяет параметры в соотвествии с правилами, в случае ошибки возвращает false
-	public function validate_action($validator_name,$params,$additional_funcs)
+	public function validate_action($validator_name,$params,$additional_funcs=array())
 	{
 		unset($additional_funcs[0]);
 		$rules=$this->datapool['validator'][$validator_name];
-		if(!isset($this->datapool['notice'])) {
+//		if(!isset($this->datapool['notice'])) {
 			$this->datapool['notice']=array();
-		}
+//		}
 		$is_ok=true;
 		foreach($rules as $key=>$value) {
+			if($key=='function') {
+				continue;	
+			}
 			if(isset($value['required']) && (!isset ($params[$key]) || trim($params[$key])=='')) {
 				$this->datapool['notice'][] = $value['required']['message'];
 				$is_ok=false;
@@ -253,7 +256,22 @@ foreach($tmparr as $key=>$subval)
 					$is_ok=false;
 				}
 			}
+			
 		}
+		
+	 
+		if(isset($rules['function'])) {
+			if(!is_array($rules['function'])) {
+				$rules['function']=array($rules['function']);
+			}
+			foreach($rules['function'] as $func) {
+				$this->call($func,array($params));
+			}
+		}
+
+		foreach($additional_funcs as $func) {
+			$this->call($func,array($params));
+		}		
 		foreach($additional_funcs as $func) {
 			$this->call($func,array($params));
 		}
