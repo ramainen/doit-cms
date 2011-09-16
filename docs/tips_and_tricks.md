@@ -23,5 +23,9 @@ before и after
 Обычное и с предложением зарегистрироваться	(stop next chain)
 	
 	
+Подкат
+------
 
+{text|after_cat}
+{text|before_cat}
 
