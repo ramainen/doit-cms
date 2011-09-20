@@ -203,6 +203,17 @@ function admin_save_data($params)
 }
 
 
+function admin_delete()
+{
+	print action('admin_delete_element');
+	print d()->admin_delete_tpl(); 
+}
+function admin_delete_element($params)
+{
+	$result=mysql_query("delete from `".e(url(3))."`  where id='".e(url(4))."'");
+	return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
+}
+
 //Функция возвращает массив возможных полей
 function admin_get_fields($tableortype='')
 {
@@ -216,7 +227,7 @@ function admin_get_fields($tableortype='')
 	foreach ($rows as $key=>$value) {
 		$data[]=array('name'=>$value[1],'type'=>$value[0],'title'=>$value[2]);
 	}
-	return $data;
+    return $data;
 }
 
 //Открытие шаблона либо вывод формы авторизации
