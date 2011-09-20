@@ -13,6 +13,19 @@ function edit($params){
 	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 }
 
+function delete($params){
+	if(!is_array($params)) {
+		$params=array($params);	
+	}
+		
+	if(!isset($_SESSION['admin'])) {
+		return ""; //Проверка на права администратора
+	}
+		
+
+	print '<a href="/admin/delete/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
+}
+
 function add($params){
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
