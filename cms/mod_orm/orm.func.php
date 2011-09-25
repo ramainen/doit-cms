@@ -220,11 +220,37 @@ class ar
 		return $new;
 	}
 	
+	public function __toString()
+	{
+		return "";
+	}
 	
 	function __construct($options=array())
 	{
+		//Создание реестра с данными по каждой таблице: имя, поля.
+		/*
+		//Реестр отключён - слишком много времени на запросы
+		//TODO: кеширование содержимого таблиц + миграции
+		if(!isset(d()->datapool['tables_information'])) {
+			d()->datapool['tables_information']=array();
+			
+			$result=mysql_query('SHOW TABLES');
+			while($line=mysql_fetch_array($result)){
+				$result_fields=mysql_query('SHOW COLUMNS FROM '.$line[0]);
+				d()->datapool['tables_information'][$line[0]]=array();
+				while ($line_fields=mysql_fetch_array($result_fields)) {
+					d()->datapool['tables_information'][$line[0]][]=$line_fields[0];
+				}
+			}
+				//d()->datapool['tables_information'][]$line[0]
+			//SHOW COLUMNS FROM
 		
+		}
+		*/
 		//Опции по умолчанию и переменные
+		
+		
+		
 		$this->options=$options;
 		
 		if(isset($this->options['data'])) {
@@ -564,7 +590,8 @@ class ar
 			//ищем поле item_id в таблице users
 			$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
 			if ($_res===false) {
-				return '';
+				$this->find_by('url',$name);
+				return $this;
 			}
 			while (($_tmpline = mysql_fetch_array($_res) )&& ($foundedfield == false)) {
 				if ($_tmpline[0]== $this->options['plural_to_one']."_id") {

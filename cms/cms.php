@@ -63,7 +63,7 @@ class doitClass
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	private $replacements=array(); //Массив подмены шабонов при вызове
 	private $caller=""; //Хранит название последней вызванной пользовательской функции. //DEPRECATED
-	private $datapool=array(); //Большой массив всех опций, данных и переменных
+	public $datapool=array(); //Большой массив всех опций, данных и переменных
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
@@ -215,6 +215,7 @@ foreach($tmparr as $key=>$subval)
 				}
 			}
 		}
+
 	}
 
 /* ================================================================================= */	
