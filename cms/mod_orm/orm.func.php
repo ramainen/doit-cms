@@ -222,7 +222,7 @@ class ar
 	
 	public function __toString()
 	{
-		return "";
+		return $this->show();
 	}
 	
 	function __construct($options=array())
@@ -441,6 +441,16 @@ class ar
 		foreach($this->_data as $_key => $_value) {
 			return $this->_data;
 		}
+	}
+	//Плучение шаблона и вывод
+	public function show()
+	{
+		d()->this = $this;
+		
+		if($this->template!=''){
+			return d()->call($this->template);
+		}
+		return '';
 	}
 	
 	//Рекурсивная функция для быстрой сортировки дерева
