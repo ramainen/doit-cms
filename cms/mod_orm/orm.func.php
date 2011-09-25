@@ -442,12 +442,11 @@ class ar
 			return $this->_data;
 		}
 	}
-	//Плучение шаблона и вывод
+	//Получение шаблона и вывод
 	public function show()
 	{
-		d()->this = $this;
-		
 		if($this->template!=''){
+			d()->this = $this;
 			return d()->call($this->template);
 		}
 		return '';
@@ -599,11 +598,14 @@ class ar
 			$foundedfield = false;
 			//ищем поле item_id в таблице users
 			$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
+			if ($_res===false && $name=='template') {
+				return ''; //template - ключевое частозапрашиваемое поле
+			}
 			if ($_res===false) {
 				$this->find_by('url',$name);
 				return $this;
 			}
-			while (($_tmpline = mysql_fetch_array($_res) )&& ($foundedfield == false)) {
+			while (($_tmpline = mysql_fetch_array($_res)) && ($foundedfield == false)) {
 				if ($_tmpline[0]== $this->options['plural_to_one']."_id") {
 					$foundedfield = true;
 				}
