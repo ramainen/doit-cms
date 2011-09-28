@@ -180,16 +180,17 @@ function admin_save_data($params)
 		$elemid=mysql_insert_id();
 	}
 	//FIXME: костыль
-	if($params['url']=='') {
-		$params['url']='page'.$elemid;
-	}
+	if(isset($params['url'])){
+		if($params['url']=='') {
+			$params['url']='page'.$elemid;
+		}
 
-	if(substr($params['url'],0,1)=='/') {
-		$params['url']=substr($params['url'],1);
+		if(substr($params['url'],0,1)=='/') {
+			$params['url']=substr($params['url'],1);
+		}
+		
+		$params['url']=str_replace('/','_',$params['url']);
 	}
-	
-	$params['url']=str_replace('/','_',$params['url']);
-	
     $result_str="update `".url(3)."` set  ";
     $i=0;
 	
@@ -201,10 +202,11 @@ function admin_save_data($params)
 		} else {
 			$result_str.=" `" . $key . "`= '".mysql_real_escape_string($value)."' ";
 		}
-        if ($i<count($params)) $result_str.=', ';
+        if ($i<count($params)) $result_str.=' , ';
     }
-    
+		
     $result_str.=" where `id`=".mysql_real_escape_string($elemid);
+	
     mysql_query($result_str);
 	if($_POST['admin_command_redirect_close']=='yes') {
 		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
