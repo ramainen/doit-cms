@@ -8,8 +8,8 @@ function pages_show()
 	 
 	  
 	if (d()->page->is_empty) {
-		print "Страница не существует";
-		print d()->add(array('texts','url'=>url(1)));
+		// Тут может быть внешний шаблон 404 страницы.
+		d()->main_tpl="Страница не существует".d()->add(array('texts','url'=>url(1)));
 	} else {
 	//	d()->route_to('/clients//edit');
 		print d()->pages_show_tpl();

@@ -262,5 +262,6 @@ function admin()
 	if(!isset($_SESSION['admin'])) {
 		return d()->admin_authorisation();
 	}
-	return d()->admin_tpl();
+	d()->content = d()->content();
+	return d()->render('admin_tpl');
 }
