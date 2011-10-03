@@ -3,8 +3,7 @@
 	Модуль для работы с текстовыми страницами, для вывода меню, выода подстраниц
 */
 function pages_show()
-{
-	
+{	
 	d()->page = d('Text')->find_by_url(url(1));
 	 
 	  
@@ -12,7 +11,7 @@ function pages_show()
 		print "Страница не существует";
 		print d()->add(array('texts','url'=>url(1)));
 	} else {
-		d()->route_to('/clients//edit');
+	//	d()->route_to('/clients//edit');
 		print d()->pages_show_tpl();
 	}
 

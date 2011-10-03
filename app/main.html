@@ -7,7 +7,7 @@
 
 </head>
 <body> 
-
+<h1>***{page.title}***</h1>
 <div class="content" style="border:1px dotted gray;padding:6px;">
 {{add 'texts'}}
 <foreach pages_tree() as menu>
@@ -23,7 +23,9 @@
 
 <hr>
 Демонстрация ORM:
+ 
 <br>
+
 <b>{Text.about.title}</b>:
 {Text.about.text}
  
@@ -31,6 +33,7 @@
 Демонстрация ORM->show():
 <br>
 {Text.about}
+ 
  <br>
  
  Ниже расположен вывод самого первого элемента в таблице texts
@@ -38,7 +41,7 @@
  {Text}
 <hr>
 
-{{content}}
+{{{content}}}
 <br>
  
 </div>

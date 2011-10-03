@@ -18,7 +18,7 @@ Copyright (C) 2011 Fahrutdinov Damir (aka Ainu)
 *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 *      MA 02110-1301, USA.
 
-0.13 ->tree в orm
+0.14 Вывод orm объектов (ar->show(), print User). Поиск по Url (Page->about->title). Удаление. Базовый полиморфизм.
 0.11 ActiveRecord и foreach для объектов 07.08.2011 
 0.7 переписано на ООП.
 0.0 Нулевая версия DoIt CMS
@@ -109,6 +109,8 @@ foreach($tmparr as $key=>$subval)
 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>';
 	
+		$this->template_patterns[]='/\{{{([#a-zA-Z0-9_]+)\}}}/';
+		$this->template_replacements[]='<'.'?php print $this->render("$1"); ?'.'>'; 
 		 
 		$this->template_patterns[]='/<type\s+([a-zA-Z0-9_-]+)>/';
 		$this->template_replacements[]='<'.'?php if($this->type=="$1"){ ?'.'>';
@@ -563,9 +565,29 @@ foreach($tmparr as $key=>$subval)
 /* ================================================================================= */
 	function shablonize($_str)
 	{
+	
 		return  preg_replace($this->template_patterns,$this->template_replacements,$_str);	
 	}
-	
+/* ================================================================================= */
+/*
+Выводит значение переменной, либо каждое из значений массива, либо запускает одноимённую функцию.
+*/
+	function render($str)
+	{
+		if (isset($this->datapool[$str])) {
+			if (is_array($this->datapool[$str])) {
+				$result='';
+				foreach($this->datapool[$str] as $value) {
+					$result .= $value;
+				}
+				return $result;
+			} else {
+				return $this->datapool[$str];
+			}
+		} else {
+			return  $this->call($str);
+		}
+	}	
 /* ============================================================================== */
 	//получение данных из .ini файла
 	function load_and_parse_ini_file($filename){
