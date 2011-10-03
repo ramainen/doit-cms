@@ -464,6 +464,40 @@ class ar
 		}
 		return $_tmparr;
 	}
+	
+	public function columns($tablename='')
+	{
+		if($tablename=='') {
+			$tablename = $this->options['table'];
+		}
+		if(!isset (d()->datapool['columns_registry'])) {
+			d()->datapool['columns_registry']=array();
+		}
+		if(isset (d()->datapool['columns_registry'][$tablename])) {
+			return d()->datapool['columns_registry'][$tablename];
+		}
+		if ($tablename=='template') {
+			//template - ключевое частозапрашиваемое поле, такой таблицы не существует
+			d()->datapool['columns_registry'][$tablename]=false;
+			return d()->datapool['columns_registry'][$tablename];
+		}
+		
+		$_res=mysql_query('SHOW COLUMNS FROM `'.$tablename.'`');
+		
+		if ($_res===false) {
+			//Если таблицы не существует
+			d()->datapool['columns_registry'][$tablename]=false;
+			return d()->datapool['columns_registry'][$tablename];
+		}
+		
+		$result_array=array();
+		while ($_tmpline = mysql_fetch_array($_res)) {
+			$result_array[] = $_tmpline[0];
+		}
+		d()->datapool['columns_registry'][$tablename] = $result_array;
+		return d()->datapool['columns_registry'][$tablename];
+	}
+	
 	public function tree()
 	{
 		//Если ленивый запрос ещё не произошёл - самое время.
@@ -586,35 +620,45 @@ class ar
 				return $this->_data[0][$name];
 			}
 			
+			
 			//Item.user          //Получение связанного объекта
 			if (isset($this->_data[0][$name.'_id'])) {
 				//TODO: вот тут возвращать User
 				$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
 				return $_tmp->find($this->_data[0][$name.'_id']);
+			} else {
+				//Проверка на факт наличия столбца $name.'_id'
+				$columns = $this->columns;
+				if($columns !== false) {
+					$columns = array_flip($columns);
+					if (isset($columns[$name.'_id'])) {
+						$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
+						return $_tmp->find($this->_data[0][$name.'_id']);
+					}
+				}	
 			}
 			
 			//Item.users
 			//1. Поиск альтернативных подходищх столбцов
 			$foundedfield = false;
 			//ищем поле item_id в таблице users
-			$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
-			if ($_res===false && $name=='template') {
+			
+			//$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
+			$columns = $this->columns($name);
+			if ($columns===false && $name=='template') {
 				return ''; //template - ключевое частозапрашиваемое поле
 			}
-			if ($_res===false) {
+			
+			if ($columns===false) {
 				$this->find_by('url',$name);
 				return $this;
 			}
-			while (($_tmpline = mysql_fetch_array($_res)) && ($foundedfield == false)) {
-				if ($_tmpline[0]== $this->options['plural_to_one']."_id") {
-					$foundedfield = true;
+			foreach($columns as $key=>$value) {
+				if ($value == $this->options['plural_to_one']."_id") {
+					$_tmpael  = new ar(array('table'=>$name));
+					return $_tmpael->where($this->options['plural_to_one']."_id = ?",$this->_data[0]['id'])->all;
 				}
-			}
-			if ($foundedfield==true) {
-				//TODDO: вот тут возвращать правльное имя
-				$_tmpael  = new ar(array('table'=>$name));
-				return $_tmpael->where($this->options['plural_to_one']."_id = ?",$this->_data[0]['id'])->all;
-			}
+			}			
 			return '';
 		} else {
 			//Item.ramambaharum_mambu_rum
