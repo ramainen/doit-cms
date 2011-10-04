@@ -33,9 +33,14 @@
 Демонстрация ORM->show():
 <br>
 {Text.about}
- 
- <br>
- 
+<br>
+<hr>
+Демонстрация ORM->sql():
+<br>
+<foreach User->sql("select * from users where id < 4 order by `login`")->all as oneuser>
+	&bull; {oneuser.login}<br>
+</foreach>
+<br> 
  Ниже расположен вывод самого первого элемента в таблице texts
  <br>
  {Text}

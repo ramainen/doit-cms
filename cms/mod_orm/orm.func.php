@@ -344,6 +344,17 @@ class ar
 		return $this;
 	}
 	
+	public function sql($query)
+	{
+		$this->options['queryready']=true;
+		$this->_data = array();	 
+		$_result=mysql_query($query);
+		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
+			$this->_data[]=$line;
+		}
+		return $this;
+	}
+	
 	public function where()
 	{
 		//TODO: переписать на preg_replace с исполльзованием последнего параметра
@@ -369,6 +380,7 @@ class ar
 		if($this->options['condition']!='') {
 			$_query_string .= 'where '.$this->options['condition'];
 		}
+		
 		$_result=mysql_query($_query_string);
 		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
 			$this->_data[]=$line;
