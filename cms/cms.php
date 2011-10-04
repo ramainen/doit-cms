@@ -156,7 +156,7 @@ foreach($tmparr as $key=>$subval)
 		
 		
 		
-		$_tmpurl=$_SERVER['REQUEST_URI'];
+		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
 		$_wherequestionsign = strpos($_tmpurl,'?');
 		if($_wherequestionsign !== false) {
 			$_tmpurl = substr($_tmpurl, 0, $_wherequestionsign); //Обрезка GET-параметров
