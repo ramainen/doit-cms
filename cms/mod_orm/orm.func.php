@@ -253,8 +253,9 @@ class ar
 		
 		$this->options=$options;
 		
-		if(isset($this->options['data'])) {
-		 
+		
+		
+		if(isset($this->options['data'])) { 
 			$this->options['queryready']=true;
 			$this->_data=$this->options['data'];
 		} else {
@@ -270,6 +271,10 @@ class ar
 		//в подавляющем случае это автоинкрементное числовое поле id
 		if(!isset($this->options['idfield'])) {
 			$this->options['idfield']='id';
+		}
+		
+		if(!isset($this->options['namefield'])) {
+			$this->options['namefield']='url';
 		}
 		
 		if(!isset($this->options['condition'])) {
@@ -308,13 +313,15 @@ class ar
 	//Функция find указывает на то, что необходимо искать нечто по полю ID
 	public function find($id)
 	{
-		$this->options['id']=(int)$id;
-		$this->options['queryready']=false;
-		$id = 1 * $id;
-		$this->options['condition'] = ' id = '.(int)$id.' ';
-		//Удалить со временем
-		if(isset($_SESSION['admin'])) {
-			$this->edit_button = '<a href="/admin/edit/'.$this->options['table'].'/'.$this->options['id'].'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+		if (is_numeric($id)) {
+			$this->options['id']=(int)$id;
+			$this->options['queryready']=false;
+			$id = 1 * $id;
+			$this->options['condition'] = ' id = '.(int)$id.' ';
+		} else {
+			$this->options['queryready']=false;
+			$name =  mysql_real_escape_string($id);
+			$this->options['condition'] = " `".$this->options['namefield']."` = '". $name ."' ";
 		}
 		return $this;
 	}
