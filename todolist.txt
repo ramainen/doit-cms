@@ -618,3 +618,4 @@ d(5)->years->ago
 сделать параметры шаблонов deprecated
 
 
+{block controller=news.lastnews}.
