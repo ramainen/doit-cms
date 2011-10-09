@@ -517,7 +517,7 @@ class ar
 		return d()->datapool['columns_registry'][$tablename];
 	}
 	
-	public function tree()
+	public function tree($root=false)
 	{
 		//Если ленивый запрос ещё не произошёл - самое время.
 		if ($this->options['queryready']==false) {
@@ -530,12 +530,23 @@ class ar
 		}		
 		$_tmparr=array();
 		$_class_name = get_class($this);
-		foreach($this->_data as $element){
-			//Если данный элемент корневой, родительских элементов нет, поле element_id пустое
- 			if(!isset($element[$this->options['plural_to_one']."_id"])) {
- 				//В опцию tree записываем рекурсивно полученные дочерние элементы
- 				$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
- 			}
+		if($root === false) {
+			foreach($this->_data as $element){
+				//Если данный элемент корневой, родительских элементов нет, поле element_id пустое
+				if(!isset($element[$this->options['plural_to_one']."_id"])) {
+					//В опцию tree записываем рекурсивно полученные дочерние элементы
+					$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+				}
+			}
+		} else {
+		 
+			foreach($this->_data as $element){
+				//Если данный элемент корневой, родительских элементов нет, поле element_id == root
+				if(isset($element[$this->options['plural_to_one']."_id"]) && ($element[$this->options['plural_to_one']."_id"]== $root )) {
+					//В опцию tree записываем рекурсивно полученные дочерние элементы
+					$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+				}
+			}
 		}
 		return $_tmparr;
 	}
