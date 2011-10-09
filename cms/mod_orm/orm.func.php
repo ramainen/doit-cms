@@ -530,6 +530,9 @@ class ar
 		}		
 		$_tmparr=array();
 		$_class_name = get_class($this);
+		if (is_object($root)) {
+			$root=$root->id;
+		}
 		if($root === false) {
 			foreach($this->_data as $element){
 				//Если данный элемент корневой, родительских элементов нет, поле element_id пустое
