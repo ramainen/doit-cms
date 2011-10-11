@@ -81,6 +81,7 @@ class doitClass
 		self::$instance = $this;
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
+		if(is_object($tmparr)) {$tmparr = $tmparr->all;}
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
@@ -102,6 +103,7 @@ foreach($tmparr as $key=>$subval)
 		
 		$this->template_patterns[]='/<foreach\s+(.*?)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
+		if(is_object($tmparr)) {$tmparr = $tmparr->all;}
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {

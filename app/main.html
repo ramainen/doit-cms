@@ -1,4 +1,4 @@
-<!doctype html>
+1`<!doctype html>
 <html>
 <head>
 <title>Заголовок страницы</title>
@@ -37,7 +37,7 @@
 <hr>
 Демонстрация ORM->sql():
 <br>
-<foreach User->sql("select * from users where id < 4 order by `login`")->all as oneuser>
+<foreach User->sql("select * from users where id < 4 order by `login`") as oneuser>
 	&bull; {oneuser.login}<br>
 </foreach>
 <br> 
