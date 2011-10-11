@@ -41,6 +41,14 @@
 	&bull; {oneuser.login}<br>
 </foreach>
 <br> 
+
+<hr>
+Демонстрация ->users
+<br>
+<foreach d()->User->find_by_login('ugandu')->texts as one_text>
+	&bull; {one_text.title}<br>
+</foreach>
+<br>
  Ниже расположен вывод самого первого элемента в таблице texts
  <br>
  {Text}
