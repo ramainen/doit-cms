@@ -116,6 +116,13 @@ foreach($tmparr as $key=>$subval)
 		 
 		$this->template_patterns[]='/<type\s+([a-zA-Z0-9_-]+)>/';
 		$this->template_replacements[]='<'.'?php if($this->type=="$1"){ ?'.'>';
+		
+		$this->template_patterns[]='/<content\s+for\s+([a-zA-Z0-9_-]+)>/';
+		$this->template_replacements[]='<'.'?php ob_start(); $this->datapool["current_ob_content_for"] = "$1"; ?'.'>';
+		
+		$this->template_patterns[]='/<\/content>/';
+		$this->template_replacements[]='<'.'?php  $this->datapool[$this->datapool["current_ob_content_for"]] = ob_get_contents(); ob_end_clean(); ?'.'>';
+		
 		$this->template_patterns[]='/<\/foreach>/' ;
 		$this->template_replacements[]='<'.'?php } } ?'.'>';
 		$this->template_patterns[]='/<\/type>/';

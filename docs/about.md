@@ -507,7 +507,12 @@ TODO:
 	{{form}}
 	[validator.mail.title]
 	d()->action('form#send');
+	
+	<content for banner>
+	&bull; Баннер &bull;
 
+	</content>
+	
 Два типа действий - с перезагрузкой и действием
 
 
