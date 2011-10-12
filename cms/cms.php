@@ -63,7 +63,7 @@ class doitClass
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	private $replacements=array(); //Массив подмены шабонов при вызове
 	private $caller=""; //Хранит название последней вызванной пользовательской функции. //DEPRECATED
-	public $datapool=array(); //Большой массив всех опций, данных и переменных
+	public $datapool=array(); //Большой массив всех опций, данных и переменных, для быстрого прямого доступа доступен публично
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
@@ -79,6 +79,8 @@ class doitClass
 	function __construct()
 	{
 		self::$instance = $this;
+		
+		// <foreach users as user>
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
 		if(is_object($tmparr)) {$tmparr = $tmparr->all;}
@@ -101,6 +103,7 @@ foreach($tmparr as $key=>$subval)
 		// TODO: 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
 		//	возможно, убрать эту конструкцию	
 		
+		// <foreach users>
 		$this->template_patterns[]='/<foreach\s+(.*?)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
 		if(is_object($tmparr)) {$tmparr = $tmparr->all;}
@@ -111,64 +114,94 @@ foreach($tmparr as $key=>$subval)
 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
 		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>';
 	
+		// {{{content}}}
 		$this->template_patterns[]='/\{{{([#a-zA-Z0-9_]+)\}}}/';
 		$this->template_replacements[]='<'.'?php print $this->render("$1"); ?'.'>'; 
-		 
+		
+		// <type admin>
 		$this->template_patterns[]='/<type\s+([a-zA-Z0-9_-]+)>/';
 		$this->template_replacements[]='<'.'?php if($this->type=="$1"){ ?'.'>';
-		
+				
+		// <content for header>
 		$this->template_patterns[]='/<content\s+for\s+([a-zA-Z0-9_-]+)>/';
 		$this->template_replacements[]='<'.'?php ob_start(); $this->datapool["current_ob_content_for"] = "$1"; ?'.'>';
 		
+		// </content>
 		$this->template_patterns[]='/<\/content>/';
 		$this->template_replacements[]='<'.'?php  $this->datapool[$this->datapool["current_ob_content_for"]] = ob_get_contents(); ob_end_clean(); ?'.'>';
 		
+		// </foreach>
 		$this->template_patterns[]='/<\/foreach>/' ;
 		$this->template_replacements[]='<'.'?php } } ?'.'>';
+		
+		// </type>
 		$this->template_patterns[]='/<\/type>/';
 		$this->template_replacements[]='<'.'?php } ?'.'>';
-		//			{{/form}}
+		
+		// {{/form}}
 		$this->template_patterns[]='/\{{\/([a-zA-Z0-9_]+)\}}/';
 		$this->template_replacements[]='</$1>';//Синтаксический сахар
+		
+		// {{content}}
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\}}/';
 		$this->template_replacements[]='<'.'?php print $this->call("$1"); ?'.'>';
-		//			{{helper param}}
+		
+		// {{helper param}}
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+([a-zA-Z0-9_]+)\}}/';
 		$this->template_replacements[]= '<'.'?php print $this->call("$1", array(d()->$2));  ?'.'>';
-		//{{helper 'parame','param2'=>'any'}}
+		
+		// {{helper 'parame','param2'=>'any'}}
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
 		$this->template_replacements[]='<'.'?php print $this->call("$1",array(array($2))); ?'.'>';
 		
+		// {title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $this->$1; ?'.'>';
+		
+		// {:title}
+		$this->template_patterns[]='/\{:([a-zA-Z0-9\._]+)\}/';
+		$this->template_replacements[]='<'.'?php } ?'.'>';
+		
+		// {title:}
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+):\}/';
+		$this->template_replacements[]='<'.'?php if($this->$1) { ?'.'>';
+		
+		// {page.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\'];
-		}else{ print  $this->$1->$2; } ?'.'>';
+		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\']; }else{ print  $this->$1->$2; } ?'.'>';
 		
+		// {page.title:}
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+):\}/';
+		$this->template_replacements[]='<'.'?php if((is_array($this->$1) && $this->$1[\'$2\']) || $this->$1->$2) { ?'.'>';
+		
+		// {.title}
 		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($this->this)) {  print  $this->this[\'$1\'];
-		}else{ print  $this->this->$1; } ?'.'>';
+		$this->template_replacements[]='<'.'?php if(is_array($this->this)) {  print  $this->this[\'$1\']; }else{ print  $this->this->$1; } ?'.'>';
 		
+		// {title|h}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $this->$2($this->$1); ?'.'>';
+		
+		// {page.title|h}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$3($this->$1[\'$2\']);
-		}else{ print  $this->$3($this->$1->$2); } ?'.'>';
+		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$3($this->$1[\'$2\']); }else{ print  $this->$3($this->$1->$2); } ?'.'>';
 		
-		
+		// {page.user.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3; ?'.'>';
+		
+		// {page.parent.user.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3->$4; ?'.'>';
+		
+		// {page.parent.user.avatar.url}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3->$4->$5; ?'.'>';
-		
-		
-		
+
 		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
-		$_wherequestionsign = strpos($_tmpurl,'?');
-		if($_wherequestionsign !== false) {
-			$_tmpurl = substr($_tmpurl, 0, $_wherequestionsign); //Обрезка GET-параметров
+		$_where_question_sign = strpos($_tmpurl,'?');
+		if($_where_question_sign !== false) {
+			$_tmpurl = substr($_tmpurl, 0, $_where_question_sign); //Обрезка GET-параметров
 		}
 		if(substr($_tmpurl,-1)=='/') {
 			$_tmpurl=$_tmpurl."index";
