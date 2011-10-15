@@ -21,7 +21,7 @@ $.fn.menu = function(options){
 	
 	$(this)
 	 
-	.click(function(){
+	.mouseenter(function(){
 		if (m.menuOpen == false) { m.showMenu(); }
 		else { m.kill(); };
 		return false;

@@ -1,0 +1,157 @@
+body
+{
+	font-size:11px;
+	background:#E7F1FC;
+	font-family:Tahoma;
+}
+input
+{
+	font-family:Tahoma;
+}
+.admin_header
+{
+	font-size:14px;
+}
+.admin_input
+{
+	padding:3px;
+}
+.admin_h2
+{
+	font-size:16px;
+}
+.admin_table
+{
+	border-collapse:collapse;
+}
+.admin_table td
+{
+/*background:#D4E6FA;*/
+	padding:4px;
+/*border:1px solid #769CB7;*/
+}
+.admin_icons {margin: 0; padding: 0; display:none;}
+.admin_icons  li {margin: 2px; position: relative; padding: 0px; cursor: pointer; list-style: none;}
+.admin_icons span.ui-icon {margin: 0 1px; float:left;}
+.menulinks{
+	position:absolute;
+	left:0px;
+	top:0px;
+
+	z-index:2;
+	width:150px;
+
+}
+.menulinks a
+{
+width:150px;
+}
+
+.fg-menu-container a:hover{
+background:#F6F6F6;
+background:#0073EA;
+color:white;
+}
+
+.hidden { position:absolute; top:0; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+.fg-button { clear:left;  text-decoration:none !important; cursor:pointer; position: relative; text-align: center; zoom: 1; }
+.fg-button .ui-icon { position: absolute; top: 50%; margin-top: -8px; left: 50%; margin-left: -8px; }
+
+button.fg-button { width:auto; overflow:visible; } /* removes extra button width in IE */
+
+
+.fg-button-icon-left .ui-icon { right: auto; left: .2em; margin-left: 0; }
+.fg-button-icon-right .ui-icon { left: auto; right: .1em; margin-left: 0;   }
+.fg-button-icon-solo { display:block; width:8px; text-indent: -9999px; }	 
+.topline
+{
+border-top:1px solid red;
+}
+.fg-button.ui-state-loading .ui-icon { background: url(spinner_bar.gif) no-repeat 0 0; }
+
+.top_header
+{
+height:50px;
+background:#17395C;
+border-bottom:1px solid white;
+}
+
+.admin_header
+
+{
+position:relative;
+top:-7px;
+
+}
+.admin_header .ui-button
+{
+background:none;
+border:none;
+
+color:#ffffff;
+text-shadow: black 0px 1px 1px; 
+
+
+font-weight:normal;
+font-size:13px;
+}
+.whitelogo
+{
+font-size:30px;
+font-family:Georgia;
+line-height:50px;
+color:#E4F1FF;
+text-shadow: black 0px 1px 0px;
+}
+.ui-button:hover
+{
+/*
+		box-shadow: 0 0 7px #1A3457;  
+-webkit-box-shadow: 0 0 7px #1A3457;  
+-moz-box-shadow: 0 0 7px #1A3457;  
+
+*/
+}
+.admin_header .ui-button:hover
+
+{
+
+color:white;
+
+background:#333333;
+background:#0F4160;
+}
+.admin_header .ui-state-active
+{ 	color:white; }
+.admin_header .ui-state-active a  { color:white; text-decoration: none; }
+.admin-list b
+{
+display:block;
+line-height:18px;
+padding:2px;
+text-decoration:none;
+border-bottom:1px solid #808080;
+}
+.admin_block
+{
+
+display:block;
+}
+.admin-list .admin-link	
+{
+
+line-height:18px;
+padding:2px;
+text-decoration:none;
+border:none;
+}
+.admin-list
+{
+box-shadow: 0 0 2px #1A3457;
+-webkit-box-shadow: 0 0 2px #1A3457;
+-moz-box-shadow: 0 0 2px #1A3457;
+border:1px solid gray;
+padding:4px;
+background:#F8F8F8;
+}
