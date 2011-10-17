@@ -42,7 +42,7 @@
 
 В данном примере используются независимые функции, но возможна и реализация при помощи класса, например, `users_controller` с методами `create`, `update`, `check` и так далее.
 
-В любом из *.init.ini файлов (возможно, validators.init.ini) необходимо создать раздел для нового действия.
+В любом из *.init.ini файлов (возможно, validators.init.ini) необходимо создать несколько правил для нового действия.
 
 Вот пример реализации:
 
@@ -50,6 +50,7 @@
 	required.message=Вы не ввели имя пользователя
 	unique.message=Такой логин уже занят
 	unique.table=users
+	
 	[validator.users_create_new.password]
 	required.message=Вы не ввели пароль
 	confirmation.message=Неправильное подтверждение пароля

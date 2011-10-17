@@ -1,61 +1,29 @@
 <!doctype html>
 <html>
 <head>
-<title>Заголовок страницы</title>
+<title>{page.title}</title>
 <meta charset="UTF-8">
     <script type="text/javascript" src="/cms/external/jquery-1.6.4.min.js"></script>
-
 </head>
 <body> 
-<h1>***{page.title}***</h1>
 <div class="content" style="border:1px dotted gray;padding:6px;">
-{{add 'texts'}}
+{{add 'pages'}}
+<ul>
 <foreach pages_tree() as menu>
-	<li>	<a href="/{menu.url}">{menu.title}</a> {{add 'texts', 'text_id'=>d()->this->id}} {{edit d()->this}} {{delete d()->this}}
-		<ul >
+	<li>
+		<a href="/{menu.url}">{menu.title}</a> {{add 'texts', 'text_id'=>d()->this->id}} {{edit this}} {{delete this}}
+		<ul>
 		<foreach menu->tree as submenu>
-			<li><a href="/{submenu.url}">{submenu.title}</a> {{edit d()->this}} {{delete d()->this}}</li>
-		</foreach>	
+			<li><a href="/{submenu.url}">{submenu.title}</a> {{edit this}} {{delete this}}</li>
+		</foreach>
 		</ul>
 	</li>
 </foreach>
-
-
-<hr>
-Демонстрация ORM:
- 
-<br>
-
-<b>{Text.about.title}</b>:
-{Text.about.text}
- 
-<hr>
-Демонстрация ORM->show():
-<br>
-{Text.about}
-<br>
-<hr>
-Демонстрация ORM->sql():
-<br>
-<foreach User->sql("select * from users where id < 4 order by `login`") as oneuser>
-	&bull; {oneuser.login}<br>
-</foreach>
-<br> 
-
-<hr>
-Демонстрация ->users
-<br>
-<foreach d()->User->find_by_login('ugandu')->texts as one_text>
-	&bull; {one_text.title}<br>
-</foreach>
-<br>
- Ниже расположен вывод самого первого элемента в таблице texts
- <br>
- {Text}
-<hr>
-
+</ul>
+   
 {{{content}}}
-<br>
+
+
  
 </div>
 </body>
