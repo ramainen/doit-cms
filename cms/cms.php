@@ -60,10 +60,12 @@ function action()
 }
 class doitClass
 {
+	public $datapool=array(); //Большой массив всех опций, данных и переменных, для быстрого прямого доступа доступен публично
+	public static $instance;
+	
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	private $replacements=array(); //Массив подмены шабонов при вызове
 	private $caller=""; //Хранит название последней вызванной пользовательской функции. //DEPRECATED
-	public $datapool=array(); //Большой массив всех опций, данных и переменных, для быстрого прямого доступа доступен публично
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
@@ -74,11 +76,12 @@ class doitClass
 	private $compiled_fragments=array(); //Кеш шаблонов
 	private $template_patterns=array(); //Теги шаблонизатора
 	private $template_replacements=array(); //Значения тегов шаблонизатора
-	public static $instance;
+	
 /* ================================================================================= */	
 	function __construct()
 	{
 		self::$instance = $this;
+		// Массив для шаблонизатора
 		
 		// <foreach users as user>
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
@@ -198,17 +201,24 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3->$4->$5; ?'.'>';
 
+		//Обрезка GET-параметров
 		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
 		$_where_question_sign = strpos($_tmpurl,'?');
 		if($_where_question_sign !== false) {
-			$_tmpurl = substr($_tmpurl, 0, $_where_question_sign); //Обрезка GET-параметров
+			$_tmpurl = substr($_tmpurl, 0, $_where_question_sign); 
 		}
+		
+		//приписывание в конце слешей index
 		if(substr($_tmpurl,-1)=='/') {
 			$_tmpurl=$_tmpurl."index";
 		}
 		$this->url_string = $_tmpurl;
+		
+		//сохранение фрагментов url
 		$this->url_parts=explode('/',substr($_tmpurl,1));
-		foreach(array('cms','app') as $dirname) { //сначала инициализируются файлы из ./cms, затем из ./app
+		
+		//сначала инициализируются файлы из ./cms, затем из ./app
+		foreach(array('cms','app') as $dirname) { 
 			$_handle = opendir($dirname);
 			$_files=array();
 			$_files['/']=array();
@@ -248,6 +258,7 @@ foreach($tmparr as $key=>$subval)
 					if (substr($_file,-4)=='.ini') {
 						//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
 						if (substr($_file,-8)=='init.ini') {
+							//Если имя файла оканчивается на .init.ini, инициализировать его сразу
 							$this->load_and_parse_ini_file ($dirname.$_dir.$_file);
 						} else {
 							//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
@@ -301,7 +312,7 @@ foreach($tmparr as $key=>$subval)
 			
 		}
 		
-	 
+		//дополнительные функции с правилами для валидаторов
 		if(isset($rules['function'])) {
 			if(!is_array($rules['function'])) {
 				$rules['function']=array($rules['function']);
@@ -325,7 +336,7 @@ foreach($tmparr as $key=>$subval)
 					return $is_ok;
 				}	
 			}
-		}		
+		}
 		foreach($additional_funcs as $func) {
 			$this->call($func,array($params));
 		}
@@ -531,6 +542,7 @@ foreach($tmparr as $key=>$subval)
 	}
 /* ================================================================================= */	
 	//Устанавливает правила для дальнейшего анализа	цепочки
+	//DEPRECATED: слишком сложно
 	function route_to($routename='')
 	{
 		if($routename=='') {
@@ -607,7 +619,6 @@ foreach($tmparr as $key=>$subval)
 /* ================================================================================= */
 	function shablonize($_str)
 	{
-	
 		return  preg_replace($this->template_patterns,$this->template_replacements,$_str);	
 	}
 /* ================================================================================= */
