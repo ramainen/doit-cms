@@ -662,7 +662,7 @@ class ar
 	}
 	print d()->User->find(1)->title;
 	*/
-	public function get()
+	public function get($name)
 	{
 	
 		if ($this->options['queryready']==false) {
