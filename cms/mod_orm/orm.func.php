@@ -634,15 +634,37 @@ class ar
 			return $this;
 		}
 		//Item.expand_to_page
+		//DEPRECATED: в дальнейшем будет удалена
 		if (substr($name,0,10)=='expand_to_') {
 			return $this->expand_to(substr($name,10));
 		}
 		
 		//Item.expand_all_to_pages
+		//DEPRECATED: в дальнейшем будет удалена
 		if (substr($name,0,14)=='expand_all_to_') {
 			return $this->expand_all_to(substr($name,14));
 		}
  		
+		return $this->get($name);
+		
+			
+	}
+	
+	/* 
+	Получение переменных напрямую
+	В случае необходимости получения в модели непосредственно значения переменной
+	Например
+	class User extends ar {
+		function title()
+		{
+			return '<b>'.$this->get('title').'</b>';
+		}
+	}
+	print d()->User->find(1)->title;
+	*/
+	public function get()
+	{
+	
 		if ($this->options['queryready']==false) {
 				$this->fetch_data_now();
 		}
@@ -672,14 +694,14 @@ class ar
 			}
 			
 			//Item.users
-			//1. Поиск альтернативных подходищх столбцов
+			//1. Поиск альтернативных подходящих столбцов
 			$foundedfield = false;
 			//ищем поле item_id в таблице users
 			
 			//$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
 			$columns = $this->columns($name);
 			if ($columns===false && $name=='template') {
-				return ''; //template - ключевое частозапрашиваемое поле
+				return ''; //template - ключевое частозапрашиваемое поле, данный оборот ускорит работу
 			}
 			
 			if ($columns===false) {
@@ -696,7 +718,7 @@ class ar
 		} else {
 			//Item.ramambaharum_mambu_rum
 			return '';
-		}	
+		}
 	}
 }
 
