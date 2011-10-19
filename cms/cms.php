@@ -64,6 +64,7 @@ class doitClass
 	public static $instance;
 	
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
+	private $php_files_list=array(); //Массив найденных php файлов.
 	private $replacements=array(); //Массив подмены шабонов при вызове
 	private $caller=""; //Хранит название последней вызванной пользовательской функции. //DEPRECATED
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
@@ -238,7 +239,11 @@ foreach($tmparr as $key=>$subval)
 			
 			foreach($_files as $_dir => $_subfiles) {
 				foreach($_subfiles as $_file) {
-					$_fragmentname = str_replace('.','_',substr($_file,0,-5));
+					if (substr($_file,-5)=='.html') {
+						$_fragmentname = str_replace('.','_',substr($_file,0,-5));
+					} else {
+						$_fragmentname = str_replace('.','_',substr($_file,0,-4));
+					}
 					if (substr($_fragmentname,0,1)=='_') {
 						$_fragmentname=substr($_dir,5,-1).$_fragmentname;
 					}
@@ -249,11 +254,17 @@ foreach($tmparr as $key=>$subval)
 						$this->fragmentslist[$_fragmentname] = $dirname.$_dir.$_file;
 						continue;
 					}
+					
 					//Контроллер - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
 					if (substr($_file,-9)=='.func.php') {
 						include ($dirname.$_dir.$_file);
 						continue;
 					}
+					if (substr($_file,-4)=='.php') {
+						$this->php_files_list[$_fragmentname] = $dirname.$_dir.$_file;
+						continue;
+					}
+					
 					//Обработка факта наличия .ini-файлов
 					if (substr($_file,-4)=='.ini') {
 						//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
@@ -432,7 +443,7 @@ foreach($tmparr as $key=>$subval)
 			}
 			$name=$_newname;
 			//Проверка на существование фрагмента fragment_tpl, если самой функции нет
-			if ( (!function_exists($name)) && (isset( $this->fragmentslist[$name."_tpl"]))) {
+			if ( (!function_exists($name)) && (!isset($this->php_files_list[$name])) && (isset( $this->fragmentslist[$name."_tpl"]))) {
 				$name = $name."_tpl";
 			}
 			$this->call_chain_level++; //поднимаем уровень текущего стека очереди
@@ -441,9 +452,13 @@ foreach($tmparr as $key=>$subval)
 			$this->call_chain_start[$this->call_chain_level]=$_currentname;
 			$this->call_chain_current_link[$this->call_chain_level]=$i;
 			//Тут вызываются предопределённые и пользовательские функции
+			
+			
 			ob_start();
 			if (function_exists($name)) {
 				$_executionResult=call_user_func_array($name, $arguments);
+			} elseif(isset($this->php_files_list[$name])){
+				include ($this->php_files_list[$name]);
 			} else {
 				$_fsym=strpos($name,'#');
 				if($_fsym !== false) {
