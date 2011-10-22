@@ -613,6 +613,14 @@ class ar
 		return $this;
 	}
 	
+	function to_array()
+	{
+		if ($this->options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		return $this->_data;
+	}
+	
 	function __set($name,$value)
 	{	
 		//Если создаём, то проверяем, был ли уже new
