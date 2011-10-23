@@ -584,47 +584,43 @@ foreach($tmparr as $key=>$subval)
 	//Проверяет URL и анализирует текущий массив правил, при наличии подходящего, возвращает массив всевдонимов (цепочку)
 	function get_function_alias($name)
 	{
+		static $cache_ansver=array(); //Кеш ответов для быстрого реагирования
+		static $rules_array = false; //Ассоциативный массив правил для того, чтобы не опрашивать
 		
-		static $url_list_size = 0;
-		static $cache_ansver=array();
-		static $rules_list=array();
-		static $mached_list=false;
-		static $booleanvalues=array(); //true или false в звсисимости от того, подходит регулрное выражение или нет
-		$_matches=array();
-		$matched=array('','',$name);
-		$longest_url='';
-		$ruleslist = $this->datapool['urls'];
-		$_requri = $this->url_string;
-		if(isset($cache_ansver[$name])) {
-			return $cache_ansver[$name];
-		}
-		if($mached_list===false) {
-			$mached_list = array();
-			foreach($ruleslist as $rule) {
-				$mached_list[$rule[1]] = true;
+		if($rules_array===false) {	
+			$tmp_mached_list = array();
+			foreach($this->datapool['urls'] as $rule) {
+				if(!isset($tmp_mached_list[$rule[1]])) {
+					$tmp_mached_list[$rule[1]] = array();
+				}
+				$tmp_mached_list[$rule[1]][] = $rule;
 			}
+			$rules_array = $tmp_mached_list;
 		}
 		
-		if(!isset($mached_list[$name])) {
+		if(!isset($rules_array[$name])) {
 			return array($name);
 		}
 		
-		//1. получаем из кеша массив правил для данной функции. Если кеша нет, то создаём его
-		 
-		/*
-		ТУТ:
-		lazy проверка всех spreg_replace и установка булевых выражений (совпадение/несовпадение)
-		*/
+		if(isset($cache_ansver[$name])) {
+			return $cache_ansver[$name];
+		}
+
+		$matched=array('','',$name);
+		$longest_url='';
+		$longest_url_length=0;
+		$_requri = $this->url_string;
+
 		//Определение наиболее подхходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
-		foreach($ruleslist as $key=>$value) {
-			//TODO: документация к следующей конструкции
-			//if(( $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && ($_requri==$value[0] || substr($_requri,0,strlen($value[0]))==$value[0] || preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)))) {
-			if (is_numeric($key) && $value[1] == $name && (strlen($value[0]) > strlen($longest_url)) && (
-					$_requri==$value[0]
-					|| substr($_requri,0,strlen($value[0]))==$value[0] 
-					|| preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
+		foreach($rules_array[$name] as $key=>$value) {
+			$strlen_value_0 = strlen($value[0]);
+			if (is_numeric($key) && ($strlen_value_0 > $longest_url_length) && (
+				$_requri==$value[0]
+				|| substr($_requri,0,$strlen_value_0)==$value[0] 
+				|| preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
 					$matched=$value;
 					$longest_url=$value[0];
+					$longest_url_length = strlen($longest_url);
 				}
 		}
 		unset($matched[0]);
