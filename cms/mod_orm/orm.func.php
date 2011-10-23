@@ -623,9 +623,30 @@ class ar
 	
 	function __set($name,$value)
 	{	
+		if(method_exists($this,'set_'.$name)) {
+			$this->{'set_'.$name}($value);
+		} else {
+			$this->set_variable_value($name,$value);
+		}
+	}
+
+	function set($name,$value)
+	{
 		//Если создаём, то проверяем, был ли уже new
 		//Если редактируем, то предварительно надо сбрасывать в ноль
 		$this->_future_data[$name]=$value;
+	}
+	
+	function set_variable_value($name,$value)
+	{
+		//Если создаём, то проверяем, был ли уже new
+		//Если редактируем, то предварительно надо сбрасывать в ноль
+		$this->_future_data[$name]=$value;
+	}
+	
+	function get_variable_value($name)
+	{
+		return $this->get($name);
 	}
 	
 	function __get($name)
