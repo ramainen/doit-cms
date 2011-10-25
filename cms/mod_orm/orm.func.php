@@ -281,6 +281,10 @@ class ar
 			$this->options['condition']='';
 		}
 		
+		if(!isset($this->options['limit'])) {
+			$this->options['limit']='';
+		}
+		
 		if(!isset($this->options['new'])) {
 			$this->options['new']=false;
 		}
@@ -370,17 +374,35 @@ class ar
 		$this->options['condition'] = $_condition.' ';
 		return $this;
 	}
+
 	
+	public function limit($limit)
+	{
+		$this->options['queryready']=false;
+		$limitstr=strtolower(trim($limit));
+		if($limitstr!='') {
+			if(substr($limitstr,0,5)=='limit') {
+				$this->options['limit'] = ' '.mysql_real_escape_string($limit).' ';
+			} else {
+				$this->options['limit'] = ' LIMIT '.mysql_real_escape_string($limit).' ';
+			}
+		} else {
+			$this->options['limit'] = '';
+		}
+		return $this;
+	}	
 	
 	function fetch_data_now()
 	{
 		$this->options['queryready']=true;
 		$this->_data = array();
-		$_query_string='select * from `'.$this->options['table'].'` ';
+		$_query_string='SELECT * FROM `'.$this->options['table'].'` ';
 		if($this->options['condition']!='') {
-			$_query_string .= 'where '.$this->options['condition'];
+			$_query_string .= 'WHERE '.$this->options['condition'];
 		}
-		
+		if($this->options['limit']!='') {
+			$_query_string .=  $this->options['limit'];
+		}
 		$_result=mysql_query($_query_string);
 		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
 			$this->_data[]=$line;
