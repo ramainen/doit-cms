@@ -65,8 +65,6 @@ class doitClass
 	
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	private $php_files_list=array(); //Массив найденных php файлов.
-	private $replacements=array(); //Массив подмены шабонов при вызове
-	private $caller=""; //Хранит название последней вызванной пользовательской функции. //DEPRECATED
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
@@ -531,7 +529,7 @@ foreach($tmparr as $key=>$subval)
 		}
 		//Проверка префиксов для модулей для модулей и расширений
 		//TODO: это слишком медленно
-		foreach ($this->prefixes as $_one_prefix) {
+		foreach ($this->datapool['prefixes'] as $_one_prefix) {
 			if(preg_match($_one_prefix[0], $name)) {
 				return $this->{$_one_prefix[1]}($name);
 			}
@@ -585,7 +583,7 @@ foreach($tmparr as $key=>$subval)
 	function get_function_alias($name)
 	{
 		static $cache_ansver=array(); //Кеш ответов для быстрого реагирования
-		static $rules_array = false; //Ассоциативный массив правил для того, чтобы не опрашивать
+		static $rules_array = false; //Ассоциативный массив правил для того, чтобы не опрашивать весь список
 		
 		if($rules_array===false) {	
 			$tmp_mached_list = array();
@@ -611,7 +609,7 @@ foreach($tmparr as $key=>$subval)
 		$longest_url_length=0;
 		$_requri = $this->url_string;
 
-		//Определение наиболее подхходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
+		//Определение наиболее подходящего правила в списке правил роутинга. Наиболее длинное из подходящих - приоритетнее.
 		foreach($rules_array[$name] as $key=>$value) {
 			$strlen_value_0 = strlen($value[0]);
 			if (is_numeric($key) && ($strlen_value_0 > $longest_url_length) && (
