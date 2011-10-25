@@ -1,6 +1,9 @@
 <?php
 //Помощники
-function edit($params){
+function edit($params=false){
+    if($params===false) {
+        $params=array(d()->this);
+    }
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
@@ -13,7 +16,11 @@ function edit($params){
 	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 }
 
-function delete($params){
+function delete($params=false){
+    if($params===false) {
+        $params=array(d()->this);
+    }
+    
 	if(!is_array($params)) {
 		$params=array($params);	
 	}

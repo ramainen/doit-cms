@@ -11,10 +11,10 @@
 <ul>
 <foreach pages_tree() as menu>
 	<li>
-		<a href="/{menu.url}">{menu.title}</a> {{add 'texts', 'text_id'=>d()->this->id}} {{edit this}} {{delete this}}
+		<a href="/{menu.url}">{menu.title}</a> {{add 'texts', 'text_id'=>d()->this->id}} {{edit}} {{delete}}
 		<ul>
 		<foreach menu->tree as submenu>
-			<li><a href="/{submenu.url}">{submenu.title}</a> {{edit this}} {{delete this}}</li>
+			<li><a href="/{submenu.url}">{submenu.title}</a> {{edit}}{{delete}}</li>
 		</foreach>
 		</ul>
 	</li>
