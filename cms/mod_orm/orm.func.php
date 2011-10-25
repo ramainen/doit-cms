@@ -284,6 +284,10 @@ class ar
 		if(!isset($this->options['limit'])) {
 			$this->options['limit']='';
 		}
+
+		if(!isset($this->options['order_by'])) {
+			$this->options['order_by']='';
+		}
 		
 		if(!isset($this->options['new'])) {
 			$this->options['new']=false;
@@ -391,6 +395,17 @@ class ar
 		}
 		return $this;
 	}	
+
+	public function order_by($order_by)
+	{
+		$this->options['queryready']=false;
+		if(trim($order_by)!='') {
+			$this->options['order_by'] = ' ORDER BY '.mysql_real_escape_string($order_by).' ';
+		} else {
+			$this->options['order_by'] = '';
+		}
+		return $this;
+	}
 	
 	function fetch_data_now()
 	{
@@ -400,9 +415,14 @@ class ar
 		if($this->options['condition']!='') {
 			$_query_string .= 'WHERE '.$this->options['condition'];
 		}
+		if($this->options['order_by']!='') {
+			$_query_string .=  $this->options['order_by'];
+		}
+		
 		if($this->options['limit']!='') {
 			$_query_string .=  $this->options['limit'];
 		}
+		
 		$_result=mysql_query($_query_string);
 		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
 			$this->_data[]=$line;
