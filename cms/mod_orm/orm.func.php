@@ -108,7 +108,7 @@ class ar
 {
 	public static $default_table='';
 	public $edit_button;
-	public $options;
+	public $_options;
 	public $_data;
 	private $_shift = 0;
 	private $_known_columns=array();
@@ -225,7 +225,7 @@ class ar
 		return $this->show();
 	}
 	
-	function __construct($options=array())
+	function __construct($_options=array())
 	{
 		//Создание реестра с данными по каждой таблице: имя, поля.
 		/*
@@ -251,68 +251,68 @@ class ar
 		
 		
 		
-		$this->options=$options;
+		$this->_options=$_options;
 		
 		
 		
-		if(isset($this->options['data'])) { 
-			$this->options['queryready']=true;
-			$this->_data=$this->options['data'];
+		if(isset($this->_options['data'])) { 
+			$this->_options['queryready']=true;
+			$this->_data=$this->_options['data'];
 		} else {
-			$this->options['queryready']=false;
+			$this->_options['queryready']=false;
 			$this->_data=array();	
 		}
 		
-	//	$this->options['queryready']=false;  //Сбрасывается при смене параметров запроса, при true запросы не выполняются
+	//	$this->_options['queryready']=false;  //Сбрасывается при смене параметров запроса, при true запросы не выполняются
 		
-		$this->options['onerow']=true;
+		$this->_options['onerow']=true;
 		
 		//поле, по которому получаем данные. Для текстовых страниц это URL, для товаров это id, для пользователей это username или login и так далее.
 		//в подавляющем случае это автоинкрементное числовое поле id
-		if(!isset($this->options['idfield'])) {
-			$this->options['idfield']='id';
+		if(!isset($this->_options['idfield'])) {
+			$this->_options['idfield']='id';
 		}
 		
-		if(!isset($this->options['namefield'])) {
-			$this->options['namefield']='url';
+		if(!isset($this->_options['namefield'])) {
+			$this->_options['namefield']='url';
 		}
 		
-		if(!isset($this->options['condition'])) {
-			$this->options['condition']='';
+		if(!isset($this->_options['condition'])) {
+			$this->_options['condition']='';
 		}
 		
-		if(!isset($this->options['limit'])) {
-			$this->options['limit']='';
+		if(!isset($this->_options['limit'])) {
+			$this->_options['limit']='';
 		}
 
-		if(!isset($this->options['order_by'])) {
-			$this->options['order_by']='';
+		if(!isset($this->_options['order_by'])) {
+			$this->_options['order_by']='';
 		}
 		
-		if(!isset($this->options['new'])) {
-			$this->options['new']=false;
+		if(!isset($this->_options['new'])) {
+			$this->_options['new']=false;
 		}
 		
-		if(!isset($this->options['tree'])) {
-			$this->options['tree']=false;
+		if(!isset($this->_options['tree'])) {
+			$this->_options['tree']=false;
 		}
 		
-		if(!isset($this->options['table'])) {
+		if(!isset($this->_options['table'])) {
 			if(self::$default_table!='') {
-				$this->options['table']=self::$default_table;
+				$this->_options['table']=self::$default_table;
 			} else {
-				$this->options['table']=self::one_to_plural(strtolower(get_class($this)));
+				$this->_options['table']=self::one_to_plural(strtolower(get_class($this)));
 			}
 		}
 		
-		if(!isset($this->options['plural_to_one'])) {
-			$this->options['plural_to_one']=self::plural_to_one($this->options['table']);
+		if(!isset($this->_options['plural_to_one'])) {
+			$this->_options['plural_to_one']=self::plural_to_one($this->_options['table']);
 		}
 	}
 	//альтернативная функция бстрого получения данных
 	public function getRow($id)
 	{
-		if ($_line = mysql_fetch_array(mysql_query("select * from `".$this->options['table']."` where `".$this->options['idfield']."`='". mysql_real_escape_string ($id)."' limit 1"))) {
+		if ($_line = mysql_fetch_array(mysql_query("select * from `".$this->_options['table']."` where `".$this->_options['idfield']."`='". mysql_real_escape_string ($id)."' limit 1"))) {
 			return $_line;
 		} else {
 			return false;
@@ -322,23 +322,22 @@ class ar
 	public function find($id)
 	{
 		if (is_numeric($id)) {
-			$this->options['id']=(int)$id;
-			$this->options['queryready']=false;
+			$this->_options['id']=(int)$id;
+			$this->_options['queryready']=false;
 			$id = 1 * $id;
-			$this->options['condition'] = ' id = '.(int)$id.' ';
+			$this->_options['condition'] = ' id = '.(int)$id.' ';
 		} else {
-			$this->options['queryready']=false;
+			$this->_options['queryready']=false;
 			$name =  mysql_real_escape_string($id);
-			$this->options['condition'] = " `".$this->options['namefield']."` = '". $name ."' ";
+			$this->_options['condition'] = " `".$this->_options['namefield']."` = '". $name ."' ";
 		}
 		return $this;
 	}
 	
 	public function find_by($by,$what)
 	{
-	
-		$this->options['queryready']=false;
-		$this->options['condition'] = " `".mysql_real_escape_string($by)."` = '".mysql_real_escape_string($what)."' ";
+		$this->_options['queryready']=false;
+		$this->_options['condition'] = " `".mysql_real_escape_string($by)."` = '".mysql_real_escape_string($what)."' ";
 		return $this;
 	}
 	
@@ -346,15 +345,15 @@ class ar
 	{
 		if(substr($name,0,8)=='find_by_') {
 			$by=substr($name,8);
-			$this->options['queryready']=false;
-			$this->options['condition'] = " `".$by."` = '".mysql_real_escape_string($arguments[0])."' ";
+			$this->_options['queryready']=false;
+			$this->_options['condition'] = " `".$by."` = '".mysql_real_escape_string($arguments[0])."' ";
 		}
 		return $this;
 	}
 	
 	public function sql($query)
 	{
-		$this->options['queryready']=true;
+		$this->_options['queryready']=true;
 		$this->_data = array();	 
 		$_result=mysql_query($query);
 		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
@@ -366,7 +365,7 @@ class ar
 	public function where()
 	{
 		//TODO: переписать на preg_replace с исполльзованием последнего параметра
-		$this->options['queryready']=false;
+		$this->_options['queryready']=false;
 		$args = func_get_args();
 		$_condition=$args[0];
 		$_conditions=explode('?',' '.$_condition.' ');
@@ -375,52 +374,52 @@ class ar
 			$_condition .= $_conditions[$i-1]. " '".mysql_real_escape_string($args[$i])."' "  ;
 		}
 		$_condition .= $_conditions[$i-1];
-		$this->options['condition'] = $_condition.' ';
+		$this->_options['condition'] = $_condition.' ';
 		return $this;
 	}
 
 	
 	public function limit($limit)
 	{
-		$this->options['queryready']=false;
+		$this->_options['queryready']=false;
 		$limitstr=strtolower(trim($limit));
 		if($limitstr!='') {
 			if(substr($limitstr,0,5)=='limit') {
-				$this->options['limit'] = ' '.mysql_real_escape_string($limit).' ';
+				$this->_options['limit'] = ' '.mysql_real_escape_string($limit).' ';
 			} else {
-				$this->options['limit'] = ' LIMIT '.mysql_real_escape_string($limit).' ';
+				$this->_options['limit'] = ' LIMIT '.mysql_real_escape_string($limit).' ';
 			}
 		} else {
-			$this->options['limit'] = '';
+			$this->_options['limit'] = '';
 		}
 		return $this;
 	}	
 
 	public function order_by($order_by)
 	{
-		$this->options['queryready']=false;
+		$this->_options['queryready']=false;
 		if(trim($order_by)!='') {
-			$this->options['order_by'] = ' ORDER BY '.mysql_real_escape_string($order_by).' ';
+			$this->_options['order_by'] = ' ORDER BY '.mysql_real_escape_string($order_by).' ';
 		} else {
-			$this->options['order_by'] = '';
+			$this->_options['order_by'] = '';
 		}
 		return $this;
 	}
 	
 	function fetch_data_now()
 	{
-		$this->options['queryready']=true;
+		$this->_options['queryready']=true;
 		$this->_data = array();
-		$_query_string='SELECT * FROM `'.$this->options['table'].'` ';
-		if($this->options['condition']!='') {
-			$_query_string .= 'WHERE '.$this->options['condition'];
+		$_query_string='SELECT * FROM `'.$this->_options['table'].'` ';
+		if($this->_options['condition']!='') {
+			$_query_string .= 'WHERE '.$this->_options['condition'];
 		}
-		if($this->options['order_by']!='') {
-			$_query_string .=  $this->options['order_by'];
+		if($this->_options['order_by']!='') {
+			$_query_string .=  $this->_options['order_by'];
 		}
 		
-		if($this->options['limit']!='') {
-			$_query_string .=  $this->options['limit'];
+		if($this->_options['limit']!='') {
+			$_query_string .=  $this->_options['limit'];
 		}
 		
 		$_result=mysql_query($_query_string);
@@ -433,19 +432,19 @@ class ar
 	//CRUD
 	public function delete()
 	{
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 		}
 			
 		if(isset($this->_data[0])){
-			$_query_string='delete from `'.$this->options['table'] . "` where `id` = '".$this->_data[0]['id']."'";
+			$_query_string='delete from `'.$this->_options['table'] . "` where `id` = '".$this->_data[0]['id']."'";
 			mysql_query($_query_string);
 		}
 		return $this;
 	}
 	public function save()  //CrUd - Create & Update
 	{
-		if($this->options['new']==true) {
+		if($this->_options['new']==true) {
 			//Тут идёт вставка
 			if(count($this->_future_data)>0) {
 				$fields=array();
@@ -456,11 +455,11 @@ class ar
 				}
 				$fields_string=implode (',',$fields);
 				$values_string=implode (',',$values);
-				$_query_string='insert into `'.$this->options['table'].'` ('.$fields_string.') values ('.$values_string.')';
+				$_query_string='insert into `'.$this->_options['table'].'` ('.$fields_string.') values ('.$values_string.')';
 				mysql_query($_query_string);
 			}
 		} else {
-			if ($this->options['queryready']==false) {
+			if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 			}
 			//Тут проверка на апдейт
@@ -470,7 +469,7 @@ class ar
 					$attributes[]=" `$key` = '".mysql_real_escape_string($value)."' ";
 				}
 				$attribute_string=implode (',',$attributes);
-				$_query_string='update `'.$this->options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
+				$_query_string='update `'.$this->_options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
 				mysql_query($_query_string);
 			}
 		}
@@ -478,14 +477,14 @@ class ar
 	}
 	public function one()
 	{
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
 		return $this;
 	}
 	public function all()
 	{
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
 
@@ -493,7 +492,7 @@ class ar
 		$_class_name = get_class($this);
 		foreach($this->_data as $element){
 			//TODO: Вот тут особенно важно возвращать правильное имя, хотя имеено тут всё верно
-			$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ) ));
+			$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ) ));
 		}
 		  
 		return $_tmparr;
@@ -519,8 +518,8 @@ class ar
 		$_tmparr=array();
 		$_class_name = get_class($this);
 		foreach($this->_data as $element){
- 			if(isset($element[$this->options['plural_to_one']."_id"]) && $element[$this->options['plural_to_one']."_id"] == $id) {
- 				$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+ 			if(isset($element[$this->_options['plural_to_one']."_id"]) && $element[$this->_options['plural_to_one']."_id"] == $id) {
+ 				$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
  			}
 		}
 		return $_tmparr;
@@ -529,7 +528,7 @@ class ar
 	public function columns($tablename='')
 	{
 		if($tablename=='') {
-			$tablename = $this->options['table'];
+			$tablename = $this->_options['table'];
 		}
 		if(!isset (d()->datapool['columns_registry'])) {
 			d()->datapool['columns_registry']=array();
@@ -562,13 +561,13 @@ class ar
 	public function tree($root=false)
 	{
 		//Если ленивый запрос ещё не произошёл - самое время.
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
 		
 		//Если при создании объекта заранее указали его дерево - возвращаем его
-		if ($this->options['tree']!==false) {
-			return $this->options['tree'];
+		if ($this->_options['tree']!==false) {
+			return $this->_options['tree'];
 		}		
 		$_tmparr=array();
 		$_class_name = get_class($this);
@@ -578,18 +577,18 @@ class ar
 		if($root === false) {
 			foreach($this->_data as $element){
 				//Если данный элемент корневой, родительских элементов нет, поле element_id пустое
-				if(!isset($element[$this->options['plural_to_one']."_id"])) {
+				if(!isset($element[$this->_options['plural_to_one']."_id"])) {
 					//В опцию tree записываем рекурсивно полученные дочерние элементы
-					$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+					$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
 				}
 			}
 		} else {
 		 
 			foreach($this->_data as $element){
 				//Если данный элемент корневой, родительских элементов нет, поле element_id == root
-				if(isset($element[$this->options['plural_to_one']."_id"]) && ($element[$this->options['plural_to_one']."_id"]== $root )) {
+				if(isset($element[$this->_options['plural_to_one']."_id"]) && ($element[$this->_options['plural_to_one']."_id"]== $root )) {
 					//В опцию tree записываем рекурсивно полученные дочерние элементы
-					$_tmparr[] = new  $_class_name (array('table'=>$this->options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+					$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
 				}
 			}
 		}
@@ -598,7 +597,7 @@ class ar
 	
 	public function is_empty()
 	{
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
 		if(isset($this->_data[0])) {
@@ -609,7 +608,7 @@ class ar
 	//Возвращает размер массива
 	public function size()
 	{
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
 		return count($this->_data);
@@ -617,7 +616,7 @@ class ar
 	
 	public function table()
 	{
-		return $this->options['table'];
+		return $this->_options['table'];
 	}
 	public function override()
 	{
@@ -625,7 +624,7 @@ class ar
 	}
 	public function expand()
 	{
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
 		if(isset($this->_data[0])) {
@@ -657,7 +656,7 @@ class ar
 	
 	function to_array()
 	{
-		if ($this->options['queryready']==false) {
+		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
 		return $this->_data;
@@ -700,7 +699,7 @@ class ar
 		}
 		//Item.new
 		if ($name=='new') { // Crud - create
-			$this->options['new']=true;
+			$this->_options['new']=true;
 			$this->_future_data = array();
 			return $this;
 		}
@@ -735,8 +734,8 @@ class ar
 	*/
 	public function get($name)
 	{
-	
-		if ($this->options['queryready']==false) {
+
+		if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 		}
 		
@@ -745,12 +744,11 @@ class ar
 			if (isset($this->_data[0][$name])) {
 				return $this->_data[0][$name];
 			}
-			
-			
+
+
 			//Item.user          //Получение связанного объекта
 			if (isset($this->_data[0][$name.'_id'])) {
-				//TODO: вот тут возвращать User
-				$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
+				$_tmp =  activerecord_factory_from_table(ar::one_to_plural($name));
 				return $_tmp->find($this->_data[0][$name.'_id']);
 			} else {
 				//Проверка на факт наличия столбца $name.'_id'
@@ -758,7 +756,7 @@ class ar
 				if($columns !== false) {
 					$columns = array_flip($columns);
 					if (isset($columns[$name.'_id'])) {
-						$_tmp = new ar(array('table'=>ar::one_to_plural($name)));
+						$_tmp = activerecord_factory_from_table(ar::one_to_plural($name));
 						return $_tmp->find($this->_data[0][$name.'_id']);
 					}
 				}	
@@ -768,21 +766,26 @@ class ar
 			//1. Поиск альтернативных подходящих столбцов
 			$foundedfield = false;
 			//ищем поле item_id в таблице users
-			
+
 			//$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
+
+            //Ищем таблицу с названием $name (например, users)
 			$columns = $this->columns($name);
+            
 			if ($columns===false && $name=='template') {
 				return ''; //template - ключевое частозапрашиваемое поле, данный оборот ускорит работу
 			}
 			
 			if ($columns===false) {
-				$this->find_by('url',$name);
-				return $this;
+                $_tmpael  = activerecord_factory_from_table($this->_options["table"]);
+                return $_tmpael->find_by('url',$name);
 			}
+        
 			foreach($columns as $key=>$value) {
-				if ($value == $this->options['plural_to_one']."_id") {
-					$_tmpael  = new ar(array('table'=>$name));
-					return $_tmpael->where($this->options['plural_to_one']."_id = ?",$this->_data[0]['id']);
+				if ($value == $this->_options['plural_to_one']."_id") {
+					$_tmpael  = activerecord_factory_from_table($name);
+
+					return $_tmpael->where($this->_options['plural_to_one']."_id = ?",$this->_data[0]['id']);
 				}
 			}			
 			return '';
@@ -801,7 +804,19 @@ function activerecord_factory($_modelname)
 	return new $_modelname ();
 	//return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
 }
+function activerecord_factory_from_table($_tablename)
+{
+	if(is_array($_tablename)) {
+		$_tablename=$_tablename[0];
+	}
+	
+	$_modelname=ar::plural_to_one(strtolower($_tablename));
+	$_first_letter=strtoupper(substr($_modelname,0,1));
+	$_modelname = $_first_letter.substr($_modelname,1);
 
+	return new $_modelname ();
+	//return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
+}
 // Автоматический создатель классов
 function __autoload($class_name) {
 	$fl=substr($class_name,0,1);
