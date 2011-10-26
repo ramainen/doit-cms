@@ -34,6 +34,7 @@ function delete($params=false){
 }
 
 function add($params){
+ 
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
@@ -49,7 +50,7 @@ function add($params){
 			if ($params_string=='') {
 				$params_string='?';
 			} else {
-				$params_string='&';
+				$params_string.='&';
 			}
 			$params_string.= $key.'='.$value;
 		}
@@ -85,8 +86,14 @@ function admin_list()
 				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. url(3) .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
-				$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3)))."_id` = '".e(url(4))."' ";
-				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h(url(3)) .'/add?'.h(to_o(url(3))).'_id='.h(url(4)).'">Добавить</a>';
+				if(is_numeric(url(4))) {
+					$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3)))."_id` = '".e(url(4))."' ";
+					d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h(url(3)) .'/add?'.h(to_o(url(3))).'_id='.h(url(4)).'">Добавить</a>';
+				}else{
+					$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3))).'_id` IN (select id from `'.e(url(3))."` where `url` = '".e(url(4))."') ";
+					d()->list_addbutton=' ';
+				}
+
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
