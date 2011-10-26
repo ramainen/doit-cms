@@ -298,7 +298,7 @@ class ar
 		}
 		
 		if(!isset($this->_options['table'])) {
-			if(self::$default_table!='') {
+			if(self::$default_table!='' && strtolower(get_class($this))=='ar') {
 				$this->_options['table']=self::$default_table;
 			} else {
 				$this->_options['table']=self::one_to_plural(strtolower(get_class($this)));
@@ -777,6 +777,7 @@ class ar
 			}
 			
 			if ($columns===false) {
+				 
                 $_tmpael  = activerecord_factory_from_table($this->_options["table"]);
                 return $_tmpael->find_by('url',$name);
 			}
