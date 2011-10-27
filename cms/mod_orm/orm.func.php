@@ -122,7 +122,7 @@ calculate
 	
 	
 //Класс Active Record, обеспечивающий простую добычу данных
-class ar
+abstract class ar
 {
 	public $edit_button;
 	public $_options;
