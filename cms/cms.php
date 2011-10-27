@@ -56,7 +56,8 @@ function d($object='')
 // Запуск валидатора и обработка действий
 function action()
 {
-	return call_user_func_array(array(d(),'action'), func_get_args());
+	$paramaters = func_get_args();
+	return call_user_func_array(array(d(),'action'),  $paramaters);
 }
 class doitClass
 {
@@ -366,7 +367,8 @@ foreach($tmparr as $key=>$subval)
 	public function action($action_name)
 	{
 		//Обработка actions. Ничего не выводится.
-		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']], func_get_args()))) {
+		$parameters = func_get_args();
+		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']],$parameters ))) {
 			return $this->call($_POST['_action'],array($_POST[$_POST['_element']]));
 		}
 	}

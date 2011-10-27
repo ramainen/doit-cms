@@ -1,6 +1,24 @@
 <?php
 /*
 
+	DoIt! CMS and VarVar framework
+	Copyright (C) 2011 Fakhrutdinov Damir (aka Ainu)
+
+	*      This program is free software; you can redistribute it and/or modify
+	*      it under the terms of the GNU General Public License as published by
+	*      the Free Software Foundation; either version 2 of the License, or
+	*      (at your option) any later version.
+	*
+	*      This program is distributed in the hope that it will be useful,
+	*      but WITHOUT ANY WARRANTY; without even the implied warranty of
+	*      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	*      GNU General Public License for more details.
+	*
+	*      You should have received a copy of the GNU General Public License
+	*      along with this program; if not, write to the Free Software
+	*      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	*      MA 02110-1301, USA.
+ *
 На будущее - итератор объектов и объект-массив
 	class ResultIterator extends ArrayIterator {
 	private $count=3;
@@ -106,21 +124,19 @@ calculate
 //Класс Active Record, обеспечивающий простую добычу данных
 class ar
 {
-	public static $default_table='';
 	public $edit_button;
 	public $_options;
 	public $_data;
 	private $_shift = 0;
 	private $_known_columns=array();
 	private $_future_data=array();
-	//Выполняет limit 1 SQL запрос
+	//TODO: Выполняет limit 1 SQL запрос
 	function first()
 	{
 		return $this;
 	}
 	
-	//<< Получение дочерних элементов (comments)
-	
+
 	static function plural_to_one ($string)
 	{
 		$_p_to_o=array(
@@ -296,10 +312,11 @@ class ar
 		if(!isset($this->_options['tree'])) {
 			$this->_options['tree']=false;
 		}
-		
+
+		//TODO: брать таблицу из родительского объекта
 		if(!isset($this->_options['table'])) {
-			if(self::$default_table!='' && strtolower(get_class($this))=='ar') {
-				$this->_options['table']=self::$default_table;
+			if(strtolower(get_class($this))=='ar') {
+				$this->_options['table']='options';
 			} else {
 				$this->_options['table']=self::one_to_plural(strtolower(get_class($this)));
 			}
@@ -825,5 +842,4 @@ function __autoload($class_name) {
 		return false;
 	}
 	eval ("class ".$class_name." extends ar {}");
-	$class_name::$default_table=ar::one_to_plural(strtolower($class_name));
 }
