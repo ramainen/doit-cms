@@ -474,6 +474,7 @@ abstract class ar
 				$values_string=implode (',',$values);
 				$_query_string='insert into `'.$this->_options['table'].'` ('.$fields_string.') values ('.$values_string.')';
 				mysql_query($_query_string);
+				//TODO: очищать $this->_future_data
 			}
 		} else {
 			if ($this->_options['queryready']==false) {
@@ -488,6 +489,7 @@ abstract class ar
 				$attribute_string=implode (',',$attributes);
 				$_query_string='update `'.$this->_options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
 				mysql_query($_query_string);
+				//TODO: очищать $this->_future_data
 			}
 		}
 		return $this;
