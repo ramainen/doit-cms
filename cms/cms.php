@@ -367,10 +367,24 @@ foreach($tmparr as $key=>$subval)
 	public function action($action_name)
 	{
 		//Обработка actions. Ничего не выводится.
+		// TODO: А зачем тут func_get_args, забыл.
+		// TODO: Ага, чтобы передавать в action(дополнительныефункции для проверки)
 		$parameters = func_get_args();
 		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']],$parameters ))) {
+			$this->datapool['params'] =  $_POST[$_POST['_element']];
 			return $this->call($_POST['_action'],array($_POST[$_POST['_element']]));
 		}
+	}
+	/* ================================================================================= */
+// Аналог action(), но только возвращающий true или false,для простой валидации
+	public function validate($action_name)
+	{
+		$parameters = func_get_args();
+		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']],$parameters ))) {
+			$this->datapool['params'] =  $_POST[$_POST['_element']];
+			return true;
+		}
+		return false;
 	}
 /* ================================================================================= */	
 //TODO: оптимизировать функцию url как частозапускаемую

@@ -98,4 +98,40 @@
 	}
 	
 	
-	
+Другой варинат иполнения, без объявления дополнительной функции выглядит так:
+
+В функции - контроллере, вызывающем форму, вставляется следующая проверка:
+
+	function show_registration_form()
+	{
+		if(d()->validate('users_create_new')){
+			$user=d()->User->new;
+			$user->login=d()->params['login'];
+			$user->password=d()->params['password'];
+			$user->save();
+
+			header('Location: /');
+			exit();
+		}
+		print d()->users_registration_tpl();
+	}
+
+В качестве плюса такого подхода - более простой внешний вид, отсуствие лишних функций.
+
+В качестве минуса - невозможность переопределить обработчик действия.
+
+Данный код абсолютно идентичен, кроме одного момента. Для получения параметров используется переменная d()->params.
+d()->params можно использовать и в функции - действии, игнорируя переменную $params, т.к. они дублируются.
+Т.е. указанную выше функцию `users_create_new` можно вызвать так:
+
+	function users_create_new()
+	{
+		$user=d()->User->new;
+		$user->login=d()->params['login'];
+		$user->password=d()->params['password'];
+		$user->save();
+
+		header('Location: /');
+		exit();
+	}
+
