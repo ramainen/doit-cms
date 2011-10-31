@@ -290,56 +290,59 @@ foreach($tmparr as $key=>$subval)
 	public function validate_action($validator_name,$params,$additional_funcs=array())
 	{
 		unset($additional_funcs[0]);
-		$rules=$this->datapool['validator'][$validator_name];
-//		if(!isset($this->datapool['notice'])) {
-			$this->datapool['notice']=array();
-//		}
 		$is_ok=true;
-		foreach($rules as $key=>$value) {
-			if($key=='function') {
-				continue;	
-			}
-			if(isset($value['required']) && (!isset ($params[$key]) || trim($params[$key])=='')) {
-				$this->datapool['notice'][] = $value['required']['message'];
-				$is_ok=false;
-			}
-			if(isset($value['confirmation']) && (!isset ($params[$key.'_confirmation']) || $params[$key.'_confirmation']!=$params[$key])) {
-				$this->datapool['notice'][] = $value['confirmation']['message'];
-				$is_ok=false;
-			}
-			if(isset($value['unique'])) {
-				if(isset($value['unique']['table'])) {
-					$table=$value['unique']['table'];
-					$model=ucfirst(d()->to_o($table));
+		
+		if (isset($this->datapool['validator'][$validator_name])) {
+			$rules=$this->datapool['validator'][$validator_name];
+	//		if(!isset($this->datapool['notice'])) {
+				$this->datapool['notice']=array();
+	//		}
+
+			foreach($rules as $key=>$value) {
+				if($key=='function') {
+					continue;
 				}
-				if(isset($value['unique']['model'])) {
-					$model =ucfirst($value['unique']['model']);
-					$table = d()->to_p(strtolower($value['unique']['model']));
-				}
- 				if (! d()->$model->find_by($key,$params[$key])->is_empty){
-					$this->datapool['notice'][] = $value['unique']['message'];
+				if(isset($value['required']) && (!isset ($params[$key]) || trim($params[$key])=='')) {
+					$this->datapool['notice'][] = $value['required']['message'];
 					$is_ok=false;
 				}
-			}
-			
-		}
-		
-		//дополнительные функции с правилами для валидаторов
-		if(isset($rules['function'])) {
-			if(!is_array($rules['function'])) {
-				$rules['function']=array($rules['function']);
-			}
-			foreach($rules['function'] as $func) {
-				$rez = $this->call($func,array($params));
-				if($rez===false){
-					if (count($this->datapool['notice'])!=0){
+				if(isset($value['confirmation']) && (!isset ($params[$key.'_confirmation']) || $params[$key.'_confirmation']!=$params[$key])) {
+					$this->datapool['notice'][] = $value['confirmation']['message'];
+					$is_ok=false;
+				}
+				if(isset($value['unique'])) {
+					if(isset($value['unique']['table'])) {
+						$table=$value['unique']['table'];
+						$model=ucfirst(d()->to_o($table));
+					}
+					if(isset($value['unique']['model'])) {
+						$model =ucfirst($value['unique']['model']);
+						$table = d()->to_p(strtolower($value['unique']['model']));
+					}
+					if (! d()->$model->find_by($key,$params[$key])->is_empty){
+						$this->datapool['notice'][] = $value['unique']['message'];
 						$is_ok=false;
-						return $is_ok;
-					}	
+					}
+				}
+
+			}
+
+			//дополнительные функции с правилами для валидаторов
+			if(isset($rules['function'])) {
+				if(!is_array($rules['function'])) {
+					$rules['function']=array($rules['function']);
+				}
+				foreach($rules['function'] as $func) {
+					$rez = $this->call($func,array($params));
+					if($rez===false){
+						if (count($this->datapool['notice'])!=0){
+							$is_ok=false;
+							return $is_ok;
+						}
+					}
 				}
 			}
 		}
-
 		foreach($additional_funcs as $func) {
 			$rez = $this->call($func,array($params));
 			if($rez===false){
