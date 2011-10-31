@@ -555,7 +555,22 @@ foreach($tmparr as $key=>$subval)
 		}
 		return '';
 	}
-	
+
+/* ================================================================================= */
+	//Запускает имя_функции.tpl.html, либо пытается угадать имя текущей триады
+	public function view($parent_function=false)
+	{
+		//Определяем функцию (контроллер), из которого был произведён вызов. Припиываем _tpl, вызываем
+		if($parent_function===false) {
+			$parent_function =  $this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]];
+		}
+
+		if(substr($parent_function,-4)!='_tpl'){
+			$parent_function .= '_tpl';
+		}
+		$parent_function =  str_replace('#','_',$parent_function);
+		return $this->call($parent_function);
+	}
 /* ================================================================================= */
 	//Меняет следующий элемент в очереди-цепи
 	public function set_next_chain($chainname)

@@ -8,7 +8,7 @@ function pages_show()
 	if (d()->page->is_empty) {
 		print "Страница не существует".d()->add(array('pages','url'=>url(1)));
 	} else {
-		print d()->pages_show_tpl();
+		print d()->view();
 	}
 
 }
