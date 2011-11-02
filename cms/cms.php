@@ -473,28 +473,61 @@ foreach($tmparr as $key=>$subval)
 			$this->call_chain_current_link[$this->call_chain_level]=$i;
 			//Тут вызываются предопределённые и пользовательские функции
 
-			//Подстановка аргументов из $this->_last_router_rule
-			//$this->_last_router_rule содержит активное правило роутера (например, "/users/")
-			//Передача параметров URL в методы классов и функции
-			if(count($arguments)==0 && $this->_last_router_rule!='') {
-				$params_arr=explode('/',substr($this->_last_router_rule,1));
-				foreach($this->url_parts as $_part_num => $_part_val){
-					if(!isset($params_arr[$_part_num]) || $params_arr[$_part_num]==''){
-						$arguments[]=$_part_val;
-					}
-				}
- 			}
+
 
 			ob_start();
 			if (function_exists($name)) {
+
+				//Подстановка аргументов из $this->_last_router_rule
+				//$this->_last_router_rule содержит активное правило роутера (например, "/users/")
+				//Передача параметров URL в методы классов и функции
+				if(count($arguments)==0 && $this->_last_router_rule!='') {
+					$params_arr=explode('/',substr($this->_last_router_rule,1));
+					foreach($this->url_parts as $_part_num => $_part_val){
+						if(!isset($params_arr[$_part_num]) || $params_arr[$_part_num]==''){
+							$arguments[]=$_part_val;
+						}
+					}
+				}
+				
 				$_executionResult=call_user_func_array($name, $arguments);
 			} elseif(isset($this->php_files_list[$name])){
 				include ($this->php_files_list[$name]);
 			} else {
 				$_fsym=strpos($name,'#');
 				if($_fsym !== false) {
+
+					//Подстановка аргументов из $this->_last_router_rule
+					//дублирование кода, расположенного выше (для скорости)
+					//Для того, чтобы не проводить операцию для шаблонов и включаемых php-файлов
+					if(count($arguments)==0 && $this->_last_router_rule!='') {
+						$params_arr=explode('/',substr($this->_last_router_rule,1));
+						foreach($this->url_parts as $_part_num => $_part_val){
+							if(!isset($params_arr[$_part_num]) || $params_arr[$_part_num]==''){
+								$arguments[]=$_part_val;
+							}
+						}
+					}
+
 					$_classname=substr($name,0,$_fsym).'_controller';
 					$_methodname=substr($name,$_fsym+1);
+
+					if($_methodname=='') {
+						if(is_numeric($arguments[0])){
+							$_methodname = 'show';
+						}else{
+
+							if($arguments[0]==''){
+								$_methodname='index';
+							}else{
+								$_methodname=$arguments[0];
+							}
+							unset($arguments[0]);
+						}
+						//В случае вызова controller# переменовывается цепочка для нормального определения вида исход из имени метода
+						$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]]=$name.$_methodname;
+					}
+
 					$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
 				} else {
 					$_executionResult=eval('?'.'>'.$this->get_compiled_code($name).'<'.'?php ;');
