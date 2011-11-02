@@ -76,7 +76,8 @@ class doitClass
 	private $compiled_fragments=array(); //Кеш шаблонов
 	private $template_patterns=array(); //Теги шаблонизатора
 	private $template_replacements=array(); //Значения тегов шаблонизатора
-	
+	private $_last_router_rule=''; //Активное правило, которое сработало для текущей функции
+
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -471,8 +472,19 @@ foreach($tmparr as $key=>$subval)
 			$this->call_chain_start[$this->call_chain_level]=$_currentname;
 			$this->call_chain_current_link[$this->call_chain_level]=$i;
 			//Тут вызываются предопределённые и пользовательские функции
-			
-			
+
+			//Подстановка аргументов из $this->_last_router_rule
+			//$this->_last_router_rule содержит активное правило роутера (например, "/users/")
+			//Передача параметров URL в методы классов и функции
+			if(count($arguments)==0 && $this->_last_router_rule!='') {
+				$params_arr=explode('/',substr($this->_last_router_rule,1));
+				foreach($this->url_parts as $_part_num => $_part_val){
+					if(!isset($params_arr[$_part_num]) || $params_arr[$_part_num]==''){
+						$arguments[]=$_part_val;
+					}
+				}
+ 			}
+
 			ob_start();
 			if (function_exists($name)) {
 				$_executionResult=call_user_func_array($name, $arguments);
@@ -617,6 +629,7 @@ foreach($tmparr as $key=>$subval)
 	function get_function_alias($name)
 	{
 		static $cache_ansver=array(); //Кеш ответов для быстрого реагирования
+		static $cache_longest_url_ansver=array(); //Кеш ответов для быстрого реагирования
 		static $rules_array = false; //Ассоциативный массив правил для того, чтобы не опрашивать весь список
 		
 		if($rules_array===false) {	
@@ -629,12 +642,15 @@ foreach($tmparr as $key=>$subval)
 			}
 			$rules_array = $tmp_mached_list;
 		}
-		
+
+		$this->_last_router_rule='';
+
 		if(!isset($rules_array[$name])) {
 			return array($name);
 		}
 		
 		if(isset($cache_ansver[$name])) {
+			$this->_last_router_rule=$cache_longest_url_ansver[$name];
 			return $cache_ansver[$name];
 		}
 
@@ -659,6 +675,8 @@ foreach($tmparr as $key=>$subval)
 		unset($matched[1]);
 		$matched=array_values($matched);
 		$cache_ansver[$name] = $matched;
+		$cache_longest_url_ansver[$name] = $longest_url;
+		$this->_last_router_rule=$cache_longest_url_ansver[$name];
 		return $matched;
 	}
 /* ================================================================================= */
