@@ -129,6 +129,7 @@ abstract class ar
 	public $_data;
 	private $_shift = 0;
 	private $_known_columns=array();
+	private $_count_rows = 0;
 	private $_future_data=array();
 	//TODO: Выполняет limit 1 SQL запрос
 	function first()
@@ -312,7 +313,11 @@ abstract class ar
 		if(!isset($this->_options['tree'])) {
 			$this->_options['tree']=false;
 		}
-
+		
+		if(!isset($this->_options['calc_rows'])) {
+			$this->_options['calc_rows']=false;
+		}
+		
 		//TODO: брать таблицу из родительского объекта
 		if(!isset($this->_options['table'])) {
 			if(strtolower(get_class($this))=='ar') {
@@ -394,6 +399,12 @@ abstract class ar
 		$this->_options['condition'] = $_condition.' ';
 		return $this;
 	}
+	
+	public function calc_rows()
+	{
+		$this->_options['calc_rows']=true;
+		return $this;
+	}
 
 	
 	public function limit($limit)
@@ -423,11 +434,38 @@ abstract class ar
 		return $this;
 	}
 	
+	//Общее количество строк в таблице
+	function all_rows_count()
+	{
+		$_count_result = mysql_query("SELECT COUNT(id)FROM ".$this->_options['table']);
+		$_countrows_line = mysql_fetch_array($_count_result);
+		return $_countrows_line[0];
+	}
+	
+	//Количество строк в найденном запросе
+	//TODO: что по поводу LIMIT?
+	function found_rows()
+	{
+		if($this->_options['calc_rows']) {
+			return $this->_count_rows;
+		} else {
+			if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+			}
+			return count($this->_data);
+		}
+		
+	}
+	
 	function fetch_data_now()
 	{
 		$this->_options['queryready']=true;
 		$this->_data = array();
-		$_query_string='SELECT * FROM `'.$this->_options['table'].'` ';
+		$_query_string='SELECT ';
+		if($this->_options['calc_rows']) {
+			$_query_string .= ' SQL_CALC_FOUND_ROWS ';
+		}
+		$_query_string .= ' * FROM `'.$this->_options['table'].'` ';
 		if($this->_options['condition']!='') {
 			$_query_string .= 'WHERE '.$this->_options['condition'];
 		}
@@ -438,8 +476,15 @@ abstract class ar
 		if($this->_options['limit']!='') {
 			$_query_string .=  $this->_options['limit'];
 		}
-		
+	 
 		$_result=mysql_query($_query_string);
+		if($this->_options['calc_rows']) {
+			$_count_result = mysql_query('SELECT FOUND_ROWS()');
+			$_countrows_line = mysql_fetch_array($_count_result);
+			$this->_count_rows = $_countrows_line[0];
+		}
+		
+		
 		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
 			$this->_data[]=$line;
 		}
