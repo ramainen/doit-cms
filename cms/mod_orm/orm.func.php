@@ -298,6 +298,10 @@ abstract class ar
 			$this->_options['condition']='';
 		}
 		
+		if(!isset($this->_options['select'])) {
+			$this->_options['select']=' * ';
+		}
+		
 		if(!isset($this->_options['limit'])) {
 			$this->_options['limit']='';
 		}
@@ -434,6 +438,17 @@ abstract class ar
 		return $this;
 	}
 	
+	public function select($select)
+	{
+		$this->_options['queryready']=false;
+		if(trim($select)!='') {
+			$this->_options['select'] = $select;
+		} else {
+			$this->_options['select'] = ' * ';
+		}
+		return $this;
+	}
+	
 	//Общее количество строк в таблице
 	function all_rows_count()
 	{
@@ -465,7 +480,7 @@ abstract class ar
 		if($this->_options['calc_rows']) {
 			$_query_string .= ' SQL_CALC_FOUND_ROWS ';
 		}
-		$_query_string .= ' * FROM `'.$this->_options['table'].'` ';
+		$_query_string .= ' ' . $this->_options['select'] . ' FROM `'.$this->_options['table'].'` ';
 		if($this->_options['condition']!='') {
 			$_query_string .= 'WHERE '.$this->_options['condition'];
 		}
