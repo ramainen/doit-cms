@@ -912,11 +912,3 @@ function activerecord_factory_from_table($_tablename)
 	return new $_modelname ();
 	//return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
 }
-// Автоматический создатель классов
-function __autoload($class_name) {
-	$fl=substr($class_name,0,1);
-	if(	$fl != strtoupper($fl)) {
-		return false;
-	}
-	eval ("class ".$class_name." extends ar {}");
-}

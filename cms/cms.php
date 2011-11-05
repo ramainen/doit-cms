@@ -874,3 +874,24 @@ class doitCaller
 	}
 }
 
+// Автоматический создатель классов и загрузчик классов по спецификации PSR-0
+function __autoload($class_name) {
+	
+	$class_name = ltrim($class_name, '\\');
+    $fileName  = '';
+    $namespace = '';
+    if ($lastNsPos = strripos($class_name, '\\')) {
+        $namespace = substr($class_name, 0, $lastNsPos);
+        $class_name = substr($class_name, $lastNsPos + 1);
+        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+    }
+    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
+	$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
+	if(file_exists($fileName)){
+		require $fileName;	
+	}else{
+		//Если совсем ничего не найдено, попытка использовать ActiveRecord.
+		eval ("class ".$class_name." extends ar {}");
+	}
+
+}
