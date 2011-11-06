@@ -85,124 +85,143 @@ class doitClass
 		// Массив для шаблонизатора
 		
 		// <foreach users as user>
+
+
+
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
-		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
+		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
 		if(is_object($tmparr)) { $tmparr = $tmparr->all;}
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
-		$this->datapool["override"]="";
+		$doit->datapool["override"]="";
 		if(is_object($subval)){
-			 $this->datapool[\'$2\']=$subval; 
-			 $this->datapool[\'this\']=$subval; 
-			 $this->datapool[\'override\']=$subval->override; 
+			 $doit->datapool[\'$2\']=$subval;
+			 $doit->datapool[\'this\']=$subval;
+			 $doit->datapool[\'override\']=$subval->override;
 		}else{
-		$this->datapool[\'this\']=array();
-		foreach($subval as $subkey=>$subvalue) { 
-		$this->datapool[\'$2\'][$subkey]=$subvalue;
-		$this->datapool[\'this\'][$subkey]=$subvalue;
+		$doit->datapool[\'this\']=array();
+		foreach($subval as $subkey=>$subvalue) {
+		$doit->datapool[\'$2\'][$subkey]=$subvalue;
+		$doit->datapool[\'this\'][$subkey]=$subvalue;
 		}   }
-		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>';
+		if ($doit->datapool["override"]!="") { print $doit->{$doit->datapool["override"]}(); } else { ?'.'>';
 
-		
+
 		//TODO: приписать if (is_object($tmparr)) $Tmparr=array($tmparr)
-		// TODO: 		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
-		//	возможно, убрать эту конструкцию	
-		
+		// TODO: 		foreach($subval as $subkey=>$subvalue) $doit->datapool[$subkey]=$subvalue;
+		//	возможно, убрать эту конструкцию
+
 		// <foreach users>
 		$this->template_patterns[]='/<foreach\s+(.*?)>/';
-		$this->template_replacements[]='<'.'?php $tmparr= $this->$1;
+		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
 		if(is_object($tmparr)) {$tmparr = $tmparr->all;}
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
-		$this->datapool["override"]="";
-		foreach($subval as $subkey=>$subvalue) $this->datapool[$subkey]=$subvalue; 
-		if ($this->datapool["override"]!="") { print $this->{$this->datapool["override"]}(); } else { ?'.'>';
-	
+		$doit->datapool["override"]="";
+		foreach($subval as $subkey=>$subvalue) $doit->datapool[$subkey]=$subvalue;
+		if ($doit->datapool["override"]!="") { print $doit->{$doit->datapool["override"]}(); } else { ?'.'>';
+
 		// {{{content}}}
 		$this->template_patterns[]='/\{{{([#a-zA-Z0-9_]+)\}}}/';
-		$this->template_replacements[]='<'.'?php print $this->render("$1"); ?'.'>'; 
-		
+		$this->template_replacements[]='<'.'?php print $doit->render("$1"); ?'.'>';
+
 		// <type admin>
 		$this->template_patterns[]='/<type\s+([a-zA-Z0-9_-]+)>/';
-		$this->template_replacements[]='<'.'?php if($this->type=="$1"){ ?'.'>';
-				
+		$this->template_replacements[]='<'.'?php if($doit->type=="$1"){ ?'.'>';
+
 		// <content for header>
 		$this->template_patterns[]='/<content\s+for\s+([a-zA-Z0-9_-]+)>/';
-		$this->template_replacements[]='<'.'?php ob_start(); $this->datapool["current_ob_content_for"] = "$1"; ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php ob_start(); $doit->datapool["current_ob_content_for"] = "$1"; ?'.'>';
+
 		// </content>
 		$this->template_patterns[]='/<\/content>/';
-		$this->template_replacements[]='<'.'?php  $this->datapool[$this->datapool["current_ob_content_for"]] = ob_get_contents(); ob_end_clean(); ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php  $doit->datapool[$doit->datapool["current_ob_content_for"]] = ob_get_contents(); ob_end_clean(); ?'.'>';
+
 		// </foreach>
 		$this->template_patterns[]='/<\/foreach>/' ;
 		$this->template_replacements[]='<'.'?php } } ?'.'>';
-		
+
 		// </type>
 		$this->template_patterns[]='/<\/type>/';
 		$this->template_replacements[]='<'.'?php } ?'.'>';
-		
-		// {{/form}}
-		$this->template_patterns[]='/\{{\/([a-zA-Z0-9_]+)\}}/';
-		$this->template_replacements[]='</$1>';//Синтаксический сахар
-		
+
+
+
 		// {{content}}
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\}}/';
-		$this->template_replacements[]='<'.'?php print $this->call("$1"); ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php print $doit->call("$1"); ?'.'>';
+
 		// {{helper param}}
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+([a-zA-Z0-9_]+)\}}/';
-		$this->template_replacements[]= '<'.'?php print $this->call("$1", array(d()->$2));  ?'.'>';
-		
+		$this->template_replacements[]= '<'.'?php print $doit->call("$1", array(d()->$2));  ?'.'>';
+
 		// {{helper 'parame','param2'=>'any'}}
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
-		$this->template_replacements[]='<'.'?php print $this->call("$1",array(array($2))); ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php print $doit->call("$1",array(array($2))); ?'.'>';
+
 		// {title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $this->$1; ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php print  $doit->$1; ?'.'>';
+
 		// {:title}
 		$this->template_patterns[]='/\{:([a-zA-Z0-9\._]+)\}/';
 		$this->template_replacements[]='<'.'?php } ?'.'>';
-		
+
 		// {title:}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+):\}/';
-		$this->template_replacements[]='<'.'?php if($this->$1) { ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php if($doit->$1) { ?'.'>';
+
+		// <if user>
+		$this->template_patterns[]='/\<if\s([a-zA-Z0-9_]+)\>/';
+		$this->template_replacements[]='<'.'?php if($doit->$1) { ?'.'>';
+
+		// <if user.title>
+		$this->template_patterns[]='/\<if\s([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\>/';
+		$this->template_replacements[]='<'.'?php if((is_array($doit->$1) && $doit->$1[\'$2\']) || $doit->$1->$2) { ?'.'>';
+
 		// {page.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$1[\'$2\']; }else{ print  $this->$1->$2; } ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php if(is_array($doit->$1)) {  print  $doit->$1[\'$2\']; }else{ print  $doit->$1->$2; } ?'.'>';
+
 		// {page.title:}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+):\}/';
-		$this->template_replacements[]='<'.'?php if((is_array($this->$1) && $this->$1[\'$2\']) || $this->$1->$2) { ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php if((is_array($doit->$1) && $doit->$1[\'$2\']) || $doit->$1->$2) { ?'.'>';
+
 		// {.title}
 		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($this->this)) {  print  $this->this[\'$1\']; }else{ print  $this->this->$1; } ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php if(is_array($doit->this)) {  print  $doit->this[\'$1\']; }else{ print  $doit->this->$1; } ?'.'>';
+
+		// </if>
+		$this->template_patterns[]='/\<\/if\>/';
+		$this->template_replacements[]='<'.'?php } ?'.'>';
+
 		// {title|h}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $this->$2($this->$1); ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php print  $doit->$2($doit->$1); ?'.'>';
+
 		// {page.title|h}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($this->$1)) {  print  $this->$3($this->$1[\'$2\']); }else{ print  $this->$3($this->$1->$2); } ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php if(is_array($doit->$1)) {  print  $doit->$3($doit->$1[\'$2\']); }else{ print  $doit->$3($doit->$1->$2); } ?'.'>';
+
 		// {page.user.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3; ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3; ?'.'>';
+
 		// {page.parent.user.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3->$4; ?'.'>';
-		
+		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3->$4; ?'.'>';
+
 		// {page.parent.user.avatar.url}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $this->$1->$2->$3->$4->$5; ?'.'>';
+		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3->$4->$5; ?'.'>';
+
+
+
+		// {{/form}}
+		$this->template_patterns[]='/\{{\/([a-zA-Z0-9_]+)\}}/';
+		$this->template_replacements[]='</$1>';//Синтаксический сахар
 
 		//Обрезка GET-параметров
 		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
@@ -530,7 +549,7 @@ foreach($tmparr as $key=>$subval)
 
 					$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
 				} else {
-					$_executionResult=eval('?'.'>'.$this->get_compiled_code($name).'<'.'?php ;');
+					$_executionResult= $this->compile_and_run_template($name);
 				}
 			}
 			$_end = ob_get_contents();
@@ -559,6 +578,20 @@ foreach($tmparr as $key=>$subval)
 			$this->compiled_fragments[$fragmentname]=$this->shablonize(file_get_contents($this->fragmentslist[$fragmentname]));
 		}
 		return $this->compiled_fragments[$fragmentname];
+	}
+	/**
+	 * Функция для eval
+	 *
+	 * Подготавливает новую функцию для предотвращения повторных eval-ов и запускает её.
+	 *
+	 * @param $name имя шаблона вида file_tpl
+	 * @return void значение, полученное из шаблона при помощи return.
+	 */
+	function compile_and_run_template($name){
+		if(!function_exists($name)){
+			eval('function '.$name.'(){ $doit=d(); ?'.'>'.$this->get_compiled_code($name).'<'.'?php ;} ');
+		}
+		return call_user_func($name);
 	}
 /* ================================================================================= */	
 	//вызов call(), эта функция более гибкая, и умеет выполнять запросы вроде call('clients#show');
