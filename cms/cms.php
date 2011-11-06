@@ -113,14 +113,21 @@ foreach($tmparr as $key=>$subval)
 		//	возможно, убрать эту конструкцию
 
 		// <foreach users>
-		$this->template_patterns[]='/<foreach\s+(.*?)>/';
+		$this->template_patterns[]='/<foreach\s+(.*)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
-		if(is_object($tmparr)) {$tmparr = $tmparr->all;}
+		if(is_object($tmparr)) { $tmparr = $tmparr->all;}
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
 		$doit->datapool["override"]="";
-		foreach($subval as $subkey=>$subvalue) $doit->datapool[$subkey]=$subvalue;
+		if(is_object($subval)){
+			 $doit->datapool[\'this\']=$subval;
+			 $doit->datapool[\'override\']=$subval->override;
+		}else{
+		$doit->datapool[\'this\']=array();
+		foreach($subval as $subkey=>$subvalue) {
+		$doit->datapool[\'this\'][$subkey]=$subvalue;
+		}   }
 		if ($doit->datapool["override"]!="") { print $doit->{$doit->datapool["override"]}(); } else { ?'.'>';
 
 		// {{{content}}}
