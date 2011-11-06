@@ -122,7 +122,7 @@ function admin_list()
 		$data[]=$line;
 	}
 	d()->objectrow = $data;
-	print d()->admin_objectlist();
+	print d()->view();
 }
 
 //	Основная функция редактирования, которая получает данные, выводит форму, обрабатывает действия, перезагружает страницу
@@ -181,7 +181,7 @@ function admin_edit()
 		d()->tabletitle = 'Добавление нового элемента';
 	}
 	d()->tablerow = $rows;
-	print d()->admin_edit_table(); //Эту функцию можно переопределять
+	print d()->view(); //Эту функцию можно переопределять
 }
 
 function admin_save_data($params)

@@ -9,11 +9,11 @@
 
 	<foreach objectrow>
 	<tr>
-		<td>{id}</td>
-		<td>{title}</td>
-		<td>{url}</td>
-		<td><a href="/admin/edit/<?= url(3) ?>/{id}" class="admin_button">Править</a> {addbuttons}
-		<a href="/admin/delete/<?= url(3) ?>/{id}" target="_blank" title="Удалить" class="admin_button ui-state-error   fg-button "   ><span class="ui-icon ui-icon-closethick"></span>&nbsp;</a>
+		<td>{.id}</td>
+		<td>{.title}</td>
+		<td>{.url}</td>
+		<td><a href="/admin/edit/<?= url(3) ?>/{.id}" class="admin_button">Править</a> {.addbuttons}
+		<a href="/admin/delete/<?= url(3) ?>/{.id}" target="_blank" title="Удалить" class="admin_button ui-state-error   fg-button "   ><span class="ui-icon ui-icon-closethick"></span>&nbsp;</a>
 		 
 		</td>
 	</tr>

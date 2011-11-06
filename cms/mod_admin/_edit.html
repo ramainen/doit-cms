@@ -13,8 +13,8 @@
 
 <foreach tablerow>
 <tr>
-	<td>{title}</td>
-	<td><input type="text" name="{name}" value="{value|h}" class="admin_input ui-widget-content ui-corner-all" style="width:500px;"></td>
+	<td>{.title}</td>
+	<td><input type="text" name="{.name}" value="{.value|h}" class="admin_input ui-widget-content ui-corner-all" style="width:500px;"></td>
 </tr>
 </foreach>
 

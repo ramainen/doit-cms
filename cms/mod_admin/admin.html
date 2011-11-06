@@ -39,7 +39,7 @@
 
  	<?php
  
-	foreach ($this->admin['leftmenu'] as $_value) { ?>
+	foreach (d()->admin['leftmenu'] as $_value) { ?>
 		<li><a href="/admin/list/<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
 	<?php } ?>
         
