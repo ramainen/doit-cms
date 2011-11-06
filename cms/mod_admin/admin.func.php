@@ -114,12 +114,16 @@ function admin_list()
 	
 	$result=mysql_query($query);
 	$data=array();
-	while ($line=mysql_fetch_array($result)) {
-		$line['addbuttons']='';
-		foreach($addbuttons as $key=>$value) {
-			$line['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
+	if(mysql_errno()!=0){
+		print mysql_error();
+	}else{
+		while ($line=mysql_fetch_array($result)) {
+			$line['addbuttons']='';
+			foreach($addbuttons as $key=>$value) {
+				$line['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
+			}
+			$data[]=$line;
 		}
-		$data[]=$line;
 	}
 	d()->objectrow = $data;
 	print d()->view();
@@ -196,7 +200,7 @@ function admin_save_data($params)
 	//FIXME: костыль
 	if(isset($params['url'])){
 		if($params['url']=='') {
-			$params['url']='page'.$elemid;
+			$params['url']=to_o(url(3)).$elemid;
 		}
 
 		if(substr($params['url'],0,1)=='/') {
@@ -220,7 +224,7 @@ function admin_save_data($params)
     }
 		
     $result_str.=" where `id`=".mysql_real_escape_string($elemid);
-	
+
     mysql_query($result_str);
 	if($_POST['admin_command_redirect_close']=='yes') {
 		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
