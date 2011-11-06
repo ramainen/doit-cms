@@ -65,7 +65,7 @@ class doitClass
 	public static $instance;
 	
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
-	private $php_files_list=array(); //Массив найденных php файлов.
+	public $php_files_list=array(); //Массив найденных php файлов.
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
@@ -77,6 +77,7 @@ class doitClass
 	private $template_patterns=array(); //Теги шаблонизатора
 	private $template_replacements=array(); //Значения тегов шаблонизатора
 	private $_last_router_rule=''; //Активное правило, которое сработало для текущей функции
+	public $_this_cache=array();
 
 /* ================================================================================= */	
 	function __construct()
@@ -90,6 +91,10 @@ class doitClass
 
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
+		if(!isset($doit->datapool[\'this\'])){
+			$doit->datapool[\'this\']=array();
+		}
+		array_push($doit->_this_cache,$doit->datapool[\'this\']);
 		if(is_object($tmparr)) { $tmparr = $tmparr->all;}
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
@@ -116,6 +121,10 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/<foreach\s+(.*)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
 		if(is_object($tmparr)) { $tmparr = $tmparr->all;}
+		if(!isset($doit->datapool[\'this\'])){
+			$doit->datapool[\'this\']=array();
+		}
+		array_push($doit->_this_cache,$doit->datapool[\'this\']);
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
@@ -148,7 +157,9 @@ foreach($tmparr as $key=>$subval)
 
 		// </foreach>
 		$this->template_patterns[]='/<\/foreach>/' ;
-		$this->template_replacements[]='<'.'?php } } ?'.'>';
+		$this->template_replacements[]='<'.'?php } }
+		$doit->datapool[\'this\'] = array_pop($doit->_this_cache );
+		 ?'.'>';
 
 		// </type>
 		$this->template_patterns[]='/<\/type>/';
@@ -916,7 +927,7 @@ class doitCaller
 
 // Автоматический создатель классов и загрузчик классов по спецификации PSR-0
 function __autoload($class_name) {
-	
+
 	$class_name = ltrim($class_name, '\\');
     $fileName  = '';
     $namespace = '';
@@ -929,6 +940,8 @@ function __autoload($class_name) {
 	$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
 	if(file_exists($fileName)){
 		require $fileName;	
+	}elseif(file_exists(d()->php_files_list[$class_name.'_class'])){
+		require d()->php_files_list[$class_name.'_class'];
 	}else{
 		//Если совсем ничего не найдено, попытка использовать ActiveRecord.
 		eval ("class ".$class_name." extends ar {}");
