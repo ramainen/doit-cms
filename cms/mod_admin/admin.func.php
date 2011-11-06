@@ -225,7 +225,8 @@ function admin_save_data($params)
 	if($_POST['admin_command_redirect_close']=='yes') {
 		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
 	}else{
-		header('Location: /admin/list/'.url(3));
+
+		header('Location: '.$_POST['_http_referer']);
 		exit();
 	}
 

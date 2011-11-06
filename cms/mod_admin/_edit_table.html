@@ -2,7 +2,9 @@
 <?php if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/')===false) { ?>
 <input type="hidden" name="admin_command_redirect_close" value="yes">
 <?php } ?>
-
+<?php if(!empty($_SERVER['HTTP_REFERER'])){?>
+<input type="hidden" name="_http_referer" value="<?=h($_SERVER['HTTP_REFERER']);?>">
+<?php } ?>
 <input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
 <table class="admin_table" width=100%>
 <tr>
