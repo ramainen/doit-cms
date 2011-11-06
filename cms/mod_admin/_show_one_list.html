@@ -1,0 +1,28 @@
+<h1>{curr_title}</h1>
+<table class="admin_table"  width=100%>
+	<tr>
+		<td width=50>ID</td>
+		<td>Заголовок</td>
+		<td>url</td>
+		<td>Действие</td>
+	</tr>
+
+	<foreach objectrow>
+	<tr>
+		<td>{.id}</td>
+		<td>{.title}</td>
+		<?php /*<td><a href="/admin/show/{curr_table}/{.id}">{.title}</a></td>*/ ?>
+		<td>{.url}</td>
+		<td><a href="/admin/edit/{curr_table}/{.id}" class="admin_button">Править</a> {.addbuttons}
+		<a href="/admin/delete/{curr_table}/{.id}" target="_blank" title="Удалить" class="admin_button ui-state-error   fg-button "   ><span class="ui-icon ui-icon-closethick"></span>&nbsp;</a>
+		 
+		</td>
+	</tr>
+	</foreach>
+
+	<tr>
+		<td colspan="4">
+			{list_addbutton}
+		</td>
+	</tr>	
+</table>

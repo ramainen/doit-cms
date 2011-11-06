@@ -59,16 +59,45 @@ function add($params){
 	print '<a href="/admin/edit/'.$params[0].'/add'.$params_string.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
 }
 
-function admin_list()
+function admin_show()
 {
+	unset (d()->datapool['admin']['bottombuttons']);
+	unset (d()->datapool['admin']['addbuttons']);
+	unset (d()->datapool['admin']['show']);
 	d()->load_and_parse_ini_file('app/fields/'.url(3).'.ini');
-	
-	if (url(4)=='') {
+	if(!empty(d()->admin['show'])){
+		foreach(d()->admin['show'] as $value){
+
+			$url=$value[0];
+			if(substr($url,-1)=='/'){
+				$url .= url(4);
+			}
+			$subarray=explode('/', $url);
+			if(!isset($subarray[1])){
+				$subarray[1]='';
+			}
+			if(!isset($subarray[2])){
+				$subarray[2]='';
+			}
+			d()->curr_title=$value[1];
+			print d()->admin_show_one_list($subarray[0],$subarray[1],$subarray[2]);
+		}
+	}
+
+}
+function admin_show_one_list($table,$id1,$id2)
+{
+	unset (d()->datapool['admin']['bottombuttons']);
+	unset (d()->datapool['admin']['addbuttons']);
+	d()->curr_table=$table;
+	d()->load_and_parse_ini_file('app/fields/'.$table.'.ini');
+
+	if ($id1=='') {
 		//list/goods     просто список всех полей
-		$query='select * from '.e(url(3));
+		$query='select * from '.e($table);
 		d()->list_addbutton='';
-		d()->list_addbutton.='<a class="admin_button" href="/admin/edit/'. url(3) .'/add">Добавить</a>';
-		
+		d()->list_addbutton.='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
+
 		if(isset(d()->admin['bottombuttons'])) {
 		$bottombuttons=d()->admin['bottombuttons'];
 
@@ -76,42 +105,42 @@ function admin_list()
 			d()->list_addbutton.=' <a class="admin_button" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
 		}
 	}
-		
-		
+
+
 	} else {
-		if(url(5) == '') {
-			if(url(4)=='index') {
+		if($id2 == '') {
+			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
-				$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3))).'_id` is NULL';
-				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. url(3) .'/add">Добавить</a>';
+				$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` is NULL';
+				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
-				if(is_numeric(url(4))) {
-					$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3)))."_id` = '".e(url(4))."' ";
-					d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h(url(3)) .'/add?'.h(to_o(url(3))).'_id='.h(url(4)).'">Добавить</a>';
+				if(is_numeric($id1)) {
+					$query='select * from `'.e($table).'` where `'.e(to_o($table))."_id` = '".e($id1)."' ";
+					d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
-					$query='select * from `'.e(url(3)).'` where `'.e(to_o(url(3))).'_id` IN (select id from `'.e(url(3))."` where `url` = '".e(url(4))."') ";
+					$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` IN (select id from `'.e($table)."` where `url` = '".e($id1)."') ";
 					d()->list_addbutton=' ';
 				}
 
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
-			$query='select * from `'.e(url(3)).'` where `'.e(url(4))."` = '".e(url(5))."' ";
-			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h(url(3)) .'/add?'.e(url(4)).'='.h(url(5)).'">Добавить</a>';
+			$query='select * from `'.e($table).'` where `'.e($id1)."` = '".e($id2)."' ";
+			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.e($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}
 	print '<!-- '.$query.' -->';
 	//Определение дополнительных кнопок
-	
-	 
+
+
 
 	$addbuttons = array();
-	
+
 	if(isset(d()->admin['addbuttons'])) {
 		$addbuttons=d()->admin['addbuttons'];
 	}
-	
+
 	$result=mysql_query($query);
 	$data=array();
 	if(mysql_errno()!=0){
@@ -127,6 +156,15 @@ function admin_list()
 	}
 	d()->objectrow = $data;
 	print d()->view();
+
+
+}
+function admin_list()
+{
+	d()->curr_title='Список объектов из таблицы '.url(3);
+	print d()->admin_show_one_list(url(3),url(4),url(5));
+	
+	print d()->admin_show();
 }
 
 //	Основная функция редактирования, которая получает данные, выводит форму, обрабатывает действия, перезагружает страницу
