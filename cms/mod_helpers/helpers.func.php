@@ -140,6 +140,10 @@ function path_to($params)
 	
 }
 
+function preview($address,$num=1 )
+{
+	return substr($address, 0, strrpos($address, "/") + 1) . ".thumbs/preview".$num."_" . substr($address, strrpos($address, "/") + 1);
+}
 function h($html)
 {
 	return htmlspecialchars($html);

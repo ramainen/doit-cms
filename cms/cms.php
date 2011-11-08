@@ -211,6 +211,10 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php if(is_array($doit->this)) {  print  $doit->this[\'$1\']; }else{ print  $doit->this->$1; } ?'.'>';
 
+		// {.title|h}
+		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php if(is_array($doit->this)) {  print  $2($doit->this[\'$1\']); }else{ print  $2($doit->this->$1); } ?'.'>';
+		
 		// </if>
 		$this->template_patterns[]='/\<\/if\>/';
 		$this->template_replacements[]='<'.'?php } ?'.'>';
