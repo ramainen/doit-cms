@@ -442,12 +442,14 @@ foreach($tmparr as $key=>$subval)
 		if($length<=0) {
 			$length = count($this->url_parts) + $length - 1;
 		}
-		if(!is_numeric($param)) { //url('users')
+		if(!is_numeric($param)) {
+			
+			//url('users')
 			$readyindex=false;
 			$i=0;
 			foreach ($this->url_parts as $key => $value) {
 				$i++;
-				if($key==$param) {
+				if($value==$param) {
 					$readyindex = $i;
 					break;
 				}
