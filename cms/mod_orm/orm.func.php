@@ -295,7 +295,7 @@ abstract class ar
 		}
 		
 		if(!isset($this->_options['condition'])) {
-			$this->_options['condition']='';
+			$this->_options['condition']=array();
 		}
 		
 		if(!isset($this->_options['select'])) {
@@ -351,11 +351,11 @@ abstract class ar
 			$this->_options['id']=(int)$id;
 			$this->_options['queryready']=false;
 			$id = 1 * $id;
-			$this->_options['condition'] = ' id = '.(int)$id.' ';
+			$this->_options['condition'] = array ('( id = '.(int)$id.' )');
 		} else {
 			$this->_options['queryready']=false;
 			$name =  mysql_real_escape_string($id);
-			$this->_options['condition'] = " `".$this->_options['namefield']."` = '". $name ."' ";
+			$this->_options['condition']=   array ("( `".$this->_options['namefield']."` = '". $name ."' )");
 		}
 		return $this;
 	}
@@ -363,7 +363,7 @@ abstract class ar
 	public function find_by($by,$what)
 	{
 		$this->_options['queryready']=false;
-		$this->_options['condition'] = " `".mysql_real_escape_string($by)."` = '".mysql_real_escape_string($what)."' ";
+		$this->_options['condition'] = array("( `".mysql_real_escape_string($by)."` = '".mysql_real_escape_string($what)."' )");
 		return $this;
 	}
 	
@@ -372,7 +372,7 @@ abstract class ar
 		if(substr($name,0,8)=='find_by_') {
 			$by=substr($name,8);
 			$this->_options['queryready']=false;
-			$this->_options['condition'] = " `".$by."` = '".mysql_real_escape_string($arguments[0])."' ";
+			$this->_options['condition'] = array("( `".$by."` = '".mysql_real_escape_string($arguments[0])."' )");
 		}
 		return $this;
 	}
@@ -400,7 +400,7 @@ abstract class ar
 			$_condition .= $_conditions[$i-1]. " '".mysql_real_escape_string($args[$i])."' "  ;
 		}
 		$_condition .= $_conditions[$i-1];
-		$this->_options['condition'] = $_condition.' ';
+		$this->_options['condition'][] = '('.$_condition.')';
 		return $this;
 	}
 	
@@ -481,8 +481,9 @@ abstract class ar
 			$_query_string .= ' SQL_CALC_FOUND_ROWS ';
 		}
 		$_query_string .= ' ' . $this->_options['select'] . ' FROM `'.$this->_options['table'].'` ';
-		if($this->_options['condition']!='') {
-			$_query_string .= 'WHERE '.$this->_options['condition'];
+		if(count($this->_options['condition'])>0) {
+			$_condition = implode(' AND ',$this->_options['condition']);
+			$_query_string .= 'WHERE '.$_condition;
 		}
 		if($this->_options['order_by']!='') {
 			$_query_string .=  $this->_options['order_by'];
