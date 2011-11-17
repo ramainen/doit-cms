@@ -198,6 +198,7 @@ function admin_edit()
 		d()->name='data['.$field['name'].']';
 		$setted_flag[$field['name']]=true;
 		d()->value='';
+		d()->field_params=$field['all'];
 		if (url(4)=='add' && isset($_GET[$field['name']])) {
 			d()->value=$_GET[$field['name']];
 		}
@@ -297,7 +298,7 @@ function admin_get_fields($tableortype='')
 	d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');
 	$rows = doit()->admin['fields'];
 	foreach ($rows as $key=>$value) {
-		$data[]=array('name'=>$value[1],'type'=>$value[0],'title'=>$value[2]);
+		$data[]=array('name'=>$value[1],'type'=>$value[0],'title'=>$value[2],'all'=>$value);
 	}
     return $data;
 }
