@@ -15,7 +15,19 @@ function edit($params=false){
 
 	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 }
-
+/**
+ *
+ * Проверяет, авторизован ли администратор сайта.
+ *
+ * @return boolean
+ */
+function iam()
+{
+	if(isset($_SESSION['admin'])) {
+		return true;
+	}
+	return false;
+}
 function delete($params=false){
     if($params===false) {
         $params=array(d()->this);
