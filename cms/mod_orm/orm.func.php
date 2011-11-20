@@ -127,6 +127,7 @@ abstract class ar
 	public $edit_button;
 	public $_options;
 	public $_data;
+	private $_used_tree_branches;
 	private $_shift = 0;
 	private $_known_columns=array();
 	private $_count_rows = 0;
@@ -607,18 +608,7 @@ abstract class ar
 		return '';
 	}
 	
-	//Рекурсивная функция для быстрой сортировки дерева
-	private function get_subtree($id)
-	{
-		$_tmparr=array();
-		$_class_name = get_class($this);
-		foreach($this->_data as $element){
- 			if(isset($element[$this->_options['plural_to_one']."_id"]) && $element[$this->_options['plural_to_one']."_id"] == $id) {
- 				$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
- 			}
-		}
-		return $_tmparr;
-	}
+
 	
 	public function columns($tablename='')
 	{
@@ -652,6 +642,23 @@ abstract class ar
 		d()->datapool['columns_registry'][$tablename] = $result_array;
 		return d()->datapool['columns_registry'][$tablename];
 	}
+
+	
+	//Рекурсивная функция для быстрой сортировки дерева
+	private function get_subtree($id)
+	{
+		$_tmparr=array();
+		$_class_name = get_class($this);
+		foreach($this->_data as $element){
+ 			if(isset($element[$this->_options['plural_to_one']."_id"]) && $element[$this->_options['plural_to_one']."_id"] == $id) {
+				if(empty($this->_used_tree_branches[$element['id']])){
+					$this->_used_tree_branches[$element['id']]=true;
+					$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+				}
+ 			}
+		}
+		return $_tmparr;
+	}
 	
 	public function tree($root=false)
 	{
@@ -669,12 +676,17 @@ abstract class ar
 		if (is_object($root)) {
 			$root=$root->id;
 		}
+		$this->_used_tree_branches=array();
+		
 		if($root === false) {
 			foreach($this->_data as $element){
 				//Если данный элемент корневой, родительских элементов нет, поле element_id пустое
 				if(!isset($element[$this->_options['plural_to_one']."_id"])) {
 					//В опцию tree записываем рекурсивно полученные дочерние элементы
-					$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+					if(empty($this->_used_tree_branches[$element['id']])){
+						$this->_used_tree_branches[$element['id']]=true;
+						$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+					}	
 				}
 			}
 		} else {
@@ -683,10 +695,15 @@ abstract class ar
 				//Если данный элемент корневой, родительских элементов нет, поле element_id == root
 				if(isset($element[$this->_options['plural_to_one']."_id"]) && ($element[$this->_options['plural_to_one']."_id"]== $root )) {
 					//В опцию tree записываем рекурсивно полученные дочерние элементы
-					$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+					if(empty($this->_used_tree_branches[$element['id']])){
+						$this->_used_tree_branches[$element['id']]=true;
+						$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ),'tree'=>$this->get_subtree($element['id'])));
+					}	
 				}
 			}
 		}
+		
+		$this->_used_tree_branches=array();
 		return $_tmparr;
 	}
 	
