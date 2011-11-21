@@ -28,6 +28,11 @@ function iam()
 	}
 	return false;
 }
+function admin_logout()
+{
+	unset($_SESSION['admin']);
+	header('Location: /');
+}
 function delete($params=false){
     if($params===false) {
         $params=array(d()->this);
