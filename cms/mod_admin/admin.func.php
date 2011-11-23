@@ -111,7 +111,7 @@ function admin_show_one_list($table,$id1,$id2)
 
 	if ($id1=='') {
 		//list/goods     просто список всех полей
-		$query='select * from '.e($table);
+		$query='select * from '.e($table).'   order by `sort`';
 		d()->list_addbutton='';
 		d()->list_addbutton.='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
 
@@ -128,22 +128,22 @@ function admin_show_one_list($table,$id1,$id2)
 		if($id2 == '') {
 			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
-				$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` is NULL';
+				$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` is NULL  order by `sort`';
 				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				if(is_numeric($id1)) {
-					$query='select * from `'.e($table).'` where `'.e(to_o($table))."_id` = '".e($id1)."' ";
+					$query='select * from `'.e($table).'` where `'.e(to_o($table))."_id` = '".e($id1)."' order by `sort`";
 					d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
-					$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` IN (select id from `'.e($table)."` where `url` = '".e($id1)."') ";
+					$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` IN (select id from `'.e($table)."` where `url` = '".e($id1)."')  order by `sort`";
 					d()->list_addbutton=' ';
 				}
 
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
-			$query='select * from `'.e($table).'` where `'.e($id1)."` = '".e($id2)."' ";
+			$query='select * from `'.e($table).'` where `'.e($id1)."` = '".e($id2)."'  order by `sort`";
 			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.e($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}
@@ -161,19 +161,42 @@ function admin_show_one_list($table,$id1,$id2)
 	$result=mysql_query($query);
 	$data=array();
 	if(mysql_errno()!=0){
-		print mysql_error();
+		print mysql_error(); //Отладка
 	}else{
 		while ($line=mysql_fetch_array($result)) {
 			$line['addbuttons']='';
 			foreach($addbuttons as $key=>$value) {
 				$line['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
 			}
+			if (empty($line['sort'])) {
+				//ВНЕЗАПНО сортировка пустая
+				mysql_query('UPDATE  `'.e($table).'` set `sort` = `id` where `id` = '.e($line['id']));
+			}
 			$data[]=$line;
 		}
 	}
 	d()->objectrow = $data;
-	print d()->view();
-
+	
+	if(empty($_GET['sort'])){
+		print d()->view();
+	}else{
+		
+		if(d()->validate('admin_do_sort')){
+			$url = preg_replace('/\?.*/','',$_SERVER['REQUEST_URI']);
+			$oldlist=d()->objectrow;
+			$newlist=d()->params['elements'];
+			
+			foreach ($newlist as $key=>$value){
+				if($oldlist[$key]['id']*1 != $value*1){
+					// Элементу с ID = $value присваеваем новый SORT, тот которы йбыл под номером $key ( $oldlist[$key]['sort'] ) 
+					mysql_query('UPDATE  `'.e($table).'` set `sort` = '.e($oldlist[$key]['sort']).' WHERE `id` = '.e($value)).'';
+				}
+			}			 
+			header('Location: '.$url) ;
+			exit();
+		}
+		print d()->admin_show_one_sortable_list();		
+	}
 
 }
 function admin_list()
@@ -265,6 +288,7 @@ function admin_save_data($params)
 		
 		$params['url']=str_replace('/','_',$params['url']);
 	}
+	$params['sort']=$elemid;
     $result_str="update `".url(3)."` set  ";
     $i=0;
 	

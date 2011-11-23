@@ -1,0 +1,24 @@
+<h1>{curr_title}</h1>
+<script>
+$(function(){
+	
+	$( ".sortable" ).sortable();
+})
+
+</script>
+
+{{form 'admin_do_sort'}}
+<div class="sortable">
+
+	<foreach objectrow>
+	<div class="sorting_element">
+	
+		{.title}({.url})
+		<input type="hidden" name="data[elements][]" value="{.id}">
+		</div>
+	</tr>
+	</foreach>
+</div>
+<br>
+<input type="submit" value="Сохранить" class="admin_button">
+{{/form}}

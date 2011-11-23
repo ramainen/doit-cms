@@ -308,7 +308,7 @@ abstract class ar
 		}
 
 		if(!isset($this->_options['order_by'])) {
-			$this->_options['order_by']='';
+			$this->_options['order_by']=' ORDER BY `sort` ';
 		}
 		
 		if(!isset($this->_options['new'])) {
