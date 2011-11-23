@@ -4,8 +4,7 @@ $database = "varvar";
 $username = "root";
 $password = "";
 
-$prefix="vv_";
-define ('ABC',$_SERVER['REQUEST_URI']);
+
 
 mysql_connect($hostname,$username,$password);
 mysql_select_db($database);
