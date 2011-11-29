@@ -36,6 +36,7 @@ window.open('','_self','');
 						language : "ru",
                         theme : "advanced",
 						skin : "o2k7",
+						convert_urls : false,
                         plugins : "pagebreak,style,table,save,advhr,advimage,advlink,emotions,inlinepopups,preview,media,contextmenu,paste,directionality,fullscreen,noneditable,nonbreaking,xhtmlxtras,simages",
                         theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,fontsizeselect",
                         theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,image,simages,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
