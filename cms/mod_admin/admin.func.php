@@ -289,7 +289,7 @@ function admin_save_data($params)
 		$params['url']=str_replace('/','_',$params['url']);
 	}
 	$params['sort']=$elemid;
-    $result_str="update `".url(3)."` set  ";
+    $result_str="update `".mysql_real_escape_string(url(3))."` set  ";
     $i=0;
 	
 	
@@ -305,7 +305,27 @@ function admin_save_data($params)
 		
     $result_str.=" where `id`=".mysql_real_escape_string($elemid);
 
-    mysql_query($result_str);
+ 
+	$not_reqursy=0;
+	while(!mysql_query($result_str) && 1054 == mysql_errno()) {
+		$error_string=mysql_error();
+		$not_reqursy++;
+		if($not_reqursy>30) {
+			print "Произошла ошибка рекурсии. Пожалуйста, добавьте поля вручную - у меня не получилось. Спасибо.";
+			exit();
+		}
+		foreach($params as $key=>$value) {
+			if(strpos($error_string , "'".$key."'")!==false){
+				if (substr($key,-3)=='_id') {
+					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` int NULL" );
+				} else {
+					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` text NULL, DEFAULT CHARACTER SET=utf8" );
+				}
+				
+			}
+		}
+	}
+	
 	if($_POST['admin_command_redirect_close']=='yes') {
 		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
 	}else{
