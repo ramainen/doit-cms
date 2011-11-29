@@ -954,3 +954,10 @@ function __autoload($class_name) {
 	}
 
 }
+/**
+* Функция, которая ничего не делает.
+*/
+function nothing()
+{
+	
+}
