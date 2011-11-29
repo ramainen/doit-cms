@@ -1,9 +1,84 @@
-<form method="POST">
-<?php if(d()->notice) { ?>
-<div style="border:1px solid lightblue;padding:6px;">{notice}</div>
-<?php } ?>
-	<input type="hidden" name="action" value="admin_login">
-	<input type="text" name="login"><br>
-	<input type="password" name="password"><br>
-	<input type="submit" value="Отправить">
-</form>
+<!doctype html>
+<html>
+<head>
+<title>Авторизация</title>
+<style>
+body
+{
+	font-family: Ubuntu, Tahoma, Arial, sans-serif;
+}
+ 
+.enter_form:before,
+.enter_form:after {
+    content:"";
+    position:absolute;
+    z-index:-2;
+}
+
+.enter_form form {
+
+	margin:auto;
+	width:200px;
+}        
+
+ 
+
+.enter_form
+{
+	padding:20px;
+ 
+	position:absolute;
+	left:50%;
+	margin-left:-210px;
+	top:50%;
+	margin-top:-120px;
+	height:180px;
+	
+	width:400px;
+	background:red;
+ 
+    
+    background:#fff;
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+       -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+            box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    -webkit-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+       -moz-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+            box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+			
+	
+}
+.text_input
+{
+	width:190px;
+	height:30px;
+	font-size:14px;
+	padding-left:5px;
+}
+.submit_input
+{
+	width:200px;
+	height:40px;
+	font-size:14px;
+	
+	display:block;
+}
+
+</style>
+</head>
+<body>
+<div class="enter_form">
+	<form method="POST">
+	<?php if(d()->notice) { ?>
+	<div style="border:1px solid lightblue;padding:6px;">{notice}</div>
+	<?php } ?>
+		<input type="hidden" name="action" value="admin_login">
+		Логин:<br>
+		<input type="text" class="text_input" name="login"><br>
+		Пароль:<br>
+		<input type="password" class="text_input" name="password"><br><br>
+		<input type="submit" class="submit_input" value="Войти">
+	</form>
+</div>
+</body>
+</html>

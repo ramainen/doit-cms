@@ -350,11 +350,21 @@ function admin()
 
 	//TODO: переписать на валидаторах
 	if(isset($_POST['action']) && $_POST['action']=='admin_login'){
-		if(d()->admin['editor']['login'] == $_POST['login'] && d()->admin['editor']['password'] == md5($_POST['password'])) {
-			$_SESSION['admin']=$_POST['login'];
-			header('Location: /');
-			exit();
+		if(!is_array(d()->admin['editor']['login']) && !is_array(d()->admin['editor']['password'] )){
+			d()->admin['editor']['login']=array(d()->admin['editor']['login']);
+			d()->admin['editor']['password']=array(d()->admin['editor']['password']);
 		}
+		foreach(d()->admin['editor']['login'] as $key=>$value){
+			$login=d()->admin['editor']['login'][$key];
+			$password=d()->admin['editor']['password'][$key];
+			
+			if($login == $_POST['login'] && $password == md5($_POST['password'])) {
+				$_SESSION['admin']=$_POST['login'];
+				header('Location: /');
+				exit();
+			}
+		}
+		
 		d()->notice='Неверный логин или пароль';
 	}
 
