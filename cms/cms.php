@@ -25,7 +25,7 @@ Copyright (C) 2011 Fakhrutdinov Damir (aka Ainu)
 	Рабочее название фреймворка Var(Var) Framework
 	Система названа в честь статьи Variable Variables http://php.net/manual/en/language.variables.variable.php 26.01.2011
 */
-error_reporting(0);
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 session_start();
 function url($param='', $length=1)
 {	
