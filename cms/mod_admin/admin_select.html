@@ -22,7 +22,7 @@
 			?>
 			<option <?php 
 
-			if(empty($_GET['$_field'])){
+			if(!isset($_GET['$_field'])){
 				if(d()->value==$_id) {
 					print 'selected';
 				}
