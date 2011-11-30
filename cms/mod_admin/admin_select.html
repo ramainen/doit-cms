@@ -1,0 +1,46 @@
+<?php
+/**
+* Расстановщик список для выбора. Всё работает автоматически. Значения в скобках - истинные (выводятся в value)
+*/
+	$_field=d()->field_params[1];
+?>
+<tr>
+	<td>{title}</td>
+	<td>
+	<select   name="{name}"  class="admin_input ui-widget-content ui-corner-all" style="width:500px;">
+		<?php
+		for($i=2;$i<=count(d()->field_params)-1;$i++) {
+		
+			$_id = d()->field_params[$i];
+			$_title = d()->field_params[$i];
+			$_arr=array();
+			if(preg_match('/^(.*?)\((.*?)\)$/',$_title,$_arr)){
+				$_id = $_arr[2];
+				$_title = $_arr[1];
+			}
+		
+			?>
+			<option <?php 
+
+			if(empty($_GET['$_field'])){
+				if(d()->value==$_id) {
+					print 'selected';
+				}
+			}else{
+				if($_GET['$_field']==$_id) {
+					print 'selected';
+				}
+			}
+			
+			?> value=<?=$_id ?>><?=$_title?></option>
+		
+		<?php
+		}
+		
+		?>
+
+	</select>
+	 
+	</td>
+</tr>
+
