@@ -565,7 +565,25 @@ abstract class ar
 				}
 				$attribute_string=implode (',',$attributes);
 				$_query_string='update `'.$this->_options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
-				mysql_query($_query_string) or print mysql_errno();
+		
+				
+				while(!mysql_query($_query_string) && 1054 == mysql_errno()) {
+					$error_string=mysql_error();
+					$not_reqursy++;
+					if($not_reqursy>30) {
+						print "Произошла ошибка рекурсии. Пожалуйста, добавьте поля вручную - у меня не получилось. Спасибо.";
+						exit();
+					}
+					foreach($this->_future_data as $key=>$value)
+					{
+						if(strpos($error_string , "'".$key."'")!==false){
+							$result = mysql_query("ALTER TABLE `".$this->_options['table']."` ADD COLUMN `$key` text NULL, DEFAULT CHARACTER SET=utf8" );
+						}
+					}
+				}
+				
+				
+				
 				$this->_future_data=array();
 			}
 		}
