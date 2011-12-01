@@ -15,6 +15,10 @@ function input ($params=array())
 		$attr .= ' class="'.$params['class'].'" ';
 	}
 	
+	if(isset($params['checked'])) {
+		$attr .= ' checked="'.$params['checked'].'" ';
+	}
+	
 	if(isset($params['id'])) {
 		$attr .= ' id="'.$params['id'].'" ';
 	}else{
@@ -78,25 +82,14 @@ function form ($params=array())
 }
 
 
-function notice($params)
+function notice()
 {
 	if(d()->notice=='' || count(d()->notice)==0) {
 		return '';
 	}
 	$str='';
 	
-	if(isset($params['class'])) {
-		$str .= ' class="'.$params['class'].'" ';
-	}
-	
-	if(isset($params['style'])) {
-		$str .= ' style="'.$params['style'].'" ';
-	} else {
-		$str .= ' style="padding:15px;padding-left:25px;border:1px solid red;" ';
-	}
-	
-	
-	$str = '<ul  '.$str.' >';
+	$str .= '<ul style="padding:15px;padding-left:25px;border:1px solid red;">';
 	
 	foreach(d()->notice as $value){
 		$str .='<li>'.$value.'</li>';

@@ -21,10 +21,16 @@ function edit($params=false){
  *
  * @return boolean
  */
-function iam()
+function iam($username='')
 {
-	if(isset($_SESSION['admin'])) {
-		return true;
+	if($username!=''){
+		if(isset($_SESSION['admin']) && ($_SESSION['admin'] == $username)) {
+			return true;
+		}
+	}else{
+		if(isset($_SESSION['admin'])) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -364,6 +370,169 @@ function admin_get_fields($tableortype='')
     return $data;
 }
 
+
+function admin_scaffold_new()
+{
+	if(d()->validate('admin_scaffold_create')){
+		$table=d()->params['name'];
+		$one_element=to_o(d()->params['name']);
+		$_first_letter=strtoupper(substr($one_element,0,1));
+		$model = $_first_letter.substr($one_element,1);
+		
+		
+		
+		if(d()->params['create_table']=='yes') {
+			print "Создаём таблицу ".h($table)."... ";
+			$result = mysql_query("CREATE TABLE `".$table."` (
+`id`  int(11) NOT NULL AUTO_INCREMENT ,
+`url`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+`text`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+`title`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+`".$one_element."_id`  int(11) NULL DEFAULT NULL ,
+`template`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+`type`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+`sort`  int(11) NULL DEFAULT NULL ,
+PRIMARY KEY (`id`)
+)
+ENGINE=MyISAM
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+;");
+ 
+			if($result){
+				print "<span style='color:#198E58'>готово</span><br>";
+			} else {
+				print "<span style='color:#B01414'>неудачно</span><br>";
+			}
+		}
+		
+		
+		if(d()->params['create_show']=='yes' || d()->params['create_list']=='yes' || d()->params['create_model']=='yes' ) {
+			print "Создаём папку mod_".h($table)."... ";
+			$result=mkdir($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table);
+ 
+			if($result){
+				print "<span style='color:#198E58'>готово</span><br>";
+			} else {
+				print "<span style='color:#B01414'>неудачно</span><br>";
+			}
+		}
+		
+		if((d()->params['create_show']=='yes' || d()->params['create_list']=='yes')) {
+			include('cms/mod_admin/scaffold_templates/scaffold_templates.php');
+			$show_controller_func=str_replace(array('#table#','#one_element#','#model#'),array($table,$one_element,$model),$show_controller_func);
+			$list_controller_func=str_replace(array('#table#','#one_element#','#model#'),array($table,$one_element,$model),$list_controller_func);
+			$show_template=str_replace(array('#table#','#one_element#','#model#'),array($table,$one_element,$model),$show_template);	
+			$list_template=str_replace(array('#table#','#one_element#','#model#'),array($table,$one_element,$model),$list_template);
+			$field_template=str_replace(array('#table#','#one_element#','#model#'),array($table,$one_element,$model),$field_template);
+			$router_template=str_replace(array('#table#','#one_element#','#model#'),array($table,$one_element,$model),$router_template);
+		}
+		
+		if((d()->params['create_show']=='yes' || d()->params['create_list']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
+
+			
+			
+			print "Создаём файл mod_".h($table)."/".e($table).".func.php... ";
+			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','w+');
+			$t_result = fwrite($result,"<"."?php\r\n\r\n");
+			fclose($result);
+			if($result!=='false' && $t_result!=='false'){
+				print "<span style='color:#198E58'>готово</span><br>";
+			} else {
+				print "<span style='color:#B01414'>неудачно</span><br>";
+			}
+		}
+		
+		
+		if((d()->params['create_show']=='yes') && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
+			
+			$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
+			if(false===strpos($check,$table."_show")){
+				print "Создаём функцию  ".h($table)."_show... ";
+				$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','a');
+				$t_result = fwrite($result,$show_controller_func);
+				fclose($result);
+				if($result!=='false' && $t_result!=='false'){
+					print "<span style='color:#198E58'>готово</span><br>";
+				} else {
+					print "<span style='color:#B01414'>неудачно</span><br>";
+				}
+			}
+			
+			
+		}
+		
+		
+		if((d()->params['create_show']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_show.html')) {
+			print "Создаём файл mod_".h($table)."/_show.html... ";
+			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_show.html','w');
+			$t_result = fwrite($result,$show_template);
+			fclose($result);
+			if($result!=='false' && $t_result!=='false'){
+				print "<span style='color:#198E58'>готово</span><br>";
+			} else {
+				print "<span style='color:#B01414'>неудачно</span><br>";
+			}
+		}
+		
+		if((d()->params['create_list']=='yes') && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
+			
+			$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
+			if(false===strpos($check,$table."_list")){
+				print "Создаём функцию  ".h($table)."_list... ";
+				$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','a');
+				$t_result = fwrite($result,$list_controller_func);
+				fclose($result);
+				if($result!=='false' && $t_result!=='false'){
+					print "<span style='color:#198E58'>готово</span><br>";
+				} else {
+					print "<span style='color:#B01414'>неудачно</span><br>";
+				}
+			}
+		}		
+		
+		if((d()->params['create_list']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_list.html')) {
+			print "Создаём файл mod_".h($table)."/_list.html... ";
+			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_list.html','w');
+			$t_result = fwrite($result,$list_template);
+			fclose($result);
+			if($result!=='false' && $t_result!=='false'){
+				print "<span style='color:#198E58'>готово</span><br>";
+			} else {
+				print "<span style='color:#B01414'>неудачно</span><br>";
+			}
+		}
+		
+		
+		if((d()->params['create_fields']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/fields/'.$table.'.ini')) {
+			print 'Создаём файл fields/'.$table.'.ini... ';
+			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/fields/'.$table.'.ini','w');
+			$t_result = fwrite($result,$field_template);
+			fclose($result);
+			if($result!=='false' && $t_result!=='false'){
+				print "<span style='color:#198E58'>готово</span><br>";
+			} else {
+				print "<span style='color:#B01414'>неудачно</span><br>";
+			}
+		}
+		
+		if((d()->params['create_router']=='yes') && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini')) {
+			$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini');
+			if(false===strpos($check,$table."_list") && false===strpos($check,$table."_show")){
+				print 'Записываем адреса в роутер... ';
+				$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini','a');
+				$t_result = fwrite($result,$router_template);
+				fclose($result);
+				if($result!=='false' && $t_result!=='false'){
+					print "<span style='color:#198E58'>готово</span><br>";
+				} else {
+					print "<span style='color:#B01414'>неудачно</span><br>";
+				}
+			}
+		}
+		
+	}
+	print d()->view();
+}
 //Открытие шаблона либо вывод формы авторизации
 function admin()
 {
