@@ -78,14 +78,25 @@ function form ($params=array())
 }
 
 
-function notice()
+function notice($params)
 {
 	if(d()->notice=='' || count(d()->notice)==0) {
 		return '';
 	}
 	$str='';
 	
-	$str .= '<ul style="padding:15px;padding-left:25px;border:1px solid red;">';
+	if(isset($params['class'])) {
+		$str .= ' class="'.$params['class'].'" ';
+	}
+	
+	if(isset($params['style'])) {
+		$str .= ' style="'.$params['style'].'" ';
+	} else {
+		$str .= ' style="padding:15px;padding-left:25px;border:1px solid red;" ';
+	}
+	
+	
+	$str = '<ul  '.$str.' >';
 	
 	foreach(d()->notice as $value){
 		$str .='<li>'.$value.'</li>';
