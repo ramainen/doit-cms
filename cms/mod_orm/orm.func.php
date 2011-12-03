@@ -521,6 +521,7 @@ abstract class ar
 		}
 		return $this;
 	}
+
 	public function save()  //CrUd - Create & Update
 	{
 		if($this->_options['new']==true) {
@@ -589,6 +590,19 @@ abstract class ar
 		}
 		return $this;
 	}
+
+	public function create($params=array())  //Crud - Create
+	{
+		//Более быстрый вариант $this->new
+		$this->_options['new']=true;
+		$this->_future_data = array();
+		foreach($params as $key => $value){
+			$this->{$key} = $value;
+		}
+		$this->save();
+		return $this;
+	}
+
 	public function one()
 	{
 		if ($this->_options['queryready']==false) {
