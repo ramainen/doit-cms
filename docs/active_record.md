@@ -423,7 +423,40 @@ where, то удаляется первый. Фактически, при `$var-
 			$this->date = user_date_to_caninical_date($value);
 		}
 	}		
-	
+
+
+### Цепочки (scopes)
+
+Данные можно объединять в цепочки, например:
+
+	function clients_sorted()
+	{
+		d()->clients=d()->Client->banned;
+		print d()->clients_index_tpl();
+
+		d()->clients=d()->Client->admins;
+		print d()->clients_index_tpl();
+
+		d()->clients=d()->Client->admins->banned;
+		print d()->clients_index_tpl();
+	}
+
+	class Client extends ar{
+		function banned()
+		{
+			$this->where('is_banned = 1');
+			return $this;
+		}
+		function admins()
+		{
+			$this->where('is_admin = 1');
+			return $this;
+		}
+	}
+
+Функции `banned` и `admins` ничем не отличаются от переопределённых или пользовательских свойств, их не нужно объявлять
+отдельно как scopes, всё будет работать само собой.
+
 ### Связи
 
 Все три вида связей (one-to-many, many-to-one, many-to-many) объявляются автоматически.
