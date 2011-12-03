@@ -438,7 +438,18 @@ abstract class ar
 		}
 		return $this;
 	}
-	
+
+	public function order($order_by)
+	{
+		$this->_options['queryready']=false;
+		if(trim($order_by)!='') {
+			$this->_options['order_by'] = ' ORDER BY '.mysql_real_escape_string($order_by).' ';
+		} else {
+			$this->_options['order_by'] = '';
+		}
+		return $this;
+	}
+
 	public function select($select)
 	{
 		$this->_options['queryready']=false;
