@@ -411,11 +411,20 @@ abstract class ar
 		return $this;
 	}
 
-	
-	public function limit($limit)
+	/**
+	 * Указывает LIMIT для будущего SQL запроса, возвращает объект для дальнейшего использования
+	 *
+	 * @param $limit первый параметр в директиве LIMIT (количество или отступ от начала). Может быть строкой с запятой.
+	 * @param bool $count второй параметр (необязательный) в дирекиве LIMIT (количество)
+	 * @return ar текущий экземплятр объекта
+	 */
+	public function limit($limit, $count=false)
 	{
 		$this->_options['queryready']=false;
 		$limitstr=strtolower(trim($limit));
+		if($count!==false) {
+			$limit = $limit.", ".$count;
+		}
 		if($limitstr!='') {
 			if(substr($limitstr,0,5)=='limit') {
 				$this->_options['limit'] = ' '.mysql_real_escape_string($limit).' ';
