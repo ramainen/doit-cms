@@ -566,7 +566,7 @@ abstract class ar
 				}
 				$attribute_string=implode (',',$attributes);
 				$_query_string='update `'.$this->_options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
-		
+				$not_reqursy=0;
 				
 				while(!mysql_query($_query_string) && 1054 == mysql_errno()) {
 					$error_string=mysql_error();
