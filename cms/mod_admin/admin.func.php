@@ -540,8 +540,8 @@ function admin()
 	//TODO: переписать на валидаторах
 	if(isset($_POST['action']) && $_POST['action']=='admin_login'){
 		if(!is_array(d()->admin['editor']['login']) && !is_array(d()->admin['editor']['password'] )){
-			d()->admin['editor']['login']=array(d()->admin['editor']['login']);
-			d()->admin['editor']['password']=array(d()->admin['editor']['password']);
+			d()->datapool['admin']['editor']['login']=array(d()->admin['editor']['login'],array());
+			d()->datapool['admin']['editor']['password']=array(d()->admin['editor']['password'],array());
 		}
 		foreach(d()->admin['editor']['login'] as $key=>$value){
 			$login=d()->admin['editor']['login'][$key];
