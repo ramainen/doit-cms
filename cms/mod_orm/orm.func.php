@@ -492,11 +492,8 @@ abstract class ar
 		}
 		
 	}
-	
-	function fetch_data_now()
+	function to_sql()
 	{
-		$this->_options['queryready']=true;
-		$this->_data = array();
 		$_query_string='SELECT ';
 		if($this->_options['calc_rows']) {
 			$_query_string .= ' SQL_CALC_FOUND_ROWS ';
@@ -509,11 +506,20 @@ abstract class ar
 		if($this->_options['order_by']!='') {
 			$_query_string .=  $this->_options['order_by'];
 		}
-		
+
 		if($this->_options['limit']!='') {
 			$_query_string .=  $this->_options['limit'];
 		}
-	 
+
+		return $_query_string;
+	}
+
+	function fetch_data_now()
+	{
+		$this->_options['queryready']=true;
+		$this->_data = array();
+
+		$_query_string = $this->to_sql();
 		$_result=mysql_query($_query_string);
 		if($this->_options['calc_rows']) {
 			$_count_result = mysql_query('SELECT FOUND_ROWS()');
