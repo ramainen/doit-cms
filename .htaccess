@@ -6,4 +6,4 @@ php_flag magic_quotes_runtime off
 RewriteEngine On
 
 
-RewriteRule  !\.jpg$|\.jpeg$|\.xlsx?$|\.pptx?$|\.docx?$|\.gif$|\.png$|\.bmp$|\.jpeg$|\.zip$|\.tar.gz$|\.swf$|\.pdf$|\.rar$|\.js$|\.css$|\.ico$|^cms/external|^cms/mod_admin/imanager|^images/|^storage/(.*)        index.php   [L]
+RewriteRule  !\.jpg$|\.jpeg$|\.xlsx?$|\.pptx?$|\.docx?$|\.gif$|\.png$|\.bmp$|\.jpeg$|\.zip$|\.tar.gz$|\.swf$|\.pdf$|\.rar$|\.js$|\.css$|\.ico$|^cms/external|^docs\/docs\.php|^cms/mod_admin/imanager|^images/|^storage/(.*)        index.php   [L]
