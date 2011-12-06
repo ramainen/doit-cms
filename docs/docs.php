@@ -1,6 +1,6 @@
 <?php 
 	$start_time = microtime(true);
-
+	error_reporting(E_ALL);
 	header('Content-type: text/html; Charset=UTF-8');
 	$content = "<ul>";
 	$f = opendir('.');
@@ -69,7 +69,7 @@
 	</style>
 </head>
 <body>
-	<?=$content ?>
+	<?php print $content ?>
 	<?php 
 $exec_time = microtime(true) - $start_time;
 printf("<!-- %f seconds -->",$exec_time );
