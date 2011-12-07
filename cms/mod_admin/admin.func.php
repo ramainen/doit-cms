@@ -8,12 +8,23 @@ function edit($params=false){
 		$params=array($params);	
 	}
 		
+	$attr='';
+	if(isset($params['style'])) {
+		$attr .= ' style="'.$params['style'].'" ';
+	}
+	if(isset($params['class'])) {
+		$attr .= ' class="'.$params['class'].'" ';
+	}
+	if(isset($params['title'])) {
+		$attr .= ' title="'.$params['title'].'" ';
+	}
+	
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
 		
 
-	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 }
 /**
  *
