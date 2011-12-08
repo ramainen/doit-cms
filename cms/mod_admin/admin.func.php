@@ -355,6 +355,8 @@ function admin_save_data($params)
 			if(strpos($error_string , "'".$key."'")!==false){
 				if (substr($key,-3)=='_id') {
 					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` int NULL" );
+				} elseif (substr($key,0,3)=='is_') {
+					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` tinyint(4) NOT NULL DEFAULT 0 " );
 				} else {
 					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` text NULL, DEFAULT CHARACTER SET=utf8" );
 				}
