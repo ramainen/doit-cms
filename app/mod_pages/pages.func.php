@@ -35,8 +35,14 @@ function pages_chain_show()
 		$curr_page->where('`url` = ?',$value);
  
 		if($curr_page->is_empty){
-			print "Страница не существует".d()->add(array('pages','url'=>$value));
-			return;
+			if($key==0){
+				print "Страница не существует".d()->add(array('pages','url'=>$value));
+				return;
+			} else {
+				print "Страница не существует".d()->add(array('pages','url'=>$value,'page_id'=>$parent_id));
+				return;
+			}
+
 		}
 		$parent_id = $curr_page->id;
 	}
