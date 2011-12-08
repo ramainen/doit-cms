@@ -26,11 +26,13 @@ function edit($params=false){
 
 	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 }
+
 /**
  *
  * Проверяет, авторизован ли администратор сайта.
  *
- * @return boolean
+ * @param string $username Имя пользователя
+ * @return boolean true, если авторизован
  */
 function iam($username='')
 {
@@ -76,7 +78,25 @@ function add($params){
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
-		
+	
+	$attr='';
+	if(isset($params['style'])) {
+		$attr .= ' style="'.$params['style'].'" ';
+		unset($params['style']);
+	}
+	if(isset($params['class'])) {
+		$attr .= ' class="'.$params['class'].'" ';
+		unset($params['class']);
+	}
+	if(isset($params['title'])) {
+		$attr .= ' title="'.$params['title'].'" ';
+		unset($params['title']);
+	}
+	
+	if(!isset($_SESSION['admin'])) {
+		return ""; //Проверка на права администратора
+	}
+	
 	$params_string='';
 
 	foreach($params as $key=>$value){
@@ -90,7 +110,7 @@ function add($params){
 		}
 	}
 	
-	print '<a href="/admin/edit/'.$params[0].'/add'.$params_string.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
+	print '<a href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr.' target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
 }
 
 function admin_show()
