@@ -25,7 +25,7 @@ function pages_chain_show()
 	
 	$params=func_get_args();
 	$parent_id=0;
-	print d()->view();
+
 	foreach($params as $key=>$value){
 		if($key==0){
 			$curr_page=d()->Page->where('page_id is NULL');
