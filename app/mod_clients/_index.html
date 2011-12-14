@@ -1,7 +1,7 @@
 <h2>Список клиентов:</h2>
 <ul>
 <foreach clients as client>
-	<li><a href="/clients/{client.id}">{client.title}</a>  <a href="/clients/{client.id}/edit">edit</a></li>
+	<li><a href="/clients/{client.id}">{client.title}</a>  <a href="/clients/{client.id}/edit">edit</a> {{edit}}</li>
 </foreach>
 </ul>
 <a href='/clients/create'>Новый</a>
