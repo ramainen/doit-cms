@@ -28,6 +28,15 @@ Copyright (C) 2011 Fakhrutdinov Damir (aka Ainu)
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 session_start();
 
+function print_error_message($wrongline,$line,$file,$message,$usermessage)
+{
+	$errfile = substr($file,strlen($_SERVER['DOCUMENT_ROOT'])) ;
+	return '<div style="padding:20px;border:1px solid red;background:white;color:black;">
+					<div>'.$usermessage.': '.$message.'</div>
+					<div>Файл '.$file.', строка '.$line.'</div>
+					'.htmlspecialchars($wrongline).'</div>';
+}
+
 /**
  * Функция, возвращающая фрагменты текущего URL, начиная с 1.
  * Например, для адреса /users/ainu/comments/3 url(1)="users", url(4)="3", url("users")="ainu", url(2,2)="ainu/comments".
@@ -725,9 +734,22 @@ foreach($tmparr as $key=>$subval)
 	 */
 	function compile_and_run_template($name){
 		if(!function_exists($name)){
-			eval('function '.$name.'(){ $doit=d(); ?'.'>'.$this->get_compiled_code($name).'<'.'?php ;} ');
+			ob_start(); //Подавление стандартного вывода ошибок Parse Error
+			$result=eval('function '.$name.'(){ $doit=d(); ?'.'>'.$this->get_compiled_code($name).'<'.'?php ;} ');
+			ob_end_clean();
+			if ( $result === false && ( $error = error_get_last() ) ) {
+ 				$lines = explode("\n",'function '.$name.'(){ $doit=d(); ?'.'>'.$this->get_compiled_code($name).'<'.'?php ;} ');
+				$file = $this->fragmentslist[$name];
+				return print_error_message( $lines [$error['line']-1],$error['line'],$file,$error['message'],'Ошибка при обработке шаблона');
+			} else {
+				return call_user_func($name);
+			}
+
+
+		}else{
+			return call_user_func($name);
 		}
-		return call_user_func($name);
+
 	}
 
 	/**
