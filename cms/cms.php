@@ -586,6 +586,13 @@ foreach($tmparr as $key=>$subval)
 	 */
 	public function call($name, $arguments=array())
 	{
+
+
+		$fistrsim =  ord(substr($name,0,1));
+		if($fistrsim>64 && $fistrsim<91){
+			return new $name($arguments);
+		}
+
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
 		//DEPRECATED - сделать явные вызовы

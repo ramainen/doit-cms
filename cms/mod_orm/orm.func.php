@@ -335,6 +335,11 @@ abstract class ar
 		if(!isset($this->_options['plural_to_one'])) {
 			$this->_options['plural_to_one']=self::plural_to_one($this->_options['table']);
 		}
+
+		if(count($_options)==1 && is_numeric($_options[0])){
+			$this->find($_options[0]);
+		}
+
 	}
 	//альтернативная функция бстрого получения данных
 	public function getRow($id)

@@ -20,4 +20,4 @@
 	$status = (explode(' ', $status[2]));
 	$na4xtat = ( 1 * $status[1])-$na4xtat;
 	
-	printf("<!-- %f seconds, %d bytes, %d queries -->",$exec_time, memory_get_usage(true),$na4xtat);
+	//printf("<!-- %f seconds, %d bytes, %d queries -->",$exec_time, memory_get_usage(true),$na4xtat);
