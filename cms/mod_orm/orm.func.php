@@ -266,14 +266,15 @@ abstract class ar
 		}
 		*/
 		//Опции по умолчанию и переменные
-		
-		
-		
-		$this->_options=$_options;
-		
-		
-		
-		if(isset($this->_options['data'])) { 
+
+
+		if(is_array($_options)){
+			$this->_options=$_options;
+		} else {
+			$this->_options=array();
+		}
+
+		if(isset($this->_options['data'])) {
 			$this->_options['queryready']=true;
 			$this->_data=$this->_options['data'];
 		} else {
