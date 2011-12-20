@@ -335,7 +335,8 @@ foreach($tmparr as $key=>$subval)
 			
 			foreach($_files as $_dir => $_subfiles) {
 				foreach($_subfiles as $_file) {
-					if (substr($_file,-5)=='.html') {
+
+					if ( strrchr($_file, '.')=='.html') {
 						$_fragmentname = str_replace('.','_',substr($_file,0,-5));
 					} else {
 						$_fragmentname = str_replace('.','_',substr($_file,0,-4));
@@ -343,7 +344,7 @@ foreach($tmparr as $key=>$subval)
 					if (substr($_fragmentname,0,1)=='_') {
 						$_fragmentname=substr($_dir,5,-1).$_fragmentname;
 					}
-					if (substr($_file,-5)=='.html') {
+					if (strrchr($_file, '.')=='.html') {
 						if (substr($_file,-9)!='.tpl.html') {
 							$_fragmentname .= '_tpl';
 						}	
@@ -356,13 +357,13 @@ foreach($tmparr as $key=>$subval)
 						include ($dirname.$_dir.$_file);
 						continue;
 					}
-					if (substr($_file,-4)=='.php') {
+					if (strrchr($_file, '.')=='.php') {
 						$this->php_files_list[$_fragmentname] = $dirname.$_dir.$_file;
 						continue;
 					}
 					
 					//Обработка факта наличия .ini-файлов
-					if (substr($_file,-4)=='.ini') {
+					if (strrchr($_file, '.')=='.ini') {
 						//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
 						if (substr($_file,-8)=='init.ini') {
 							//Если имя файла оканчивается на .init.ini, инициализировать его сразу
@@ -1009,14 +1010,14 @@ foreach($tmparr as $key=>$subval)
 	 * @return bool false в случае ошибки
 	 */
 	function load_and_parse_ini_file($filename){
-		if(!$ini=file($filename)) return false;
+		if(!$ini=file($filename,FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) return false;
 		$res=array();
 		$currentGroup='';
 		$arrayKeys=array();
 		foreach($ini as $row) {
-			$row=rtrim($row);
-			if($row=='' || substr($row,0,1)==';') continue; //Пустые строки игнорируются
-			if (substr($row,0,1)=='[') { //Начало новой группы [group]
+			$first_symbol=substr($row,0,1);
+			if($first_symbol==';') continue; //Комментарии строки игнорируются
+			if ($first_symbol=='[') { //Начало новой группы [group]
 				$currentGroup=substr($row,1,-1);
 				continue;
 			}
@@ -1072,7 +1073,7 @@ foreach($tmparr as $key=>$subval)
 				$arrayKeys[$currentGroup]++; //Генерация номера элемента массива, массив нельзя перемешивать с обычными данными
 			} else {
 				$delimeterPos=strpos($row,'=');
-				if (substr($row,0,1)=='$') { //Если опция начинается на "$", то её значение - выражение на PHP (например, дата или md5-хеш).
+				if ($first_symbol=='$') { //Если опция начинается на "$", то её значение - выражение на PHP (например, дата или md5-хеш).
 					$subject= rtrim(substr($row,1,$delimeterPos-1));
 					if ($currentGroup!='') {
 						$subject = $currentGroup . '.' . $subject;
