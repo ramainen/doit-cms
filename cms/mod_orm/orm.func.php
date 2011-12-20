@@ -837,7 +837,11 @@ abstract class ar
 		}
 		return $this->_data;
 	}
-	
+
+	function to_json()
+	{
+		return json_encode($this->to_array);
+	}
 	function __set($name,$value)
 	{	
 		if(method_exists($this,'set_'.$name)) {
