@@ -130,6 +130,7 @@ class doitClass
 	private $template_patterns=array(); //Теги шаблонизатора
 	private $template_replacements=array(); //Значения тегов шаблонизатора
 	private $_last_router_rule=''; //Активное правило, которое сработало для текущей функции
+    public  $lang=''; //Текущий язык мультиязычного сайта
 	public $_this_cache=array();
 
 /* ================================================================================= */	
@@ -300,6 +301,16 @@ foreach($tmparr as $key=>$subval)
 
 		//Обрезка GET-параметров
 		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
+
+        //Проверка на мультиязычность сайта
+        if(substr($_tmpurl,3,1)=='/'){
+            $probablyLang=substr($_tmpurl,1,2);
+            if(file_exists('app/lang/'.$probablyLang.'.ini')){
+                $this->load_and_parse_ini_file('app/lang/'.$probablyLang.'.ini');
+                $this->lang=$probablyLang;
+                $_tmpurl=substr($_tmpurl,3);
+            }
+        }
 		$_where_question_sign = strpos($_tmpurl,'?');
 		if($_where_question_sign !== false) {
 			$_tmpurl = substr($_tmpurl, 0, $_where_question_sign); 

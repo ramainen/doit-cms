@@ -872,11 +872,20 @@ abstract class ar
 	
 	function __get($name)
 	{
-	
+
 		//Item.something
-		if (method_exists($this,$name)) {
+		if (method_exists($this, $name)) {
 			return $this->{$name}();
 		}
+
+		//Item.ml_title
+		if (substr($name, 0, 3) == 'ml_') {
+			$lang = d()->lang;
+			if ($lang != '') {
+				return $this->{$lang.substr($name,2)};
+            }
+		}
+
 		//Item.new
 		if ($name=='new') { // Crud - create
 			$this->_options['new']=true;
