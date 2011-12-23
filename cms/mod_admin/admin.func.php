@@ -249,11 +249,24 @@ function admin_edit()
 {
 	print action('admin_save_data');
 	$rows=array();
+	$scenario=0;
 	$tableortype = url(3);
+	//Перенаправление
+	if(!is_numeric(url(4)) && url(4)!='add'){
+			$scenario=1;
+	}
 	if (url(4)!='add') {
 		//TODO: db()->sql();
-		if (!($line=mysql_fetch_array(mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `id` = '".mysql_real_escape_string(url(4))."'")))) {
-			$line=array();
+		if($scenario==1){
+			if (!($line=mysql_fetch_array(mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `url` = '".mysql_real_escape_string(url(4))."'")))) {
+				$scenario=2;
+				$_GET['url']=url(4);
+				$line=array();
+			}
+		} else {
+			if (!($line=mysql_fetch_array(mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `id` = '".mysql_real_escape_string(url(4))."'")))) {
+				$line=array();
+			}
 		}
 	} else {
 		$line=array();
@@ -276,7 +289,7 @@ function admin_edit()
 		$setted_flag[$field['name']]=true;
 		d()->value='';
 		d()->field_params=$field['all'];
-		if (url(4)=='add' && isset($_GET[$field['name']])) {
+		if ((url(4)=='add' || $scenario==2) && isset($_GET[$field['name']])) {
 			d()->value=$_GET[$field['name']];
 		}
 		if (isset($line[$field['name']])) {
@@ -285,7 +298,7 @@ function admin_edit()
 		$rows[]=d()->call('admin_'.$field['type']);
 	}	
 	
-	if(url(4)=='add') {
+	if(url(4)=='add' || $scenario==2) {
 		//Установка скрытых полей
 		foreach($_GET as $key=>$value) {
 			if (!isset($setted_flag[$key])) {
@@ -295,9 +308,18 @@ function admin_edit()
 			}
 		}
 	}
-	
+	if($scenario==2){
+		d()->name = '_scenario';
+		d()->value = 'add';
+		$rows[]=d()->call('admin_hidden');
+	}
+	if($scenario==1){
+			d()->name = '_scenario';
+			d()->value = 'edit';
+			$rows[]=d()->call('admin_hidden');
+	}
 	d()->tabletitle = 'Редактирование элемента';
-	if(url(4)=='add') {
+	if(url(4)=='add' || $scenario==2) {
 		d()->tabletitle = 'Добавление нового элемента';
 	}
 	d()->tablerow = $rows;
@@ -308,10 +330,27 @@ function admin_save_data($params)
 {
 	//TODO: Новое API для добавление новых элементов в базу данных;  
 	$elemid=url(4);
-	if($elemid=='add') {
+	$scenario=0;
+	if(isset($_POST['_scenario']) && $_POST['_scenario']=='add'){
+		$scenario=2;
+	}
+	if(isset($_POST['_scenario']) && $_POST['_scenario']=='edit'){
+		$scenario=1;
+	}
+	if($elemid=='add' || $scenario=='2') {
 		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
 		$result=mysql_query("insert into `".mysql_real_escape_string(url(3))."`  () values ()");
 		$elemid=mysql_insert_id();
+	}
+	if($scenario=='1') {
+		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
+		$result = mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `url` = '".mysql_real_escape_string(url(4))."'");
+		if($line=mysql_fetch_array($result)){
+			$elemid=$line['id'];
+		}else{
+			$result=mysql_query("insert into `".mysql_real_escape_string(url(3))."`  () values ()");
+			$elemid=mysql_insert_id();
+		}
 	}
 	//FIXME: костыль
 	if(isset($params['url'])){
