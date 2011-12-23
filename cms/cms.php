@@ -1010,6 +1010,7 @@ foreach($tmparr as $key=>$subval)
 	 * @return bool false в случае ошибки
 	 */
 	function load_and_parse_ini_file($filename){
+	 
 		if(!$ini=file($filename,FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) return false;
 		$res=array();
 		$currentGroup='';
@@ -1026,12 +1027,12 @@ foreach($tmparr as $key=>$subval)
 				//Если тип строки - неименованный массив, разделённый пробелами
 				$subject=$currentGroup;
 
-				$tmparr = explode(' ',$row);
+				$tmparr = explode(' ',str_replace("\t",' ',$row));
 				$value=array();
 				$quoteflag=false;
 				$tmpstr="";
 				foreach ($tmparr as $val) {
-					if ($val!='' && $val!="\t") {  //игнорирование двойных пробелов между значениями
+					if ($val!='') {  //игнорирование двойных пробелов между значениями
 						if(substr($val,0,1)=='"' && $quoteflag==false) {
 							if(substr($val,-1,1)=='"') {
 								$value[]=substr($val,1,-1); //Одиночное слово в кавычках
@@ -1058,6 +1059,20 @@ foreach($tmparr as $key=>$subval)
 				if (!isset($arrayKeys[$currentGroup])) {
 					$arrayKeys[$currentGroup]=0;
 				}
+				//Разбор пар ключ-значение
+				$founded = false;
+				//$value2=$value;
+			/*	foreach($value as $number => $element) {
+					if(substr($element,-1,1)==':') {
+						$value2[substr($element,0,-1)] = $value[$number+1];
+						unset($value2[$number]);
+						unset($value2[$number+1]);						
+					}
+				}*/
+				
+				$value=array($arrayKeys[$currentGroup]=>$value);
+				$arrayKeys[$currentGroup]++; //Генерация номера элемента массива, массив нельзя перемешивать с обычными данными
+				
 			} else {
 				$subject= rtrim(substr($row,0,$delimeterPos));
 				if ($currentGroup!='') {
