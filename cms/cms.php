@@ -277,6 +277,10 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$2($doit->$1); ?'.'>';
 
+		// {"userlist"|t}
+		$this->template_patterns[]='/\{\"(.+?)\"\|([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php print  $doit->$2("$1"); ?'.'>';
+
 		// {page.title|h}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php if(is_array($doit->$1)) {  print  $doit->$3($doit->$1[\'$2\']); }else{ print  $doit->$3($doit->$1->$2); } ?'.'>';

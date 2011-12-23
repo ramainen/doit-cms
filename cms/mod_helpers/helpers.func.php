@@ -167,3 +167,11 @@ function to_p($one)
 {
 	return ar::one_to_plural($one);
 }
+
+function t($text)
+{
+	if(!empty(d()->translate[$text])){
+		return d()->translate[$text];
+	}
+	return $text;
+}
