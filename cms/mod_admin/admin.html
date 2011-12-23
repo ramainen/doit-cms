@@ -38,10 +38,13 @@
 <div  class=" news-items hidden">
     <ul>
 
- 	<?php
- 
-	foreach (d()->admin['leftmenu'] as $_value) { ?>
-		<li><a href="/admin/list/<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
+ 	<?php foreach (d()->admin['leftmenu'] as $_value) { ?>
+	
+		<?php if(substr( $_value[0],0,7)!='/admin/'){ ?>
+			<li><a href="/admin/list/<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
+		<?php }else{ ?>
+			<li><a href="<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
+		<?php } ?>
 	<?php } ?>
         
 
