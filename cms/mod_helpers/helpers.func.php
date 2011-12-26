@@ -175,3 +175,32 @@ function t($text)
 	}
 	return $text;
 }
+
+
+/**
+ * Склонение числительных
+ *
+ * <code>
+ * declOfNum(4, array('помидор', 'помидора', 'помидоров')
+ * </code>
+ *
+ * @param $number
+ * @param $titles
+ * @return string
+ */
+function declOfNum($number, $words)
+{
+	$checks = array (2, 0, 1, 1, 1, 2);
+	return $words[($number%100>4 && $number%100<20)? 2 : $checks[min($number%10, 5)]];
+}
+
+
+function userdate($date)
+{
+	return d()->Date($date)->user();
+}
+
+function ml_userdate($date)
+{
+	return d()->Date($date)->ml_user();
+}
