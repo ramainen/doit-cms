@@ -4,7 +4,7 @@ class clients_controller
 {
 	function index()
 	{
-		d()->clients  = d()->Client->all;
+		d()->clients  = d()->Client;
 		print d()->view();
 	}
 	

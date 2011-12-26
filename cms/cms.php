@@ -833,6 +833,13 @@ foreach($tmparr as $key=>$subval)
 		if(substr($name,-11)=='_controller') {
 			return  doit_caller_factory($name);
 		}
+
+		//$fistrsim =  ord(substr($name,0,1));
+		//if($fistrsim>64 && $fistrsim<91){
+		if(preg_match('/^[A-Z].+/', $name)) {
+			return new $name();
+		}
+
 		//Проверка префиксов для модулей для модулей и расширений
 		//TODO: это слишком медленно
 		foreach ($this->datapool['prefixes'] as $_one_prefix) {

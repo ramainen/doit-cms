@@ -664,8 +664,12 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 		}
-		$this->_cursor = $index;
-		return $this;
+		if(is_numeric($index)){
+			$this->_cursor = $index;
+			return $this;
+		}else{
+			return $this->{$index};
+		}
 	}
 
 	function offsetExists($offset) {
