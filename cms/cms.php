@@ -149,7 +149,6 @@ class doitClass
 			$doit->datapool[\'this\']=array();
 		}
 		array_push($doit->_this_cache,$doit->datapool[\'this\']);
-		if(is_object($tmparr)) { $tmparr = $tmparr->all;}
 if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
@@ -174,7 +173,7 @@ foreach($tmparr as $key=>$subval)
 		// <foreach users>
 		$this->template_patterns[]='/<foreach\s+(.*)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
-		if(is_object($tmparr)) { $tmparr = $tmparr->all;}
+
 		if(!isset($doit->datapool[\'this\'])){
 			$doit->datapool[\'this\']=array();
 		}

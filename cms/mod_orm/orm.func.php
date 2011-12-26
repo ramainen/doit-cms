@@ -18,59 +18,6 @@
 	*      along with this program; if not, write to the Free Software
 	*      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	*      MA 02110-1301, USA.
- *
-На будущее - итератор объектов и объект-массив
-	class ResultIterator extends ArrayIterator {
-	private $count=3;
-		function key()
-		{
-			return  "!!";
-		}
-		function append ($str)
-		{
-			print "#".$str;
-		}
-		function offsetGet ($str)
-		{
-			print "#".$str;
-		}
-		
-		function count()
-		{
-			return 3;
-		}
-		function next()
-		{
-		print "2";
-		return "2";
-		}
-		function valid()
-		{
-			print "1";
-			$this->count--;
-			if($this->count > 0){
-				return true;
-			}
-		}
-	}
-	class ResultElement extends ArrayObject {
-		private $linktoobject;
-		function __construct(&$object)
-		{
-			$this->linktoobject = &$object;
-		}
-		public function getIterator()
-		{
-			return new ResultIterator(    );
-		}
-		function offsetGet($index) {		
-			return $this->linktoobject->shift_to($index);
-		}
-		function count()
-		{
-			return $this->linktoobject->size();
-		}
-	}
  
 */
 	
@@ -122,7 +69,7 @@ calculate
 	
 	
 //Класс Active Record, обеспечивающий простую добычу данных
-abstract class ar
+abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIterator
 {
 	public $edit_button;
 	public $_options;
@@ -132,6 +79,8 @@ abstract class ar
 	private $_known_columns=array();
 	private $_count_rows = 0;
 	private $_future_data=array();
+	private $_cursor=0;
+	private $_count=0;
 	//TODO: Выполняет limit 1 SQL запрос
 	function first()
 	{
@@ -538,7 +487,7 @@ abstract class ar
 			$this->_data[]=$line;
 		}
 		
-		 
+		 $this->_count=count($this->_data);
 	}
 	//CRUD
 	public function delete()
@@ -661,6 +610,88 @@ abstract class ar
 		foreach($this->_data as $_key => $_value) {
 			return $this->_data;
 		}
+	}
+
+	//Итератор
+	function count()
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		return $this->_count;
+	}
+
+	function current()
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		return $this;
+	}
+
+	function next()
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		$this->_cursor++;
+	}
+
+	function valid()
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		return !($this->_cursor >= $this->_count);
+	}
+
+	function key()
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		return $this->_cursor;
+	}
+	function rewind()
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		$this->_cursor=0;
+	}
+	function offsetGet( $index )
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		$this->_cursor = $index;
+		return $this;
+	}
+
+	function offsetExists($offset) {
+	if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+	}
+	   return isset($this->_data[$this->_cursor]);
+	}
+	function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            //ничего пока не делать
+        } else {
+	        $this->{$offset} = $value;
+        }
+    }
+
+	function seek ($position)
+	{
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
+		$this->_cursor = $position;
+	}
+	function offsetUnset($offset) {
+		//unset($this->_data[$this->_cursor]);
+		//Я этого делать не буду. Пока.
 	}
 	//Получение шаблона и вывод
 	public function show()
@@ -928,17 +959,17 @@ abstract class ar
 				$this->fetch_data_now();
 		}
 		
-		if (isset($this->_data[0])) {
+		if (isset($this->_data[$this->_cursor])) {
 			//Item.title         //Получение одного свойства
-			if (isset($this->_data[0][$name])) {
-				return $this->_data[0][$name];
+			if (isset($this->_data[$this->_cursor][$name])) {
+				return $this->_data[$this->_cursor][$name];
 			}
 
 
 			//Item.user          //Получение связанного объекта
-			if (isset($this->_data[0][$name.'_id'])) {
+			if (isset($this->_data[$this->_cursor][$name.'_id'])) {
 				$_tmp =  activerecord_factory_from_table(ar::one_to_plural($name));
-				return $_tmp->find($this->_data[0][$name.'_id']);
+				return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
 			} else {
 				//Проверка на факт наличия столбца $name.'_id'
 				$columns = $this->columns;
@@ -946,7 +977,7 @@ abstract class ar
 					$columns = array_flip($columns);
 					if (isset($columns[$name.'_id'])) {
 						$_tmp = activerecord_factory_from_table(ar::one_to_plural($name));
-						return $_tmp->find($this->_data[0][$name.'_id']);
+						return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
 					}
 				}	
 			}
@@ -958,7 +989,7 @@ abstract class ar
 
 			//$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
 
-            //Ищем таблицу с названием $name (например, users)
+            //??щем таблицу с названием $name (например, users)
 			$columns = $this->columns($name);
             
 			if ($columns===false && $name=='template') {
@@ -975,7 +1006,7 @@ abstract class ar
 				if ($value == $this->_options['plural_to_one']."_id") {
 					$_tmpael  = activerecord_factory_from_table($name);
 
-					return $_tmpael->where($this->_options['plural_to_one']."_id = ?",$this->_data[0]['id']);
+					return $_tmpael->where($this->_options['plural_to_one']."_id = ?",$this->_data[$this->_cursor]['id']);
 				}
 			}			
 			return '';
