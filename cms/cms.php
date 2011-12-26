@@ -130,7 +130,7 @@ class doitClass
 	private $template_patterns=array(); //Теги шаблонизатора
 	private $template_replacements=array(); //Значения тегов шаблонизатора
 	private $_last_router_rule=''; //Активное правило, которое сработало для текущей функции
-    public  $lang=''; //Текущий язык мультиязычного сайта
+    public  $lang='ru'; //Текущий язык мультиязычного сайта
 	public $_this_cache=array();
 
 /* ================================================================================= */	
@@ -196,9 +196,9 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{{{([#a-zA-Z0-9_]+)\}}}/';
 		$this->template_replacements[]='<'.'?php print $doit->render("$1"); ?'.'>';
 
-		// <type admin>
-		$this->template_patterns[]='/<type\s+([a-zA-Z0-9_-]+)>/';
-		$this->template_replacements[]='<'.'?php if($doit->type=="$1"){ ?'.'>';
+		// <type admin> //DEPRECATED
+//		$this->template_patterns[]='/<type\s+([a-zA-Z0-9_-]+)>/';
+//		$this->template_replacements[]='<'.'?php if($doit->type=="$1"){ ?'.'>';
 
 		// <content for header>
 		$this->template_patterns[]='/<content\s+for\s+([a-zA-Z0-9_-]+)>/';
@@ -244,13 +244,13 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+):\}/';
 		$this->template_replacements[]='<'.'?php if($doit->$1) { ?'.'>';
 
-		// <if user>
-		$this->template_patterns[]='/\<if\s([a-zA-Z0-9_]+)\>/';
-		$this->template_replacements[]='<'.'?php if($doit->$1) { ?'.'>';
+		// <if user>    //DEPRECATED
+//		$this->template_patterns[]='/\<if\s([a-zA-Z0-9_]+)\>/';
+//		$this->template_replacements[]='<'.'?php if($doit->$1) { ?'.'>';
 
-		// <if user.title>
-		$this->template_patterns[]='/\<if\s([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\>/';
-		$this->template_replacements[]='<'.'?php if((is_array($doit->$1) && $doit->$1[\'$2\']) || $doit->$1->$2) { ?'.'>';
+		// <if user.title>    //DEPRECATED
+//		$this->template_patterns[]='/\<if\s([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\>/';
+//		$this->template_replacements[]='<'.'?php if((is_array($doit->$1) && $doit->$1[\'$2\']) || $doit->$1->$2) { ?'.'>';
 
 		// {page.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/';
@@ -268,9 +268,9 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php if(is_array($doit->this)) {  print  $2($doit->this[\'$1\']); }else{ print  $2($doit->this->$1); } ?'.'>';
 		
-		// </if>
-		$this->template_patterns[]='/\<\/if\>/';
-		$this->template_replacements[]='<'.'?php } ?'.'>';
+		// </if> //DEPRECATED
+//		$this->template_patterns[]='/\<\/if\>/';
+//		$this->template_replacements[]='<'.'?php } ?'.'>';
 
 		// {title|h}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
@@ -308,12 +308,22 @@ foreach($tmparr as $key=>$subval)
         //Проверка на мультиязычность сайта
         if(substr($_tmpurl,3,1)=='/'){
             $probablyLang=substr($_tmpurl,1,2);
+			//Язык /ml/ при отсуствующем файле запрещён
             if(file_exists('app/lang/'.$probablyLang.'.ini')){
                 $this->load_and_parse_ini_file('app/lang/'.$probablyLang.'.ini');
                 $this->lang=$probablyLang;
                 $_tmpurl=substr($_tmpurl,3);
-            }
-        }
+            } else{
+				if(file_exists('app/lang/'.$this->lang.'.ini')){
+					$this->load_and_parse_ini_file('app/lang/'.$this->lang.'.ini');
+				}
+			}
+        }else{
+			if(file_exists('app/lang/'.$this->lang.'.ini')){
+				$this->load_and_parse_ini_file('app/lang/'.$this->lang.'.ini');
+			}
+		}
+
 		$_where_question_sign = strpos($_tmpurl,'?');
 		if($_where_question_sign !== false) {
 			$_tmpurl = substr($_tmpurl, 0, $_where_question_sign); 

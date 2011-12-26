@@ -52,7 +52,7 @@ function pages_chain_show()
 }
 function pages_tree()
 {
-	return d()->Page->tree(d()->Page->index);
+	return d()->Page->tree(d()->Page->find_by_url('index'));
 }
 
 class Page extends ar
