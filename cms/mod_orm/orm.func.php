@@ -313,6 +313,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			$name =  mysql_real_escape_string($id);
 			$this->_options['condition']=   array ("( `".$this->_options['namefield']."` = '". $name ."' )");
 		}
+		$this->order_by('')->limit(1);
 		return $this;
 	}
 	
@@ -471,23 +472,41 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 
 	function fetch_data_now()
 	{
-		$this->_options['queryready']=true;
+		$this->_options['queryready'] = true;
 		$this->_data = array();
 
 		$_query_string = $this->to_sql();
-		$_result=mysql_query($_query_string);
-		if($this->_options['calc_rows']) {
+		$_result = mysql_query($_query_string);
+		if ($this->_options['calc_rows']) {
 			$_count_result = mysql_query('SELECT FOUND_ROWS()');
 			$_countrows_line = mysql_fetch_array($_count_result);
 			$this->_count_rows = $_countrows_line[0];
 		}
-		
-		
-		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
-			$this->_data[]=$line;
+
+		if (!isset (d()->datapool['columns_registry'])) {
+			d()->datapool['columns_registry'] = array();
+			d()->datapool['_known_fields'] = array();
 		}
-		
-		 $this->_count=count($this->_data);
+		if (!isset (d()->datapool['columns_registry'][$this->_options['table']])) {
+			d()->datapool['columns_registry'][$this->_options['table']]=array();
+			d()->datapool['_known_fields'][$this->_options['table']]=array();
+			$i = 0;
+			while ($i < mysql_num_fields($_result)) {
+
+				$meta = mysql_fetch_field($_result, $i);
+
+				d()->datapool['_known_fields'][$this->_options['table']][$meta->name]=true;
+				d()->datapool['columns_registry'][$this->_options['table']][]=$meta->name;
+				$i++;
+			}
+		}
+
+
+		while ($line = mysql_fetch_assoc($_result)) {
+			$this->_data[] = $line;
+		}
+
+		$this->_count = count($this->_data);
 	}
 	//CRUD
 	public function delete()
@@ -716,6 +735,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		if(!isset (d()->datapool['columns_registry'])) {
 			d()->datapool['columns_registry']=array();
+			d()->datapool['_known_fields']=array();
 		}
 		if(isset (d()->datapool['columns_registry'][$tablename])) {
 			return d()->datapool['columns_registry'][$tablename];
@@ -969,50 +989,55 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 				return $this->_data[$this->_cursor][$name];
 			}
 
+			if(!isset(d()->datapool['_known_fields'][$this->_options['table']][$name])){
 
-			//Item.user          //Получение связанного объекта
-			if (isset($this->_data[$this->_cursor][$name.'_id'])) {
-				$_tmp =  activerecord_factory_from_table(ar::one_to_plural($name));
-				return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
-			} else {
-				//Проверка на факт наличия столбца $name.'_id'
-				$columns = $this->columns;
-				if($columns !== false) {
-					$columns = array_flip($columns);
-					if (isset($columns[$name.'_id'])) {
-						$_tmp = activerecord_factory_from_table(ar::one_to_plural($name));
-						return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
+
+				//Item.user          //Получение связанного объекта
+				if (isset($this->_data[$this->_cursor][$name.'_id'])) {
+					$_tmp =  activerecord_factory_from_table(ar::one_to_plural($name));
+					return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
+				} else {
+					//Проверка на факт наличия столбца $name.'_id'
+					$columns = $this->columns();
+					if($columns !== false) {
+						$columns = array_flip($columns);
+						if (isset($columns[$name.'_id'])) {
+							$_tmp = activerecord_factory_from_table(ar::one_to_plural($name));
+							return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
+						}
 					}
-				}	
-			}
-			
-			//Item.users
-			//1. Поиск альтернативных подходящих столбцов
-			$foundedfield = false;
-			//ищем поле item_id в таблице users
-
-			//$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
-
-            //??щем таблицу с названием $name (например, users)
-			$columns = $this->columns($name);
-            
-			if ($columns===false && $name=='template') {
-				return ''; //template - ключевое частозапрашиваемое поле, данный оборот ускорит работу
-			}
-			
-			if ($columns===false) {
-				 
-                $_tmpael  = activerecord_factory_from_table($this->_options["table"]);
-                return $_tmpael->find_by('url',$name);
-			}
-        
-			foreach($columns as $key=>$value) {
-				if ($value == $this->_options['plural_to_one']."_id") {
-					$_tmpael  = activerecord_factory_from_table($name);
-
-					return $_tmpael->where($this->_options['plural_to_one']."_id = ?",$this->_data[$this->_cursor]['id']);
 				}
-			}			
+
+				//Item.users
+				//1. Поиск альтернативных подходящих столбцов
+				$foundedfield = false;
+				//ищем поле item_id в таблице users
+
+				//$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
+
+				//??щем таблицу с названием $name (например, users)
+				$columns = $this->columns($name);
+
+				if ($columns===false && $name=='template') {
+					return ''; //template - ключевое частозапрашиваемое поле, данный оборот ускорит работу
+				}
+
+				/*
+				 DEPRECATED - лишние запросы
+				if ($columns===false) {
+
+					$_tmpael  = activerecord_factory_from_table($this->_options["table"]);
+					return $_tmpael->find_by('url',$name);
+				}
+				*/
+				foreach($columns as $key=>$value) {
+					if ($value == $this->_options['plural_to_one']."_id") {
+						$_tmpael  = activerecord_factory_from_table($name);
+
+						return $_tmpael->where($this->_options['plural_to_one']."_id = ?",$this->_data[$this->_cursor]['id']);
+					}
+				}
+			}
 			return '';
 		} else {
 			//Item.ramambaharum_mambu_rum

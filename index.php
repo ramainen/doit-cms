@@ -1,7 +1,6 @@
 <?php
 	
-	error_reporting(E_ALL + E_NOTICE);
-	
+
 	include_once ('config.php');
 	$start_time = microtime(true);
 	include_once ('cms/cms.php');
