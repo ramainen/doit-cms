@@ -204,3 +204,18 @@ function ml_userdate($date)
 {
 	return d()->Date($date)->ml_user();
 }
+
+/**
+ * Функция, проверяющая валидность адреса электронной почты. Используется в валидаторах.
+ *
+ * @param $value Адрес электроннйо почты
+ * @param $params Массив параметров валидатора (в данном случае пустой)
+ * @return bool false, если адрес некорректен.
+ */
+function valid_email($value,$params)
+{
+	return ( 1 == preg_match(
+		'/^[-a-z0-9\!\#\$\%\&\'\*\+\/\=\?\^\_\`\{\|\}\~]+(?:\.[-a-z0-9!' .
+			'\#\$\%\&\'\*\+\/\=\?\^\_\`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?\.)*'.
+			'(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$/' ,$value));
+}
