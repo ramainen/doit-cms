@@ -503,7 +503,28 @@ foreach($tmparr as $key=>$subval)
 						$is_ok=false;
 					}
 				}
-
+				if(isset($value['function'])) {
+					if(!is_array($value['function'])) {
+						$value['function']=array($value['function']);
+					}
+					foreach($value['function'] as $func) {
+						$rez = $this->call($func,array($params[$key]));
+						if($rez===false){
+							if (count($this->datapool['notice'])!=0){
+								$is_ok=false;
+							}
+						}
+					}
+				}
+				foreach($value as $rule => $rule_array){
+					 if( !in_array($rule,array('unique','required','function','confirmation'))){
+						 $rez = $this->call($rule,array($params[$key],$rule_array));
+						 if($rez===false){
+							 $this->datapool['notice'][] = $value[$rule]['message'];
+							 $is_ok=false;
+						 }
+					}
+				}
 			}
 
 			//дополнительные функции с правилами для валидаторов

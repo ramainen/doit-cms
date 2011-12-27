@@ -17,8 +17,9 @@ class clients_controller
 	function edit($id)
 	{
 		d()->client = d()->Client->find($id);
-		action('clients#update');
 		action('mailer');
+		action('clients#update');
+		
 		print d()->view();
 	}
 
