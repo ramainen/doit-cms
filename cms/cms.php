@@ -18,18 +18,71 @@ Copyright (C) 2011 Fakhrutdinov Damir (aka Ainu)
 *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 *      MA 02110-1301, USA.
 
-0.14 Вывод orm объектов (ar->show(), print User). Поиск по Url (Page->about->title). Удаление. Базовый полиморфизм.
-0.11 ActiveRecord и foreach для объектов 07.08.2011 
-0.7 переписано на ООП.
+0.19 Скаффолдинг, ArrayAccess, обработка ошибок, мультиязычность, оптимизация скорости 28.12.2011
+0.11 ActiveRecord и foreach для объектов 07.08.2011
 0.0 Нулевая версия DoIt CMS
 	Рабочее название фреймворка Var(Var) Framework
 	Система названа в честь статьи Variable Variables http://php.net/manual/en/language.variables.variable.php 26.01.2011
 */
-error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+//error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+error_reporting(0);
 session_start();
 
-function print_error_message($wrongline,$line,$file,$message,$usermessage)
+
+/**
+ * Обработчик ошибок, возникающих при работе функций любого типа (шаблоны, функции и т.д.)
+ *
+ * @param $output Ошибочный вывод.
+ * @return string Информация об шибке
+ */
+function doit_ob_error_handler($output)
 {
+	$error = error_get_last();
+
+	if($error['type']==1){
+		$parent_function =  d()->_active_function();
+		return print_error_message(' ',$error['line'],'(неизвестно)' ,$error['message'],'Ошибка при выполнении функции '.$parent_function );
+	}
+	return $output;
+}
+
+/**
+ * Обработчик исключений тип PARSE_ERROR, возникших при загрузке проекта, которые невозможно словить другим способом.
+ */
+function doit_parse_error_exception()
+{
+	if($error = error_get_last()){
+		if($error['type']==4){
+			$errfile = substr($error['file'],strlen($_SERVER['DOCUMENT_ROOT'])) ;
+			$lines=file($error['file']);
+			$wrongline=$lines[$error['line']];
+			print print_error_message($wrongline,$error['line'],$errfile ,$error['message'],'Ошибка при разборе кода');
+		}
+	}
+}
+
+register_shutdown_function('doit_parse_error_exception');
+
+/**
+ * Внутренняя служебная функция для вывода сообщений об ошибке.
+ *
+ * @param $wrongline Текст строки с ошибкой
+ * @param $line Номер строки с ошибкой
+ * @param $file Файл
+ * @param $message Сообщение системное
+ * @param $usermessage Соощение пользователя
+ * @param bool $last Скрывать все следающие ошибки после этой.
+ * @return string Сформированное сообщение.
+ */
+function print_error_message($wrongline,$line,$file,$message,$usermessage,$last=false)
+{
+	static $not_show_me_in_future=false;
+	if($not_show_me_in_future){
+		return '';
+	}
+	if($last==true){
+		$not_show_me_in_future=true;
+	}
 	$errfile = substr($file,strlen($_SERVER['DOCUMENT_ROOT'])) ;
 	return '<div style="padding:20px;border:1px solid red;background:white;color:black;">
 					<div>'.$usermessage.': '.$message.'</div>
@@ -132,7 +185,6 @@ class doitClass
 	private $_last_router_rule=''; //Активное правило, которое сработало для текущей функции
     public  $lang='ru'; //Текущий язык мультиязычного сайта
 	public $_this_cache=array();
-
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -337,7 +389,7 @@ foreach($tmparr as $key=>$subval)
 		
 		//сохранение фрагментов url
 		$this->url_parts=explode('/',substr($_tmpurl,1));
-		
+
 		//сначала инициализируются файлы из ./cms, затем из ./app
 		foreach(array('cms','app') as $dirname) { 
 			$_handle = opendir($dirname);
@@ -661,8 +713,7 @@ foreach($tmparr as $key=>$subval)
 			$this->call_chain_start[$this->call_chain_level]=$_currentname;
 			$this->call_chain_current_link[$this->call_chain_level]=$i;
 			//Тут вызываются предопределённые и пользовательские функции
-
-			ob_start();
+			ob_start('doit_ob_error_handler');
 			if (function_exists($name)) {
 
 				//Подстановка аргументов из $this->_last_router_rule
@@ -772,7 +823,7 @@ foreach($tmparr as $key=>$subval)
 			if ( $result === false && ( $error = error_get_last() ) ) {
  				$lines = explode("\n",'function '.$name.'(){ $doit=d(); ?'.'>'.$this->get_compiled_code($name).'<'.'?php ;} ');
 				$file = $this->fragmentslist[$name];
-				return print_error_message( $lines [$error['line']-1],$error['line'],$file,$error['message'],'Ошибка при обработке шаблона');
+				return print_error_message( $lines [$error['line']-1],$error['line'],$file,$error['message'],'Ошибка при обработке шаблона',true);
 			} else {
 				return call_user_func($name);
 			}
@@ -860,6 +911,16 @@ foreach($tmparr as $key=>$subval)
 		return '';
 	}
 
+	/**
+	 * Возвращает имя текущей функции (триады). Даже если в её теле запускались другие функции, текущая не потеряется
+	 * Внутри вложенных функций текущая функция будет другой. Внутренняя. Используется при обработке ошибок
+	 * и при запуске d()->view()
+	 * @return mixed Название функции
+	 */
+	public function _active_function()
+	{
+		return $this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]];
+	}
 
 	/**
 	 * Запускает имя_функции.tpl.html, либо пытается угадать имя текущей триады
@@ -874,7 +935,7 @@ foreach($tmparr as $key=>$subval)
 	{
 		//Определяем функцию (контроллер), из которого был произведён вызов. Припиываем _tpl, вызываем
 		if($parent_function===false) {
-			$parent_function =  $this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]];
+			$parent_function =  $this->_active_function();
 		}
 
 		if(substr($parent_function,-4)!='_tpl'){
