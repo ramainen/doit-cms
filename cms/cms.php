@@ -1268,9 +1268,10 @@ function __autoload($class_name) {
     }
     $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
 	$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
+	$lover_class_name=strtolower($class_name);
 
-	if(file_exists(d()->php_files_list[$class_name.'_class'])){
-		require d()->php_files_list[$class_name.'_class'];
+	if(file_exists(d()->php_files_list[$lover_class_name.'_class'])){
+		require d()->php_files_list[$lover_class_name.'_class'];
 	}elseif(file_exists($fileName)){
 		require $fileName;
 	}else{
