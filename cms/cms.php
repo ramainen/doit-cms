@@ -115,15 +115,12 @@ function url($param='', $length=1)
  * @param string $object (необязательно) Свойство основного объекта
  * @return doitClass Экземпляр основного объекта системы
  */
-function doit($object='')
+function doit()
 {
-	if (!isset(doitClass::$instance)) {
-		new doitClass();
-	}
-	if($object=='') {
-		return doitClass::$instance; 
-	}
+	return doitClass::$instance;
+	/* DEPRECATED
 	return doitClass::$instance->$object;
+	*/
 }
 
 /**
@@ -136,15 +133,12 @@ function doit($object='')
  * @param string $object (необязательно) Свойство основного объекта
  * @return doitClass Экземпляр основного объекта системы
  */
-function d($object='')
+function d()
 {
-	if (!isset(doitClass::$instance)) {
-		new doitClass();
-	}
-	if($object=='') {
-		return doitClass::$instance;
-	}
+	return doitClass::$instance;
+	/* DEPRECATED
 	return doitClass::$instance->$object;
+	*/
 }
 /**
  * Объект-прокси.
@@ -1291,4 +1285,9 @@ function __autoload($class_name) {
 function nothing()
 {
 	
+}
+
+
+if (!isset(doitClass::$instance)) {
+	new doitClass();
 }
