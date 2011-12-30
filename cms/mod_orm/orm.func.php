@@ -81,6 +81,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	private $_future_data=array();
 	private $_cursor=0;
 	private $_count=0;
+	private $_objects_cache=array();
 	//TODO: Выполняет limit 1 SQL запрос
 	function first()
 	{
@@ -924,7 +925,37 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	{
 		return $this->get($name);
 	}
-	
+
+
+	/**
+	 * Возвращает ключ массива (курсор, для обращения как к элементу массива), по id объекта
+	 *
+	 * @param $id ID Объекта
+	 * @return int искомый ключ
+	 */
+	function get_cursor_key_by_id($id)
+	{
+		static $_cache=false;
+		$key=0;
+		if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		if($_cache===false){
+			$_cache=array();
+			foreach ($this->_data as $key=>$value){
+				$_cache[$value['id']]=$key;
+			}
+			if(isset($_cache[$id])){
+				return $_cache[$id];
+			}
+		}else{
+			if(isset($_cache[$id])){
+				return $_cache[$id];
+			}
+		}
+		return $key;
+	}
+
 	function __get($name)
 	{
 
@@ -960,8 +991,6 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
  		
 		return $this->get($name);
-		
-			
 	}
 	
 	/* 
@@ -993,20 +1022,35 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 
 
 				//Item.user          //Получение связанного объекта
+				$_is_column_exists=false;
 				if (isset($this->_data[$this->_cursor][$name.'_id'])) {
-					$_tmp =  activerecord_factory_from_table(ar::one_to_plural($name));
-					return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
+					$_is_column_exists=true;
 				} else {
 					//Проверка на факт наличия столбца $name.'_id'
 					$columns = $this->columns();
 					if($columns !== false) {
-						$columns = array_flip($columns);
+						$columns = array_flip($columns);//TODO: возможно, array_keys будет быстрее
 						if (isset($columns[$name.'_id'])) {
-							$_tmp = activerecord_factory_from_table(ar::one_to_plural($name));
-							return $_tmp->find($this->_data[$this->_cursor][$name.'_id']);
+							$_is_column_exists=true;
 						}
 					}
 				}
+
+				if($_is_column_exists==true){
+					if(!isset($this->_objects_cache[$name])){
+						/* кеш собранных массивов */
+						$ids_array=array();
+						foreach($this->_data as $key=>$value){
+							$ids_array[$value[$name.'_id']]=true;
+						}
+						$ids_array=array_keys($ids_array);
+						$this->_objects_cache[$name] =  activerecord_factory_from_table(ar::one_to_plural($name))->order('')->where(' `id` IN ('.implode(' , ',$ids_array).') ');
+					}
+					$cursor_key=$this->_objects_cache[$name]->get_cursor_key_by_id($this->_data[$this->_cursor][$name.'_id']);
+					return $this->_objects_cache[$name][$cursor_key];
+				}
+
+
 
 				//Item.users
 				//1. Поиск альтернативных подходящих столбцов
