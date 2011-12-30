@@ -439,15 +439,15 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	//TODO: что по поводу LIMIT?
 	function found_rows()
 	{
+		if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		
 		if($this->_options['calc_rows']) {
 			return $this->_count_rows;
 		} else {
-			if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
-			}
 			return count($this->_data);
-		}
-		
+		}	
 	}
 	function to_sql()
 	{
