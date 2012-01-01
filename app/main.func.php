@@ -2,7 +2,7 @@
 function main()
 {
 	//var_dump(d()->Client);
-	$users=d()->Client->sql('select * from clients')->to_array;
+//	$users=d()->Client->sql('select * from clients')->to_array;
 	//var_dump($users);
 	//print(d()->User->find(2)->clients[0]['title']);
 
