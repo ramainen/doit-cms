@@ -41,7 +41,16 @@ function doit_ob_error_handler($output)
 
 	if($error['type']==1){
 		$parent_function =  d()->_active_function();
-		return print_error_message(' ',$error['line'],'(неизвестно)' ,$error['message'],'Ошибка при выполнении функции '.$parent_function );
+
+
+
+
+		if(d()->db->errorCode()!=0){
+			$mysql_err=d()->db->errorInfo();
+			$_message='<br>Также зафиксирована ошибка Mysql:<br>'. $mysql_err[2]."<br>";
+		}
+
+		return print_error_message(' ',$error['line'],'(неизвестно)' ,$error['message'],'Ошибка при выполнении функции '.$parent_function.' '.$_message );
 	}
 	return $output;
 }
@@ -179,6 +188,7 @@ class doitClass
 	private $_last_router_rule=''; //Активное правило, которое сработало для текущей функции
     public  $lang='ru'; //Текущий язык мультиязычного сайта
 	public $_this_cache=array();
+	public $db = NULL;
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -187,7 +197,9 @@ class doitClass
 		
 		// <foreach users as user>
 
-
+		$this->db = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+		$this->db->exec('SET CHARACTER SET utf8');
+		$this->db->exec('SET NAMES utf8');
 
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
