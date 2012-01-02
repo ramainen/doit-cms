@@ -148,7 +148,7 @@ function admin_show_one_list($table,$id1,$id2)
 
 	if ($id1=='') {
 		//list/goods     просто список всех полей
-		$query='select * from '.e($table).'   order by `sort`';
+		$query='select * from '.et($table).'   order by `sort`';
 		d()->list_addbutton='';
 		d()->list_addbutton.='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
 
@@ -165,23 +165,23 @@ function admin_show_one_list($table,$id1,$id2)
 		if($id2 == '') {
 			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
-				$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` is NULL  order by `sort`';
+				$query='select * from `'.et($table).'` where `'.et(to_o($table)).'_id` is NULL  order by `sort`';
 				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				if(is_numeric($id1)) {
-					$query='select * from `'.e($table).'` where `'.e(to_o($table))."_id` = '".e($id1)."' order by `sort`";
+					$query='select * from `'.et($table).'` where `'.et(to_o($table))."_id` = ".e($id1)." order by `sort`";
 					d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
-					$query='select * from `'.e($table).'` where `'.e(to_o($table)).'_id` IN (select id from `'.e($table)."` where `url` = '".e($id1)."')  order by `sort`";
+					$query='select * from `'.et($table).'` where `'.et(to_o($table)).'_id` IN (select id from `'.et($table)."` where `url` = ".e($id1).")  order by `sort`";
 					d()->list_addbutton=' ';
 				}
 
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
-			$query='select * from `'.e($table).'` where `'.e($id1)."` = '".e($id2)."'  order by `sort`";
-			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.e($id1).'='.h($id2).'">Добавить</a>';
+			$query='select * from `'.et($table).'` where `'.et($id1)."` = ".e($id2)."  order by `sort`";
+			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.et($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}
 	print '<!-- '.$query.' -->';
@@ -260,13 +260,15 @@ function admin_edit()
 	}
 	if (url(4)!='add') {
 		if($scenario==1){
-			if (!($line=mysql_fetch_array(mysql_query("select * from `".et(url(3))."` where `url` = ".e(url(4)))))) {
+			$result=d()->db->query("select * from `".et(url(3))."` where `url` = ".e(url(4)));
+			if ($result===false ||  ($line=$result->fetch())===false) {
 				$scenario=2;
 				$_GET['url']=url(4);
 				$line=array();
 			}
 		} else {
-			if (!($line=mysql_fetch_array(mysql_query("select * from `".et(url(3))."` where `id` = ".(int)url(4))))) {
+			$result=d()->db->query("select * from `".et(url(3))."` where `id` = ".(int)url(4));
+			if ($result===false ||  ($line=$result->fetch())===false) {
 				$line=array();
 			}
 		}
@@ -395,12 +397,11 @@ function admin_save_data($params)
 		
 		
 		$_res=doitClass::$instance->db->query('SHOW COLUMNS FROM `'.et(url(3)).'`');		
-		$result_array=array();
+		$list_of_existing_columns=array();
 		foreach ($_res->fetchAll(PDO::FETCH_NUM) as $_tmpline) {
-			$result_array[] = $_tmpline[0];
+			$list_of_existing_columns[] = $_tmpline[0];
 		}
-		
-		$list_of_existing_columns=$result_array;
+
 		foreach($params as  $value=>$key){
 			if(!in_array($value,$list_of_existing_columns)){
 				doitClass::$instance->Scaffold->create_field(et(url(3)),$value);
@@ -408,29 +409,7 @@ function admin_save_data($params)
 		}
 		doitClass::$instance->db->exec($result_str);
 	}
-	
-	/*
-	while(!mysql_query($result_str) && 1054 == mysql_errno()) {
-		$error_string=mysql_error();
-		$not_reqursy++;
-		if($not_reqursy>30) {
-			print "Произошла ошибка рекурсии. Пожалуйста, добавьте поля вручную - у меня не получилось. Спасибо.";
-			exit();
-		}
-		foreach($params as $key=>$value) {
-			if(strpos($error_string , "'".$key."'")!==false){
-				if (substr($key,-3)=='_id') {
-					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` int NULL" );
-				} elseif (substr($key,0,3)=='is_') {
-					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` tinyint(4) NOT NULL DEFAULT 0 " );
-				} else {
-					$result = mysql_query("ALTER TABLE `".mysql_real_escape_string(url(3))."` ADD COLUMN `$key` text NULL, DEFAULT CHARACTER SET=utf8" );
-				}
-				
-			}
-		}
-	}
-	*/
+
 	if($_POST['admin_command_redirect_close']=='yes') {
 		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
 	}else{
@@ -462,7 +441,7 @@ function admin_get_fields($tableortype='')
 	}
 	
 	d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');
-	$rows = doit()->admin['fields'];
+	$rows = d()->admin['fields'];
 	foreach ($rows as $key=>$value) {
 		$data[]=array('name'=>$value[1],'type'=>$value[0],'title'=>$value[2],'all'=>$value);
 	}
@@ -482,7 +461,7 @@ function admin_scaffold_new()
 		
 		if(d()->params['create_table']=='yes') {
 			print "Создаём таблицу ".h($table)."... ";
-			$result = d()->exec("CREATE TABLE `".$table."` (
+			$result = d()->db->exec("CREATE TABLE `".$table."` (
 `id`  int(11) NOT NULL AUTO_INCREMENT ,
 `url`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
 `text`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
@@ -496,8 +475,7 @@ PRIMARY KEY (`id`)
 ENGINE=MyISAM
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 ;");
- 
-			if($result){
+			if($result!==false){
 				print "<span style='color:#198E58'>готово</span><br>";
 			} else {
 				print "<span style='color:#B01414'>неудачно</span><br>";
@@ -530,7 +508,7 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 
 			
 			
-			print "Создаём файл mod_".h($table)."/".e($table).".func.php... ";
+			print "Создаём файл mod_".h($table)."/".h(et($table)).".func.php... ";
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','w+');
 			$t_result = fwrite($result,"<"."?php\r\n\r\n");
 			fclose($result);
