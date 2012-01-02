@@ -341,17 +341,18 @@ function admin_save_data($params)
 	}
 	if($elemid=='add' || $scenario=='2') {
 		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
-		$result=mysql_query("insert into `".mysql_real_escape_string(url(3))."`  () values ()");
-		$elemid=mysql_insert_id();
+		d()->db->exec("insert into `".et(url(3))."`  () values ()");
+		$elemid=d()->db->lastInsertId();
 	}
 	if($scenario=='1') {
 		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
-		$result = mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `url` = '".mysql_real_escape_string(url(4))."'");
-		if($line=mysql_fetch_array($result)){
+		$result = d()->db->query("select * from `".et(url(3))."` where `url` = ".e(url(4))."");
+		if($result){
+			$line=$result->fetch();
 			$elemid=$line['id'];
 		}else{
-			$result=mysql_query("insert into `".mysql_real_escape_string(url(3))."`  () values ()");
-			$elemid=mysql_insert_id();
+			d()->db->exec("insert into `".et(url(3))."`  () values ()");
+			$elemid=d()->db->lastInsertId();
 		}
 	}
 	//FIXME: костыль
@@ -367,7 +368,7 @@ function admin_save_data($params)
 		$params['url']=str_replace('/','_',$params['url']);
 	}
 	$params['sort']=$elemid;
-    $result_str="update `".mysql_real_escape_string(url(3))."` set  ";
+    $result_str="update `".et(url(3))."` set  ";
     $i=0;
 	
 	
@@ -376,15 +377,39 @@ function admin_save_data($params)
 		if (substr($key,-3)=='_id' && $value == '') {
 			$result_str.=" `" . $key . "`= NULL ";
 		} else {
-			$result_str.=" `" . $key . "`= '".mysql_real_escape_string($value)."' ";
+			$result_str.=" `" . $key . "`= ".e($value)." ";
 		}
         if ($i<count($params)) $result_str.=' , ';
     }
 		
-    $result_str.=" where `id`=".mysql_real_escape_string($elemid);
+    $result_str.=" where `id`=".(int)($elemid);
 
  
 	$not_reqursy=0;
+	
+	doitClass::$instance->db->exec($result_str);
+	$error_code=doitClass::$instance->db->errorInfo();
+	$error_code=$error_code[1];
+
+	if (1054 == $error_code) {
+		
+		
+		$_res=doitClass::$instance->db->query('SHOW COLUMNS FROM `'.et(url(3)).'`');		
+		$result_array=array();
+		foreach ($_res->fetchAll(PDO::FETCH_NUM) as $_tmpline) {
+			$result_array[] = $_tmpline[0];
+		}
+		
+		$list_of_existing_columns=$result_array;
+		foreach($params as  $value=>$key){
+			if(!in_array($value,$list_of_existing_columns)){
+				doitClass::$instance->Scaffold->create_field(et(url(3)),$value);
+			}
+		}
+		doitClass::$instance->db->exec($result_str);
+	}
+	
+	/*
 	while(!mysql_query($result_str) && 1054 == mysql_errno()) {
 		$error_string=mysql_error();
 		$not_reqursy++;
@@ -405,7 +430,7 @@ function admin_save_data($params)
 			}
 		}
 	}
-	
+	*/
 	if($_POST['admin_command_redirect_close']=='yes') {
 		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
 	}else{
@@ -424,7 +449,7 @@ function admin_delete()
 }
 function admin_delete_element($params)
 {
-	$result=mysql_query("delete from `".e(url(3))."`  where id='".e(url(4))."'");
+	d()->db->exec("delete from `".et(url(3))."`  where id= ".e(url(4))." ");
 	return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
 }
 
@@ -457,7 +482,7 @@ function admin_scaffold_new()
 		
 		if(d()->params['create_table']=='yes') {
 			print "Создаём таблицу ".h($table)."... ";
-			$result = mysql_query("CREATE TABLE `".$table."` (
+			$result = d()->exec("CREATE TABLE `".$table."` (
 `id`  int(11) NOT NULL AUTO_INCREMENT ,
 `url`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
 `text`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
