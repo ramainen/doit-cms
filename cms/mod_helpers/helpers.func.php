@@ -152,10 +152,14 @@ function h($html)
 {
 	return htmlspecialchars($html);
 }
-
+function et($string)
+{
+	$string=str_replace(array('"',"'",'\\',' ','.','*','/','`',')'),array('','','','','','','','',''),$string);
+	return $string;
+}
 function e($string)
 {
-	return mysql_real_escape_string($string);
+	return d()->db->quote($string);
 }
 //получение множественного числа
 function to_o($plural)

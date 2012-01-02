@@ -195,26 +195,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	
 	function __construct($_options=array())
 	{
-		//Создание реестра с данными по каждой таблице: имя, поля.
-		/*
-		//Реестр отключён - слишком много времени на запросы
-		//TODO: кеширование содержимого таблиц + миграции
-		if(!isset(d()->datapool['tables_information'])) {
-			d()->datapool['tables_information']=array();
-			
-			$result=mysql_query('SHOW TABLES');
-			while($line=mysql_fetch_array($result)){
-				$result_fields=mysql_query('SHOW COLUMNS FROM '.$line[0]);
-				d()->datapool['tables_information'][$line[0]]=array();
-				while ($line_fields=mysql_fetch_array($result_fields)) {
-					d()->datapool['tables_information'][$line[0]][]=$line_fields[0];
-				}
-			}
-				//d()->datapool['tables_information'][]$line[0]
-			//SHOW COLUMNS FROM
-		
-		}
-		*/
+
 		//Опции по умолчанию и переменные
 
 
@@ -249,7 +230,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if(!isset($this->_options['condition'])) {
 			$this->_options['condition']=array();
 		}
-		
+
 		if(!isset($this->_options['select'])) {
 			$this->_options['select']=' * ';
 		}
@@ -292,14 +273,20 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 
 	}
+
+
+	/**
+	 * Функция возвращает сссылку на сам объект, для запросов вроде doitClass::$instance->User->me[3]
+	 */
+	public function me()
+	{
+		return $this;
+	}
+
 	//альтернативная функция бстрого получения данных
 	public function getRow($id)
 	{
-		if ($_line = mysql_fetch_array(mysql_query("select * from `".$this->_options['table']."` where `".$this->_options['idfield']."`='". mysql_real_escape_string ($id)."' limit 1"))) {
-			return $_line;
-		} else {
-			return false;
-		}
+		return $this->find($id)->me[0];
 	}
 	//Функция find указывает на то, что необходимо искать нечто по полю ID
 	public function find($id)
@@ -311,8 +298,8 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			$this->_options['condition'] = array ('( id = '.(int)$id.' )');
 		} else {
 			$this->_options['queryready']=false;
-			$name =  mysql_real_escape_string($id);
-			$this->_options['condition']=   array ("( `".$this->_options['namefield']."` = '". $name ."' )");
+			$name = doitClass::$instance->db->quote($id);
+			$this->_options['condition']=   array ("( `".$this->_options['namefield']."` = ". $name ." )");
 		}
 		$this->order_by('')->limit(1);
 		return $this;
@@ -321,7 +308,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	public function find_by($by,$what)
 	{
 		$this->_options['queryready']=false;
-		$this->_options['condition'] = array("( `".mysql_real_escape_string($by)."` = '".mysql_real_escape_string($what)."' )");
+		$this->_options['condition'] = array("( `".$by."` = ".doitClass::$instance->db->quote($what)." )");
 		return $this;
 	}
 	
@@ -330,7 +317,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if(substr($name,0,8)=='find_by_') {
 			$by=substr($name,8);
 			$this->_options['queryready']=false;
-			$this->_options['condition'] = array("( `".$by."` = '".mysql_real_escape_string($arguments[0])."' )");
+			$this->_options['condition'] = array("( `".$by."` = ".doitClass::$instance->db->quote($arguments[0])." )");
 		}
 		return $this;
 	}
@@ -338,11 +325,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	public function sql($query)
 	{
 		$this->_options['queryready']=true;
-		$this->_data = array();	 
-		$_result=mysql_query($query);
-		while ($line=mysql_fetch_array($_result,MYSQL_ASSOC)) {
-			$this->_data[]=$line;
-		}
+		$this->_data=doitClass::$instance->db->query($query)->fetchAll();
 		return $this;
 	}
 	
@@ -355,7 +338,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		$_conditions=explode('?',' '.$_condition.' ');
 		$_condition='';
 		for ($i=1; $i<= count($_conditions)-1; $i++) {
-			$_condition .= $_conditions[$i-1]. " '".mysql_real_escape_string($args[$i])."' "  ;
+			$_condition .= $_conditions[$i-1]. " ".doitClass::$instance->db->quote($args[$i])." "  ;
 		}
 		$_condition .= $_conditions[$i-1];
 		$this->_options['condition'][] = '('.$_condition.')';
@@ -384,9 +367,9 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		if($limitstr!='') {
 			if(substr($limitstr,0,5)=='limit') {
-				$this->_options['limit'] = ' '.mysql_real_escape_string($limit).' ';
+				$this->_options['limit'] = ' '.$limit.' ';
 			} else {
-				$this->_options['limit'] = ' LIMIT '.mysql_real_escape_string($limit).' ';
+				$this->_options['limit'] = ' LIMIT '.$limit.' ';
 			}
 		} else {
 			$this->_options['limit'] = '';
@@ -398,7 +381,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	{
 		$this->_options['queryready']=false;
 		if(trim($order_by)!='') {
-			$this->_options['order_by'] = ' ORDER BY '.mysql_real_escape_string($order_by).' ';
+			$this->_options['order_by'] = ' ORDER BY '.$order_by.' ';
 		} else {
 			$this->_options['order_by'] = '';
 		}
@@ -409,7 +392,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	{
 		$this->_options['queryready']=false;
 		if(trim($order_by)!='') {
-			$this->_options['order_by'] = ' ORDER BY '.mysql_real_escape_string($order_by).' ';
+			$this->_options['order_by'] = ' ORDER BY '.$order_by.' ';
 		} else {
 			$this->_options['order_by'] = '';
 		}
@@ -430,9 +413,8 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	//Общее количество строк в таблице
 	function all_rows_count()
 	{
-		$_count_result = mysql_query("SELECT COUNT(id)FROM ".$this->_options['table']);
-		$_countrows_line = mysql_fetch_array($_count_result);
-		return $_countrows_line[0];
+		$_count_result = doitClass::$instance->db->query("SELECT COUNT(id) as counting FROM ".$this->_options['table'])->fetch();
+		return $_count_result ['counting'];
 	}
 	
 	//Количество строк в найденном запросе
@@ -474,40 +456,25 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	function fetch_data_now()
 	{
 		$this->_options['queryready'] = true;
-		$this->_data = array();
 
-		$_query_string = $this->to_sql();
-		$_result = mysql_query($_query_string);
-		if ($this->_options['calc_rows']) {
-			$_count_result = mysql_query('SELECT FOUND_ROWS()');
-			$_countrows_line = mysql_fetch_array($_count_result);
-			$this->_count_rows = $_countrows_line[0];
-		}
+		$this->_data =  doitClass::$instance->db->query($this->to_sql())->fetchAll(PDO::FETCH_ASSOC);
+		$this->_count = count($this->_data);
 
-		if (!isset (d()->datapool['columns_registry'])) {
-			d()->datapool['columns_registry'] = array();
-			d()->datapool['_known_fields'] = array();
-		}
-		if (!isset (d()->datapool['columns_registry'][$this->_options['table']])) {
-			d()->datapool['columns_registry'][$this->_options['table']]=array();
-			d()->datapool['_known_fields'][$this->_options['table']]=array();
-			$i = 0;
-			while ($i < mysql_num_fields($_result)) {
+		if($this->_count>0){
+			if (!isset (doitClass::$instance->datapool['columns_registry'])) {
+				doitClass::$instance->datapool['columns_registry'] = array();
+				doitClass::$instance->datapool['_known_fields'] = array();
+			}
 
-				$meta = mysql_fetch_field($_result, $i);
-
-				d()->datapool['_known_fields'][$this->_options['table']][$meta->name]=true;
-				d()->datapool['columns_registry'][$this->_options['table']][]=$meta->name;
-				$i++;
+			if (!isset (doitClass::$instance->datapool['columns_registry'][$this->_options['table']])) {
+				doitClass::$instance->datapool['_known_fields'][$this->_options['table']]	=array_keys($this->_data[0]);
+				doitClass::$instance->datapool['columns_registry'][$this->_options['table']] =array_keys($this->_data[0]);
 			}
 		}
-
-
-		while ($line = mysql_fetch_assoc($_result)) {
-			$this->_data[] = $line;
+		if ($this->_options['calc_rows']) {
+			$_countrows_line = doitClass::$instance->db->query('SELECT FOUND_ROWS()')->fetch();
+			$this->_count_rows = $_countrows_line[0];
 		}
-
-		$this->_count = count($this->_data);
 	}
 	//CRUD
 	public function delete()
@@ -518,7 +485,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			
 		if(isset($this->_data[0])){
 			$_query_string='delete from `'.$this->_options['table'] . "` where `id` = '".$this->_data[0]['id']."'";
-			mysql_query($_query_string);
+			doitClass::$instance->db->exec($_query_string);
 		}
 		return $this;
 	}
@@ -532,28 +499,11 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 				$values=array();
 				foreach($this->_future_data as $key => $value) {
 					$fields[]=" `$key` ";
-					$values[]=" '".mysql_real_escape_string($value)."' ";
+					$values[]=" ". doitClass::$instance->db->quote ($value)." ";
 				}
 				$fields_string=implode (',',$fields);
 				$values_string=implode (',',$values);
 				$_query_string='insert into `'.$this->_options['table'].'` ('.$fields_string.') values ('.$values_string.')';
-				$not_reqursy=0;
-				while(!mysql_query($_query_string) && 1054 == mysql_errno()) {
-					$error_string=mysql_error();
-					$not_reqursy++;
-					if($not_reqursy>30) {
-						print "Произошла ошибка рекурсии. Пожалуйста, добавьте поля вручную - у меня не получилось. Спасибо.";
-						exit();
-					}
-					foreach($this->_future_data as $key=>$value)
-					{
-						if(strpos($error_string , "'".$key."'")!==false){
-							$result = mysql_query("ALTER TABLE `".$this->_options['table']."` ADD COLUMN `$key` text NULL, DEFAULT CHARACTER SET=utf8" );
-						}
-					}
-				}
-				$this->_future_data=array();
-
 			}
 		} else {
 			if ($this->_options['queryready']==false) {
@@ -563,32 +513,27 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
 				$attributes=array();
 				foreach($this->_future_data as $key => $value) {
-					$attributes[]=" `$key` = '".mysql_real_escape_string($value)."' ";
+					$attributes[]=" `$key` = ". doitClass::$instance->db->quote($value)." ";
 				}
 				$attribute_string=implode (',',$attributes);
 				$_query_string='update `'.$this->_options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
-				$not_reqursy=0;
-				
-				while(!mysql_query($_query_string) && 1054 == mysql_errno()) {
-					$error_string=mysql_error();
-					$not_reqursy++;
-					if($not_reqursy>30) {
-						print "Произошла ошибка рекурсии. Пожалуйста, добавьте поля вручную - у меня не получилось. Спасибо.";
-						exit();
-					}
-					foreach($this->_future_data as $key=>$value)
-					{
-						if(strpos($error_string , "'".$key."'")!==false){
-							$result = mysql_query("ALTER TABLE `".$this->_options['table']."` ADD COLUMN `$key` text NULL, DEFAULT CHARACTER SET=utf8" );
-						}
-					}
-				}
-				
-				
-				
-				$this->_future_data=array();
+
 			}
 		}
+		doitClass::$instance->db->exec($_query_string);
+		$error_code=doitClass::$instance->db->errorInfo();
+		$error_code=$error_code[1];
+
+		if (1054 == $error_code) {
+			$list_of_existing_columns=$this->columns();
+			foreach($this->_future_data as  $value=>$key){
+				if(!in_array($value,$list_of_existing_columns)){
+					doitClass::$instance->Scaffold->create_field($this->_options['table'],$value);
+				}
+			}
+			doitClass::$instance->db->exec($_query_string);
+		}
+		$this->_future_data=array();
 		return $this;
 	}
 
@@ -625,11 +570,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		  
 		return $_tmparr;
-		
-		//Старый подход
-		foreach($this->_data as $_key => $_value) {
-			return $this->_data;
-		}
+		return $_tmparr;
 	}
 
 	//Итератор
@@ -721,8 +662,8 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	public function show()
 	{
 		if($this->template!=''){
-			d()->this = $this;
-			return d()->call($this->template);
+			doitClass::$instance->this = $this;
+			return doitClass::$instance->call($this->template);
 		}
 		return '';
 	}
@@ -734,33 +675,29 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if($tablename=='') {
 			$tablename = $this->_options['table'];
 		}
-		if(!isset (d()->datapool['columns_registry'])) {
-			d()->datapool['columns_registry']=array();
-			d()->datapool['_known_fields']=array();
+		if(!isset (doitClass::$instance->datapool['columns_registry'])) {
+			doitClass::$instance->datapool['columns_registry']=array();
+			doitClass::$instance->datapool['_known_fields']=array();
 		}
-		if(isset (d()->datapool['columns_registry'][$tablename])) {
-			return d()->datapool['columns_registry'][$tablename];
+		if(isset (doitClass::$instance->datapool['columns_registry'][$tablename])) {
+			return doitClass::$instance->datapool['columns_registry'][$tablename];
 		}
 		if ($tablename=='template') {
 			//template - ключевое частозапрашиваемое поле, такой таблицы не существует
-			d()->datapool['columns_registry'][$tablename]=false;
-			return d()->datapool['columns_registry'][$tablename];
+			return doitClass::$instance->datapool['columns_registry'][$tablename]=false;
 		}
 		
-		$_res=mysql_query('SHOW COLUMNS FROM `'.$tablename.'`');
-		
+		$_res=doitClass::$instance->db->query('SHOW COLUMNS FROM `'.$tablename.'`');
 		if ($_res===false) {
 			//Если таблицы не существует
-			d()->datapool['columns_registry'][$tablename]=false;
-			return d()->datapool['columns_registry'][$tablename];
+			return doitClass::$instance->datapool['columns_registry'][$tablename]=false;
 		}
 		
 		$result_array=array();
-		while ($_tmpline = mysql_fetch_array($_res)) {
+		foreach ($_res->fetchAll(PDO::FETCH_NUM) as $_tmpline) {
 			$result_array[] = $_tmpline[0];
 		}
-		d()->datapool['columns_registry'][$tablename] = $result_array;
-		return d()->datapool['columns_registry'][$tablename];
+		return  doitClass::$instance->datapool['columns_registry'][$tablename] = $result_array;
 	}
 
 	
@@ -861,7 +798,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		if(isset($this->_data[0])) {
 			foreach( $this->_data[0] as $_key=>$_value) {
-				d()->{$_key} = $_value;
+				doitClass::$instance->{$_key} = $_value;
 			}
 			return true;
 		}
@@ -876,13 +813,13 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	
 	public function expand_all_to($varname)
 	{
-		d()->{$varname} = $this->all;
+		doitClass::$instance->{$varname} = $this->all;
 		return $this;
 	}
 	
 	public function expand_to($varname)
 	{
-		d()->{$varname} = $this->one;
+		doitClass::$instance->{$varname} = $this->one;
 		return $this;
 	}
 	
@@ -966,7 +903,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 
 		//Item.ml_title
 		if (substr($name, 0, 3) == 'ml_') {
-			$lang = d()->lang;
+			$lang = doitClass::$instance->lang;
 			if ($lang != '') {
 				return $this->{$lang.substr($name,2)};
             }
@@ -1003,7 +940,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			return '<b>'.$this->get('title').'</b>';
 		}
 	}
-	print d()->User->find(1)->title;
+	print doitClass::$instance->User->find(1)->title;
 	*/
 	public function get($name)
 	{
@@ -1018,7 +955,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 				return $this->_data[$this->_cursor][$name];
 			}
 
-			if(!isset(d()->datapool['_known_fields'][$this->_options['table']][$name])){
+			if(!isset(doitClass::$instance->datapool['_known_fields'][$this->_options['table']][$name])){
 
 
 				//Item.user          //Получение связанного объекта
@@ -1054,11 +991,12 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 
 				//Item.users
 				//1. Поиск альтернативных подходящих столбцов
+
+				//TODO: удалить позже
 				$foundedfield = false;
+
+
 				//ищем поле item_id в таблице users
-
-				//$_res=mysql_query('SHOW COLUMNS FROM `'.$name.'`');
-
 				//??щем таблицу с названием $name (например, users)
 				$columns = $this->columns($name);
 
@@ -1074,10 +1012,10 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 					return $_tmpael->find_by('url',$name);
 				}
 				*/
+
 				foreach($columns as $key=>$value) {
 					if ($value == $this->_options['plural_to_one']."_id") {
 						$_tmpael  = activerecord_factory_from_table($name);
-
 						return $_tmpael->where($this->_options['plural_to_one']."_id = ?",$this->_data[$this->_cursor]['id']);
 					}
 				}

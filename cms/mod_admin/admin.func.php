@@ -195,22 +195,25 @@ function admin_show_one_list($table,$id1,$id2)
 		$addbuttons=d()->admin['addbuttons'];
 	}
 
-	$result=mysql_query($query);
+	$result=d()->db->query($query);
 	$data=array();
-	if(mysql_errno()!=0){
-		print mysql_error(); //Отладка
+	if($result===false){
+		$err= d()->db->errorInfo(); //Отладка
+		print $err[2];
 	}else{
-		while ($line=mysql_fetch_array($result)) {
+		$all_lines=$result->fetchAll();
+		foreach($all_lines as $line){
 			$line['addbuttons']='';
 			foreach($addbuttons as $key=>$value) {
 				$line['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
 			}
 			if (empty($line['sort'])) {
 				//ВНЕЗАПНО сортировка пустая
-				mysql_query('UPDATE  `'.e($table).'` set `sort` = `id` where `id` = '.e($line['id']));
+				//TODO: ХЕРОВО
+				d()->db->exec('UPDATE  `'.et($table).'` set `sort` = `id` where `id` = '.((int)$line['id']));
 			}
-			$data[]=$line;
 		}
+		$data = $all_lines;
 	}
 	d()->objectrow = $data;
 	
@@ -226,7 +229,7 @@ function admin_show_one_list($table,$id1,$id2)
 			foreach ($newlist as $key=>$value){
 				if($oldlist[$key]['id']*1 != $value*1){
 					// Элементу с ID = $value присваеваем новый SORT, тот которы йбыл под номером $key ( $oldlist[$key]['sort'] ) 
-					mysql_query('UPDATE  `'.e($table).'` set `sort` = '.e($oldlist[$key]['sort']).' WHERE `id` = '.e($value)).'';
+					d()->db->exec('UPDATE  `'.et($table).'` set `sort` = '.((int)$oldlist[$key]['sort']).' WHERE `id` = '.((int)$value)).'';
 				}
 			}			 
 			header('Location: '.$url) ;
@@ -256,15 +259,14 @@ function admin_edit()
 			$scenario=1;
 	}
 	if (url(4)!='add') {
-		//TODO: db()->sql();
 		if($scenario==1){
-			if (!($line=mysql_fetch_array(mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `url` = '".mysql_real_escape_string(url(4))."'")))) {
+			if (!($line=mysql_fetch_array(mysql_query("select * from `".et(url(3))."` where `url` = ".e(url(4)))))) {
 				$scenario=2;
 				$_GET['url']=url(4);
 				$line=array();
 			}
 		} else {
-			if (!($line=mysql_fetch_array(mysql_query("select * from `".mysql_real_escape_string(url(3))."` where `id` = '".mysql_real_escape_string(url(4))."'")))) {
+			if (!($line=mysql_fetch_array(mysql_query("select * from `".et(url(3))."` where `id` = ".(int)url(4))))) {
 				$line=array();
 			}
 		}
