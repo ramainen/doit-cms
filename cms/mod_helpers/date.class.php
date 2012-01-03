@@ -50,6 +50,14 @@ class Date extends UniversalHelper
 		}
 		$this->year=substr($this->date,6,4);
 		$this->month=1*substr($this->date,3,2);
+		
+		
+		if($this->year<99 && $this->year>50){
+			$this->year=1*('19'.$this->year);
+		}
+		if($this->year<99 && $this->year<50){
+			$this->year=1*('20'.$this->year);
+		}
 		$this->day=1*substr($this->date,0,2);
 		$this->ru_month = $this->ru_months[$this->month];
 		$this->en_month = $this->en_months[$this->month];

@@ -76,6 +76,17 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->notice(array('style'=>'color:black;')),'<ul style="color:black;" ><li>Errorka</li><li>SecondError</li></ul>');
 	}
 	
+	function test_multilangl_userdate()
+	{
+		d()->lang='ru';
+		$this->assertEquals(d()->ml_userdate('11.11.2011'),'11 ноября 2011');
+		$this->assertEquals(d()->ml_userdate('11.11.11'),'11 ноября 2011');
+		d()->lang='en';
+		$this->assertEquals(d()->ml_userdate('31.01.2011'),'January 31, 2011');
+		$this->assertEquals(d()->ml_userdate('31.01.2011'),'January 31, 2011');
+		
+		
+	}
 	
 	
 }
