@@ -20,10 +20,13 @@ class Test
 	public function failedTest()
 	{
 		$this->bad_results++;
-		$this->bad_tests[]=get_class ($this).':'.$this->current_test.':'.$this->current_sub_test;
+		$debug=debug_backtrace();
+		
+		$this->bad_tests[]=' '.$debug[1]['function'].' on '.get_class ($this).'->'.$this->current_test.': проверка #'.$this->current_sub_test.': строка '.$debug[1]['line'];
+		
 	}
 	
-	public function acceptEqual($var1,$var2)
+	public function assertEquals($var1,$var2)
 	{
 		$this->anotherTest();
 		if($var1==$var2){
@@ -33,7 +36,7 @@ class Test
 		}
 	}
 	
-	public function acceptTrue($var1)
+	public function assertTrue($var1)
 	{
 		$this->anotherTest();
 		if($var1){
@@ -43,7 +46,7 @@ class Test
 		}
 	}
 	
-	public function acceptFalse($var1)
+	public function assertFalse($var1)
 	{
 		$this->anotherTest();
 		if(!$var1){
@@ -53,7 +56,7 @@ class Test
 		}
 	}
 	
-	public function acceptNotEqual($var1,$var2)
+	public function assertNotEquals($var1,$var2)
 	{
 		$this->anotherTest();
 		if($var1!=$var2){
@@ -82,7 +85,7 @@ class Test
 	
 	public function test_itself()
 	{
-		$this->acceptEqual(1,1);
+		$this->assertEquals(1,1);
 	}
 	
 }
