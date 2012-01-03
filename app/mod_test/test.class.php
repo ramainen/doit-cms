@@ -36,6 +36,26 @@ class Test
 		}
 	}
 	
+	public function assertNonSpaceEquals($var1,$var2)
+	{
+		$var1=str_replace(' ','',$var1);
+		$var1=str_replace("\n",'',$var1);
+		$var1=str_replace("\r",'',$var1);
+		$var1=str_replace("\t",'',$var1);
+		
+		$var2=str_replace(' ','',$var2);
+		$var2=str_replace("\n",'',$var2);
+		$var2=str_replace("\r",'',$var2);
+		$var2=str_replace("\t",'',$var2);
+		
+		$this->anotherTest();
+		if($var1==$var2){
+			$this->goodTest();
+		}else{
+			$this->failedTest();
+		}
+	}
+	
 	public function assertTrue($var1)
 	{
 		$this->anotherTest();
