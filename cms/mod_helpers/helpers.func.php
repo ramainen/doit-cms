@@ -112,6 +112,8 @@ function notice()
 	}
 	$str='';
 	
+	
+	
 	$str .= '<ul style="padding:15px;padding-left:25px;border:1px solid red;">';
 	
 	foreach(d()->notice as $value){

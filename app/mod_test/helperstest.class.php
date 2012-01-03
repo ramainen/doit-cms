@@ -57,6 +57,17 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->tag(array('div', '123', 'class'=>"hidden blue")),'<div class="hidden blue" >123</div>');
 		
 	}
+	
+	function test_notice()
+	{
+		$this->assertEquals(d()->notice(),'');
+		//Добавляем ошибку
+		d()->add_notice('Errorka');
+		$this->assertEquals(d()->notice(),'<ul style="padding:15px;padding-left:25px;border:1px solid red;"><li>Errorka</li></ul>');
+		$this->assertEquals(d()->notice(array('style'=>'color:black;')),'<ul style="color:black;"><li>Errorka</li></ul>');
+		
+	}
+	
 }
  
 ?>
