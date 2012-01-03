@@ -63,11 +63,23 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->notice(),'');
 		//Добавляем ошибку
 		d()->add_notice('Errorka');
-		$this->assertEquals(d()->notice(),'<ul style="padding:15px;padding-left:25px;border:1px solid red;"><li>Errorka</li></ul>');
-		$this->assertEquals(d()->notice(array('style'=>'color:black;')),'<ul style="color:black;"><li>Errorka</li></ul>');
-		
+		$this->assertEquals(d()->notice(),'<ul style="padding:15px;padding-left:25px;border:1px solid red;" ><li>Errorka</li></ul>');
+		//Хотим переопределять внешний вид ошибок
+		$this->assertEquals(d()->notice(array('style'=>'color:black;')),'<ul style="color:black;" ><li>Errorka</li></ul>');
+		$this->assertEquals($this->delete_spaces(d()->notice(array('class'=>'red_error'))),
+			$this->delete_spaces('<ul class="red_error"     style="padding:15px;padding-left:25px;border:1px solid red;" ><li>Errorka</li></ul>'));
+			
+			$this->assertEquals($this->delete_spaces(d()->notice(array('class'=>'red_error','style'=>'display:none;'))),
+			$this->delete_spaces('<ul class="red_error"     style="display:none;" ><li>Errorka</li></ul>'));
+			
+		d()->add_notice('SecondError');
+		$this->assertEquals(d()->notice(array('style'=>'color:black;')),'<ul style="color:black;" ><li>Errorka</li><li>SecondError</li></ul>');
 	}
 	
+	function delete_spaces($str)
+	{
+		return str_replace(' ','',$str);
+	}
 }
  
 ?>

@@ -105,16 +105,21 @@ function tag ($params=array())
 	
 }
 
-function notice()
+function notice($params=array())
 {
+	//Если пусто, не выводить
 	if(d()->notice=='' || count(d()->notice)==0) {
 		return '';
 	}
 	$str='';
 	
+	//Пользуемся оттсестированной функцией tag()
+	if(!isset($params['style'])){
+		$params['style']='padding:15px;padding-left:25px;border:1px solid red;';
+	}
+	$params[0]='ul';
 	
-	
-	$str .= '<ul style="padding:15px;padding-left:25px;border:1px solid red;">';
+	$str .= tag($params);
 	
 	foreach(d()->notice as $value){
 		$str .='<li>'.$value.'</li>';
