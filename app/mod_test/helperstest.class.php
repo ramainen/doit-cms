@@ -44,6 +44,16 @@ class HelpersTest extends Test
 		
 		
 	}
+	
+	function test_tag()
+	{
+		$this->acceptEqual(d()->tag(array('div', '')),'<div></div>');
+		$this->acceptEqual(d()->tag(array('input')),'<input />');
+		$this->acceptEqual(d()->tag(array('div', '123')),'<div>123</div>');
+		$this->acceptEqual(d()->tag(array('div', '123', 'style'=>"color:red;")),'<div style="color:red;" >123</div>');
+		$this->acceptEqual(d()->tag(array('div', '123', 'class'=>"hidden blue")),'<div class="hidden blue" >123</div>');
+		
+	}
 }
  
 ?>
