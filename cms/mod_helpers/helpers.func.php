@@ -85,40 +85,18 @@ function form ($params=array())
 function tag ($params=array())
 {
 
-
 	$attr='';
-	if(isset($params['style'])) {
-		$attr .= ' style="'.$params['style'].'" ';
-	}
-	
-	if(isset($params['class'])) {
-		$attr .= ' class="'.$params['class'].'" ';
-	}
-	
-	if(isset($params['checked'])) {
-		$attr .= ' checked="'.$params['checked'].'" ';
-	}
-	
-	if(isset($params['id'])) {
-		$attr .= ' id="'.$params['id'].'" ';
-	}
-	
+
 	if(isset($params['attr'])) {
 		$attr .= ' '.$params['attr'].' ';
 	}
 	
-	
-	if(isset($params['name'])) {
-		$attr .= ' name="'.$params['name'].'" ';
-	} 
-	
-	if(isset($params['type'])) {
-		$attr .= ' type="'.$params['type'].'" ';
+	foreach($params as $key=>$value){
+		if(!is_numeric($key) && ($key!='attr')){
+			$attr .= ' '.$key.'="'.$value.'" ';
+		}
 	}
 	
-	if(isset($params['value'])) {
-		$attr .= ' value="'.$params['value'].'" ';
-	}
 	if(isset($params[1])) {
 		return '<'.$params[0].  $attr . '>'.$params[1].'</'.$params[0].'>';
 	}else{
