@@ -22,7 +22,7 @@ class Test
 		$this->bad_results++;
 		$debug=debug_backtrace();
 		
-		$this->bad_tests[]=' '.$debug[1]['function'].' on '.get_class ($this).'->'.$this->current_test.': проверка #'.$this->current_sub_test.': строка '.$debug[1]['line'];
+		$this->bad_tests[]=' '.$debug[1]['function'].' on '.get_class ($this).'->'.$this->current_test.': проверка №'.$this->current_sub_test.': строка '.$debug[1]['line'];
 		
 	}
 	
@@ -76,7 +76,12 @@ class Test
 			}
 		}
 		print '<pre>';
-		print "OK: {$this->ok_results}, BAD: {$this->bad_results} <br>";
+		$color='green';
+		if($this->bad_results!=0){
+			$color='red';
+		}
+		print '<span style="color:'.$color.'">';
+		print "OK: {$this->ok_results}, BAD: {$this->bad_results} </span><br>";
 		foreach($this->bad_tests as $test){
 			print 'fail: '.$test.'<br>';
 		}
