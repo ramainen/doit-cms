@@ -48,9 +48,11 @@ class HelpersTest extends Test
 	function test_tag()
 	{
 		$this->assertEquals(d()->tag(array('div', '')),'<div></div>');
-		$this->assertEquals(d()->tag(array('input')),'<input />');
+		$this->assertNotEquals(d()->tag(array('input')),'<input />');
+		$this->assertEquals(d()->tag(array('input')),'<input>');
 		$this->assertEquals(d()->tag(array('div', '123')),'<div>123</div>');
 		$this->assertEquals(d()->tag(array('div', '123', 'color'=>'red')),'<div color="red" >123</div>');
+		$this->assertEquals(d()->tag(array('div', 'color'=>'red')),'<div color="red" >');
 		$this->assertEquals(d()->tag(array('div', '123', 'style'=>"color:red;")),'<div style="color:red;" >123</div>');
 		$this->assertEquals(d()->tag(array('div', '123', 'class'=>"hidden blue")),'<div class="hidden blue" >123</div>');
 		

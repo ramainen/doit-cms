@@ -100,7 +100,7 @@ function tag ($params=array())
 	if(isset($params[1])) {
 		return '<'.$params[0].  $attr . '>'.$params[1].'</'.$params[0].'>';
 	}else{
-		return '<'.$params[0].  $attr . ' />';
+		return '<'.$params[0].  $attr . '>';
 	}
 	
 }
