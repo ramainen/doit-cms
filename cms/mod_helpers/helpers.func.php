@@ -144,9 +144,16 @@ function path_to($params)
 	
 }
 
-function preview($address,$num=1 )
+function preview($adress,$num=1 )
 {
-	return substr($address, 0, strrpos($address, "/") + 1) . ".thumbs/preview".$num."_" . substr($address, strrpos($address, "/") + 1);
+	if($adress==''){
+		return '';
+	}
+	$ext=strtolower(strrchr($adress, '.'));
+	if(!in_array($ext,array('.gif','.jpg','.png','.jpeg'))){
+		return '';
+	}
+	return substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$num."_" . substr($adress, strrpos($adress, "/") + 1);
 }
 function h($html)
 {
