@@ -92,12 +92,21 @@ class Test
 	//Заглушка для запуска сразу всех тестов
 	public function runAll()
 	{
-		//var_dump(get_declared_classes() );
-		/*foreach(d()->php_files_list as $key->$value){
+//		var_dump( );
+		
+		foreach(d()->php_files_list as $key=>$value){
 			if(substr($key,-10)=='test_class' && $key!='test_class'){
-				
+				include_once($value);
 			}
-		}*/
+		} 
+		
+		foreach(get_declared_classes() as $key=>$value){
+			if(substr($value,-4)=='Test' && $value != 'Test'){
+				d()->$value->run();
+			}
+		}
+		
+		
 	}
 	
 	public function run()
@@ -110,12 +119,13 @@ class Test
 			}
 		}
 		print '<pre>';
+		print get_class($this).': ';
 		$color='green';
 		if($this->bad_results!=0){
 			$color='red';
 		}
 		print '<span style="color:'.$color.'">';
-		print "OK: {$this->ok_results}, BAD: {$this->bad_results} </span><br>";
+		print "OK: {$this->ok_results}, FAILS: {$this->bad_results} </span><br>";
 		foreach($this->bad_tests as $test){
 			print 'fail: '.$test.'<br>';
 		}
