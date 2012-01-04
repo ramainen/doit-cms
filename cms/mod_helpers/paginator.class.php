@@ -30,9 +30,11 @@
 class Paginator extends UniversalHelper
 {
 	public $active='active';
+	
 	public function setActive($active)
 	{
 		$this->active = $active;
+		return $this;
 	}
 	
 	public function generate($allcount=1, $current=false){

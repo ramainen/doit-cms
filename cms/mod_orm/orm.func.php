@@ -364,6 +364,15 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		return $this;
 	}
 	
+	public function paginator($activeclass=false)
+	{
+		$paginator = d()->Paginator;
+		if($activeclass!==false){
+			$paginator->setActive($activeclass);
+		}
+		return $paginator->generate($this);
+	}
+	
 	public function calc_rows()
 	{
 		$this->_options['calc_rows']=true;

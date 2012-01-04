@@ -43,6 +43,39 @@ class ActiveRecordTest extends Test
 		//Пагинатор с обычными данными и пагинатор на основе класса должны вести себя одинаково
 		$this->assertEquals($pages_etalon ,$pages_generated);
 		
+		
+		//Пагинатор, вызываемый изнутри класса
+		$page=d()->Page->paginate(3);
+		$etalon_paginator = d()->Paginator->generate($page);
+		
+		$page2=d()->Page->paginate(3);
+		$generated_paginator = $page2->paginator;
+		$this->assertEquals($etalon_paginator ,$generated_paginator);
+		
+		
+		
+		//Пагинатор с классов
+		$page=d()->Page->paginate(3);
+		$etalon_paginator = d()->Paginator->setActive('red')->generate($page);
+		
+		$page2=d()->Page->paginate(3);
+		$generated_paginator = $page2->paginator;
+		
+		//Заведомо ошибочно
+		$this->assertNotEquals($etalon_paginator ,$generated_paginator);
+		
+		
+		
+		//Пагинатор с классов
+		$page=d()->Page->paginate(3);
+		$etalon_paginator = d()->Paginator->setActive('red')->generate($page);
+		
+		$page2=d()->Page->paginate(3);
+		$generated_paginator = $page2->paginator('red');
+		$this->assertEquals($etalon_paginator ,$generated_paginator);
+		
+		
+	 
 		$_GET = $tmp;
 	}
 }
