@@ -2,7 +2,7 @@
 	
 class HelpersTest extends Test
 {
-	
+	//Тест бесмысленный, яляется образцом =). Как и следующий.
 	public function test_helperh()
 	{
 		$this->assertEquals('asd',d()->h('asd'));
@@ -88,6 +88,38 @@ class HelpersTest extends Test
 		
 	}
 	
+	
+	function test_paginator_class()
+	{
+		//Тестирование класса пагинатора
+		$tmp=$_SERVER['REQUEST_URI'];
+		$tmp2=$_GET;
+		$paginator = d()->Paginator;
+		$_GET['page']='2';
+		$pages=$paginator->generate(3,2); //3 страницы, текущая 2
+		$_SERVER['REQUEST_URI'] = '/news/';
+		$this->assertEquals($pages,'<a href="/news/?page=0">1</a><a href="/news/?page=1">2</a><a href="/news/?page=2">3</a>');
+		
+		$this->assertEquals($paginator->clearPagesInAdress('/news/'),'/news/');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?'),'/news/');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?page=23'),'/news/');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?user=ainu&page=23'),'/news/?user=ainu');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?user=ainu&page=tarakan&user=123'),'/news/?user=ainu&user=123');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?page=2&user=123'),'/news/?user=123');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?page=2&user[]=123&user[]=123&&page=3'),'/news/?user[]=123&user[]=123');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?2=2&&&page=2&user=123?page=2&page=2'),'/news/?2=2&&&user=123?page=2');
+		$this->assertEquals($paginator->clearPagesInAdress('/news/?&&&&&&&page=2'),'/news/');
+		$this->assertEquals($paginator->clearPagesInAdress('/?admin&page=2'),'/?admin');
+		
+		$this->assertEquals($paginator->drawPageInAdress('/news/',2),'/news/?page=2');
+		$this->assertEquals($paginator->drawPageInAdress('/news/?here=1',3),'/news/?here=1&page=3');
+		$this->assertEquals($paginator->drawPageInAdress('/news/?here=1&low',3),'/news/?here=1&low&page=3');
+		$this->assertEquals($paginator->drawPageInAdress('/news/?',3),'/news/?page=3');
+		
+		
+		$_SERVER['REQUEST_URI'] = $tmp;
+		$_GET=$tmp2;
+	}
 	
 }
  

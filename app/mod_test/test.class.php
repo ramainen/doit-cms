@@ -6,10 +6,12 @@ class Test
 	public $bad_results=0;
 	public $bad_tests=array();
 	public $current_test='';
+	public $last_nonequal='';
 	public $current_sub_test=0;
 	public function anotherTest()
 	{
 		$this->current_sub_test++;
+		$this->last_nonequal='';
 	}
 	
 	public function goodTest()
@@ -22,7 +24,7 @@ class Test
 		$this->bad_results++;
 		$debug=debug_backtrace();
 		
-		$this->bad_tests[]=' '.$debug[1]['function'].' on '.get_class ($this).'->'.$this->current_test.': проверка №'.$this->current_sub_test.': строка '.$debug[1]['line'];
+		$this->bad_tests[]=' '.$debug[1]['function'].' on '.get_class ($this).'->'.$this->current_test.': проверка №'.$this->current_sub_test.': строка '.$debug[1]['line'].$this->last_nonequal;
 		
 	}
 	
@@ -32,6 +34,7 @@ class Test
 		if($var1==$var2){
 			$this->goodTest();
 		}else{
+			$this->last_nonequal = '<br><span style="color:green">"'.htmlspecialchars($var1).'"</span> != <span style="color:blue">"'.htmlspecialchars($var2).'"</span>';
 			$this->failedTest();
 		}
 	}
