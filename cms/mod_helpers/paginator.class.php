@@ -23,24 +23,45 @@
 
 /**
  * Класс для генерации постраничной навигации
- *
+ 
+ * d()->Paginator->generate(10,2);
+ * d()->Paginator->generate(10);
  */
 class Paginator extends UniversalHelper
 {
-	public function generate($allcount, $current=false){
+	public $active='active';
+	public function setActive($active)
+	{
+		$this->active = $active;
+	}
+	
+	public function generate($allcount=1, $current=false){
+		
+		if($allcount<=1){
+			return '';
+		}
 		if($current===false){
-			if(isset($_POST['page'])){
-				$current=(int)$_POST['page'];
+			if(isset($_GET['page'])){
+				$current=(int)$_GET['page'];
 			}else{
 				$current=0;
 			}
 		}
-		$current_url=$this->clearPagesInAdress($_SERVER['REQUEST_URI']);
+		$all_url=$this->clearPagesInAdress($_SERVER['REQUEST_URI']);
+		
+		
 		
 		$result='';
 		for($i=1;$i<=$allcount;$i++){
-			$result .= '<a href=""></a>';
+			$current_url=$this->drawPageInAdress($all_url,$i-1);
+			$params=array('a',$i);
+			$params['href']=$current_url;
+			if($i-1==$current){
+				$params['class']=$this->active;
+			}
+			$result .= tag($params);
 		}
+		return $result;
 		
 	}
 	

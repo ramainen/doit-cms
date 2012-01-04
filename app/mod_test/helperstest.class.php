@@ -55,7 +55,6 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->tag(array('div', 'color'=>'red')),'<div color="red" >');
 		$this->assertEquals(d()->tag(array('div', '123', 'style'=>"color:red;")),'<div style="color:red;" >123</div>');
 		$this->assertEquals(d()->tag(array('div', '123', 'class'=>"hidden blue")),'<div class="hidden blue" >123</div>');
-		
 	}
 	
 	function test_notice()
@@ -95,10 +94,22 @@ class HelpersTest extends Test
 		$tmp=$_SERVER['REQUEST_URI'];
 		$tmp2=$_GET;
 		$paginator = d()->Paginator;
-		$_GET['page']='2';
-		$pages=$paginator->generate(3,2); //3 страницы, текущая 2
+		
 		$_SERVER['REQUEST_URI'] = '/news/';
-		$this->assertEquals($pages,'<a href="/news/?page=0">1</a><a href="/news/?page=1">2</a><a href="/news/?page=2">3</a>');
+		$this->assertEquals($paginator->generate(3,2),'<a href="/news/?page=0" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2"  class="active" >3</a>');
+		
+		$paginator->setActive('active_link');
+		$this->assertEquals($paginator->generate(3,2),'<a href="/news/?page=0" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2"  class="active_link" >3</a>');
+		
+		$_GET['page']='1';
+		
+		//При одной или менее страниц их быть не должно вооюще
+		$this->assertEquals($paginator->generate(1,2),'');
+		$this->assertEquals($paginator->generate(0,2),'');
+		$this->assertEquals($paginator->generate(1),'');
+		
+		
+		$this->assertEquals($paginator->generate(3),'<a href="/news/?page=0" >1</a><a href="/news/?page=1"  class="active_link" >2</a><a href="/news/?page=2" >3</a>');
 		
 		$this->assertEquals($paginator->clearPagesInAdress('/news/'),'/news/');
 		$this->assertEquals($paginator->clearPagesInAdress('/news/?'),'/news/');
