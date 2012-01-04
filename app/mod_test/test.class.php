@@ -89,6 +89,17 @@ class Test
 		}
 	}	
 	
+	//Заглушка для запуска сразу всех тестов
+	public function runAll()
+	{
+		//var_dump(get_declared_classes() );
+		/*foreach(d()->php_files_list as $key->$value){
+			if(substr($key,-10)=='test_class' && $key!='test_class'){
+				
+			}
+		}*/
+	}
+	
 	public function run()
 	{
 		foreach( get_class_methods($this) as $method){
