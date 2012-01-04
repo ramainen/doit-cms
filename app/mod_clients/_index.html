@@ -4,5 +4,20 @@
 	<li><a href="/clients/{client.id}">{client.title}</a>  <a href="/clients/{client.id}/edit">edit</a> {{edit}}</li>
 </foreach>
 </ul>
+
+<style>
+.pagination a
+{
+	padding:6px;
+	margin:2px;
+}
+.pagination a.active
+{
+	background:#dec;
+}
+</style>
+<div class="pagination">
+{paginator}
+</div>
 <a href='/clients/create'>Новый</a>
 

@@ -4,7 +4,9 @@ class clients_controller
 {
 	function index()
 	{
-		d()->clients  = d()->Client;
+		d()->clients  = d()->Client->paginate(3);
+		
+		d()->paginator = d()->Paginator->generate(d()->clients  );
 		print d()->view();
 	}
 	
