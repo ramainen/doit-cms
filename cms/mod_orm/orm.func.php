@@ -80,6 +80,8 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	private $_count_rows = 0;
 	private $_future_data=array();
 	private $_cursor=0;
+	public $current_page=0;
+	public $per_page=10;
 	private $_count=0;
 	private $_objects_cache=array();
 	//TODO: Выполняет limit 1 SQL запрос
@@ -342,6 +344,23 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		$_condition .= $_conditions[$i-1];
 		$this->_options['condition'][] = '('.$_condition.')';
+		return $this;
+	}
+	
+	public function paginate($per_page=10,$current=false)
+	{
+		if($current===false){
+			//Если в контроллере забыли передать это подразумевающееся понятие, поможем контроллеру
+			if(isset($_GET['page'])){
+				$current=(int)$_GET['page'];
+			}else{
+				$current=0;
+			}
+		}
+		$this->calc_rows();
+		$this->limit($current*$per_page,$per_page);
+		$this->current_page=$current;
+		$this->per_page=$per_page;
 		return $this;
 	}
 	

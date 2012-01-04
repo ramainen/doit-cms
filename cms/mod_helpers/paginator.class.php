@@ -36,7 +36,12 @@ class Paginator extends UniversalHelper
 	}
 	
 	public function generate($allcount=1, $current=false){
-		
+		if(!is_numeric($allcount)){
+			//Внезапно передали экземпля модели
+			$model = $allcount;
+			$allcount= ceil($model->found_rows/$model->per_page);
+			$current = $model->current_page;
+		}
 		if($allcount<=1){
 			return '';
 		}
