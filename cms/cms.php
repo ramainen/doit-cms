@@ -165,6 +165,20 @@ function action()
 	return call_user_func_array(array(d(),'action'),  $paramaters);
 }
 
+
+/**
+* Класс - заглушка для глушения ошибок PDO
+*
+*/
+
+class PDODummy
+{
+	function __call($a,$s)
+	{
+		return $this;
+	}
+}
+
 /**
  * Основной объект системы
  */
@@ -197,9 +211,14 @@ class doitClass
 		
 		// <foreach users as user>
 
-		$this->db = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
-		$this->db->exec('SET CHARACTER SET utf8');
-		$this->db->exec('SET NAMES utf8');
+		try {
+			$this->db = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+			$this->db->exec('SET CHARACTER SET utf8');
+			$this->db->exec('SET NAMES utf8');
+		} catch (PDOException $e) {
+			//Создание заголовки для подавления ошибок и доступа к скаффолдингу
+			$this->db=new PDODummy();
+		}
 
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
