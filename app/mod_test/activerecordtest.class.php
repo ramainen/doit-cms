@@ -17,7 +17,9 @@ class ActiveRecordTest extends Test
 		
 		//Общее количество строк == результирующее количетсов строк
 		$this->assertTrue($found_rows==$count_all_first);
-		$this->assertTrue($count_all==5);
+		
+		//Следующий тест бесмысленен
+		//$this->assertEquals($count_all,$count_all_first);
 		
 		$tmp=$_GET;
 		$_GET['page']=1;
