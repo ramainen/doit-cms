@@ -80,6 +80,31 @@ class ActiveRecordTest extends Test
 	 
 		$_GET = $tmp;
 	}
+
+	function test_tree()
+	{
+
+		$data=array(
+			array(
+				'id'=>'1',
+				'title'=>'one',
+				'page_id'=>null,
+			),
+			array(
+				'id'=>'2',
+				'title'=>'two',
+				'page_id'=>null,
+			),
+			array(
+				'id'=>'3',
+				'title'=>'two',
+				'page_id'=>'2',
+			),
+		);
+		$pages=new Page(array('data'=>$data));
+		$this->assertTrue(count($pages->tree)==2);
+	}
+
 }
  
 ?>

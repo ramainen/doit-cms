@@ -71,7 +71,6 @@ calculate
 //Класс Active Record, обеспечивающий простую добычу данных
 abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIterator
 {
-	public $edit_button;
 	public $_options;
 	public $_data;
 	private $_used_tree_branches;
