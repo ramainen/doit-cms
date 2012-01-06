@@ -131,7 +131,26 @@ class HelpersTest extends Test
 		$_SERVER['REQUEST_URI'] = $tmp;
 		$_GET=$tmp2;
 	}
-	
+
+
+	function test_seo()
+	{
+		$seo = new Seo();
+		$seo->title = 'zagolovok';
+		$this->assertEquals($seo->title,'zagolovok');
+
+
+		$seo = new Seo();
+		$this->assertNotEquals($seo->title,'zagolovok');
+
+		//Проверка на синглтонность
+		d()->Seo->title="zagolovok2";
+		$this->assertEquals(d()->Seo->title,'zagolovok2');
+
+		d()->Seo->title="zagolovok3";
+		$this->assertEquals(d()->Seo->title,'zagolovok3');
+	}
+
 }
  
 ?>
