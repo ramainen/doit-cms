@@ -135,6 +135,7 @@ class HelpersTest extends Test
 
 	function test_seo()
 	{
+		//Базовая проверка на работоспособность
 		$seo = new Seo();
 		$seo->title = 'zagolovok';
 		$this->assertEquals($seo->title,'zagolovok');
@@ -149,6 +150,28 @@ class HelpersTest extends Test
 
 		d()->Seo->title="zagolovok3";
 		$this->assertEquals(d()->Seo->title,'zagolovok3');
+		$data=array(
+			array(
+				'id'=>'1',
+				'title'=>'Главная',
+				'link'=>'/',
+			),
+			array(
+				'id'=>'2',
+				'title'=>'Контакты',
+				'link'=>'/contacts',
+			),
+			array(
+				'id'=>'3',
+				'title'=>'Второстепенные данные ошибочны',
+				'link'=>null,
+			),
+		);
+		//работа с базой данных
+		d()->Seo=new Seo();
+		$mock_seopage = new Page(array('data'=>$data));
+		d()->Seo->model = $mock_seopage;
+
 	}
 
 }
