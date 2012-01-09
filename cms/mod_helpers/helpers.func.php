@@ -73,6 +73,9 @@ function form ($params=array())
 		$attr .= ' action="'.$params['action'].'" ';
 	}
 	
+	if(isset($params['enctype'])) {
+		$attr .= ' enctype="'.$params['enctype'].'" ';
+	}
 	
 	$result =  "<form method='POST' ".$attr.">";
 	$result .= ' <input type="hidden" name="_element" value="' . d()->current_form_object .'" >';
