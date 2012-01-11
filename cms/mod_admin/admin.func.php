@@ -215,6 +215,14 @@ function admin_show_one_list($table,$id1,$id2)
 		}
 		$data = $all_lines;
 	}
+	
+	
+	foreach ($data as $key=>$value){
+		if($data[$key]['title']=='' && isset($data[$key]['ru_title']) && $data[$key]['ru_title']!=''){
+			$data[$key]['title']=$data[$key]['ru_title'];
+		}
+	}
+	
 	d()->objectrow = $data;
 	
 	if(empty($_GET['sort'])){
