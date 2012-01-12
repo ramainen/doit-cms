@@ -43,7 +43,7 @@ class Test
 		if($var1==$var2){
 			$this->goodTest();
 		}else{
-			$this->last_nonequal = '<br><span style="color:green">"'.htmlspecialchars($var1).'"</span> != <span style="color:blue">"'.htmlspecialchars($var2).'"</span>';
+			$this->last_nonequal = '<span style="color:green">"'.htmlspecialchars($var1).'"</span> != <span style="color:blue">"'.htmlspecialchars($var2).'"</span>';
 			$this->failedTest();
 		}
 	}
@@ -132,7 +132,7 @@ class Test
 				$this->$method();
 			}
 		}
-		print '<pre>';
+		print '<pre style="margin:0;">';
 		print get_class($this).': ';
 		$color='green';
 		if($this->bad_results!=0){
@@ -182,23 +182,27 @@ class Test
 					}
 					$covered_count=count($lines)-count($uncovered_lines);
 					$procent = ceil(($covered_count/count($lines))*100);
-					$rand_id=md5(rand().time());
-					print '<pre>Файл '.$file.' покрыт на '.$procent .'% ('.$covered_count.' из '.count($lines).', непокрыто: '.
-						count($uncovered_lines).')'. //, из них рабочего кода  '.count($covered_lines).
-						' <a href="#" onclick="document.getElementById(\''. 'id_' .$rand_id . '\').style.display=\'block\';return false;" >показать</a></pre>';
-					print '<div id="id_'.$rand_id.'" style="display:none;border:1px solid #ffee99;padding-left:15px;"><pre>';
+					if(count($uncovered_lines)>0){
+						$rand_id=md5(rand().time());
+						print '<pre  style="margin:0;">Файл '.$file.' покрыт на '.$procent .'% ('.$covered_count.' из '.count($lines).', непокрыто: '.
+							count($uncovered_lines).')'. //, из них рабочего кода  '.count($covered_lines).
+							' <a href="#" onclick="document.getElementById(\''. 'id_' .$rand_id . '\').style.display=\'block\';return false;" >показать</a></pre>';
+						print '<div id="id_'.$rand_id.'" style="display:none;border:1px solid #ffee99;padding-left:15px;"><pre  style="margin:0;">';
 
-					foreach($uncovered_lines as $bad_line=>$bad_code){
-						print ($bad_line+1).':   '.trim(htmlspecialchars($bad_code))."\n";
+						foreach($uncovered_lines as $bad_line=>$bad_code){
+							print ($bad_line+1).':   '.trim(htmlspecialchars($bad_code))."\n";
+						}
+						print "</div></pre>";
+					}else{
+						print "<pre  style='margin:0;'>Файл $file покрыт на 100%</pre>";
 					}
-					print "</div></pre>";
 				}else{
 
 				}
 			}
 		}else{
 			if(count($this->coverages)>0){
-				print '<pre>Для подсчёта процента покрытия установите xdebug.</pre>';
+				print '<pre  style="margin:0;">Для подсчёта процента покрытия установите xdebug.</pre>';
 			}
 		}
 
