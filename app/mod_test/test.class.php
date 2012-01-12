@@ -165,7 +165,7 @@ class Test
 							$covered_lines[]=$line-1;
 						}else{
 							if($_count==-1){
-								if(trim($lines[$line-1])=='}'){
+								if(trim($lines[$line-1])=='}' || (1==preg_match('/^\s*}\s*else\s*{\s*$/',$lines[$line-1]))){
 									$covered_lines[]=$line-1;
 								}else{
 									$uncovered_lines[$line-1]=$lines[$line-1];

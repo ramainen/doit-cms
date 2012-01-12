@@ -99,6 +99,7 @@ class HelpersTest extends Test
 	
 	function test_paginator_class()
 	{
+		$this->assertCoverage('cms/mod_helpers/paginator.class.php');
 		//Тестирование класса пагинатора
 		$tmp=$_SERVER['REQUEST_URI'];
 		$tmp2=$_GET;
@@ -119,7 +120,11 @@ class HelpersTest extends Test
 		
 		
 		$this->assertEquals($paginator->generate(3),'<a href="/news/?page=0" >1</a><a href="/news/?page=1"  class="active_link" >2</a><a href="/news/?page=2" >3</a>');
-		
+
+		$this->assertEquals($paginator->generate(3,0),'<a href="/news/?page=0"  class="active_link" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2" >3</a>');
+		$_GET=array();
+		$this->assertEquals($paginator->generate(3),'<a href="/news/?page=0"  class="active_link" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2" >3</a>');
+
 		$this->assertEquals($paginator->clearPagesInAdress('/news/'),'/news/');
 		$this->assertEquals($paginator->clearPagesInAdress('/news/?'),'/news/');
 		$this->assertEquals($paginator->clearPagesInAdress('/news/?page=23'),'/news/');
@@ -135,6 +140,7 @@ class HelpersTest extends Test
 		$this->assertEquals($paginator->drawPageInAdress('/news/?here=1',3),'/news/?here=1&page=3');
 		$this->assertEquals($paginator->drawPageInAdress('/news/?here=1&low',3),'/news/?here=1&low&page=3');
 		$this->assertEquals($paginator->drawPageInAdress('/news/?',3),'/news/?page=3');
+
 		
 		
 		$_SERVER['REQUEST_URI'] = $tmp;
