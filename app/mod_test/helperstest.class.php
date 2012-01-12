@@ -2,6 +2,15 @@
 	
 class HelpersTest extends Test
 {
+	public function test_coverage()
+	{
+		//$this->assertCoverage('cms/cms.php');
+		$this->assertCoverage('cms/mod_helpers/helpers.func.php');
+		/*$f = d()->form('sdasd');
+		$f = d()->input(array());
+		$f = d()->input(array('style'=>'color:red;'));
+		$f = d()->input(array('class'=>'system'));*/
+	}
 	//Тест бесмысленный, яляется образцом =). Как и следующий.
 	public function test_helperh()
 	{
