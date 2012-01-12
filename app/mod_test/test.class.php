@@ -120,6 +120,8 @@ class Test
 	
 	public function run()
 	{
+		$COLOR_RED='#FFDCD7';
+		$COLOR_GREEN='#A5FFA5';
 		if(function_exists('xdebug_start_code_coverage')){
 			xdebug_start_code_coverage(XDEBUG_CC_UNUSED);
 		}
@@ -189,9 +191,31 @@ class Test
 							' <a href="#" onclick="document.getElementById(\''. 'id_' .$rand_id . '\').style.display=\'block\';return false;" >показать</a></pre>';
 						print '<div id="id_'.$rand_id.'" style="display:none;border:1px solid #ffee99;padding-left:15px;"><pre  style="margin:0;">';
 
-						foreach($uncovered_lines as $bad_line=>$bad_code){
-							print ($bad_line+1).':   '.trim(htmlspecialchars($bad_code))."\n";
+						$max=1;
+						foreach($uncovered_lines as $_key=>$_value){
+							$max=$_key; //Ага,быдлокод
 						}
+						$dots_shown=false;
+						for($i=0;$i<=$max;$i++){
+
+							if (isset($uncovered_lines[$i])){
+								$dots_shown=false;
+								print '<div style="background:'.$COLOR_RED.'">'.($i+1).':   '. (htmlspecialchars($uncovered_lines[$i]))."</div>";
+							}elseif(isset($uncovered_lines[$i+1])){
+								$dots_shown=false;
+								print '<div style="background:'.$COLOR_GREEN.'">'.($i+1).':   '. (htmlspecialchars($lines[$i]))."</div>";
+							}elseif(isset($uncovered_lines[$i+2]) && $dots_shown==true && trim($lines[$i])!=''){
+								$dots_shown=false;
+								print '<div style="background:'.$COLOR_GREEN.'">'.($i+1).':   '. (htmlspecialchars($lines[$i]))."</div>";
+							}elseif(isset($uncovered_lines[$i-1])){
+								$dots_shown=false;
+								print '<div style="background:'.$COLOR_GREEN.'">'.($i+1).':   '. (htmlspecialchars($lines[$i]))."</div>";
+							}elseif($dots_shown==false){
+								$dots_shown=true;
+								print '<div  style="font-size:8px;">...</div>';
+							}
+						}
+
 						print "</div></pre>";
 					}else{
 						print "<pre  style='margin:0;'>Файл $file покрыт на 100%</pre>";
