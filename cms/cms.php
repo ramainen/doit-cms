@@ -49,8 +49,8 @@ function doit_ob_error_handler($output)
 			$mysql_err=d()->db->errorInfo();
 			$_message='<br>Также зафиксирована ошибка Mysql:<br>'. $mysql_err[2]."<br>";
 		}
-
-		return print_error_message(' ',$error['line'],'(неизвестно)' ,$error['message'],'Ошибка при выполнении функции '.$parent_function.' '.$_message );
+		$errfile = substr($error['file'],strlen($_SERVER['DOCUMENT_ROOT'])) ;
+		return print_error_message(' ',$error['line'],$errfile ,$error['message'],'Ошибка при выполнении функции '.$parent_function.' '.$_message );
 	}
 	return $output;
 }
@@ -1323,3 +1323,5 @@ function nothing()
 if (!isset(doitClass::$instance)) {
 	new doitClass();
 }
+
+/* END OF cms.php */
