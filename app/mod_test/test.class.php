@@ -120,8 +120,10 @@ class Test
 	
 	public function run()
 	{
+		if(function_exists('xdebug_start_code_coverage')){
+			xdebug_start_code_coverage(XDEBUG_CC_UNUSED);
+		}
 
-		xdebug_start_code_coverage(XDEBUG_CC_UNUSED     );
 
 		foreach( get_class_methods($this) as $method){
 			if(substr($method,0,4)=='test') {
@@ -142,55 +144,61 @@ class Test
 			print 'fail: '.$test.'<br>';
 		}
 		print '</pre>';
-		$files_coverage=xdebug_get_code_coverage();
-		$right_slashes=str_replace('\\','/',$_SERVER['DOCUMENT_ROOT']);
-		foreach($files_coverage as $key=>$value){
+		if(function_exists('xdebug_start_code_coverage')){
+			$files_coverage=xdebug_get_code_coverage();
+			$right_slashes=str_replace('\\','/',$_SERVER['DOCUMENT_ROOT']);
+			foreach($files_coverage as $key=>$value){
 
-			$file=str_replace('\\','/',$key);
-			$file=str_replace($right_slashes,'',$file);
-			$file=str_replace('\\','/',$file);
-			if(isset($this->coverages[$file])){
-//				print $file;
-			//	var_dump($value);
-				$lines=file($key);
-				$covered_lines=array();
-				$uncovered_lines=array();
-				$dead_lines=array();
-				foreach($value as $line=>$_count){
-					if($_count>0){
-						//print $lines[$line-1]."\n";
-						$covered_lines[]=$line-1;
-					}else{
-						if($_count==-1){
-							if(trim($lines[$line-1])=='}'){
-								$covered_lines[]=$line-1;
-							}else{
-								$uncovered_lines[$line-1]=$lines[$line-1];
+				$file=str_replace('\\','/',$key);
+				$file=str_replace($right_slashes,'',$file);
+				$file=str_replace('\\','/',$file);
+				if(isset($this->coverages[$file])){
+	//				print $file;
+				//	var_dump($value);
+					$lines=file($key);
+					$covered_lines=array();
+					$uncovered_lines=array();
+					$dead_lines=array();
+					foreach($value as $line=>$_count){
+						if($_count>0){
+							//print $lines[$line-1]."\n";
+							$covered_lines[]=$line-1;
+						}else{
+							if($_count==-1){
+								if(trim($lines[$line-1])=='}'){
+									$covered_lines[]=$line-1;
+								}else{
+									$uncovered_lines[$line-1]=$lines[$line-1];
+								}
+
+							}
+							if($_count==-2){
+								$dead_lines[$line-1]=$lines[$line-1];
 							}
 
-						}
-						if($_count==-2){
-							$dead_lines[$line-1]=$lines[$line-1];
-						}
 
+						}
 
 					}
+					$covered_count=count($lines)-count($uncovered_lines);
+					$procent = ceil(($covered_count/count($lines))*100);
+					$rand_id=md5(rand().time());
+					print '<pre>Файл '.$file.' покрыт на '.$procent .'% ('.$covered_count.' из '.count($lines).', непокрыто: '.
+						count($uncovered_lines).')'. //, из них рабочего кода  '.count($covered_lines).
+						' <a href="#" onclick="document.getElementById(\''. 'id_' .$rand_id . '\').style.display=\'block\';return false;" >показать</a></pre>';
+					print '<div id="id_'.$rand_id.'" style="display:none;border:1px solid #ffee99;padding-left:15px;"><pre>';
+
+					foreach($uncovered_lines as $bad_line=>$bad_code){
+						print ($bad_line+1).':   '.trim(htmlspecialchars($bad_code))."\n";
+					}
+					print "</div></pre>";
+				}else{
 
 				}
-				$covered_count=count($lines)-count($uncovered_lines);
-				$procent = ceil(($covered_count/count($lines))*100);
-				$rand_id=md5(rand().time());
-				print '<pre>Файл '.$file.' покрыт на '.$procent .'% ('.$covered_count.' из '.count($lines).', непокрыто: '.
-					count($uncovered_lines).')'. //, из них рабочего кода  '.count($covered_lines).
-					' <a href="#" onclick="document.getElementById(\''. 'id_' .$rand_id . '\').style.display=\'block\';return false;" >показать</a></pre>';
-				print '<div id="id_'.$rand_id.'" style="display:none;border:1px solid #ffee99;padding-left:15px;"><pre>';
-
-				foreach($uncovered_lines as $bad_line=>$bad_code){
-					print ($bad_line+1).':   '.trim(htmlspecialchars($bad_code))."\n";
-				}
-				print "</div></pre>";
-			}else{
-
+			}
+		}else{
+			if(count($this->coverages)>0){
+				print '<pre>Для подсчёта процента покрытия установите xdebug.</pre>';
 			}
 		}
 
