@@ -23,10 +23,11 @@ class CoreTest extends Test
 		d()->stuff_for_test = 'another result';
 		$this->assertEquals(d()->render('stuff_for_test'), 'another result');
 		
+		
 		$dummy = new PDODummy();
 		$this->assertEquals($dummy, $dummy->someUnusualFunc());
 		
-		
+		$this->assertEquals(get_class(d()->SomeAnyStuff), 'SomeAnyStuff');
 		
 	}
 
