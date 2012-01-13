@@ -191,7 +191,7 @@ class Test
 						print '<pre  style="margin:0;">Файл '.$file.' покрыт на '.$procent .'% ('.$covered_count.' из '.count($lines).', непокрыто: '.
 							count($uncovered_lines).')'. //, из них рабочего кода  '.count($covered_lines).
 							' <a href="#" onclick="document.getElementById(\''. 'id_' .$rand_id . '\').style.display=\'block\';return false;" >показать</a></pre>';
-						print '<div id="id_'.$rand_id.'" style="display:none;border:1px solid #ffee99;padding-left:15px;"><pre  style="margin:0;">';
+						print '<div id="id_'.$rand_id.'" style="display:none;"><pre  style="margin:0;">';
 
 						$max=1;
 						foreach($uncovered_lines as $_key=>$_value){
