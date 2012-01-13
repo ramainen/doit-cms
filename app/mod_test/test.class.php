@@ -154,7 +154,9 @@ class Test
 				$file=str_replace('\\','/',$key);
 				$file=str_replace($right_slashes,'',$file);
 				$file=str_replace('\\','/',$file);
-				if(isset($this->coverages[$file])){
+				
+				$only_filename = '/'.$this->filename_from(str_replace('\\','/',$key)); //Ага, слеш - быдлокод, согласен
+				if(isset($this->coverages[$file]) || isset($this->coverages[$only_filename])){
 	//				print $file;
 				//	var_dump($value);
 					$lines=file($key);
@@ -240,6 +242,11 @@ class Test
 		$this->assertEquals(1,1);
 	}
 	
+	function filename_from($str){
+		$str=explode('/',$str);
+		$str=$str[count($str)-1];
+		return $str;
+	}
 }
  
 ?>
