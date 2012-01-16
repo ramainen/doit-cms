@@ -202,10 +202,10 @@ function admin_show_one_list($table,$id1,$id2)
 		print $err[2];
 	}else{
 		$all_lines=$result->fetchAll();
-		foreach($all_lines as $line){
-			$line['addbuttons']='';
-			foreach($addbuttons as $key=>$value) {
-				$line['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
+		foreach($all_lines as $key0=> $line){
+			$all_lines[$key0]['addbuttons']='';
+			foreach($addbuttons as $key => $value) {
+				$all_lines[$key0]['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
 			}
 			if (empty($line['sort'])) {
 				//ВНЕЗАПНО сортировка пустая
