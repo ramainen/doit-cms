@@ -341,17 +341,22 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		for ($i=1; $i<= count($_conditions)-1; $i++) {
 			$param=$args[$i];
 			if(is_array($param)){
-				if(is_object($param)){
-					$newparam=array();
-					foreach ($param as $key=>$value){
-						$newparam[$key] = doitClass::$instance->db->quote($param[$key]->id);
-					}
-					$param=implode(", ",$newparam);
+				if(count($param)==0){
+					$param = ' false ';
 				}else{
-					foreach ($param as $key=>$value){
-						$param[$key] = doitClass::$instance->db->quote($param[$key]);
+					if(is_object($param)){
+						$newparam=array();
+						foreach ($param as $key=>$value){
+							$newparam[$key] = doitClass::$instance->db->quote($param[$key]->id);
+						}
+						$param=implode(", ",$newparam);
+						
+					}else{
+						foreach ($param as $key=>$value){
+							$param[$key] = doitClass::$instance->db->quote($param[$key]);
+						}
+						$param=implode(", ",$param);
 					}
-					$param=implode(", ",$param);
 				}
 			}else{
 				$param = doitClass::$instance->db->quote($param);
