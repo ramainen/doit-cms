@@ -479,6 +479,7 @@ foreach($tmparr as $key=>$subval)
 				}
 			}
 		}
+		d()->bootstrap();
 
 	}
 
