@@ -53,7 +53,7 @@ function input ($params=array())
 				$attr .= ' value= "'.  htmlspecialchars($_POST[$cfo][$params[0]]) .'" ';
 			}
 		} else {
-			$attr .= ' value= "'.  htmlspecialchars(d($cfo)->{$params[0]}) .'" ';
+			$attr .= ' value= "'.  htmlspecialchars(d()->{$cfo}->{$params[0]}) .'" ';
 		}
 	}
 	
