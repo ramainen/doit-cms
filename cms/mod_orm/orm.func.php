@@ -339,7 +339,24 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		$_conditions=explode('?',' '.$_condition.' ');
 		$_condition='';
 		for ($i=1; $i<= count($_conditions)-1; $i++) {
-			$_condition .= $_conditions[$i-1]. " ".doitClass::$instance->db->quote($args[$i])." "  ;
+			$param=$args[$i];
+			if(is_array($param)){
+				if(is_object($param)){
+					$newparam=array();
+					foreach ($param as $key=>$value){
+						$newparam[$key] = doitClass::$instance->db->quote($param[$key]->id);
+					}
+					$param=implode(", ",$newparam);
+				}else{
+					foreach ($param as $key=>$value){
+						$param[$key] = doitClass::$instance->db->quote($param[$key]);
+					}
+					$param=implode(", ",$param);
+				}
+			}else{
+				$param = doitClass::$instance->db->quote($param);
+			}
+			$_condition .= $_conditions[$i-1]. " ".$param." "  ;
 		}
 		$_condition .= $_conditions[$i-1];
 		$this->_options['condition'][] = '('.$_condition.')';

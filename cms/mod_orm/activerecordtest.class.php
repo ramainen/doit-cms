@@ -105,6 +105,16 @@ class ActiveRecordTest extends Test
 		$this->assertTrue(count($pages->tree)==2);
 	}
 
+	function test_wherein()
+	{
+		$my_array=array('a','b','c');
+		$test_sql=d()->Nontableuser->where('`user_id` IN (?)',$my_array)->to_sql;
+		$this->assertEquals($test_sql,"SELECT   *  FROM `nontableusers` WHERE ( `user_id` IN ( 'a', 'b', 'c' ) ) ORDER BY `sort` ");
+		
+		$test_sql=d()->Nontableuser->where("`user_id` =?",'any')->to_sql;
+		$this->assertEquals($test_sql,"SELECT   *  FROM `nontableusers` WHERE ( `user_id` = 'any'  ) ORDER BY `sort` ");
+	}
+	
 }
  
 ?>
