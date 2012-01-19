@@ -142,6 +142,45 @@ class HelpersTest extends Test
 		$this->assertEquals($paginator->drawPageInAdress('/news/?',3),'/news/?page=3');
 
 		
+		//Самые обычные расклады - точки не появляются вообще
+		$this->assertEquals($paginator->getPagesArray(1,0),array(0));
+		$this->assertEquals($paginator->getPagesArray(5,0),array(0,1,2,3,4));
+		$this->assertEquals($paginator->getPagesArray(5,1),array(0,1,2,3,4));
+		$this->assertEquals($paginator->getPagesArray(5,2),array(0,1,2,3,4));
+		$this->assertEquals($paginator->getPagesArray(5,3),array(0,1,2,3,4));
+		$this->assertEquals($paginator->getPagesArray(5,4),array(0,1,2,3,4));
+		$this->assertEquals($paginator->getPagesArray(6,4),array(0,1,2,3,4,5));
+		$this->assertEquals($paginator->getPagesArray(6,2),array(0,1,2,3,4,5));
+		$this->assertEquals($paginator->getPagesArray(6,0),array(0,1,2,3,4,5));
+		
+		
+		//Исключение
+		$this->assertEquals($paginator->getPagesArray(0,300),array(0));
+		
+		
+		$this->assertEquals($paginator->getPagesArray(2,0),array(0,1));
+		$this->assertEquals($paginator->getPagesArray(3,0),array(0,1,2));
+		$this->assertEquals($paginator->getPagesArray(4,0),array(0,1,2,3));
+		$this->assertEquals($paginator->getPagesArray(10,5),array(0,3,4,5,6,7,8,9));
+		$this->assertEquals($paginator->getPagesArray(10,6),array(0,4,5,6,7,8,9));
+		$this->assertEquals($paginator->getPagesArray(10,7),array(0,5,6,7,8,9));
+		$this->assertEquals($paginator->getPagesArray(10,8),array(0,5,6,7,8,9));
+		$this->assertEquals($paginator->getPagesArray(5,2),array(0,1,2,3,4));
+		$this->assertEquals($paginator->getPagesArray(7,3),array(0,1,2,3,4,5,6));
+		$this->assertEquals($paginator->getPagesArray(10,3),array(0,1,2,3,4,5,9));
+		$this->assertEquals($paginator->getPagesArray(10,2),array(0,1,2,3,4,9));
+		$this->assertEquals($paginator->getPagesArray(10,1),array(0,1,2,3,4,9));
+		$this->assertEquals($paginator->getPagesArray(1000,5),array(0,3,4,5,6,7,999));
+		$this->assertEquals($paginator->getPagesArray(1000,4),array(0,1,2,3,4,5,6,999));
+		$this->assertEquals($paginator->getPagesArray(10,9),array(0,5,6,7,8,9));
+		$this->assertEquals($paginator->getPagesArray(1000,0),array(0,1,2,3,4,999));
+		
+		
+		
+		//
+		
+		
+		
 		
 		$_SERVER['REQUEST_URI'] = $tmp;
 		$_GET=$tmp2;

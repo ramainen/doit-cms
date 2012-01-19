@@ -59,7 +59,15 @@ class Paginator extends UniversalHelper
 		
 		
 		$result='';
-		for($i=1;$i<=$allcount;$i++){
+		$allowed_pages=$this->getPagesArray($allcount,$current);
+		$old_step=$allowed_pages[0]; //Виртуальный прошлый шаг
+		foreach ($allowed_pages as $i){
+			$i++;
+			 
+			if (($i-$old_step)>1) {
+				$result .= ' ... ';
+			}
+			
 			$current_url=$this->drawPageInAdress($all_url,$i-1);
 			$params=array('a',$i);
 			$params['href']=$current_url;
@@ -67,6 +75,9 @@ class Paginator extends UniversalHelper
 				$params['class']=$this->active;
 			}
 			$result .= tag($params);
+		
+			
+			$old_step = $i;
 		}
 		return $result;
 		
@@ -82,6 +93,82 @@ class Paginator extends UniversalHelper
 			return $url.'&page='.$value;
 		}
 	}
+	
+	public function getPagesArray($pages_count=1,$current=0)
+	{
+		if($pages_count<=0) {
+			$pages_count=1;
+		}
+		
+		if($current >= $pages_count) {
+			$current = $pages_count-1;
+		}
+		
+		$result=array();
+		$interval=2; // Интервал - две страницы ДО текущей и две ПОСЛЕ
+		//current от 0 и до конца
+		//массив от 0 и до конца
+		$start_page=$current-$interval;
+		$end_page=$current+$interval;
+		
+		
+		if ($start_page==-1) {
+			//Проверка 1 [2] 3 4 5 ... 9 - соблюдение пяти цифр
+			$end_page=$end_page+$interval-1;
+		} elseif ($start_page<0) {
+			//Проверка 1 2 3 [4] 5  6 ... 9 - соблюдение пяти цифр
+			$end_page=$end_page+$interval;
+		}
+		
+		if ($end_page-1 > $pages_count-1) {
+			$start_page=$start_page-$interval;
+		} elseif ($end_page > $pages_count-1) {
+			$start_page=$start_page-$interval+1;
+		}
+		
+		
+		if ($start_page<0) {
+			$start_page=0;
+		}
+		
+		if ($end_page>$pages_count-1) {
+			$end_page = $pages_count-1;
+		}
+		
+		if($start_page>=3){
+			$result[]=0;
+		}
+		
+		if($start_page==2){
+			$result[]=0;
+			$result[]=1;
+		}
+		
+		if($start_page==1){
+			$result[]=0;
+		}
+		
+		for ($i=$start_page;$i<=$end_page;$i++){
+			$result[] = $i;
+		}
+		
+		if ($end_page<=$pages_count-4) {
+			$result[] =  $pages_count-1;
+		}
+		
+		if($end_page==$pages_count-3){
+			$result[] =  $pages_count-2;
+			$result[] =  $pages_count-1;
+		}
+		
+		if($end_page==$pages_count-2){
+			$result[] =  $pages_count-1;
+		}
+		
+		return $result;
+		
+	}
+	
 	public function clearPagesInAdress($adress){
 		
 		$first_quest=strpos($adress,'?');

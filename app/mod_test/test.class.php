@@ -43,7 +43,12 @@ class Test
 		if($var1==$var2){
 			$this->goodTest();
 		}else{
-			$this->last_nonequal = '<span style="color:green">"'.htmlspecialchars($var1).'"</span> != <span style="color:blue">"'.htmlspecialchars($var2).'"</span>';
+			if(is_string($var1) || is_string($var2)){
+				$this->last_nonequal = ' <span style="color:green">"'.htmlspecialchars($var1).'"</span> != <span style="color:blue">"'.htmlspecialchars($var2).'"</span>';
+			} else {
+				$this->last_nonequal = ' <span style="color:green">"'.print_r($var1, true).'"</span> != <span style="color:blue">"'.print_r($var2, true).'"</span>';
+				
+			}
 			$this->failedTest();
 		}
 	}
