@@ -61,7 +61,7 @@ function doit_ob_error_handler($output)
 function doit_parse_error_exception()
 {
 	if($error = error_get_last()){
-		if($error['type']==4){
+		if($error['type']==4 || $error['type']==4096){
 			$errfile = substr($error['file'],strlen($_SERVER['DOCUMENT_ROOT'])) ;
 			$lines=file($error['file']);
 			$wrongline=$lines[$error['line']];
