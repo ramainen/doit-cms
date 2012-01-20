@@ -368,6 +368,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		return $this;
 	}
 	
+	
 	public function paginate($per_page=10,$current=false)
 	{
 		if($current===false){
@@ -605,6 +606,18 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		return $this;
 	}
+	
+	public function all_of($field = 'titles') {
+		
+	
+		$result_array=array();
+		$field = to_o($field);
+		foreach($this as $key=>$value) {
+			$result_array[]=$value->{$field};
+		}
+		return $result_array;
+	}
+	
 	public function all()
 	{
 		if ($this->_options['queryready']==false) {
@@ -683,11 +696,12 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	}
 
 	function offsetExists($offset) {
-	if ($this->_options['queryready']==false) {
-			$this->fetch_data_now();
-	}
+		if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+		}
 	   return isset($this->_data[$this->_cursor]);
 	}
+	
 	function offsetSet($offset, $value) {
         if (is_null($offset)) {
             //ничего пока не делать
