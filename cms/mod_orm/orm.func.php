@@ -612,8 +612,9 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	
 		$result_array=array();
 		$field = to_o($field);
-		foreach($this as $key=>$value) {
-			$result_array[]=$value->{$field};
+		$array  = $this->all;
+		foreach($array  as $value) {
+			$result_array[]= $value->{$field};
 		}
 		return $result_array;
 	}
@@ -631,7 +632,6 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ) ));
 		}
 		  
-		return $_tmparr;
 		return $_tmparr;
 	}
 
@@ -983,6 +983,12 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if (substr($name,0,10)=='expand_to_') {
 			return $this->expand_to(substr($name,10));
 		}
+		
+		
+		if (substr($name,0,4)=='all_') {
+			return $this->all_of(substr($name,4));
+		}
+		
 		
 		//Item.expand_all_to_pages
 		//DEPRECATED: в дальнейшем будет удалена
