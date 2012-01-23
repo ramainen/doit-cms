@@ -34,5 +34,12 @@ class Auth extends UniversalSingletoneHelper
 		return $_SESSION['auth'];
 	}
 	
+	function user($id=false)
+	{
+		if ($id===false){
+			$id = $_SESSION['auth'];
+		}
+		return d()->User($id);
+	}
 
 }
