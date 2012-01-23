@@ -937,7 +937,11 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		return $this->get($name);
 	}
 
-
+	function only($field)
+	{
+		return $this->where("`is_{$field}` = 1");
+	}
+	
 	/**
 	 * Возвращает ключ массива (курсор, для обращения как к элементу массива), по id объекта
 	 *
