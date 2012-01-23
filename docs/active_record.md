@@ -547,3 +547,23 @@ TODO:
 	<foreach d()->Group(2)->categories_to_groups->all_of('categories')>
 
 Простое правильное именование таблицы позволяет сильно упростить код.
+
+Простая реализация many-to-many:
+
+	class User
+	{
+		function groups()
+		{
+			return $this->groups_throw_groups_to_users;
+		}
+	}
+
+Реализация (например, список групп пользователя):
+	
+	<foreach d()->Auth->user->groups>
+		{.title}, 
+	</foreach>
+	
+Пока в данном случае возвращается массив (не ленивый запрос) в связи с несколькими таблицами. Таким образом, нельзя сделать
+	
+	d()->Auth->user->groups->all_titles //Так нельзя
