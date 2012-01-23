@@ -513,3 +513,37 @@ TODO:
 	$user->posts
 	$post->user
 
+Связь many-to-many легко реализуется через объект-посредник. Если таблицу, связывающую таблицы groups и categories назвать permissions,
+то можно использовать следующую конструкцию:
+
+	<foreach d()->Group(2)->categories_throw_permissions>
+		{this.title}<br>
+	</foreach>
+
+Другой вариант использования (меньше магии):
+
+	<foreach d()->Group(2)->permissions->all_of_categories>
+		{this.title}<br>
+	</foreach>
+
+Или (нет магии):
+
+	<foreach d()->Group(2)->permissions->all_of('categories')>
+		{this.title}<br>
+	</foreach>
+
+Если не хватает фантазии для именования таблиц, можно просто назвать её categories_to_groups.
+
+Три варианта в этом случае:
+
+	<foreach d()->Group(2)->categories_throw_categories_to_groups>
+
+Другой вариант использования (меньше магии):
+
+	<foreach d()->Group(2)->categories_to_groups->all_of_categories>
+
+Или (нет магии):
+
+	<foreach d()->Group(2)->categories_to_groups->all_of('categories')>
+
+Простое правильное именование таблицы позволяет сильно упростить код.

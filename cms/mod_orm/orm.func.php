@@ -506,10 +506,21 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	function fetch_data_now()
 	{
 		$this->_options['queryready'] = true;
-
+		
+		/*
+		$result = doitClass::$instance->db->query($this->to_sql());
+		if(!$result){
+			print $this->to_sql();
+		}else{
+			$this->_data =  $result->fetchAll(PDO::FETCH_ASSOC);
+			$this->_count = count($this->_data);
+		}
+		*/
+		
 		$this->_data =  doitClass::$instance->db->query($this->to_sql())->fetchAll(PDO::FETCH_ASSOC);
 		$this->_count = count($this->_data);
-
+		
+		
 		if($this->_count>0){
 			if (!isset (doitClass::$instance->datapool['columns_registry'])) {
 				doitClass::$instance->datapool['columns_registry'] = array();
@@ -990,6 +1001,15 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		
 		
+		//d()->User->groups_throw_roles
+		$throw_substr= strpos($name,'_throw_');
+		if($throw_substr!==false) {
+		
+			$first_word = substr($name,0,$throw_substr);
+			$second_word = substr($name,$throw_substr+7);
+			return $this->{$second_word}->all_of($first_word);
+		}
+		
 		//Item.expand_all_to_pages
 		//DEPRECATED: в дальнейшем будет удалена
 		if (substr($name,0,14)=='expand_all_to_') {
@@ -1050,7 +1070,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 							$ids_array[$value[$name.'_id']]=true;
 						}
 						$ids_array=array_keys($ids_array);
-						$this->_objects_cache[$name] =  activerecord_factory_from_table(ar::one_to_plural($name))->order('')->where(' `id` IN ('.implode(' , ',$ids_array).') ');
+						$this->_objects_cache[$name] =  activerecord_factory_from_table(ar::one_to_plural($name))->order('')->where(' `id` IN (?)',$ids_array);
 					}
 					$cursor_key=$this->_objects_cache[$name]->get_cursor_key_by_id($this->_data[$this->_cursor][$name.'_id']);
 					return $this->_objects_cache[$name][$cursor_key];

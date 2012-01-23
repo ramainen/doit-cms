@@ -73,3 +73,16 @@
 	d()->Catalog
 	d()->News
 	d()->Option
+	
+Связь между группами и категориями:
+
+	d()->Group(2)->categories_throw_permissions	
+	
+Все заголовки пользователей в группе в виде массива
+	
+	d()->Group(2)->users->all_of_titles
+
+Массив ID пользователей в группе
+	
+	d()->Group(2)->users->all_of_ids
+	
