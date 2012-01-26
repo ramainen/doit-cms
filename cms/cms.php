@@ -61,7 +61,8 @@ function doit_ob_error_handler($output)
 function doit_parse_error_exception()
 {
 	if($error = error_get_last()){
-		if($error['type']==4 || $error['type']==4096){
+	
+		if($error['type']==4 || $error['type']==64 || $error['type']==4096){
 			$errfile = substr($error['file'],strlen($_SERVER['DOCUMENT_ROOT'])) ;
 			$lines=file($error['file']);
 			$wrongline=$lines[$error['line']];
@@ -190,6 +191,8 @@ class doitClass
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	public $php_files_list=array(); //Массив найденных php файлов.
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
+	private $for_include=array(); //Массив файлов для последующего инклуда
+	private $for_ini=array(); //Массив файлов для последующей загрузки
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
 	private $call_chain=array(); //Цепь вызовов
@@ -414,27 +417,34 @@ foreach($tmparr as $key=>$subval)
 		
 		//сохранение фрагментов url
 		$this->url_parts=explode('/',substr($_tmpurl,1));
-
+		
+		$_files=array();
+		$_files['cms']['/']=array();
+		$_files['app']['/']=array();
 		//сначала инициализируются файлы из ./cms, затем из ./app
 		foreach(array('cms','app') as $dirname) { 
+			
 			$_handle = opendir($dirname);
-			$_files=array();
-			$_files['/']=array();
+
 			while (false !== ($_file = readdir($_handle))) {
 				 if(substr($_file,0,4)=='mod_') {
 					$_subhandle = opendir($dirname.'/'.$_file);
-					$_files['/'.$_file.'/']=array();
+					$_files[$dirname]['/'.$_file.'/']=array();
 					while (false !== ($_subfile = readdir($_subhandle))) {
-						$_files['/'.$_file.'/'][]=$_subfile;
+						$_files[$dirname]['/'.$_file.'/'][]=$_subfile;
 					}
 					closedir($_subhandle);
 				 } else {
-					$_files['/'][]=$_file;
+					$_files[$dirname]['/'][]=$_file;
 				 }
 			}
 			closedir($_handle);
-			
-			foreach($_files as $_dir => $_subfiles) {
+		}
+
+		$for_include=array();
+		$for_ini=array();
+		foreach(array('cms','app') as $dirname) {
+			foreach($_files[$dirname] as $_dir => $_subfiles) {
 				foreach($_subfiles as $_file) {
 
 					if ( strrchr($_file, '.')=='.html') {
@@ -455,7 +465,8 @@ foreach($tmparr as $key=>$subval)
 					
 					//Контроллер - функции для работы с данными и бизнес-логика. Работа шаблонизатора подавлена.
 					if (substr($_file,-9)=='.func.php') {
-						include ($dirname.$_dir.$_file);
+						$this->for_include[$_dir.$_file]=$dirname.$_dir.$_file;
+						
 						continue;
 					}
 					if (strrchr($_file, '.')=='.php') {
@@ -468,7 +479,7 @@ foreach($tmparr as $key=>$subval)
 						//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
 						if (substr($_file,-8)=='init.ini') {
 							//Если имя файла оканчивается на .init.ini, инициализировать его сразу
-							$this->load_and_parse_ini_file ($dirname.$_dir.$_file);
+							$this->for_ini[$_dir.$_file]=($dirname.$_dir.$_file);
 						} else {
 							//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
 							//Хранит адрес ini-файла, запускаемого перед определённой функцией //DEPRECATED
@@ -479,6 +490,15 @@ foreach($tmparr as $key=>$subval)
 				}
 			}
 		}
+ 
+		foreach($this->for_include as $value) {
+			include($value);
+		}
+
+		foreach($this->for_ini as $value) {
+			$this->load_and_parse_ini_file ($value);
+		}
+		
 		d()->bootstrap();
 
 	}
