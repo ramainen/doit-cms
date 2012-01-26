@@ -7,6 +7,8 @@ class clients_controller
 		d()->clients  = d()->Client->paginate(3);
 		
 		d()->paginator = d()->Paginator->generate(d()->clients  );
+
+		d()->long_paginator = d()->Paginator->generate(30);
 		print d()->view();
 	}
 	
