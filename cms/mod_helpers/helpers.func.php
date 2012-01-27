@@ -60,6 +60,58 @@ function input ($params=array())
 	return '<input ' . $attr . '>';
 }
 
+
+//helper textarea для отображения текстового поля
+function textarea ($params=array())
+{
+
+	$cfo = d()->current_form_object;
+	$attr='';
+	if(isset($params['style'])) {
+		$attr .= ' style="'.$params['style'].'" ';
+	}
+	
+	//TODO: проверка на класс error
+	if(isset($params['class'])) {
+		$attr .= ' class="'.$params['class'].'" ';
+	}
+	
+	if(isset($params['id'])) {
+		$attr .= ' id="'.$params['id'].'" ';
+	}else{
+		$attr .= ' id="'.$cfo.'_'.$params[0].'" ';		
+	}
+	
+	if(isset($params['attr'])) {
+		$attr .= ' '.$params['attr'].' ';
+	}
+	
+	
+	if(isset($params['name'])) {
+		$attr .= ' name="'.$params['name'].'" ';
+		
+	} else {
+		$attr .= ' name="'.$cfo.'['.$params[0].']" ';		
+	}
+	
+	$value="";
+	if(isset($params['value'])) {
+		$value = htmlspecialchars( $params['value']);
+	}else{
+		if(isset($_POST['_action'])) {					
+			if(isset($params['name'])) {
+				$value =  htmlspecialchars( $_POST[$params['name']]) ;
+			} else {
+				$value =   htmlspecialchars($_POST[$cfo][$params[0]]) ;
+			}
+		} else {
+			$value =  htmlspecialchars(d()->{$cfo}->{$params[0]}) ;
+		}
+	}
+	
+	return '<textarea ' . $attr . '>' . $value . '</textarea>';
+}
+
 function form ($params=array()) 
 {
 	$attr="";
