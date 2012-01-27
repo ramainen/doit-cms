@@ -1,8 +1,8 @@
 <h1>Скаффолдинг: создание заготовки</h1>
 {{form 'admin_scaffold_create'}}
 	Создание объектов. Введите имя таблицы во множественном числе.
-	Примеры: catalogs, news, users, pages, articles, goods, examples, documents. <br>
-	{{input 'name'}}<br>
+	 <br>
+	{{input 'name'}} Примеры: catalogs, news, users, pages, articles, goods, examples, documents.<br>
 	{{input 'create_table', id=>'create_table', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_table">Создать таблицу</label><br>
 	{{input 'create_show',id=>'create_show', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_show">Создать вывод элемента</label><br>
 	{{input 'create_list', id=>'create_list',type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_list">Создать список элементов</label><br>
@@ -12,5 +12,5 @@
 	{{input 'create_menu',id=>'create_menu', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_menu">Создать пункт меню в системе администрирования</label><br>
 	
 	<br>
-	<input type="submit" value="Создать">
+	<input type="submit" value="Создать" class="admin_button">
 {{/form}}
