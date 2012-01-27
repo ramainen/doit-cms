@@ -21,7 +21,7 @@ $list_controller_func = '
 /**
 * Список всех элементов
 */	
-function #table#_list($id)
+function #table#_list()
 {
 	d()->#table#_list = d()->#model#;
 	print d()->view();
@@ -32,7 +32,7 @@ function #table#_list($id)
 
 $show_template = '
 
-<h1>Просмотр: {.title} {{edit}}</h1>
+<h1>{.title} {{edit}}</h1>
 {.text}
 
 ';
