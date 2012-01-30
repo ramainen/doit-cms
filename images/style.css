@@ -1,0 +1,19 @@
+html, body
+{
+	margin:0;
+	padding:0;
+}
+
+a img, a
+{
+	border:none;
+	outline:none;
+}
+
+.clear
+{
+	clear:both;
+	visibility: hidden;
+	height:0px;
+	overflow: hidden;
+}

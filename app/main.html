@@ -1,30 +1,14 @@
 <!doctype html>
 <html>
 <head>
-<title>{page.title}</title>
+<title></title>
 <meta charset="UTF-8">
     <script type="text/javascript" src="/cms/external/jquery-1.6.4.min.js"></script>
+	<link rel="stylesheet" href="/images/style.css">
 </head>
 <body> 
-<div class="content" style="border:1px dotted gray;padding:6px;">
-{{add 'pages'}}
-	{ainu}
-<ul>
-<foreach pages_tree() as menu>
-	<li>
-		<a href="/{menu.url}">{menu.title}</a> {{add 'texts', 'text_id'=>d()->this->id}} {{edit}} {{delete}}
-		<ul>
-		<foreach menu->tree as submenu>
-			<li><a href="/{submenu.url}">{submenu.title}</a> {{edit}}{{delete}}</li>
-		</foreach>
-		</ul>
-	</li>
-</foreach>
-</ul>
-{{{content}}}
-
-
- 
+<div class="content">
+	{{{content}}}
 </div>
 </body>
 </html>
