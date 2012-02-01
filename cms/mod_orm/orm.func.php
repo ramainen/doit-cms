@@ -481,6 +481,13 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			return count($this->_data);
 		}	
 	}
+	
+	function order_by_userdate($order='DESC')
+	{
+		$this->order_by('CONCAT(SUBSTR(`date`, 7, 4), SUBSTR(`date`, 4, 2), SUBSTR(`date`, 1, 2) ) '.$order);
+		return $this;
+	}
+	
 	function to_sql()
 	{
 		$_query_string='SELECT ';
