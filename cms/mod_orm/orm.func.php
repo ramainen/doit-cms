@@ -84,6 +84,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	private $_count=0;
 	private $_objects_cache=array();
 	//TODO: Выполняет limit 1 SQL запрос
+	//DEPRECATED: Это не Rails, тут всё гораздо проще.
 	function first()
 	{
 		return $this;
@@ -1002,10 +1003,11 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		//Item.expand_to_page
 		//DEPRECATED: в дальнейшем будет удалена
+		/*
 		if (substr($name,0,10)=='expand_to_') {
 			return $this->expand_to(substr($name,10));
 		}
-		
+		*/
 		
 		if (substr($name,0,4)=='all_') {
 			return $this->all_of(substr($name,4));

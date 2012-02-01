@@ -336,6 +336,7 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php if(is_array($doit->$1)) {  print  $doit->$1[\'$2\']; }else{ print  $doit->$1->$2; } ?'.'>';
 
+		//DEPRECATED
 		// {page.title:}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+):\}/';
 		$this->template_replacements[]='<'.'?php if((is_array($doit->$1) && $doit->$1[\'$2\']) || $doit->$1->$2) { ?'.'>';
@@ -419,11 +420,9 @@ foreach($tmparr as $key=>$subval)
 		$this->url_parts=explode('/',substr($_tmpurl,1));
 		
 		$_files=array();
-		$_files['cms']['/']=array();
-		$_files['app']['/']=array();
 		//сначала инициализируются файлы из ./cms, затем из ./app
 		foreach(array('cms','app') as $dirname) { 
-			
+			$_files[$dirname]['/']=array();
 			$_handle = opendir($dirname);
 
 			while (false !== ($_file = readdir($_handle))) {
