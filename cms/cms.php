@@ -298,6 +298,11 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/<\/type>/';
 		$this->template_replacements[]='<'.'?php } ?'.'>';
 
+		/*
+		// {{helper 'parame' 'param' 'param2'=>'any'}}
+		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+([a-Z0-9\s\"\\\']+)\}}/';
+		$this->template_replacements[]='{{test}}>';
+		*/
 
 
 		// {{content}}
@@ -312,6 +317,10 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
 		$this->template_replacements[]='<'.'?php print $doit->call("$1",array(array($2))); ?'.'>';
 
+		
+		
+
+		
 		// {title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$1; ?'.'>';

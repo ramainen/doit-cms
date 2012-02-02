@@ -30,7 +30,30 @@ class CoreTest extends Test
 		$this->assertEquals(get_class(d()->SomeAnyStuff), 'SomeAnyStuff');
 		
 	}
+	
+	/*
+	Issue #27
+	Преобразовывание следующее:
 
+		{{helper client 'user' admin user => list }}
+		в следующее
+		{{helper d()->client, 'user', d()->admin,'user'=> d()->list }}
+	
+	*/
+	function test_simple_syntaxis()
+	{
+	
+		//регрессионные тесты
+		$this->assertEquals(d()->shablonize('{test}'),'<?php print  $doit->test; ?>');
+		$this->assertEquals(d()->shablonize('{{test}}'),'<?php print $doit->call("test"); ?>');
+		$this->assertEquals(d()->shablonize('{{test "user"}}'),'<?php print $doit->call("test",array(array("user"))); ?>');
+		
+		/*
+		$this->assertEquals(d()->shablonize('{{test user admin les}}'),'<?php print $doit->call("test",array(array(user, admin,	 les))); ?>');
+		*/
+		
+		
+	}
 }
  
 ?>
