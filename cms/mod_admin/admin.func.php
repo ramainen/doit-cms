@@ -562,8 +562,8 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 		if((d()->params['create_list']=='yes') && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
 			
 			$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
-			if(false===strpos($check,$table."_list")){
-				print "Создаём функцию  ".h($table)."_list... ";
+			if(false===strpos($check,$table."_index")){
+				print "Создаём функцию  ".h($table)."_index... ";
 				$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','a');
 				$t_result = fwrite($result,$list_controller_func);
 				fclose($result);
@@ -575,9 +575,9 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 			}
 		}		
 		
-		if((d()->params['create_list']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_list.html')) {
-			print "Создаём файл mod_".h($table)."/_list.html... ";
-			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_list.html','w');
+		if((d()->params['create_list']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_index.html')) {
+			print "Создаём файл mod_".h($table)."/_index.html... ";
+			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_index.html','w');
 			$t_result = fwrite($result,$list_template);
 			fclose($result);
 			if($result!=='false' && $t_result!=='false'){
@@ -602,7 +602,7 @@ DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 		
 		if((d()->params['create_router']=='yes') && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini')) {
 			$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini');
-			if(false===strpos($check,$table."_list") && false===strpos($check,$table."_show")){
+			if(false===strpos($check,$table."_index") && false===strpos($check,$table."_show")){
 				print 'Записываем адреса в роутер... ';
 				$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini','a');
 				$t_result = fwrite($result,$router_template);

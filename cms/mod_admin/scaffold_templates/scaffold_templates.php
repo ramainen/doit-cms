@@ -21,7 +21,7 @@ $list_controller_func = '
 /**
 * Список всех элементов
 */	
-function #table#_list()
+function #table#_index()
 {
 	d()->#table#_list = d()->#model#;
 	print d()->view();
@@ -58,6 +58,6 @@ rich text "Текст"
 ';
 
 $router_template = '
-/#table#/index		content    #table#_list
+/#table#/index		content    #table#_index
 /#table#/			content    #table#_show
 ';
