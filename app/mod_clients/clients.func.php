@@ -1,6 +1,6 @@
 <?php
 //контроллер
-class clients_controller 
+class ClientsController 
 {
 	function index()
 	{

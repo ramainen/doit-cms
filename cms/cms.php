@@ -813,7 +813,11 @@ foreach($tmparr as $key=>$subval)
 						}
 					}
 
-					$_classname=substr($name,0,$_fsym).'_controller';
+					$_classname=substr($name,0,$_fsym).'Controller';
+					
+					$_first_letter=strtoupper(substr($_classname,0,1));
+					$_classname = $_first_letter.substr($_classname,1);
+
 					$_methodname=substr($name,$_fsym+1);
 
 					if($_methodname=='') {
@@ -832,7 +836,8 @@ foreach($tmparr as $key=>$subval)
 						$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]]=$name.$_methodname;
 					}
 
-					$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
+					//$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
+					$_executionResult=call_user_func_array(array($this->{$_classname}, $_methodname), $arguments);
 				} else {
 					$_executionResult= $this->compile_and_run_template($name);
 				}
@@ -957,9 +962,6 @@ foreach($tmparr as $key=>$subval)
 		if(isset($this->datapool[$name])) {
 			return $this->datapool[$name];
 		}
-		if(substr($name,-11)=='_controller') {
-			return  doit_caller_factory($name);
-		}
 
 		//$fistrsim =  ord(substr($name,0,1));
 		//if($fistrsim>64 && $fistrsim<91){
@@ -999,11 +1001,12 @@ foreach($tmparr as $key=>$subval)
 	 */
 	public function view($parent_function=false)
 	{
+		
+		
 		//Определяем функцию (контроллер), из которого был произведён вызов. Припиываем _tpl, вызываем
 		if($parent_function===false) {
 			$parent_function =  $this->_active_function();
 		}
-
 		if(substr($parent_function,-4)!='_tpl'){
 			$parent_function .= '_tpl';
 		}
@@ -1250,52 +1253,6 @@ foreach($tmparr as $key=>$subval)
 			}
 		}
 		$this->datapool=array_merge_recursive ($this->datapool,$res);
-	}
-}
-
-/**
- * Фабрика и хранилище для doitCaller
- * при запросе doit_caller_factory('clients_controller') создаёт (если нет) и возвращает экземпляр
- * прокси - объекта doitCaller, способного выполнять методы.
- * Не вызывается напрямую, используется системой для запросов вида d()->call('users#new') и d()->users_controller->new()
- *
- * @param $controllername Имя класса-контроллера вида users_controller
- * @return mixed Экземпляр класса контроллера
- */
-function doit_caller_factory($controllername)
-{
-	static $callers = array();
-	if(!isset ($callers[$controllername])) {
-		$callers[$controllername] = new doitCaller($controllername);
-	}
-	return $callers[$controllername];
-}
-
-/**
- * Класс doitCaller создаёт универсальный прокси-объект.
- * При вызове его метода  вызов передаётся в основной объект системы.
- * Конструкция $caller=doitCaller('clients_controller'); $caller->show(); перенаправит вызов универсальному лаунчеру
- * d()->call('clients#show');
- * doitCaller использует основной объект системы при попытке получить переменную - объект d()->*_controller.
- * Таким образом, запросы вида  d()->clients_controller->show(); перенаправляются в  d()->call('clients#show');
- * Это позволяет при необходимости переопределять поведение при помощи роутера.
- * Не вызывается и не используется напрямую, используется системой.
- */
-class doitCaller
-{
-	private $_classname;
-	function __call($name,$params)
-	{
-		return d()->call($this->_classname."#".$name,$params);
-	}
-	function __construct($controllername) {
-		$this->_classname = substr($controllername,0,-11);
-	}
-	function __get ($name) {
-		return d()->universal_controller_factory($this->_classname.'_controller')->$name;
-	}
-	function __set ($name,$value) {
-		d()->universal_controller_factory($this->_classname.'_controller')->$name = $value;
 	}
 }
 
