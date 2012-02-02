@@ -872,7 +872,7 @@ foreach($tmparr as $key=>$subval)
 	function get_compiled_code($fragmentname)
 	{
 		if(!isset ($this->compiled_fragments[$fragmentname])) {
-			$this->compiled_fragments[$fragmentname]=$this->shablonize(file_get_contents($this->fragmentslist[$fragmentname]));
+			return $this->compiled_fragments[$fragmentname]=$this->shablonize(file_get_contents($this->fragmentslist[$fragmentname]));
 		}
 		return $this->compiled_fragments[$fragmentname];
 	}
