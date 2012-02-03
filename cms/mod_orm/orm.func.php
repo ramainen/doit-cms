@@ -195,6 +195,10 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		return $this->show();
 	}
 	
+	function init()
+	{
+		
+	}
 	function __construct($_options=array())
 	{
 
@@ -273,7 +277,8 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if(count($_options)==1 && is_numeric($_options[0])){
 			$this->find($_options[0]);
 		}
-
+		
+		$this->init();
 	}
 
 
@@ -481,6 +486,33 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		} else {
 			return count($this->_data);
 		}	
+	}
+	
+	function search()
+	{
+		$args = func_get_args();
+		if(count($args)==0){
+			return $this;
+		}
+		if(count($args)==1){
+			$args[1]='title';
+			$args[2]='text';
+		}
+		
+		$this->_options['queryready']=false;
+
+		$param = doitClass::$instance->db->quote('%'.$args[count($args)-1].'%');
+		$_pieces=array();
+		
+		//Вот тут стоит остановиться, и подумать о map-reduce.
+		for ($i=0; $i<= count($args)-2; $i++) {
+			$_pieces[] = " `".$args[$i]."` LIKE  ".$param." ";
+		}
+		
+		//Вот тут стоит остановиться, и подумать о map-reduce.
+		$_condition=implode(' OR ',$_pieces);
+		$this->_options['condition'][] = '('.$_condition.')';
+		return $this;
 	}
 	
 	function order_by_userdate($order='DESC')
