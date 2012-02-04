@@ -9,7 +9,7 @@ php_flag magic_quotes_runtime off
 #CharsetDefault UTF-8
 
 RewriteEngine On
-
+RewriteBase /
 
 RewriteRule \.git - [F,L]
 
