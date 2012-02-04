@@ -3,6 +3,11 @@ php_value upload_max_filesize 15M
 php_value post_max_size 20M
 php_flag magic_quotes_gpc off 
 php_flag magic_quotes_runtime off
+
+#uncomment for majordomo hosting
+#CharsetSourceEnc UTF-8
+#CharsetDefault UTF-8
+
 RewriteEngine On
 
 
