@@ -83,7 +83,7 @@ if(jQuery)(
 				data.queueSizeLimit = settings.queueSizeLimit;
 				data.simUploadLimit = settings.simUploadLimit;
 				if (settings.hideButton)   data.hideButton   = true;
-				data.fileDesc     = 'Файлы (zip, mp3, flv, doc и другие)';
+				data.fileDesc     = 'Р¤Р°Р№Р»С‹ (zip, mp3, flv, doc Рё РґСЂСѓРіРёРµ)';
 				data.fileExt      = '*.*';
 				if (settings.multi)        data.multi        = true;
 				if (settings.auto)         data.auto         = true;
@@ -93,7 +93,7 @@ if(jQuery)(
 				if (settings.queueID)      data.queueID      = settings.queueID;
 				if (settings.onInit() !== false) {
 					jQuery(this).css('display','none');
-					jQuery(this).after('<div class="uploadifyob">Обзор...</div><div class="uploadifywhereflash"><div id="' + jQuery(this).attr('id') + 'Uploader" ></div></div>');
+					jQuery(this).after('<div class="uploadifyob">РћР±Р·РѕСЂ...</div><div class="uploadifywhereflash"><div id="' + jQuery(this).attr('id') + 'Uploader" ></div></div>');
 					swfobject.embedSWF(settings.uploader, settings.id + 'Uploader', settings.width, settings.height, '9.0.24', settings.expressInstall, data, {'quality':'high','wmode':settings.wmode,'allowScriptAccess':settings.scriptAccess});
 					if (settings.queueID == false) {
 						jQuery("#" + jQuery(this).attr('id') + "Uploader").after('<div id="' + jQuery(this).attr('id') + 'Queue" class="uploadifyQueue"></div>');
@@ -195,11 +195,11 @@ if(jQuery)(
                                             if(response.substr(0,5)=='error')
                                                 {
                                                     
-                                                     if(response.substr(0,6)=='error1') alert('Произошла ошибка: файл не загружен, возможно, размер слишком большой');
-                                                     if(response.substr(0,6)=='error2') alert('Произошла ошибка: это не изображение');
-                                                     if(response.substr(0,6)=='error3') alert('Произошла ошибка: это не изображение');
-                                                     if(response.substr(0,6)=='error4') alert('Произошла ошибка: проверьте права на файлы');
-                                                     if(response.substr(0,6)=='error5') alert('Неизвестная ошибка');
+                                                     if(response.substr(0,6)=='error1') alert('РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°: С„Р°Р№Р» РЅРµ Р·Р°РіСЂСѓР¶РµРЅ, РІРѕР·РјРѕР¶РЅРѕ, СЂР°Р·РјРµСЂ СЃР»РёС€РєРѕРј Р±РѕР»СЊС€РѕР№');
+                                                     if(response.substr(0,6)=='error2') alert('РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°: СЌС‚Рѕ РЅРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ');
+                                                     if(response.substr(0,6)=='error3') alert('РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°: СЌС‚Рѕ РЅРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ');
+                                                     if(response.substr(0,6)=='error4') alert('РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°: РїСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІР° РЅР° С„Р°Р№Р»С‹');
+                                                     if(response.substr(0,6)=='error5') alert('РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°');
 
                                                 }else{
                                                  
