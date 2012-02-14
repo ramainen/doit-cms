@@ -246,7 +246,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 
 		if(!isset($this->_options['order_by'])) {
-			$this->_options['order_by']=' ORDER BY `sort` ';
+			$this->_options['order_by']=' ORDER BY '.DB_FIELD_DEL . 'sort'.DB_FIELD_DEL . ' ';
 		}
 		
 		if(!isset($this->_options['new'])) {
@@ -306,7 +306,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		} else {
 			$this->_options['queryready']=false;
 			$name = doitClass::$instance->db->quote($id);
-			$this->_options['condition']=   array ("( `".$this->_options['namefield']."` = ". $name ." )");
+			$this->_options['condition']=   array ("( ". DB_FIELD_DEL .$this->_options['namefield'].DB_FIELD_DEL . " = ". $name ." )");
 		}
 		$this->order_by('')->limit(1);
 		return $this;
@@ -315,7 +315,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	public function find_by($by,$what)
 	{
 		$this->_options['queryready']=false;
-		$this->_options['condition'] = array("( `".$by."` = ".doitClass::$instance->db->quote($what)." )");
+		$this->_options['condition'] = array("( ".DB_FIELD_DEL .$by. DB_FIELD_DEL . " = ".doitClass::$instance->db->quote($what)." )");
 		return $this;
 	}
 	
@@ -324,7 +324,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if(substr($name,0,8)=='find_by_') {
 			$by=substr($name,8);
 			$this->_options['queryready']=false;
-			$this->_options['condition'] = array("( `".$by."` = ".doitClass::$instance->db->quote($arguments[0])." )");
+			$this->_options['condition'] = array("( ".DB_FIELD_DEL .$by.DB_FIELD_DEL ." = ".doitClass::$instance->db->quote($arguments[0])." )");
 		}
 		return $this;
 	}
@@ -506,7 +506,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		
 		//Вот тут стоит остановиться, и подумать о map-reduce.
 		for ($i=0; $i<= count($args)-2; $i++) {
-			$_pieces[] = " `".$args[$i]."` LIKE  ".$param." ";
+			$_pieces[] = " ".DB_FIELD_DEL.$args[$i].DB_FIELD_DEL." LIKE  ".$param." ";
 		}
 		
 		//Вот тут стоит остановиться, и подумать о map-reduce.
@@ -517,7 +517,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	
 	function order_by_userdate($order='DESC')
 	{
-		$this->order_by('CONCAT(SUBSTR(`date`, 7, 4), SUBSTR(`date`, 4, 2), SUBSTR(`date`, 1, 2) ) '.$order);
+		$this->order_by('CONCAT(SUBSTR('.DB_FIELD_DEL.'date'.DB_FIELD_DEL.', 7, 4), SUBSTR('.DB_FIELD_DEL.'date'.DB_FIELD_DEL.', 4, 2), SUBSTR('.DB_FIELD_DEL.'date'.DB_FIELD_DEL.', 1, 2) ) '.$order);
 		return $this;
 	}
 	
@@ -527,7 +527,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if($this->_options['calc_rows']) {
 			$_query_string .= ' SQL_CALC_FOUND_ROWS ';
 		}
-		$_query_string .= ' ' . $this->_options['select'] . ' FROM `'.$this->_options['table'].'` ';
+		$_query_string .= ' ' . $this->_options['select'] . ' FROM '.DB_FIELD_DEL.''.$this->_options['table'].''.DB_FIELD_DEL.' ';
 		if(count($this->_options['condition'])>0) {
 			$_condition = implode(' AND ',$this->_options['condition']);
 			$_query_string .= 'WHERE '.$_condition;
@@ -585,7 +585,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 			
 		if(isset($this->_data[0])){
-			$_query_string='delete from `'.$this->_options['table'] . "` where `id` = '".$this->_data[0]['id']."'";
+			$_query_string='delete from '.DB_FIELD_DEL.''.$this->_options['table'] . DB_FIELD_DEL." where ".DB_FIELD_DEL."id".DB_FIELD_DEL." = '".$this->_data[0]['id']."'";
 			doitClass::$instance->db->exec($_query_string);
 		}
 		return $this;
@@ -599,12 +599,12 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 				$fields=array();
 				$values=array();
 				foreach($this->_future_data as $key => $value) {
-					$fields[]=" `$key` ";
+					$fields[]=" ".DB_FIELD_DEL . $key . DB_FIELD_DEL." ";
 					$values[]=" ". doitClass::$instance->db->quote ($value)." ";
 				}
 				$fields_string=implode (',',$fields);
 				$values_string=implode (',',$values);
-				$_query_string='insert into `'.$this->_options['table'].'` ('.$fields_string.') values ('.$values_string.')';
+				$_query_string='insert into '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' ('.$fields_string.') values ('.$values_string.')';
 			}
 		} else {
 			if ($this->_options['queryready']==false) {
@@ -614,10 +614,10 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
 				$attributes=array();
 				foreach($this->_future_data as $key => $value) {
-					$attributes[]=" `$key` = ". doitClass::$instance->db->quote($value)." ";
+					$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = ". doitClass::$instance->db->quote($value)." ";
 				}
 				$attribute_string=implode (',',$attributes);
-				$_query_string='update `'.$this->_options['table'].'` set '.$attribute_string." where `id` = '".$this->_data[0]['id']."'";
+				$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.$attribute_string." where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->_data[0]['id']."'";
 
 			}
 		}
@@ -801,7 +801,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			return doitClass::$instance->datapool['columns_registry'][$tablename]=false;
 		}
 		
-		$_res=doitClass::$instance->db->query('SHOW COLUMNS FROM `'.$tablename.'`');
+		$_res=doitClass::$instance->db->query('SHOW COLUMNS FROM '.DB_FIELD_DEL.$tablename.DB_FIELD_DEL);
 		if ($_res===false) {
 			//Если таблицы не существует
 			return doitClass::$instance->datapool['columns_registry'][$tablename]=false;
@@ -979,7 +979,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 
 	function only($field)
 	{
-		return $this->where("`is_{$field}` = 1");
+		return $this->where(DB_FIELD_DEL . "is_{$field}".DB_FIELD_DEL . " = 1");
 	}
 	
 	/**
@@ -1115,7 +1115,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 							$ids_array[$value[$name.'_id']]=true;
 						}
 						$ids_array=array_keys($ids_array);
-						$this->_objects_cache[$name] =  activerecord_factory_from_table(ar::one_to_plural($name))->order('')->where(' `id` IN (?)',$ids_array);
+						$this->_objects_cache[$name] =  activerecord_factory_from_table(ar::one_to_plural($name))->order('')->where(' '.DB_FIELD_DEL . id . DB_FIELD_DEL. ' IN (?)',$ids_array);
 					}
 					$cursor_key=$this->_objects_cache[$name]->get_cursor_key_by_id($this->_data[$this->_cursor][$name.'_id']);
 					return $this->_objects_cache[$name][$cursor_key];

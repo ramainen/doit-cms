@@ -148,7 +148,7 @@ function admin_show_one_list($table,$id1,$id2)
 
 	if ($id1=='') {
 		//list/goods     просто список всех полей
-		$query='select * from '.et($table).'   order by `sort`';
+		$query='select * from '.et($table).'   order by '.DB_FIELD_DEL.'sort'.DB_FIELD_DEL;
 		d()->list_addbutton='';
 		d()->list_addbutton.='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
 
@@ -165,22 +165,22 @@ function admin_show_one_list($table,$id1,$id2)
 		if($id2 == '') {
 			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
-				$query='select * from `'.et($table).'` where `'.et(to_o($table)).'_id` is NULL  order by `sort`';
+				$query='select * from '.DB_FIELD_DEL . et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL  order by '.DB_FIELD_DEL .'sort'.DB_FIELD_DEL;
 				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				if(is_numeric($id1)) {
-					$query='select * from `'.et($table).'` where `'.et(to_o($table))."_id` = ".e($id1)." order by `sort`";
+					$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL.' where '.DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1)." order by ".DB_FIELD_DEL. "sort".DB_FIELD_DEL;
 					d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
-					$query='select * from `'.et($table).'` where `'.et(to_o($table)).'_id` IN (select id from `'.et($table)."` where `url` = ".e($id1).")  order by `sort`";
+					$query='select * from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).")  order by ".DB_FIELD_DEL . "sort".DB_FIELD_DEL;
 					d()->list_addbutton=' ';
 				}
 
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
-			$query='select * from `'.et($table).'` where `'.et($id1)."` = ".e($id2)."  order by `sort`";
+			$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL .' where '.DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2)."  order by ".DB_FIELD_DEL."sort".DB_FIELD_DEL;
 			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.et($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}

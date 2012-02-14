@@ -25,7 +25,7 @@ Copyright (C) 2011 Fakhrutdinov Damir (aka Ainu)
 	Система названа в честь статьи Variable Variables http://php.net/manual/en/language.variables.variable.php 26.01.2011
 */
 //error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
-error_reporting(0);
+//error_reporting(0);
 session_start();
 
 
@@ -38,7 +38,7 @@ session_start();
 function doit_ob_error_handler($output)
 {
 	$error = error_get_last();
-
+	
 	if($error['type']==1){
 		$parent_function =  d()->_active_function();
 
@@ -46,8 +46,8 @@ function doit_ob_error_handler($output)
 
 
 		if(d()->db->errorCode()!=0){
-			$mysql_err=d()->db->errorInfo();
-			$_message='<br>Также зафиксирована ошибка Mysql:<br>'. $mysql_err[2]."<br>";
+			$db_err=d()->db->errorInfo();
+			$_message='<br>Также зафиксирована ошибка базы данных:<br>'. $db_err[2]."<br>";
 		}
 		$errfile = substr($error['file'],strlen($_SERVER['DOCUMENT_ROOT'])) ;
 		return print_error_message(' ',$error['line'],$errfile ,$error['message'],'Ошибка при выполнении функции '.$parent_function.' '.$_message );
@@ -210,19 +210,34 @@ class doitClass
 	function __construct()
 	{
 		self::$instance = $this;
-		// Массив для шаблонизатора
 		
-		// <foreach users as user>
-
+		
+		
+		//тут описана работа с базой данных
+		
+		if(!defined('DB_TYPE')){
+			define('DB_TYPE','mysql');
+		}
 		try {
-			$this->db = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
-			$this->db->exec('SET CHARACTER SET utf8');
-			$this->db->exec('SET NAMES utf8');
+			if(DB_TYPE == 'mysql') {
+				define ('DB_FIELD_DEL','`');
+				$this->db = new PDO(DB_TYPE.':host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+				$this->db->exec('SET CHARACTER SET utf8');
+				$this->db->exec('SET NAMES utf8');
+			} else {
+				define ('DB_FIELD_DEL','');
+				$this->db = new PDO(DB_TYPE.':host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+			}
+			
 		} catch (PDOException $e) {
 			//Создание заголовки для подавления ошибок и доступа к скаффолдингу
 			$this->db=new PDODummy();
 		}
-
+		
+		
+		// Массив для шаблонизатора
+		
+		// <foreach users as user>
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
 		if(!isset($doit->datapool[\'this\'])){
