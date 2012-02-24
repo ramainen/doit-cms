@@ -14,7 +14,7 @@ class ClientsController
 	
 	function show($id)
 	{
-		d()->client = d()->Client->find($id);
+		d()->this = d()->Client->find($id);
 		print d()->view();
 	}
 

@@ -995,10 +995,20 @@ foreach($tmparr as $key=>$subval)
 
 		//Проверка префиксов для модулей для модулей и расширений
 		//TODO: это слишком медленно
+		//DEPRECATED
 		foreach ($this->datapool['prefixes'] as $_one_prefix) {
 			if(preg_match($_one_prefix[0], $name)) {
 				return $this->{$_one_prefix[1]}($name);
 			}
+		}
+		
+		if($name!='this'){
+			if(is_object($this->this)) {
+				return $this->this->{$name};	
+			}
+			if(is_array($this->this)) {
+				return  $this->this[$name];
+			}			
 		}
 		return '';
 	}
