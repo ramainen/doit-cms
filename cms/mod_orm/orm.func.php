@@ -94,6 +94,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	static function plural_to_one ($string)
 	{
 		$_p_to_o=array(
+			'criteria' => 'criteria',
 			'men' => 'man',
 			'women' =>	'woman',
 			'mice' =>'mouse',
@@ -143,6 +144,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	static function one_to_plural ($string)
 	{
 		$_o_to_p=array(
+			'criteria' => 'criteria',
 			'man' => 'men',
 			'pike' => 'pike',
 			'woman' => 'women',
