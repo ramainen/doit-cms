@@ -15,6 +15,10 @@ class ClientsController
 	function show($id)
 	{
 		d()->this = d()->Client->find($id);
+		if(count(d()->this)==0){
+			d()->message="Клиент не найден";
+			return d()->error('404');
+		}
 		print d()->view();
 	}
 

@@ -218,6 +218,9 @@ class doitClass
 	public $_this_cache=array();
 	public $db = NULL;
 	public $db_error=false;
+	private $is_root_func=false;
+	private $must_be_stopped=false; //Устанавливается в true при необходимости прервать текущее выполнение
+	private $_prepared_content=array();
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -766,13 +769,30 @@ foreach($tmparr as $key=>$subval)
 	 */
 	public function call($name, $arguments=array())
 	{
-
+		
 
 		$fistrsim =  ord(substr($name,0,1));
 		if($fistrsim>64 && $fistrsim<91){
 			return new $name($arguments);
 		}
-
+		
+		
+		if(!$this->is_root_func){
+			$this->is_root_func = true;
+			$i_am_root=true; //Если установлено, данная функция - первая
+		}else{
+			$i_am_root=false;
+			if($this->must_be_stopped){
+				return '';
+			}
+		}
+		
+		if(isset($this->_prepared_content[$name])){
+			$content=$this->_prepared_content[$name];
+			unset($this->_prepared_content[$name]);
+			return $content;
+		}
+		
 		//Одиночная загрузка .ini файла при первом обращении к функции
 		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
 		//DEPRECATED - сделать явные вызовы
@@ -890,11 +910,19 @@ foreach($tmparr as $key=>$subval)
 			$i = $this->call_chain_current_link[$this->call_chain_level];
 			$this->call_chain_level--; //опускаем уровень текущего стека очереди
 			if (count($_newnames)==1) {
+				if($i_am_root && $this->must_be_stopped){
+					return $this->do_redirect();
+				}
+				$this->is_root_func=false;
 				return $_end;
 			} else {
 				$_result_end .= $_end;
 			}
 		}
+		if($i_am_root && $this->must_be_stopped){
+			return $this->do_redirect();
+		}
+		$this->is_root_func=false;
 		return $_result_end;
 	}
 
@@ -1126,7 +1154,12 @@ foreach($tmparr as $key=>$subval)
 		static $cache_ansver=array(); //Кеш ответов для быстрого реагирования
 		static $cache_longest_url_ansver=array(); //Кеш ответов для быстрого реагирования
 		static $rules_array = false; //Ассоциативный массив правил для того, чтобы не опрашивать весь список
-		
+		if ($name===false){
+			$cache_ansver=array(); 
+			$cache_longest_url_ansver=array();
+			$rules_array = false;
+			return false;
+		}
 		if($rules_array===false) {	
 			$tmp_mached_list = array();
 			foreach($this->datapool['urls'] as $rule) {
@@ -1300,6 +1333,44 @@ foreach($tmparr as $key=>$subval)
 			}
 		}
 		$this->datapool=array_merge_recursive ($this->datapool,$res);
+	}
+	
+	function error($error_page)
+	{
+		print d()->redirect('/error_'.$error_page);
+	}
+	
+	function redirect($url)
+	{
+		//Обрезка GET-параметров
+		$_tmpurl=urldecode($url);
+
+		$_where_question_sign = strpos($_tmpurl,'?');
+		if($_where_question_sign !== false) {
+			$_tmpurl = substr($_tmpurl, 0, $_where_question_sign); 
+		}
+		
+		//приписывание в конце слешей index
+		if(substr($_tmpurl,-1)=='/') {
+			$_tmpurl=$_tmpurl."index";
+		}
+		$this->url_string = $_tmpurl;
+		
+		//сохранение фрагментов url
+		$this->url_parts=explode('/',substr($_tmpurl,1));
+		$this->get_function_alias(false);
+		$this->must_be_stopped=true;
+	}
+	
+	function do_redirect()
+	{
+		$this->is_root_func=false;
+		$this->must_be_stopped=false;
+		return d()->main();
+	}
+	function prepare_content($function,$content)
+	{
+		$this->_prepared_content[$function]=$content;
 	}
 }
 
