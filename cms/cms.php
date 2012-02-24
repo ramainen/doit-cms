@@ -94,10 +94,14 @@ function print_error_message($wrongline,$line,$file,$message,$usermessage,$last=
 		$not_show_me_in_future=true;
 	}
 	$errfile = substr($file,strlen($_SERVER['DOCUMENT_ROOT'])) ;
+	$file_and_line='';
+	if($file!='' || $line!=''){
+		$file_and_line='<div>Файл '.$file.', строка '.$line.'</div>';
+	}
 	return '<div style="padding:20px;border:1px solid red;background:white;color:black;">
-					<div>'.$usermessage.': '.$message.'</div>
-					<div>Файл '.$file.', строка '.$line.'</div>
-					'.htmlspecialchars($wrongline).'</div>';
+					<div>'.$usermessage.': '.$message.'</div>'.
+					$file_and_line.
+					htmlspecialchars($wrongline).'</div>';
 }
 
 /**
@@ -181,12 +185,12 @@ class PDODummy
 	}
 	function __toString()
 	{
-		print print_error_message('Укажите верные настройки базы данных в файле config.php',' -',' -' ,d()->db_error->getMessage(),'Ошибка при подключении к базе данных ' );
+		print print_error_message('Укажите верные настройки базы данных в файле config.php','','' ,d()->db_error->getMessage(),'Ошибка при подключении к базе данных ' );
 		exit();
 	}
 	function __get($name)
 	{
-		print print_error_message('Укажите верные настройки базы данных в файле config.php',' -',' -' ,d()->db_error->getMessage(),'Ошибка при подключении к базе данных ' );
+		print print_error_message('Укажите верные настройки базы данных в файле config.php','','' ,d()->db_error->getMessage(),'Ошибка при подключении к базе данных ' );
 		exit();
 	}
 }
