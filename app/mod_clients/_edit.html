@@ -1,27 +1,11 @@
 <h2>Редактирование клиента {client.title}:</h2>
   
-{{form 'clients#update', 'client'  }} 
+{{form 'clients_update', 'client'  }} 
 {{notice}}
 	Заголовок {{input 'title', 'default'=>'имя_пользовталя'}} <br>				
 	Описание {{input 'text'}} <br>
 
 	<input type="submit">
 
-{{/form}}
- 
- 
- 
-<h2>Форма обратной связи</h2>
- 
-
-
-{{form 'mailer' }}
-{{notice}}
-	Заголовок письма {{input 'title', 'default'=>'имя_пользовталя'}} <br>				
-	Ваше имя {{input 'name', 'style'=>"color:red"}} <br>
-	Электронная почта {{input 'email'}} <br>
-	<input type="submit">
-	 
- 
 {{/form}}
  
