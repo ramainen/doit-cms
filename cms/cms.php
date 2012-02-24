@@ -168,7 +168,8 @@ function action()
 
 
 /**
-* Класс - заглушка для глушения ошибок PDO
+* Класс - заглушка для глушения ошибок PDO. Создаётся, если база данных в проекте не нужна.
+* Выводит ошибки только в момент попытки получения данных
 *
 */
 
@@ -177,6 +178,16 @@ class PDODummy
 	function __call($a,$s)
 	{
 		return $this;
+	}
+	function __toString()
+	{
+		print print_error_message('Укажите верные настройки базы данных в файле config.php',' -',' -' ,d()->db_error->getMessage(),'Ошибка при подключении к базе данных ' );
+		exit();
+	}
+	function __get($name)
+	{
+		print print_error_message('Укажите верные настройки базы данных в файле config.php',' -',' -' ,d()->db_error->getMessage(),'Ошибка при подключении к базе данных ' );
+		exit();
 	}
 }
 
@@ -206,6 +217,7 @@ class doitClass
     public  $lang='ru'; //Текущий язык мультиязычного сайта
 	public $_this_cache=array();
 	public $db = NULL;
+	public $db_error=false;
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -230,6 +242,7 @@ class doitClass
 			}
 			
 		} catch (PDOException $e) {
+			$this->db_error=$e;
 			//Создание заголовки для подавления ошибок и доступа к скаффолдингу
 			$this->db=new PDODummy();
 		}
