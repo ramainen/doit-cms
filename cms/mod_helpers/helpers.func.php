@@ -15,8 +15,50 @@ function input ($params=array())
 		$attr .= ' class="'.$params['class'].'" ';
 	}
 	
+	
+	
+	if(isset($params['name'])) {
+		$attr .= ' name="'.$params['name'].'" ';
+		
+	} else {
+		$attr .= ' name="'.$cfo.'['.$params[0].']" ';		
+	}
+//	print '<!-- ';
+//	var_dump($_POST['document[document_type]']);
+//	print ' -->';
+	
 	if(isset($params['checked'])) {
 		$attr .= ' checked="'.$params['checked'].'" ';
+	} else {
+		
+		if ($params['type']=='radio'){
+			if(isset($_POST['_action'])) {
+				//Был POST-запрос
+				if(isset($params['name'])){
+
+					if( isset($params['value']) && $_POST[$params['name']]==$params['value']) {
+						//Совпало значение
+						$attr .= ' checked="checked" ';
+					}
+				}else{
+					
+					if( isset($params['value']) && $_POST[$cfo][$params[0]]==$params['value']) {
+						//Совпало значение
+						$attr .= ' checked="checked" ';
+					}
+				}
+			} else {
+				if(isset($params['value']) && count(d()->{$cfo})>0 && d()->{$cfo}->{$params[0]}==$params['value']){
+					$attr .= ' checked="checked" ';
+				}else{
+					if(isset($params['value']) && (count(d()->{$cfo})==0 || d()->{$cfo}->{$params[0]}=='') && isset($params['default_checked'])){
+						$attr .= ' checked="checked" ';	
+					
+					}
+				}
+
+			}
+		}
 	}
 	
 	if(isset($params['id'])) {
@@ -30,12 +72,7 @@ function input ($params=array())
 	}
 	
 	
-	if(isset($params['name'])) {
-		$attr .= ' name="'.$params['name'].'" ';
-		
-	} else {
-		$attr .= ' name="'.$cfo.'['.$params[0].']" ';		
-	}
+	
 	
 	if(isset($params['type'])) {
 		$attr .= ' type="'.$params['type'].'" ';
@@ -57,7 +94,7 @@ function input ($params=array())
 		}
 	}
 	
-	return '<input ' . $attr . '>';
+	print '<input ' . $attr . '>';
 }
 
 
