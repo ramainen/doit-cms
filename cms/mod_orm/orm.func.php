@@ -81,8 +81,13 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	private $_cursor=0;
 	public $current_page=0;
 	public $per_page=10;
+	private $_is_sliced=false;
+	private $_revinded=0;
 	private $_count=0;
+	private $_must_revind=false;
+	private $_slice_size=5;
 	private $_objects_cache=array();
+	
 	//TODO: Выполняет limit 1 SQL запрос
 	//DEPRECATED: Это не Rails, тут всё гораздо проще.
 	function first()
@@ -335,6 +340,13 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	{
 		$this->_options['queryready']=true;
 		$this->_data=doitClass::$instance->db->query($query)->fetchAll();
+		return $this;
+	}
+	
+	public function slice($pieces=2)
+	{
+		$this->_is_sliced=true;
+		$this->_slice_size=$pieces+2;	
 		return $this;
 	}
 	
@@ -708,17 +720,41 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	function next()
 	{
 		if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
+			$this->fetch_data_now();
 		}
-		$this->_cursor++;
+		if(!$this->_is_sliced){
+			$this->_cursor++;
+			return;
+		}
+		if(!$this->_is_sliced){
+			$this->_cursor++;
+			return;
+		}
+		if(!$this->_must_revind){
+			$this->_cursor++;
+		}
 	}
 
 	function valid()
 	{
+		
 		if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 		}
-		return !($this->_cursor >= $this->_count);
+		if(!$this->_is_sliced){
+			return !($this->_cursor >= $this->_count);
+		}
+		 
+		if($this->_cursor >= $this->_count){
+			return false;
+		}else{
+			$this->_revinded++;
+			if($this->_revinded % $this->_slice_size == 0){
+				$this->_must_revind=true;
+				return false;
+			}
+		}
+		return true;	
 	}
 
 	function key()
@@ -730,10 +766,22 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 	}
 	function rewind()
 	{
+	
 		if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 		}
-		$this->_cursor=0;
+		
+		if(!$this->_is_sliced){
+			$this->_cursor=0;
+			return;
+		}
+		
+		if($this->_must_revind){
+			$this->_must_revind=false;
+		}else{
+			$this->_cursor=0;
+		}
+		
 	}
 	function offsetGet( $index )
 	{
