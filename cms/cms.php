@@ -911,7 +911,9 @@ foreach($tmparr as $key=>$subval)
 			$_end = ob_get_contents();
 			ob_end_clean();
 			
-			if($been_controller && ($_end=='')){
+			
+			
+			if($been_controller && ($_end=='') && (is_null($_executionResult) || $_executionResult=='')){
 				//Определяем функцию (контроллер), из которого был произведён вызов. Припиываем _tpl, вызываем
 				$parent_function =  $this->_active_function();
 				if(substr($parent_function,-4)!='_tpl'){
