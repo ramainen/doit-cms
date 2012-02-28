@@ -917,11 +917,12 @@ foreach($tmparr as $key=>$subval)
 				//Определяем функцию (контроллер), из которого был произведён вызов. Припиываем _tpl, вызываем
 				$parent_function =  $this->_active_function();
 				if(substr($parent_function,-4)!='_tpl'){
+					
 					$parent_function .= '_tpl';
 					$parent_function =  str_replace('#','_',$parent_function);
 					if(isset($this->fragmentslist[$parent_function])){
 						ob_start('doit_ob_error_handler');
-						$_executionResult= $this->compile_and_run_template($parent_function);
+						$_executionResult= $this->call($parent_function);
 						$_end = ob_get_contents();
 						ob_end_clean();
 					}
