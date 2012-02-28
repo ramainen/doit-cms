@@ -12,7 +12,7 @@ class PagesController
 			d()->message="Страница не существует".d()->add(array('pages','url'=>url(1)));
 			return d()->error('404');
 		}
-		
-		print d()->view();
+
 	}
 }
+

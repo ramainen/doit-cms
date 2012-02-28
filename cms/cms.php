@@ -841,6 +841,7 @@ foreach($tmparr as $key=>$subval)
 			$this->call_chain_current_link[$this->call_chain_level]=$i;
 			//Тут вызываются предопределённые и пользовательские функции
 			ob_start('doit_ob_error_handler');
+			$been_controller=false;
 			if (function_exists($name)) {
 
 				//Подстановка аргументов из $this->_last_router_rule
@@ -856,8 +857,10 @@ foreach($tmparr as $key=>$subval)
 				}
 				
 				$_executionResult=call_user_func_array($name, $arguments);
+				$been_controller=true;
 			} elseif(isset($this->php_files_list[$name])){
 				include ($this->php_files_list[$name]);
+				$been_controller=true;
 			} else {
 				$_fsym=strpos($name,'#');
 				if($_fsym !== false) {
@@ -899,12 +902,29 @@ foreach($tmparr as $key=>$subval)
 
 					//$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
 					$_executionResult=call_user_func_array(array($this->{$_classname}, $_methodname), $arguments);
+					$been_controller=true;
+				
 				} else {
 					$_executionResult= $this->compile_and_run_template($name);
 				}
 			}
 			$_end = ob_get_contents();
 			ob_end_clean();
+			
+			if($been_controller && ($_end=='')){
+				//Определяем функцию (контроллер), из которого был произведён вызов. Припиываем _tpl, вызываем
+				$parent_function =  $this->_active_function();
+				if(substr($parent_function,-4)!='_tpl'){
+					$parent_function .= '_tpl';
+					$parent_function =  str_replace('#','_',$parent_function);
+					if(isset($this->fragmentslist[$parent_function])){
+						ob_start('doit_ob_error_handler');
+						$_executionResult= $this->compile_and_run_template($parent_function);
+						$_end = ob_get_contents();
+						ob_end_clean();
+					}
+				}
+			}
 			
 			if (!is_null($_executionResult)) {
 				$_end = $_executionResult;

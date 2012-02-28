@@ -9,7 +9,7 @@ class ClientsController
 		d()->paginator = d()->Paginator->generate(d()->clients);
 
 		d()->long_paginator = d()->Paginator->generate(30);
-		print d()->view();
+
 	}
 	
 	function show($id)
@@ -19,7 +19,7 @@ class ClientsController
 			d()->message="Клиент не найден";
 			return d()->error('404');
 		}
-		print d()->view();
+
 	}
 
 	function edit($id)
@@ -33,7 +33,7 @@ class ClientsController
 			header('Location: /clients/');
 			exit;
 		}
-		print d()->view();
+
 	}
 
 	function create()
