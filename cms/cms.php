@@ -914,10 +914,10 @@ foreach($tmparr as $key=>$subval)
 			
 			
 			if($been_controller && ($_end=='') && (is_null($_executionResult) || $_executionResult=='')){
+				
 				//Определяем функцию (контроллер), из которого был произведён вызов. Припиываем _tpl, вызываем
 				$parent_function =  $this->_active_function();
 				if(substr($parent_function,-4)!='_tpl'){
-					
 					$parent_function .= '_tpl';
 					$parent_function =  str_replace('#','_',$parent_function);
 					if(isset($this->fragmentslist[$parent_function])){
@@ -1364,7 +1364,7 @@ foreach($tmparr as $key=>$subval)
 	
 	function error($error_page)
 	{
-		print d()->redirect('/error_'.$error_page);
+		return d()->redirect('/error_'.$error_page);
 	}
 	
 	function redirect($url)
@@ -1387,6 +1387,7 @@ foreach($tmparr as $key=>$subval)
 		$this->url_parts=explode('/',substr($_tmpurl,1));
 		$this->get_function_alias(false);
 		$this->must_be_stopped=true;
+		return true;
 	}
 	
 	function do_redirect()
