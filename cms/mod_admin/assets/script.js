@@ -16,6 +16,10 @@ $(function () {
 		})
 	});
 
+	
+	
+	
+	
 	/*		 	$('.fg-button').hover(
 	 function(){ $(this).removeClass('ui-state-default').addClass('ui-state-focus'); },
 	 function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
@@ -78,5 +82,45 @@ $(function () {
 
 	$('.admin_date').datepicker({dateFormat: 'dd.mm.yy',changeMonth: true, changeYear: true});
 
-
+ 
 });
+function create_field_template()
+{
+	$('.field_template_question').hide();
+	$('.edit_field_content').val('[admin.fields]\n'+
+	'small title "Название"\n'+
+	'rich text "Текст"\n'+
+	'\n'+
+	';small url "Адрес страницы (необязательно)"\n'+
+	';userdate date Дата\n'+
+	';image image "Изображение" galleries 180 auto\n'+
+	';file file  Файл "files"\n'+
+	';select razdel Раздел "Оборудование(1)" "Обучение(2)"\n'+
+	'\n'+
+	';<тип поля> <имя поля> <название для администратора>\n'+
+	
+	'\n'+
+	';[admin.addbuttons]\n'+
+	';/list/texts/	Подстраницы\n'+
+	';/list/goods/catalog_id/   "Связанные товары"')
+}
+function show_field_editor()
+{
+	if($('.edit_field_content').val()==''){
+		$('.field_template_question').show();
+	}
+	$('.field_edit_dialog').dialog({height:400,width:600,buttons: {
+				
+				'Сохранить': function() {
+					if($('.edit_field_content').val().substr(0,14)!='[admin.fields]'){
+						$('.edit_field_content').val("[admin.fields]\n"+$('.edit_field_content').val());
+					}
+					$('.field_edit_dialog form').submit();
+					$(this).dialog('close');	 
+				},
+				'Закрыть': function() {
+					$(this).dialog('close');
+				}
+			}});
+	return false;
+}

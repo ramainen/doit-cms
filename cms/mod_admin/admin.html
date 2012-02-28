@@ -24,6 +24,35 @@
 	</div>
 </div>
 
+
+<?php if(iam('developer') && url(1,2)=='admin/edit'){ 
+$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
+?>
+ <div class="field_edit_dialog" style="display:none"  title="Редактирование файла  <?php print $filename ?>">
+ <form method="post">
+ <input type="hidden" name="admin_action" value="edit_field">
+ <input type="hidden" name="admin_command_redirect_close" value="yes">
+ 
+  <div class="ui-state-highlight ui-widget field_template_question"  style="display:none;padding:10px;margin-bottom:10px;margin-top:5px;">
+	 Шаблон пустой. Использовать заготовку?
+<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick=" create_field_template();return false;" value="Да" role="button">
+	<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick="$('.field_template_question').hide();return false;" value="Нет, спасибо" role="button">
+
+	</div>
+	
+	
+	<textarea style="width:96%;height:252px;border:1px solid gray;background:white;font-family:consolas, 'courier new', monospace" class="edit_field_content"  name="content"><?php
+		
+		if(file_exists($_SERVER['DOCUMENT_ROOT'].$filename)){
+			print htmlspecialchars(file_get_contents($_SERVER['DOCUMENT_ROOT'].$filename));
+		}
+	
+	?></textarea>
+ </form>
+
+ </div>
+<?php } ?>		
+		
 <div class="container_12" >
 <div class="grid_12 admin_header">
 <div class="ui-widget-header ui-corner-all">
@@ -60,7 +89,9 @@
     <ul>
  
 		<li><a href="/admin/scaffold/new">Создать</a></li>
-	 
+		<?php if(url(1,2)=='admin/edit') {?>
+		<li><a href="javascript:void(0)" onclick="show_field_editor();;" class="show_field_editor">Текущий шаблон</a></li>
+		<?php } ?>
 
     </ul>
 </div>

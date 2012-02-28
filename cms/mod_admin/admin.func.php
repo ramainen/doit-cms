@@ -258,6 +258,27 @@ function admin_list()
 //	Основная функция редактирования, которая получает данные, выводит форму, обрабатывает действия, перезагружает страницу
 function admin_edit()
 {
+/*
+<form method="post">
+ <input type="hidden" name="admin_action" value="edit_field">
+	<textarea style="width:96%;height:252px;border:1px solid gray;background:white;font-family:consolas, 'courier new', monospace" class="edit_field_content"  name="content"><?php
+		
+		if(file_exists($_SERVER['DOCUMENT_ROOT'].$filename)){
+			print htmlspecialchars(file_get_contents($_SERVER['DOCUMENT_ROOT'].$filename));
+		}
+	
+	?></textarea>
+ </form>
+*/
+	if(isset($_POST['admin_action']) && $_POST['admin_action']=='edit_field'){
+		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
+		$fhandler=fopen($_SERVER['DOCUMENT_ROOT'].$filename,'w+');
+		fwrite($fhandler,$_POST['content']);
+		fclose($fhandler);		
+		header('Location: '.$_SERVER['REQUEST_URI']);
+		exit();
+	}
+
 	print action('admin_save_data');
 	$rows=array();
 	$scenario=0;
@@ -291,6 +312,13 @@ function admin_edit()
 		$tableortype = to_p($_GET['type']);
 	}
 	$fields=d()->admin_get_fields($tableortype);
+	if(empty($fields)){
+		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
+		$filename= $_SERVER['DOCUMENT_ROOT'].$filename;
+		if (!file_exists($filename) && iam('developer')){
+			d()->field_not_found='yes';
+		}
+	}
 	//список элементов, для которых переопределелили скрытые параметры
 	//при помощи GET. Если их нет, то создаются новые скрытые е параметры.
 	$setted_flag=array();
@@ -419,6 +447,7 @@ function admin_save_data($params)
 	}
 
 	if($_POST['admin_command_redirect_close']=='yes') {
+		
 		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
 	}else{
 

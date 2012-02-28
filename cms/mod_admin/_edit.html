@@ -1,5 +1,21 @@
+<?php if(d()->field_not_found=='yes') { ?>
+<h2 class="admin_h2">Ошибка</h2>
+
+    
+   <div class="ui-state-highlight ui-widget" style="padding:10px;margin-bottom:10px;margin-top:5px;">
+	<div style="float:left" class="ui-icon ui-icon-alert"></div>   Запрашиваемый шаблон не найден<br><br>
+<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick=" show_field_editor();return false;" value="Создать" role="button">
+
+	<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick="window.open('','_self','');window.close();return false;" value="Отменить" role="button">
+
+	</div>
+	
+
+<?php } else {?>
 {{form 'admin_save_data'}}
-<?php if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/')===false) { ?>
+<?php 
+ 
+if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/')===false || (strpos($_SERVER['HTTP_REFERER'],$_SERVER['REQUEST_URI'])!==false)) { ?>
 <input type="hidden" name="admin_command_redirect_close" value="yes">
 <?php } ?>
 <?php if(!empty($_SERVER['HTTP_REFERER'])){?>
@@ -24,3 +40,4 @@
 
 </table>
 {{/form}}
+<?php } ?>
