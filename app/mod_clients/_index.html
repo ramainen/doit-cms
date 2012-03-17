@@ -1,27 +1,10 @@
 <h2>Список клиентов:</h2>
 <ul>
-<foreach clients as client>
+<foreach clients_list as client>
 	<li><a href="/clients/{id}">{title}</a>  <a href="/clients/{client.id}/edit">edit</a> {{edit}}</li>
 </foreach>
 </ul>
 
-<style>
-.pagination a
-{
-	padding:6px;
-	margin:2px;
-}
-.pagination a.active
-{
-	background:#dec;
-}
-</style>
-<div class="pagination">
-{paginator}
-</div>
-<div class="pagination">
-{long_paginator}
-</div>
-
+ 
 <a href='/clients/create'>Новый</a>
 

@@ -304,6 +304,12 @@ function to_p($one)
 	return ar::one_to_plural($one);
 }
 
+function to_camel($string)
+{
+ 
+	return strtoupper(substr($string,0,1)).substr($string,1);
+}
+
 function t($text)
 {
 	if(!empty(d()->translate[$text])){
