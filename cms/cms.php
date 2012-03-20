@@ -427,6 +427,11 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{{\/([a-zA-Z0-9_]+)\}}/';
 		$this->template_replacements[]='</$1>';//Синтаксический сахар
 
+		
+		// {=url(0)}
+		$this->template_patterns[]='/\{=(.+)\}/';
+		$this->template_replacements[]='<'.'?php print  $1; ?'.'>';
+		
 		//Обрезка GET-параметров
 		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
 
