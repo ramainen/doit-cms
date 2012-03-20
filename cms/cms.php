@@ -774,12 +774,10 @@ foreach($tmparr as $key=>$subval)
 	public function call($name, $arguments=array())
 	{
 		
-
-		$fistrsim =  ord(substr($name,0,1));
-		if($fistrsim>64 && $fistrsim<91){
+		$fistrsim = $name{0};
+		if($fistrsim>='A' && $fistrsim<='Z'){
 			return new $name($arguments);
 		}
-		
 		
 		if(!$this->is_root_func){
 			$this->is_root_func = true;
