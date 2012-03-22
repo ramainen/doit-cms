@@ -1411,6 +1411,26 @@ foreach($tmparr as $key=>$subval)
 	{
 		$this->_prepared_content[$function]=$content;
 	}
+	
+	/**
+	 * Перенапрвляет браузер при помощ заголовка и завершает код скрипта.
+	 * В случае использования AJAX делает немного магии.
+	 * 
+	 * @param $url Адрес для пернаправления
+	 */
+	function reload($url=false)
+	{
+		if(AJAX){
+			print $this->Ajax->get_compiled_response();
+			header('Content-type: text/javascript; Charset=UTF-8');
+			exit();
+		}
+		if($url==false) {
+			$url=$_SERVER['REQUEST_URI'];
+			header('Location: '.$url);
+			exit();
+		}	
+	}
 }
 
 
@@ -1458,4 +1478,9 @@ if (!isset(doitClass::$instance)) {
 	new doitClass();
 }
 
+if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest'){
+	define ('AJAX',true);
+} else {
+	define ('AJAX',false);
+}
 /* END OF cms.php */
