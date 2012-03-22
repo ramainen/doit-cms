@@ -36,6 +36,11 @@ class Ajax extends UniversalSingletoneHelper
 	function set_html($element,$html){
 		$this->response .=  '$("'.$element.'").html('.json_encode($html).");\n";
 	}
+
+	function run_function($function_name){
+		$this->response .=  $function_name."();\n";
+	}
+	
 	function reload($adress=false){
 		if($adress!==false){
 			$this->response .=  "document.location.href='$adress';\n";
