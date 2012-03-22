@@ -231,6 +231,7 @@ class doitClass
 	private $is_root_func=false;
 	private $must_be_stopped=false; //Устанавливается в true при необходимости прервать текущее выполнение
 	private $_prepared_content=array();
+	private $validate_disabled=false;
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -710,6 +711,9 @@ foreach($tmparr as $key=>$subval)
 	 */
 	public function validate($action_name)
 	{
+		if($this->validate_disabled){
+			return false;
+		}
 		$parameters = func_get_args();
 		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']],$parameters ))) {
 			$this->datapool['params'] =  $_POST[$_POST['_element']];
@@ -831,6 +835,10 @@ foreach($tmparr as $key=>$subval)
 		}
 		$_currentname=$name;
 		$_continuechain = true;
+		
+		if($this->_active_function()==$name){
+			$this->validate_disabled=true;
+		}
 		for($i=0;$i<=count($_newnames)-1;$i++) {
 			$_newname = $_newnames[$i];
 			//DEPRECATED - сделать явные вызовы
@@ -949,18 +957,22 @@ foreach($tmparr as $key=>$subval)
 			$this->call_chain_level--; //опускаем уровень текущего стека очереди
 			if (count($_newnames)==1) {
 				if($i_am_root && $this->must_be_stopped){
+					$this->validate_disabled=false;
 					return $this->do_redirect();
 				}
 				$this->is_root_func=false;
+				$this->validate_disabled=false;
 				return $_end;
 			} else {
 				$_result_end .= $_end;
 			}
 		}
 		if($i_am_root && $this->must_be_stopped){
+			$this->validate_disabled=false;
 			return $this->do_redirect();
 		}
 		$this->is_root_func=false;
+		$this->validate_disabled=false;
 		return $_result_end;
 	}
 
