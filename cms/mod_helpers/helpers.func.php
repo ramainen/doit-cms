@@ -166,7 +166,8 @@ function form ($params=array())
 	}
 	
 	if(isset($params['ajax']) && $params['ajax']==true) {
-		$attr .= ' onsubmit="typeof($.fn.ajaxSubmit)==\'undefined\'&&$(\'<sc\'+\'ript src=\\\'/cms/external/jquery.form.js\\\'></scr\'+\'ipt>\').appendTo(document);$(this).ajaxSubmit({\'success\':function(recieved_data){eval(recieved_data)}});return false;" ';
+		$attr .= ' onsubmit="$.ajax({\'type\':\'post\',\'url\':$(this).attr(\'action\') && document.location.href,\'data\':$(this).serialize(),\'success\':function(recieved_data){eval(recieved_data)}});return false;" ';
+		
 	}
 	
 	if(isset($params['class'])) {
