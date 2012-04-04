@@ -1,11 +1,27 @@
 <h2>Редактирование клиента {.title}:</h2>
   
-{{form 'clients_update', 'this'  }} 
+{{form 'clients_update', 'this' ,'class'=>'form-horizontal' }} 
 {{notice}}
-	Заголовок {{input 'title', 'default'=>'имя_пользовталя'}} <br>				
-	Описание {{input 'text'}} <br>
 
-	<input type="submit">
+ <fieldset>
+    <legend>Legend text</legend>
+    <div class="control-group">
+      <label class="control-label" for="input01">Text input</label>
+      <div class="controls">
+        
+		
+		Цена {{input 'text','class'=>'span1'}} <br>
+        <p class="help-block">Supporting help text</p>
+      </div>
+    </div>
+  </fieldset>
+  
+  
+	
+	Заголовок {{input 'title','class'=>'span3', 'default'=>'имя_пользовталя'}} <br>				
+	Описание {{input 'text','class'=>'span2'}} <br>
+	
+	<input type="submit" class="btn">
 
 {{/form}}
  
