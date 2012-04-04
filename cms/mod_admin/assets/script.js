@@ -36,12 +36,15 @@ $(function () {
 	);
 
 
-	// or from an external source
-
-
+	
+	var isCurrentBrowserIE= /*@cc_on!@*/false;
+	var forIEscript_url = '/cms/external/tiny_mce/tiny_mce_gzip.php';
+	if(isCurrentBrowserIE){
+		var forIEscript_url = '/cms/external/tiny_mce/tiny_mce.js';
+	}
 	$('.admin_button').button();
 	$('.tinymce').tinymce({
-		script_url:'/cms/external/tiny_mce/tiny_mce_gzip.php',
+		script_url:forIEscript_url,
 		language:"ru",
 		theme:"advanced",
 		skin:"o2k7",
