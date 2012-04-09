@@ -161,6 +161,9 @@ function form ($params=array())
 	if(isset($params['action'])) {
 		$attr .= ' action="'.$params['action'].'" ';
 	}
+	if(isset($params['class'])) {
+		$attr .= ' class="'.$params['class'].'" ';
+	}
 	
 	if(isset($params['enctype'])) {
 		$attr .= ' enctype="'.$params['enctype'].'" ';
@@ -205,17 +208,39 @@ function notice($params=array())
 	}
 	$str='';
 	
-	//Пользуемся оттсестированной функцией tag()
-	if(!isset($params['style'])){
-		$params['style']='padding:15px;padding-left:25px;border:1px solid red;';
+	if($params[0]=='bootstrap'){
+		//Пользуемся оттсестированной функцией tag()
+		if(!isset($params['style'])){
+			$params['style']='';
+			$params['class']='alert alert-error';
+		}
+		$params[0]='ul';
+		
+		$str .= tag($params)	;
+		
+		foreach(d()->notice as $value){
+		$str .='<li style="margin-left:20px;">'.$value.'</li>';
 	}
-	$params[0]='ul';
 	
-	$str .= tag($params);
-	
-	foreach(d()->notice as $value){
+	}else{
+		//Пользуемся оттсестированной функцией tag()
+		if(!isset($params['style'])){
+			$params['style']='';
+		}
+		$params[0]='ul';
+		
+		$str .= tag($params);
+		
+		foreach(d()->notice as $value){
 		$str .='<li>'.$value.'</li>';
 	}
+	
+	
+	}
+	
+	
+	
+	
 	
 	$str .= '</ul>';
 	return $str;
