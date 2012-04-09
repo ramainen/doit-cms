@@ -10,4 +10,4 @@
 
 	
 	$exec_time = microtime(true) - $start_time;
-	printf("<!-- %f seconds, %d bytes -->",$exec_time, memory_get_usage(true));
+//	printf("<!-- %f seconds, %d bytes -->",$exec_time, memory_get_usage(true));

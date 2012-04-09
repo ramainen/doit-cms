@@ -14,6 +14,8 @@ function edit($params=false){
 	}
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
+	}else{
+		$attr .= ' class="adm_icon" ';
 	}
 	if(isset($params['title'])) {
 		$attr .= ' title="'.$params['title'].'" ';
@@ -56,7 +58,13 @@ function delete($params=false){
     if($params===false) {
         $params=array(d()->this);
     }
-    
+    $attr='';
+	if(isset($params['class'])) {
+		$attr .= ' class="'.$params['class'].'" ';
+	}else{
+		$attr .= ' class="adm_icon" ';
+	}
+	
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
@@ -66,7 +74,7 @@ function delete($params=false){
 	}
 		
 
-	print '<a href="/admin/delete/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
+	print '<a href="/admin/delete/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" '.$attr.'><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
 }
 
 function add($params){
