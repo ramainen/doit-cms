@@ -13,7 +13,7 @@ $(function(){
 	<foreach objectrow>
 	<div class="sorting_element">
 	
-		{.title}({.url})
+		{.title} <?php if(d()->this->url != ''){ ?>({.url})<?php } ?>
 		<input type="hidden" name="data[elements][]" value="{.id}">
 		</div>
 	</tr>

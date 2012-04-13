@@ -39,7 +39,7 @@ class Date extends UniversalHelper
 	function __construct($params=array(''))
 	{
 
-		if($params[0]!=''){
+		if($params[0]!==false){
 			$this->date = $params[0];
 		}else{
 			$this->date = time();

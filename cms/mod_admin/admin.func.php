@@ -121,6 +121,48 @@ function add($params){
 	print '<a href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr.' target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
 }
 
+function sort_icon($params){
+ 
+	if(!isset($_SESSION['admin'])) {
+		return ""; //Проверка на права администратора
+	}
+	
+	if(!is_array($params)) {
+		$params=array($params);	
+	}
+	
+	$attr='';
+	if(isset($params['style'])) {
+		$attr .= ' style="'.$params['style'].'" ';
+		unset($params['style']);
+	}
+	if(isset($params['class'])) {
+		$attr .= ' class="'.$params['class'].'" ';
+		unset($params['class']);
+	}
+	if(isset($params['title'])) {
+		$attr .= ' title="'.$params['title'].'" ';
+		unset($params['title']);
+	}
+	
+	if(!isset($_SESSION['admin'])) {
+		return ""; //Проверка на права администратора
+	}
+	
+	$params_string='';
+
+	foreach($params as $key=>$value){
+		if(!is_numeric($key)) {
+			$params_string.= '/'.$key.'/'.$value;
+		}
+	}
+	
+	$params_string .= '?sort=yes';
+	
+	print '<a href="/admin/list/'.$params[0].''.$params_string.'" '.$attr.' target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
+}
+
+
 function admin_show()
 {
 	unset (d()->datapool['admin']['bottombuttons']);

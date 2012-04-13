@@ -15,6 +15,9 @@ function input ($params=array())
 		$attr .= ' class="'.$params['class'].'" ';
 	}
 	
+	if(isset($params['title'])) {
+		$attr .= ' title="'.$params['title'].'" ';
+	}
 	
 	
 	if(isset($params['name'])) {
