@@ -255,6 +255,11 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if(!isset($this->_options['order_by'])) {
 			$this->_options['order_by']=' ORDER BY '.DB_FIELD_DEL . 'sort'.DB_FIELD_DEL . ' ';
 		}
+		if(!isset($this->_options['group_by'])) {
+			$this->_options['group_by']=' ';
+		}
+		
+ 
 		
 		if(!isset($this->_options['new'])) {
 			$this->_options['new']=false;
@@ -457,7 +462,16 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		}
 		return $this;
 	}
-
+	public function group_by($group_by)
+	{
+		$this->_options['queryready']=false;
+		if(trim($group_by)!='') {
+			$this->_options['group_by'] = ' GROUP BY '.$group_by.' ';
+		} else {
+			$this->_options['group_by'] = '';
+		}
+		return $this;
+	}
 	public function order($order_by)
 	{
 		$this->_options['queryready']=false;
@@ -545,6 +559,10 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		if(count($this->_options['condition'])>0) {
 			$_condition = implode(' AND ',$this->_options['condition']);
 			$_query_string .= 'WHERE '.$_condition;
+		}
+		
+		if($this->_options['group_by']!='') {
+			$_query_string .=  ' '.$this->_options['group_by'].' ';
 		}
 		if($this->_options['order_by']!='') {
 			$_query_string .=  $this->_options['order_by'];
