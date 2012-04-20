@@ -30,13 +30,17 @@
 class Paginator extends UniversalHelper
 {
 	public $active='active';
-	
+	private $_is_bootstrap=false;
 	public function setActive($active)
 	{
 		$this->active = $active;
 		return $this;
 	}
-	
+	public function bootstrap($is=true)
+	{
+		$this->_is_bootstrap=$is;
+		return $this;
+	}
 	public function generate($allcount=1, $current=false){
 		if(!is_numeric($allcount)){
 			//Внезапно передали экземпля модели
@@ -61,25 +65,55 @@ class Paginator extends UniversalHelper
 		$result='';
 		$allowed_pages=$this->getPagesArray($allcount,$current);
 		$old_step=$allowed_pages[0]; //Виртуальный прошлый шаг
-		foreach ($allowed_pages as $i){
-			$i++;
-			 
-			if (($i-$old_step)>1) {
-				$result .= ' ... ';
-			}
-			
-			$current_url=$this->drawPageInAdress($all_url,$i-1);
-			$params=array('a',$i);
-			$params['href']=$current_url;
-			if($i-1==$current){
-				$params['class']=$this->active;
-			}
-			$result .= tag($params);
 		
+		if($this->_is_bootstrap){
+			foreach ($allowed_pages as $i){
+				$i++;
+				 
+				if (($i-$old_step)>1) {
+					$result .= '<li class="disabled"><a href="#">...</a></li>';
+				}
+				
+				$current_url=$this->drawPageInAdress($all_url,$i-1);
+				$params=array('a',$i);
+				$params['href']=$current_url;
+				if($i-1==$current){
+					
+					$result .= '<li class="active">'.tag($params).'</li>';
+				}else{
+					$result .= '<li>'.tag($params).'</li>';
+					
+				}
+				
 			
-			$old_step = $i;
+				
+				$old_step = $i;
+			}
+			return '<div class="pagination"><ul>'.$result.'</ul></div>';
+		}else{
+	
+			foreach ($allowed_pages as $i){
+				$i++;
+				 
+				if (($i-$old_step)>1) {
+					$result .= ' ... ';
+				}
+				
+				$current_url=$this->drawPageInAdress($all_url,$i-1);
+				$params=array('a',$i);
+				$params['href']=$current_url;
+				if($i-1==$current){
+					$params['class']=$this->active;
+				}
+				$result .= tag($params);
+			
+				
+				$old_step = $i;
+			}
+			return $result;
 		}
-		return $result;
+		
+
 		
 	}
 	
