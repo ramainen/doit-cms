@@ -286,7 +286,7 @@ foreach($tmparr as $key=>$subval)
 		//	возможно, убрать эту конструкцию
 
 		// <foreach users>
-		$this->template_patterns[]='/<foreach\s+(.*)>/';
+		$this->template_patterns[]='/<foreach\s+(.*?)>/';
 		$this->template_replacements[]='<'.'?php $tmparr= $doit->$1;
 
 		if(!isset($doit->datapool[\'this\'])){
