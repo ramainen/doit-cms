@@ -44,21 +44,30 @@ class Date extends UniversalHelper
 		}else{
 			$this->date = time();
 		}
-
-		if(strpos($this->date,'.')===false){
-			$this->date=Date('d.m.Y',$this->date);
+		if(strpos($this->date,'-')!==false ){
+						
+			$this->year=substr($this->date,0,4);
+			$this->month=1*substr($this->date,5,2);
+			$this->day=1*substr($this->date,8,2);
+			
+		}else {
+			if(strpos($this->date,'.')===false ){
+				$this->date=Date('d.m.Y',$this->date);
+			}
+			
+			$this->year=substr($this->date,6,4);
+			$this->month=1*substr($this->date,3,2);
+			
+			
+			if($this->year<99 && $this->year>50){
+				$this->year=1*('19'.$this->year);
+			}
+			if($this->year<99 && $this->year<50){
+				$this->year=1*('20'.$this->year);
+			}
+			$this->day=1*substr($this->date,0,2);
 		}
-		$this->year=substr($this->date,6,4);
-		$this->month=1*substr($this->date,3,2);
 		
-		
-		if($this->year<99 && $this->year>50){
-			$this->year=1*('19'.$this->year);
-		}
-		if($this->year<99 && $this->year<50){
-			$this->year=1*('20'.$this->year);
-		}
-		$this->day=1*substr($this->date,0,2);
 		$this->ru_month = $this->ru_months[$this->month];
 		$this->en_month = $this->en_months[$this->month];
 	}
@@ -87,10 +96,49 @@ class Date extends UniversalHelper
 	{
 		return $this->ru_ago();
 	}
-
+	function when()
+	{
+		return $this->ru_when();
+	}
 	//Предупреждение: не оттестировано, пока не работает
 	function ru_ago()
 	{
+		 
+	/*	 return $this->ru_user();*/
 
+		$timediff = time() - mktime(23,00,00,$this->month, $this->day, $this->year);    
+		$timediff = intval($timediff); 
+		if($timediff < 60)   
+		  $time = "$timediff секунд назад";  
+		else if(($timediff = intval($timediff/60)) < 60)   
+		  $time = "$timediff минут назад";  
+		else if(($timediff = intval($timediff/60)) < 24)   
+		   $time = "$timediff часов назад";  
+		else if(($timediff = intval($timediff/24)) < 14)   
+		   $time = "$timediff дней назад";  
+		else if(($weeks= intval($timediff/7)) < 4)   
+		  $time = "$weeks недели назад";  
+		else if(($months= intval($timediff/30.4)) < 12)   
+		   $time = "$monts месяцев назад";  
+		return $time; 
+ 
 	}
+	
+	function ru_when()
+	{
+
+
+		$timediff = time() - mktime(23,00,00,$this->month, $this->day, $this->year);    
+		$timediff  = $timediff/(60 *60 );
+		
+		if($timediff  < 0)   
+		   $time = "Сегодня";  
+		else if($timediff  < 24)   
+		   $time = "Вчера";   
+		else  
+		   $time = $this->ru_user(); 
+		return $time; 
+ 
+	}
+	
 }
