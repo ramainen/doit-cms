@@ -1151,6 +1151,10 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 				$this->fetch_data_now();
 		}
 		
+		if(isset($this->_future_data[$name])){
+			return $this->_future_data[$name];
+		}
+		
 		if (isset($this->_data[$this->_cursor])) {
 			//Item.title         //Получение одного свойства
 			if (isset($this->_data[$this->_cursor][$name])) {
