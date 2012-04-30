@@ -171,6 +171,10 @@ function form ($params=array())
 	if(isset($params['enctype'])) {
 		$attr .= ' enctype="'.$params['enctype'].'" ';
 	}
+	if(isset($params['id'])) {
+		$attr .= ' id="'.$params['id'].'" ';
+	}	
+	
 	
 	$result =  "<form method='POST' ".$attr.">";
 	$result .= ' <input type="hidden" name="_element" value="' . d()->current_form_object .'" >';
