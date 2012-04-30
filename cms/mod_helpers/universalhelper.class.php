@@ -63,4 +63,13 @@ class UniversalHelper
 	{
 		return '';
 	}
+	function before()
+	{
+	
+	}
+	
+	function after()
+	{
+	
+	}
 }

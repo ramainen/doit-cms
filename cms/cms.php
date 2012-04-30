@@ -904,7 +904,9 @@ foreach($tmparr as $key=>$subval)
 					}
 
 					//$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
+					call_user_func_array(array($this->{$_classname}, 'before'), array($_methodname, $arguments));
 					$_executionResult=call_user_func_array(array($this->{$_classname}, $_methodname), $arguments);
+					call_user_func_array(array($this->{$_classname}, 'after'), array($_methodname, $arguments));
 					$been_controller=true;
 				
 				} else {
