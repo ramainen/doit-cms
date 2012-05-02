@@ -131,12 +131,17 @@ class Date extends UniversalHelper
 		$timediff = time() - mktime(23,00,00,$this->month, $this->day, $this->year);    
 		$timediff  = $timediff/(60 *60 );
 		
-		if($timediff  < 0)   
+		if($timediff  < -48) {
+		   $time = $this->ru_user();  
+		} else if($timediff  < -24) {
+		   $time = "Завтра";  
+		} else if($timediff  < 0) {
 		   $time = "Сегодня";  
-		else if($timediff  < 24)   
+		} else if($timediff  < 24){   
 		   $time = "Вчера";   
-		else  
+		} else {
 		   $time = $this->ru_user(); 
+		}
 		return $time; 
  
 	}
