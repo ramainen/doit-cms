@@ -66,7 +66,7 @@ sum
 calculate
 
 */	
-	
+define('SQL_NULL',md5(time()).'MYSQL_NULL_CONST'.rand());
 	
 //Класс Active Record, обеспечивающий простую добычу данных
 abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIterator
@@ -632,7 +632,13 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 				$values=array();
 				foreach($this->_future_data as $key => $value) {
 					$fields[]=" ".DB_FIELD_DEL . $key . DB_FIELD_DEL." ";
-					$values[]=" ". doitClass::$instance->db->quote ($value)." ";
+					
+					if(SQL_NULL == $value){
+						$values[]=" NULL ";
+					}else{
+						$values[]=" ". doitClass::$instance->db->quote ($value)." ";
+					}
+					
 				}
 				$fields_string=implode (',',$fields);
 				$values_string=implode (',',$values);
@@ -646,7 +652,12 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
 				$attributes=array();
 				foreach($this->_future_data as $key => $value) {
-					$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = ". doitClass::$instance->db->quote($value)." ";
+					if(SQL_NULL == $value){
+						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = NULL ";
+					}else{
+						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = ". doitClass::$instance->db->quote($value)." ";
+					}
+					
 				}
 				$attribute_string=implode (',',$attributes);
 				$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.$attribute_string." where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->_data[0]['id']."'";
