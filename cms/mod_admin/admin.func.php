@@ -200,7 +200,7 @@ function admin_show_one_list($table,$id1,$id2)
 		//list/goods     просто список всех полей
 		$query='select * from '.et($table).'   order by '.DB_FIELD_DEL.'sort'.DB_FIELD_DEL;
 		d()->list_addbutton='';
-		d()->list_addbutton.='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
+		d()->list_addbutton.='<a class="btn" href="/admin/edit/'. $table .'/add"><i class="icon-plus"></i> Добавить</a>';
 
 		if(isset(d()->admin['bottombuttons'])) {
 		$bottombuttons=d()->admin['bottombuttons'];

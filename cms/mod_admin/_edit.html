@@ -22,7 +22,7 @@ if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/
 <input type="hidden" name="_http_referer" value="<?=h($_SERVER['HTTP_REFERER']);?>">
 <?php } ?>
 <input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
-<table class="admin_table" width=100%>
+<table class="" width=100%>
 <tr>
 	<td colspan=2><h2 class="admin_h2">{tabletitle}</h2></td>
 </tr>
@@ -35,7 +35,7 @@ if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/
 </foreach>
 
 <tr>
-	<td colspan="2"><input type="submit"   value="Отправить" class="admin_button" ></td>
+	<td colspan="2"><input type="submit"   value="Отправить" class="btn btn-primary" ></td>
 </tr>
 
 </table>
