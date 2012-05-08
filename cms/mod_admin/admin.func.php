@@ -768,6 +768,26 @@ function admin_scaffold_new()
 	}
 	print d()->view();
 }
+
+
+
+function admin_scaffold_install_plugin()
+{
+	if(d()->validate('admin_scaffold_install_plugin')) {
+		
+		$plugin='twitter_bootstrap';
+		
+		d()->PluginInstaller->download($plugin);
+		
+		d()->PluginInstaller->install($plugin);
+		
+		print "OK";
+		exit();
+	}
+	print d()->view();
+}
+
+
 //Открытие шаблона либо вывод формы авторизации
 function admin()
 {
