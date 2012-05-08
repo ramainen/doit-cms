@@ -60,6 +60,8 @@ class PluginInstaller extends UniversalSingletoneHelper
 			}
 			 rmdir($dir);
 			}
+			
+			 unlink($dir.'.zip');
 	}
 	
 	
@@ -69,5 +71,10 @@ class PluginInstaller extends UniversalSingletoneHelper
 		
 		$result=$_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$file_name.'.zip';
 		file_put_contents($result,file_get_contents($url));
+	}
+	
+	function get_list()
+	{
+		return json_decode(file_get_contents( $this->download_url));
 	}
 }

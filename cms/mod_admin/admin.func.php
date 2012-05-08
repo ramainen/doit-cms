@@ -773,17 +773,22 @@ function admin_scaffold_new()
 
 function admin_scaffold_install_plugin()
 {
+	if(!iam('developer')){ 
+		return 'Устанавливать расширения могут только разработчики';
+	}
 	if(d()->validate('admin_scaffold_install_plugin')) {
 		
-		$plugin='twitter_bootstrap';
+		$plugin=d()->params['plugin'];
+		
+		d()->message='Процесс установки проведён';
+		
 		
 		d()->PluginInstaller->download($plugin);
 		
 		d()->PluginInstaller->install($plugin);
-		
-		print "OK";
-		exit();
 	}
+	d()->plugins_list = d()->PluginInstaller->get_list();
+	
 	print d()->view();
 }
 

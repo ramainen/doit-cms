@@ -1,7 +1,26 @@
  
 
 <h1>Скаффолдинг: Установка плагина</h1>
-{{form 'admin_scaffold_install_plugin'}}
-	 
-	<input type="submit" value="Создать" class="admin_button">
-{{/form}}
+<?php if(d()->message!=''){ ?>
+	<div class="ui-widget" style="padding:4px;">
+		<div class="ui-state-highlight  ui-corner-all" style="padding: 10px;"> 
+			<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+			<strong>Результат:</strong> {message}</p>
+		</div>
+	</div>
+
+<?php } ?>			
+<div style="width:700px;">
+<foreach plugins_list>
+	<div style="width:200px;float:left;margin:3px;" class="ui-corner-all ui-widget">
+		{{form 'admin_scaffold_install_plugin'}}
+			<input type="hidden" name='data[plugin]' value="{.file|h}">
+			<b>{.name}</b><br>{.description}<br>
+			<input type="submit" value="Установить" class="admin_button">
+		{{/form}}
+		
+	</div>
+
+</foreach>
+<div style="clear:both;"></div>
+</div>
