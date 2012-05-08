@@ -69,7 +69,7 @@ calculate
 define('SQL_NULL',md5(time()).'MYSQL_NULL_CONST'.rand());
 	
 //Класс Active Record, обеспечивающий простую добычу данных
-abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIterator
+abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extends ArrayIterator
 {
 	public $_options;
 	public $_data;
@@ -275,7 +275,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 		
 		//TODO: брать таблицу из родительского объекта
 		if(!isset($this->_options['table'])) {
-			if(strtolower(get_class($this))=='ar') {
+			if(strtolower(get_class($this))=='ActiveRecord') {
 				$this->_options['table']='options';
 			} else {
 				$this->_options['table']=self::one_to_plural(strtolower(get_class($this)));
@@ -1198,7 +1198,7 @@ abstract class ar implements ArrayAccess, Iterator, Countable //extends ArrayIte
 							$ids_array[$value[$name.'_id']]=true;
 						}
 						$ids_array=array_keys($ids_array);
-						$this->_objects_cache[$name] =  activerecord_factory_from_table(ar::one_to_plural($name))->order('')->where(' '.DB_FIELD_DEL . id . DB_FIELD_DEL. ' IN (?)',$ids_array);
+						$this->_objects_cache[$name] =  activerecord_factory_from_table(ActiveRecord::one_to_plural($name))->order('')->where(' '.DB_FIELD_DEL . id . DB_FIELD_DEL. ' IN (?)',$ids_array);
 					}
 					$cursor_key=$this->_objects_cache[$name]->get_cursor_key_by_id($this->_data[$this->_cursor][$name.'_id']);
 					return $this->_objects_cache[$name][$cursor_key];
@@ -1259,10 +1259,16 @@ function activerecord_factory_from_table($_tablename)
 		$_tablename=$_tablename[0];
 	}
 	
-	$_modelname=ar::plural_to_one(strtolower($_tablename));
+	$_modelname=ActiveRecord::plural_to_one(strtolower($_tablename));
 	$_first_letter=strtoupper(substr($_modelname,0,1));
 	$_modelname = $_first_letter.substr($_modelname,1);
 
 	return new $_modelname ();
 	//return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
+}
+
+//DEPRECATED - Для совместимости
+class ar extends ActiveRecord
+{
+	
 }
