@@ -13,23 +13,45 @@ class PluginInstaller extends UniversalSingletoneHelper
 			$zip->close();
 			
 		
-		
+		$standart_format=true;
+		$search_started=false;
 		$dir = $_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$plugin_folder;
 		$prefixlength = strlen($dir)+1;
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir),
 									  RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($iterator as $path) {
+			
+		
+			
+			
 			$file=substr($path->__toString(),$prefixlength);
+			$plugin_file=$file;
+			$app_file=$file;
+			
+			if($search_started==false){
+				$search_started=true;
+				if($file==$plugin_folder){
+					$standart_format=false;
+					continue;
+				}
+			}
+			
+			$search_started=true; 
+			
+			if($standart_format==false){
+				$app_file = substr($app_file,strlen($plugin_folder)+1);
+			}
+			
 			if ($path->isDir()) {
 				//СОздание отсуствующих директорий
-				if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/'.$file)){
-					mkdir($_SERVER['DOCUMENT_ROOT'].'/'.$file);
+				if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/'.$app_file)){
+					mkdir($_SERVER['DOCUMENT_ROOT'].'/'.$app_file);
 				}
 			} else {
-				if(substr($file,-5)=='.diff'){
-					$file_without_diff=substr($file,0,-5);
+				if(substr($plugin_file,-5)=='.diff'){
+					$file_without_diff=substr($plugin_file,0,-5);
 					
-					$patch=file_get_contents($dir.'/'.$file);
+					$patch=file_get_contents($dir.'/'.$plugin_file);
 					$first_nl = strpos($patch,"\n");
 					$search_string=substr($patch,0,$first_nl);
 					$search_string=str_replace("\r","",$search_string);
@@ -44,7 +66,7 @@ class PluginInstaller extends UniversalSingletoneHelper
 					
 					
 				} else {
-					copy($dir.'/'.$file,  $_SERVER['DOCUMENT_ROOT'].'/'.$file);
+					copy($dir.'/'.$plugin_file,  $_SERVER['DOCUMENT_ROOT'].'/'.$app_file);
 				}
 				
 			}
