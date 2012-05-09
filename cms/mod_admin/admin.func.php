@@ -354,6 +354,19 @@ function admin_edit()
 	} else {
 		$line=array();
 	}
+	if(iam('developer')){
+		if( d()->db->errorCode()=='42S02'){
+			if(d()->validate('admin_attempt_create_table')){
+				$table=url(3);
+				$one_element=to_o(url(3));
+				$result = d()->Scaffold->create_table($table,$one_element);
+				header('Location: '.$_SERVER['REQUEST_URI']);
+				exit();
+			}
+			d()->missing_table=url(3);
+			return d()->admin_error_create_table_tpl();
+		}
+	}
 	if(isset($line['type']) && $line['type']!='') {
 		$tableortype = to_p($line['type']);
 	}
@@ -550,6 +563,10 @@ function admin_get_fields($tableortype='')
 
 function admin_scaffold_new()
 {
+	d()->table_name='';
+	if(isset($_GET['table'])){
+		d()->table_name = $_GET['table'];
+	}
 	if(d()->validate('admin_scaffold_create')){
 		
 		$result_messages='';

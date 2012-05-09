@@ -589,7 +589,14 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		*/
 		
-		$this->_data =  doitClass::$instance->db->query($this->to_sql())->fetchAll(PDO::FETCH_ASSOC);
+		$db_result = doitClass::$instance->db->query($this->to_sql());
+		if( d()->db->errorCode()=='42S02'){
+			d()->bad_table = $this->_options['table'];
+		}
+		$this->_data =  $db_result ->fetchAll(PDO::FETCH_ASSOC);
+		
+		
+		
 		$this->_count = count($this->_data);
 		
 		

@@ -47,7 +47,13 @@ function doit_ob_error_handler($output)
 
 		if(d()->db->errorCode()!=0){
 			$db_err=d()->db->errorInfo();
-			$_message='<br>Также зафиксирована ошибка базы данных:<br>'. $db_err[2]."<br>";
+			$_message='<br>Также зафиксирована ошибка базы данных:<br>'. $db_err[2]." (".$db_err[1].")<br>";
+			if(iam('developer')){ 
+				if($db_err[1] == '1146'){
+					$_message.=' Создать таблицу <b>'.h(d()->bad_table).'</b>? <form method="get" action="/admin/scaffold/new" style="display:inline;" target="_blank"><input type="submit" value="Создать"><input type="hidden" name="table" value="'.h(d()->bad_table).'"></form><br>';
+				}
+			}
+			
 		}
 		$errfile = substr($error['file'],strlen($_SERVER['DOCUMENT_ROOT'])) ;
 		return print_error_message(' ',$error['line'],$errfile ,$error['message'],'Ошибка при выполнении функции '.$parent_function.' '.$_message );

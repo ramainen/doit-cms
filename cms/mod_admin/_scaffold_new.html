@@ -27,7 +27,7 @@ $(function(){
 {{form 'admin_scaffold_create', 'class'=>'form-horizontal'}}
 	Создание объектов. Введите имя таблицы во множественном числе.
 	 <br>
-	{{input 'name'}} Примеры: catalogs, news, users, pages, articles, goods, examples, documents.<br>
+	{{input 'name', 'value'=>d()->table_name}} Примеры: catalogs, news, users, pages, articles, goods, examples, documents.<br>
 	
 	<label  class="checkbox">
 		{{input 'create_table', id=>'create_table', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} 
