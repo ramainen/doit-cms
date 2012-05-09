@@ -528,11 +528,23 @@ function admin_get_fields($tableortype='')
 	}
 	
 	d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');
+	
+	
+	if ($handle = opendir('app/fields/')) {
+		while (false !== ($file = readdir($handle))) {
+			if(preg_match('/'.$tableortype.'\..*?.ini/i', $file)){
+				d()->load_and_parse_ini_file('app/fields/'.$file);
+			}
+		}
+		closedir($handle);
+	}
 	$rows = d()->admin['fields'];
 	foreach ($rows as $key=>$value) {
 		$data[]=array('name'=>$value[1],'type'=>$value[0],'title'=>$value[2],'all'=>$value);
 	}
+	
     return $data;
+	
 }
 
 
