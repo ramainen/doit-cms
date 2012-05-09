@@ -17,11 +17,13 @@ border-bottom:1px solid white;
 .admin_header
 
 {
+border:1px solid white;
+border-radius:3px;
 position:relative;
 top:-7px;
 
 }
- 
+
 .whitelogo
 {
 font-size:30px;
