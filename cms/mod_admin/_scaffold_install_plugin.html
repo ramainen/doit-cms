@@ -1,26 +1,51 @@
  
 
 <h1>Скаффолдинг: Установка плагина</h1>
-<?php if(d()->message!=''){ ?>
-	<div class="ui-widget" style="padding:4px;">
-		<div class="ui-state-highlight  ui-corner-all" style="padding: 10px;"> 
-			<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
-			<strong>Результат:</strong> {message}</p>
-		</div>
-	</div>
 
-<?php } ?>			
-<div style="width:700px;">
+<?php if(d()->message){ ?>
+
+
+<div class="modal fade" id="message_modal">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Результаты</h3>
+  </div>
+  <div class="modal-body">
+    <p>{message}</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">OK</a>
+    
+  </div>
+</div>
+<script>
+$(function(){
+	$('#message_modal').modal()
+})
+</script>
+<?php } ?>
+
+<div class="row">
+<div class="span12" >
+<div class="row"> 
 <foreach plugins_list>
-	<div style="width:200px;float:left;margin:3px;" class="ui-corner-all ui-widget">
+
+	<div class="span3" >
+	<div class="well">
 		{{form 'admin_scaffold_install_plugin'}}
 			<input type="hidden" name='data[plugin]' value="{.file|h}">
-			<b>{.name}</b><br>{.description}<br>
+			<b>{.name}</b><hr>{.description}<hr>
 			<input type="submit" value="Установить" class="btn">
+			
 		{{/form}}
 		
 	</div>
-
+	</div>
+	<?php if ($key%4==3){ ?>
+		<div class="clear"
+	<?php  } ?>
 </foreach>
-<div style="clear:both;"></div>
+
+	</div>
+</div>
 </div>

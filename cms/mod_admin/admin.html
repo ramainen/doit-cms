@@ -8,6 +8,8 @@
  
 	
 	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/datepicker.css" />
+	
 	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap-responsive.min.css" />
 	
 	
@@ -17,7 +19,7 @@
 	<script type="text/javascript" src="/cms/external/jqueryui/jquery-ui-1.8.10.custom.min.js"></script>
 	
 	<script src="/cms/external/bootstrap/js/bootstrap.js"></script>
-	
+	<script src="/cms/external/bootstrap/js/bootstrap-datepicker.js"></script>
 	
  
 	<script type="text/javascript" src="/cms/external/tiny_mce/jquery.tinymce.js"></script>
@@ -37,15 +39,23 @@
 <?php if(iam('developer') && url(1,2)=='admin/edit'){ 
 $filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
 ?>
- <div class="field_edit_dialog" style="display:none"  title="Редактирование файла  <?php print $filename ?>">
+ <div class="field_edit_dialog modal fade " style="display:none"  >
+ <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Редактирование файла  <?php print $filename ?></h3>
+  </div>
+  
+  <div class="modal-body">
+  
+  
  <form method="post">
  <input type="hidden" name="admin_action" value="edit_field">
  <input type="hidden" name="admin_command_redirect_close" value="yes">
  
-  <div class="ui-state-highlight ui-widget field_template_question"  style="display:none;padding:10px;margin-bottom:10px;margin-top:5px;">
+  <div class="alert field_template_question"  style="display:none;padding:10px;margin-bottom:10px;margin-top:5px;">
 	 Шаблон пустой. Использовать заготовку?
-<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick=" create_field_template();return false;" value="Да" role="button">
-	<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick="$('.field_template_question').hide();return false;" value="Нет, спасибо" role="button">
+<input type="button" class="btn btn-primary" onclick=" create_field_template();return false;" value="Да" role="button">
+	<input type="button" class="btn" onclick="$('.field_template_question').hide();return false;" value="Нет, спасибо" role="button">
 
 	</div>
 	
@@ -58,6 +68,11 @@ $filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\'
 	
 	?></textarea>
  </form>
+ </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn">Отмена</a>
+    <a href="#" class="btn btn-primary modal-edit-save">Сохранить</a>
+  </div>
 
  </div>
 <?php } ?>		

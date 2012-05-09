@@ -1,35 +1,99 @@
-<script>
-
-
-</script>
-
+ 
 <h1>Скаффолдинг: создание заготовки</h1>
-{{form 'admin_scaffold_create'}}
+
+<?php if(d()->result_messages){ ?>
+
+
+<div class="modal fade" id="message_modal">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Результаты</h3>
+  </div>
+  <div class="modal-body">
+    <p>{result_messages}</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">OK</a>
+    
+  </div>
+</div>
+<script>
+$(function(){
+	$('#message_modal').modal()
+})
+</script>
+<?php } ?>
+
+{{form 'admin_scaffold_create', 'class'=>'form-horizontal'}}
 	Создание объектов. Введите имя таблицы во множественном числе.
 	 <br>
 	{{input 'name'}} Примеры: catalogs, news, users, pages, articles, goods, examples, documents.<br>
-	{{input 'create_table', id=>'create_table', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_table">Создать таблицу</label><br>
+	
+	<label  class="checkbox">
+		{{input 'create_table', id=>'create_table', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} 
+		Создать таблицу
+	</label>
+	 
+	<fieldset  >
+	<legend>Генерация кода</legend>
 	
 	 
-	<fieldset style="border:1px solid gray;padding:5px;">
-	<legend>Генерация кода</legend>
-	{{input 'create_show',id=>'create_show', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_show">Создать вывод элемента</label><br>
-	{{input 'create_list', id=>'create_list',type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_list">Создать список элементов</label><br>
-	{{input 'create_model',id=>'create_model', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_model">Создать модель</label><br>	
-		<fieldset style="border:1px solid gray;padding:5px;">
-		<legend>Стиль</legend>
-		{{input 'create_type',id=>'create_func', type=>'radio',  value=>'func'}} <label for="create_func">В процедурном стиле</label><br>
-		{{input 'create_type', id=>'create_oop', type=>'radio', 'checked'=>'checked', value=>'oop'}} <label for="create_oop">В ООП стиле</label><br>
+	<label  class="checkbox">
+		{{input 'create_show',id=>'create_show', type=>'checkbox',   value=>'yes'}}  
+		Создать вывод элемента
+	</label>
+	
+	
+	<label  class="checkbox">
+		{{input 'create_list', id=>'create_list',type=>'checkbox',   value=>'yes'}}
+		Создать список элементов
+	</label>
+	
+	<label  class="checkbox">
+		{{input 'create_model',id=>'create_model', type=>'checkbox',   value=>'yes'}}
+		Создать модель
+	</label>
+ 
 		
+		<label  class="radio">
+			{{input 'create_type',id=>'create_func', type=>'radio',  value=>'func'}}
+			В процедурном стиле
+		</label>
 		
-		</fieldset>
+		<label  class="radio">
+			{{input 'create_type', id=>'create_oop', type=>'radio', 'checked'=>'checked', value=>'oop'}}
+			В ООП стиле
+		</label>
+		
+ 
 	
 	</fieldset>
 	
-	{{input 'create_router',id=>'create_router', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_router">Создать записи в роутере</label><br>
-	{{input 'create_fields',id=>'create_fields', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_fields">Создать страницу редактирования</label><br>
-	{{input 'create_menu',id=>'create_menu', type=>'checkbox', 'checked'=>'checked', value=>'yes'}} <label for="create_menu">Создать пункт меню в системе администрирования</label><br>
+	<fieldset  >
+	<legend>Генерация окружения</legend>
 	
-	<br>
-	<input type="submit" value="Создать" class="admin_button">
+	<label  class="checkbox">
+		{{input 'create_router',id=>'create_router', type=>'checkbox',  value=>'yes'}}
+		Создать записи в роутере
+	</label>
+	
+	<label  class="checkbox">
+		{{input 'create_fields',id=>'create_fields', type=>'checkbox',   value=>'yes'}}
+		Создать страницу редактирования
+	</label>
+	
+	<label  class="checkbox">
+		{{input 'create_menu',id=>'create_menu', type=>'checkbox',   value=>'yes'}}
+		Создать пункт меню в системе администриров
+	</label>
+	
+		</fieldset>
+	
+	
+	<div class="form-actions">
+	<input type="submit" value="Создать" class="btn btn-primary">
+            <a href="#" class="btn">Отмена</a>
+          </div>
+
+
 {{/form}}

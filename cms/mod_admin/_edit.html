@@ -4,40 +4,52 @@
     
    <div class="ui-state-highlight ui-widget" style="padding:10px;margin-bottom:10px;margin-top:5px;">
 	<div style="float:left" class="ui-icon ui-icon-alert"></div>   Запрашиваемый шаблон не найден<br><br>
-<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick=" show_field_editor();return false;" value="Создать" role="button">
+<input type="button" class="btn btn-primary" onclick=" show_field_editor();return false;" value="Создать" role="button">
 
-	<input type="button" class="admin_button ui-button ui-widget ui-state-default ui-corner-all" onclick="window.open('','_self','');window.close();return false;" value="Отменить" role="button">
+	<input type="button" class="btn" onclick="window.open('','_self','');window.close();return false;" value="Отменить" role="button">
 
 	</div>
-	
+	 
 
 <?php } else {?>
-{{form 'admin_save_data'}}
+{{form 'admin_save_data', 'class'=>"form-horizontal admin_edit_form"}}
+<fieldset>
 <?php 
  
 if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/')===false || (strpos($_SERVER['HTTP_REFERER'],$_SERVER['REQUEST_URI'])!==false)) { ?>
 <input type="hidden" name="admin_command_redirect_close" value="yes">
 <?php } ?>
+
+
+
 <?php if(!empty($_SERVER['HTTP_REFERER'])){?>
 <input type="hidden" name="_http_referer" value="<?=h($_SERVER['HTTP_REFERER']);?>">
 <?php } ?>
+
+
 <input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
-<table class="" width=100%>
-<tr>
-	<td colspan=2><h2 class="admin_h2">{tabletitle}</h2></td>
-</tr>
 
+<legend>{tabletitle}</legend>
+ 
 <foreach tablerow>
-<tr>
-	<td>{.title}</td>
-	<td><input type="text" name="{.name}" value="{.value|h}" class="admin_input ui-widget-content ui-corner-all" style="width:500px;"></td>
-</tr>
+
+<div class="control-group">
+  <label class="control-label"  >{.title}</label>
+  <div class="controls">
+	<input type="text"  name="{.name}" value="{.value|h}" class="input-xlarge"  >
+ 
+  </div>
+</div>
+
+
+ 
 </foreach>
+<div class="form-actions">
+             <input type="submit"   value="Отправить" class="btn btn-primary" > 
+            <a href="#" class="btn">Отмена</a>
+          </div>
 
-<tr>
-	<td colspan="2"><input type="submit"   value="Отправить" class="btn btn-primary" ></td>
-</tr>
 
-</table>
+</fieldset>
 {{/form}}
 <?php } ?>

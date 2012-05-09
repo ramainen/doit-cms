@@ -206,7 +206,7 @@ function admin_show_one_list($table,$id1,$id2)
 		$bottombuttons=d()->admin['bottombuttons'];
 
 		foreach($bottombuttons as $bottombutton) {
-			d()->list_addbutton.=' <a class="admin_button" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
+			d()->list_addbutton.=' <a class="btn" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
 		}
 	}
 
@@ -216,12 +216,12 @@ function admin_show_one_list($table,$id1,$id2)
 			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
 				$query='select * from '.DB_FIELD_DEL . et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL  order by '.DB_FIELD_DEL .'sort'.DB_FIELD_DEL;
-				d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. $table .'/add">Добавить</a>';
+				d()->list_addbutton='<a class="btn" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				if(is_numeric($id1)) {
 					$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL.' where '.DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1)." order by ".DB_FIELD_DEL. "sort".DB_FIELD_DEL;
-					d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
+					d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
 					$query='select * from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).")  order by ".DB_FIELD_DEL . "sort".DB_FIELD_DEL;
 					d()->list_addbutton=' ';
@@ -231,7 +231,7 @@ function admin_show_one_list($table,$id1,$id2)
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
 			$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL .' where '.DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2)."  order by ".DB_FIELD_DEL."sort".DB_FIELD_DEL;
-			d()->list_addbutton='<a class="admin_button" href="/admin/edit/'. h($table) .'/add?'.et($id1).'='.h($id2).'">Добавить</a>';
+			d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.et($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}
 	print '<!-- '.$query.' -->';
@@ -255,7 +255,7 @@ function admin_show_one_list($table,$id1,$id2)
 		foreach($all_lines as $key0=> $line){
 			$all_lines[$key0]['addbuttons']='';
 			foreach($addbuttons as $key => $value) {
-				$all_lines[$key0]['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="admin_button">'.$value[1].'</a> ';
+				$all_lines[$key0]['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="btn btn-mini">'.$value[1].'</a> ';
 			}
 			if (empty($line['sort'])) {
 				//ВНЕЗАПНО сортировка пустая
@@ -539,6 +539,9 @@ function admin_get_fields($tableortype='')
 function admin_scaffold_new()
 {
 	if(d()->validate('admin_scaffold_create')){
+		
+		$result_messages='';
+		
 		$table=d()->params['name'];
 		$one_element=to_o(d()->params['name']);
 		$_first_letter=strtoupper(substr($one_element,0,1));
@@ -554,25 +557,25 @@ function admin_scaffold_new()
 		//Создание таблицы
 		if(d()->params['create_table']=='yes') {
 		
-			print "Создаём таблицу ".h($table)."... ";
+			$result_messages .= "Создаём таблицу ".h($table)."... ";
 			
 			$result = d()->Scaffold->create_table($table,$one_element);
 			if($result!==false){
-				print "<span style='color:#198E58'>готово</span><br>";
+				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
-				print "<span style='color:#B01414'>неудачно</span><br>";
+				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
 		
 		//Создание папки для модуля
 		if(d()->params['create_show']=='yes' || d()->params['create_list']=='yes' || d()->params['create_model']=='yes' ) {
-			print "Создаём папку mod_".h($table)."... ";
+			$result_messages .=  "Создаём папку mod_".h($table)."... ";
 			$result=mkdir($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table);
  
 			if($result){
-				print "<span style='color:#198E58'>готово</span><br>";
+				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
-				print "<span style='color:#B01414'>неудачно</span><br>";
+				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
 		
@@ -582,14 +585,14 @@ function admin_scaffold_new()
 		//Создание файла с контроллером
 		if((d()->params['create_show']=='yes' || d()->params['create_list']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
 
-			print "Создаём файл mod_".h($table)."/".h(et($table)).".func.php... ";
+			$result_messages .=  "Создаём файл mod_".h($table)."/".h(et($table)).".func.php... ";
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','w+');
 			$t_result = fwrite($result,"<"."?php\r\n\r\n");
 			fclose($result);
 			if($result!=='false' && $t_result!=='false'){
-				print "<span style='color:#198E58'>готово</span><br>";
+				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
-				print "<span style='color:#B01414'>неудачно</span><br>";
+				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
 		
@@ -600,14 +603,14 @@ function admin_scaffold_new()
 				
 				$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
 				if(false===strpos($check,$table."_show")){
-					print "Создаём функцию  ".h($table)."_show... ";
+					$result_messages .=  "Создаём функцию  ".h($table)."_show... ";
 					$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','a');
 					$t_result = fwrite($result,$scaffold_templates["show_controller_func"]);
 					fclose($result);
 					if($result!=='false' && $t_result!=='false'){
-						print "<span style='color:#198E58'>готово</span><br>";
+						$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 					} else {
-						print "<span style='color:#B01414'>неудачно</span><br>";
+						$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 					}
 				}
 			}
@@ -616,14 +619,14 @@ function admin_scaffold_new()
 				
 				$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
 				if(false===strpos($check,$table."_index")){
-					print "Создаём функцию  ".h($table)."_index... ";
+					$result_messages .=  "Создаём функцию  ".h($table)."_index... ";
 					$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','a');
 					$t_result = fwrite($result,$scaffold_templates["list_controller_func"]);
 					fclose($result);
 					if($result!=='false' && $t_result!=='false'){
-						print "<span style='color:#198E58'>готово</span><br>";
+						$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 					} else {
-						print "<span style='color:#B01414'>неудачно</span><br>";
+						$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 					}
 				}
 			}
@@ -635,14 +638,14 @@ function admin_scaffold_new()
 				
 				$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
 				if(false===strpos($check,$controller_name."Controller")){
-					print "Создаём и открываем класс  ".h($controller_name)."Controller... ";
+					$result_messages .=  "Создаём и открываем класс  ".h($controller_name)."Controller... ";
 					$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','a');
 					$t_result = fwrite($result,$scaffold_templates["controller_start"]);
 					
 					if($result!=='false' && $t_result!=='false'){
-						print "<span style='color:#198E58'>готово</span><br>";
+						$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 					} else {
-						print "<span style='color:#B01414'>неудачно</span><br>";
+						$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 					}
 					
 
@@ -652,12 +655,12 @@ function admin_scaffold_new()
 						
 						$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
 						if(false===strpos($check,"show(")){
-							print "Создаём метод show... ";
+							$result_messages .=  "Создаём метод show... ";
 							$t_result = fwrite($result,$scaffold_templates["show_controller_method"]);
 							if($result!=='false' && $t_result!=='false'){
-								print "<span style='color:#198E58'>готово</span><br>";
+								$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 							} else {
-								print "<span style='color:#B01414'>неудачно</span><br>";
+								$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 							}
 						}
 					}
@@ -666,23 +669,23 @@ function admin_scaffold_new()
 						
 						$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
 						if(false===strpos($check,"index(")){
-							print "Создаём метод index... ";
+							$result_messages .=  "Создаём метод index... ";
 							$t_result = fwrite($result,$scaffold_templates["list_controller_method"]);
 							if($result!=='false' && $t_result!=='false'){
-								print "<span style='color:#198E58'>готово</span><br>";
+								$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 							} else {
-								print "<span style='color:#B01414'>неудачно</span><br>";
+								$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 							}
 						}
 					}					
 					
-					print "Закрываем класс  ".h($controller_name)."Controller... ";
+					$result_messages .=  "Закрываем класс  ".h($controller_name)."Controller... ";
 					$t_result = fwrite($result,$scaffold_templates["controller_end"]);
 
 					if($result!=='false' && $t_result!=='false'){
-						print "<span style='color:#198E58'>готово</span><br>";
+						$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 					} else {
-						print "<span style='color:#B01414'>неудачно</span><br>";
+						$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 					}
 					
 					fclose($result);
@@ -695,41 +698,41 @@ function admin_scaffold_new()
 		
 		
 		if((d()->params['create_show']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_show.html')) {
-			print "Создаём файл mod_".h($table)."/_show.html... ";
+			$result_messages .=  "Создаём файл mod_".h($table)."/_show.html... ";
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_show.html','w');
 			$t_result = fwrite($result,$scaffold_templates["show_template"]);
 			fclose($result);
 			if($result!=='false' && $t_result!=='false'){
-				print "<span style='color:#198E58'>готово</span><br>";
+				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
-				print "<span style='color:#B01414'>неудачно</span><br>";
+				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
 		
 
 		
 		if((d()->params['create_list']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_index.html')) {
-			print "Создаём файл mod_".h($table)."/_index.html... ";
+			$result_messages .=  "Создаём файл mod_".h($table)."/_index.html... ";
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_index.html','w');
 			$t_result = fwrite($result,$scaffold_templates["list_template"]);
 			fclose($result);
 			if($result!=='false' && $t_result!=='false'){
-				print "<span style='color:#198E58'>готово</span><br>";
+				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
-				print "<span style='color:#B01414'>неудачно</span><br>";
+				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
 		
 		
 		if((d()->params['create_fields']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/fields/'.$table.'.ini')) {
-			print 'Создаём файл fields/'.$table.'.ini... ';
+			$result_messages .=  'Создаём файл fields/'.$table.'.ini... ';
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/fields/'.$table.'.ini','w');
 			$t_result = fwrite($result,$scaffold_templates["field_template"]);
 			fclose($result);
 			if($result!=='false' && $t_result!=='false'){
-				print "<span style='color:#198E58'>готово</span><br>";
+				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
-				print "<span style='color:#B01414'>неудачно</span><br>";
+				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
 		
@@ -739,33 +742,34 @@ function admin_scaffold_new()
 			if(d()->params['create_type']=='func'){
 				$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini');
 				if(false===strpos($check,$table."_index") && false===strpos($check,$table."_show")){
-					print 'Записываем адреса в роутер... ';
+					$result_messages .=  'Записываем адреса в роутер... ';
 					$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini','a');
 					$t_result = fwrite($result,$scaffold_templates["router_template_func"]);
 					fclose($result);
 					if($result!=='false' && $t_result!=='false'){
-						print "<span style='color:#198E58'>готово</span><br>";
+						$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 					} else {
-						print "<span style='color:#B01414'>неудачно</span><br>";
+						$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 					}
 				}
 			}else{
 				$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini');
 				if(false===strpos($check,$table."_index") && false===strpos($check,$table."_show")){
-					print 'Записываем адреса в роутер... ';
+					$result_messages .=  'Записываем адреса в роутер... ';
 					$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/router.init.ini','a');
 					$t_result = fwrite($result,$scaffold_templates["router_template_oop"]);
 					fclose($result);
 					if($result!=='false' && $t_result!=='false'){
-						print "<span style='color:#198E58'>готово</span><br>";
+						$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 					} else {
-						print "<span style='color:#B01414'>неудачно</span><br>";
+						$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 					}
 				}			
 			}
 		}
 		
 	}
+	d()->result_messages = $result_messages ;
 	print d()->view();
 }
 

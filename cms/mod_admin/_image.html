@@ -1,6 +1,10 @@
-<tr>
-	<td>{title}</td>
-	<td><input type="text" name="{name}" id="element_{name}" value="{value|h}" class="admin_input ui-widget-content ui-corner-all" style="width:400px;">
+<div class="control-group">
+  <label class="control-label"  >{title}</label>
+  <div class="controls">
+	<input type="text"  name="{name}" value="{value|h}"  id="element_{name}" class="input-xlarge"  >
+ 
+ 
+ 
 
 		<iframe style="overflow:hidden;height:20px;width:80px;border:none;border:0;"  frameborder="0" border="0" src="/cms/mod_admin/imanager/button.htm?element=element_{name}&folder=<?=d()->field_params[3]?>&w=<?=d()->field_params[4]?>&h=<?=d()->field_params[5]?><?php
 			$j=1;
@@ -14,5 +18,11 @@
 		
 		?>"></iframe>
 
-	</td>
-</tr>
+		
+		
+ 
+  </div>
+</div>
+
+ 
+ 

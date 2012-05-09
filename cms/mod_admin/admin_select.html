@@ -4,10 +4,10 @@
 */
 	$_field=d()->field_params[1];
 ?>
-<tr>
-	<td>{title}</td>
-	<td>
-	<select   name="{name}"  class="admin_input ui-widget-content ui-corner-all" style="width:500px;">
+<div class="control-group">
+  <label class="control-label"  >{title}</label>
+  <div class="controls">
+	<select   name="{name}"  class="input-xlarge">
 		<?php
 		for($i=3;$i<=count(d()->field_params)-1;$i++) {
 		
@@ -41,6 +41,6 @@
 
 	</select>
 	 
-	</td>
-</tr>
+  </div>
+</div>
 

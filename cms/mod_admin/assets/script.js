@@ -25,15 +25,7 @@ $(function () {
 	 function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
 	 );
 	 */
-
-	$('.admin-link').hover(
-			function () {
-				$(this).removeClass('ui-state-default').addClass('ui-state-focus');
-			},
-			function () {
-				$(this).removeClass('ui-state-focus').addClass('ui-state-default');
-			}
-	);
+ 
 
 
 	
@@ -61,7 +53,7 @@ $(function () {
 		theme_advanced_resizing:true
 	});
 
-
+/*
 
 	$.datepicker.regional['ru'] = {
 		closeText: 'Закрыть',
@@ -82,10 +74,16 @@ $(function () {
 		showMonthAfterYear: false,
 		yearSuffix: ''};
 	$.datepicker.setDefaults($.datepicker.regional['ru']);
+*/
+	$('.admin_date').datepicker();
 
-	$('.admin_date').datepicker({dateFormat: 'dd.mm.yy',changeMonth: true, changeYear: true});
-
- 
+	$('.modal-edit-save').bind('click',function(){
+			if($('.edit_field_content').val().substr(0,14)!='[admin.fields]'){
+				$('.edit_field_content').val("[admin.fields]\n"+$('.edit_field_content').val());
+			}
+			$('.field_edit_dialog form').submit();
+			return false;
+	})
 });
 function create_field_template()
 {
@@ -110,9 +108,10 @@ function create_field_template()
 function show_field_editor()
 {
 	if($('.edit_field_content').val()==''){
+	
 		$('.field_template_question').show();
 	}
-	$('.field_edit_dialog').dialog({height:400,width:600,buttons: {
+	/*$('.field_edit_dialog').modal({height:400,width:600,buttons: {
 				
 				'Сохранить': function() {
 					if($('.edit_field_content').val().substr(0,14)!='[admin.fields]'){
@@ -124,6 +123,8 @@ function show_field_editor()
 				'Закрыть': function() {
 					$(this).dialog('close');
 				}
-			}});
+			}});*/
+			
+			$('.field_edit_dialog').modal()
 	return false;
 }
