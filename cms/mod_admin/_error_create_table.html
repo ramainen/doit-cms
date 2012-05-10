@@ -1,0 +1,16 @@
+ 
+	<h2 class="admin_h2">Ошибка</h2>
+
+		{{form 'admin_attempt_create_table'}}
+	<div class="alert alert-error"  >
+	 <b>Ошибка!</b> Таблица {missing_table|h} не найдена. Попробовать создать её?
+ <br><br>
+
+		<input type="submit" class="btn btn-primary"   value="Создать" role="button">
+
+		<input type="button" class="btn" onclick="window.open('','_self','');window.close();return false;" value="Отменить"  >
+		
+ 
+	</div>
+	 
+		{{/form}}
