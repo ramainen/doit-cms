@@ -12,78 +12,81 @@ class PluginInstaller extends UniversalSingletoneHelper
 			$zip->extractTo($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$plugin_folder);
 			$zip->close();
 			
-		
-		$standart_format=true;
-		$search_started=false;
-		$dir = $_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$plugin_folder;
-		$prefixlength = strlen($dir)+1;
-		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir),
-									  RecursiveIteratorIterator::SELF_FIRST);
-		foreach ($iterator as $path) {
+			
+			$standart_format=true;
+			$search_started=false;
+			$dir = $_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$plugin_folder;
+			$prefixlength = strlen($dir)+1;
+			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir),
+										  RecursiveIteratorIterator::SELF_FIRST);
+			foreach ($iterator as $path) {
 			
 		
-			
-			
-			$file=substr($path->__toString(),$prefixlength);
-			$plugin_file=$file;
-			$app_file=$file;
-			
-			if($search_started==false){
-				$search_started=true;
-				if($file==$plugin_folder){
-					$standart_format=false;
-					continue;
-				}
-			}
-			
-			$search_started=true; 
-			
-			if($standart_format==false){
-				$app_file = substr($app_file,strlen($plugin_folder)+1);
-			}
-			
-			if ($path->isDir()) {
-				//СОздание отсуствующих директорий
-				if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/'.$app_file)){
-					mkdir($_SERVER['DOCUMENT_ROOT'].'/'.$app_file);
-				}
-			} else {
-				if(substr($plugin_file,-5)=='.diff'){
-					$file_without_diff=substr($plugin_file,0,-5);
-					
-					$patch=file_get_contents($dir.'/'.$plugin_file);
-					$first_nl = strpos($patch,"\n");
-					$search_string=substr($patch,0,$first_nl);
-					$search_string=str_replace("\r","",$search_string);
-					
-					$replacement_string=substr($patch,$first_nl);
-
-					
-					$first_file=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/'.$file_without_diff);
-					
-					$first_file=preg_replace('/('.$search_string.')/i',"$1".$replacement_string,$first_file,1);
-					file_put_contents ( $_SERVER['DOCUMENT_ROOT'].'/'.$file_without_diff,$first_file);
-					
-					
-				} else {
-					copy($dir.'/'.$plugin_file,  $_SERVER['DOCUMENT_ROOT'].'/'.$app_file);
+				
+				
+				$file=substr($path->__toString(),$prefixlength);
+				$plugin_file=$file;
+				$app_file=$file;
+				
+				if($search_started==false){
+					$search_started=true;
+					if($file==$plugin_folder){
+						$standart_format=false;
+						continue;
+					}
 				}
 				
+				$search_started=true; 
+				
+				if($standart_format==false){
+					$app_file = substr($app_file,strlen($plugin_folder)+1);
+				}
+				
+				if ($path->isDir()) {
+					//СОздание отсуствующих директорий
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/'.$app_file)){
+						mkdir($_SERVER['DOCUMENT_ROOT'].'/'.$app_file);
+						chmod($_SERVER['DOCUMENT_ROOT'].'/'.$app_file, 0777);
+					}
+				} else {
+					if(substr($plugin_file,-5)=='.diff'){
+						$file_without_diff=substr($plugin_file,0,-5);
+						
+						$patch=file_get_contents($dir.'/'.$plugin_file);
+						$first_nl = strpos($patch,"\n");
+						$search_string=substr($patch,0,$first_nl);
+						$search_string=str_replace("\r","",$search_string);
+						
+						$replacement_string=substr($patch,$first_nl);
+
+						
+						$first_file=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/'.$file_without_diff);
+						
+						$first_file=preg_replace('/('.$search_string.')/i',"$1".$replacement_string,$first_file,1);
+						file_put_contents ( $_SERVER['DOCUMENT_ROOT'].'/'.$file_without_diff,$first_file);
+						chmod($_SERVER['DOCUMENT_ROOT'].'/'.$file_without_diff, 0777);
+						
+					} else {
+						copy($dir.'/'.$plugin_file,  $_SERVER['DOCUMENT_ROOT'].'/'.$app_file);
+						chmod($_SERVER['DOCUMENT_ROOT'].'/'.$app_file, 0777);
+					}
+					
+				}
 			}
-		}
-		 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir),
+			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir),
                                               RecursiveIteratorIterator::CHILD_FIRST);
 			foreach ($iterator as $path) {
-			  if ($path->isDir()) {
-				 rmdir($path->__toString());
-			  } else {
-				 unlink($path->__toString());
-			  }
+				if ($path->isDir()) {
+					rmdir($path->__toString());
+				} else {
+					unlink($path->__toString());
+				}
 			}
-			 rmdir($dir);
-			}
+		
+			rmdir($dir);
+		}
 			
-			 unlink($dir.'.zip');
+		unlink($dir.'.zip');
 	}
 	
 	
