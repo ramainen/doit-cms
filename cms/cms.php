@@ -1441,7 +1441,7 @@ function __autoload($class_name) {
 		require $fileName;
 	}else{
 		//Если совсем ничего не найдено, попытка использовать ActiveRecord.
-		eval ("class ".$class_name." extends ar {}");
+		eval ("class ".$class_name." extends ActiveRecord {}");
 	}
 
 }

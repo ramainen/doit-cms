@@ -328,12 +328,12 @@ function e($string)
 //получение множественного числа
 function to_o($plural)
 {
-	return ar::plural_to_one($plural);
+	return ActiveRecord::plural_to_one($plural);
 }
 //Получение единственного числа
 function to_p($one)
 {
-	return ar::one_to_plural($one);
+	return ActiveRecord::one_to_plural($one);
 }
 
 function to_camel($string)
