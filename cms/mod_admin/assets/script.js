@@ -134,6 +134,6 @@ function window_cancel()
 	if(window.opener){
 		 window.open('','_self','');window.close();
 	} else {
-		history.back();
+		history.history.go(-1);
 	}
 }
