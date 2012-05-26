@@ -73,6 +73,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 {
 	public $_options;
 	public $_data;
+	public $insert_id=false;
 	private $_used_tree_branches;
 	private $_shift = 0;
 	private $_known_columns=array();
@@ -337,6 +338,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$by=substr($name,8);
 			$this->_options['queryready']=false;
 			$this->_options['condition'] = array("( ".DB_FIELD_DEL .$by.DB_FIELD_DEL ." = ".doitClass::$instance->db->quote($arguments[0])." )");
+		}
+		if($name == 'new'){
+			$this->_options['new']=true;
+			$this->_future_data = array();
+			return $this;
 		}
 		return $this;
 	}
@@ -633,6 +639,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	public function save()  //CrUd - Create & Update
 	{
 		if($this->_options['new']==true) {
+			$this->insert_id=false;
 			//Тут идёт вставка
 			if(count($this->_future_data)>0) {
 				$fields=array();
@@ -667,11 +674,14 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 					
 				}
 				$attribute_string=implode (',',$attributes);
-				$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.$attribute_string." where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->_data[0]['id']."'";
+				$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.$attribute_string.", ". DB_FIELD_DEL ."updated_at". DB_FIELD_DEL ." = NOW()  where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->_data[0]['id']."'";
 
 			}
 		}
 		doitClass::$instance->db->exec($_query_string);
+		
+		
+		
 		$error_code=doitClass::$instance->db->errorInfo();
 		$error_code=$error_code[1];
 
@@ -683,6 +693,33 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				}
 			}
 			doitClass::$instance->db->exec($_query_string);
+		}
+		
+		
+		if($this->_options['new']==true) {
+			$this->insert_id = doitClass::$instance->db->lastInsertId();
+			$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.
+			DB_FIELD_DEL ."sort". DB_FIELD_DEL ." = '".$this->insert_id."', ".
+			DB_FIELD_DEL ."created_at". DB_FIELD_DEL ." = NOW(), ".
+			DB_FIELD_DEL ."updated_at". DB_FIELD_DEL ." = NOW() ".
+			"where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->insert_id."'";
+			doitClass::$instance->db->exec($_query_string);
+			
+ 
+			$error_code=doitClass::$instance->db->errorInfo();
+			$error_code=$error_code[1];
+			
+			if (1054 == $error_code) {
+				$list_of_existing_columns=$this->columns();
+				foreach(array('sort','created_at','updated_at') as  $value){
+					if(!in_array($value,$list_of_existing_columns)){
+						doitClass::$instance->Scaffold->create_field($this->_options['table'],$value);
+					}
+				}
+				
+				doitClass::$instance->db->exec($_query_string);
+			}
+			
 		}
 		$this->_future_data=array();
 		return $this;

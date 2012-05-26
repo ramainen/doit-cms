@@ -9,6 +9,8 @@ class Scaffold extends UniversalHelper
 			d()->db->exec("ALTER TABLE `".$table."` ADD COLUMN `$field` int NULL");
 		} elseif (substr($field,0,3)=='is_') {
 			d()->db->exec("ALTER TABLE `".$table."` ADD COLUMN `$field` tinyint(4) NOT NULL DEFAULT 0");
+		} elseif (substr($field,-3)=='_at') {
+			d()->db->exec("ALTER TABLE `".$table."` ADD COLUMN `$field` datetime NULL");
 		} else {
 			d()->db->exec("ALTER TABLE `".$table."` ADD COLUMN `$field` text NULL, DEFAULT CHARACTER SET=utf8");
 		}
