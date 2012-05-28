@@ -6,8 +6,10 @@
 	
 	header('Content-type: text/html; Charset=UTF-8');
 
-	print d()->main(); 
+	$result= d()->main(); 
 
 	
 	$exec_time = microtime(true) - $start_time;
-//	printf("<!-- %f seconds, %d bytes -->",$exec_time, memory_get_usage(true));
+	header("X-CMS-Runtime: {$exec_time}s, ". memory_get_usage(true).'b');
+	print $result;
+	
