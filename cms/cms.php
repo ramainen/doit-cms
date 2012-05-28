@@ -1259,8 +1259,7 @@ foreach($tmparr as $key=>$subval)
 	}
 /* ================================================================================= */
 	function shablonize($_str)
-	{
-		return  preg_replace($this->template_patterns,$this->template_replacements,$_str);	
+	{			return  preg_replace($this->template_patterns,$this->template_replacements,str_replace(array("\r\n","\r"),array("\n","\n"),$_str));	
 	}
 
 	/**

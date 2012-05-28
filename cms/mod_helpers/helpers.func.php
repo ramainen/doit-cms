@@ -259,6 +259,38 @@ function notice($params=array())
 	return $str;
 }
 
+function flash($params=array())
+{
+	
+	//Если пусто, не выводить
+	if(!isset($_SESSION['flash']) || $_SESSION['flash']=='' ){
+		return '';
+	}
+	$str='';
+	
+	if($params[0]=='bootstrap'){
+		//Пользуемся оттсестированной функцией tag()
+		if(!isset($params['style'])){
+			$params['style']='';
+			$params['class']='alert alert-info';
+		}
+		
+		$params[0]='div';
+		$str .= tag($params);
+		$str .=$_SESSION['flash'];
+	} else{
+		$params[0]='div';
+		$str .= tag($params);
+		if(!isset($params['style'])){
+			$params['style']='';
+		}
+		$str .=$_SESSION['flash'];
+	}
+	$str .= '</div>';
+	unset($_SESSION['flash']);
+	return $str;
+}
+
 function link_to($params)
 {
 	

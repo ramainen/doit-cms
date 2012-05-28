@@ -324,7 +324,8 @@ function admin_edit()
 		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
 		$fhandler=fopen($_SERVER['DOCUMENT_ROOT'].$filename,'w+');
 		fwrite($fhandler,$_POST['content']);
-		fclose($fhandler);		
+		fclose($fhandler);
+		chmod($_SERVER['DOCUMENT_ROOT'].$filename, 0777);
 		header('Location: '.$_SERVER['REQUEST_URI']);
 		exit();
 	}
@@ -618,6 +619,7 @@ function admin_scaffold_new()
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php','w+');
 			$t_result = fwrite($result,"<"."?php\r\n\r\n");
 			fclose($result);
+			chmod($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php', 0777);
 			if($result!=='false' && $t_result!=='false'){
 				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
@@ -731,6 +733,7 @@ function admin_scaffold_new()
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_show.html','w');
 			$t_result = fwrite($result,$scaffold_templates["show_template"]);
 			fclose($result);
+			chmod($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_show.html', 0777);
 			if($result!=='false' && $t_result!=='false'){
 				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
@@ -745,6 +748,7 @@ function admin_scaffold_new()
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_index.html','w');
 			$t_result = fwrite($result,$scaffold_templates["list_template"]);
 			fclose($result);
+			chmod($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/_index.html', 0777);
 			if($result!=='false' && $t_result!=='false'){
 				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
@@ -758,6 +762,7 @@ function admin_scaffold_new()
 			$result=fopen($_SERVER['DOCUMENT_ROOT'].'/app/fields/'.$table.'.ini','w');
 			$t_result = fwrite($result,$scaffold_templates["field_template"]);
 			fclose($result);
+			chmod($_SERVER['DOCUMENT_ROOT'].'/app/fields/'.$table.'.ini', 0777);
 			if($result!=='false' && $t_result!=='false'){
 				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {

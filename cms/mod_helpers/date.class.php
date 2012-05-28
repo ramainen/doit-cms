@@ -32,10 +32,16 @@ class Date extends UniversalHelper
 	public $month;
 	public $ru_month;
 	public $en_month;
+	public $ru_month_simple;
+	public $en_month_simple;
 	public $year;
 	public $day;
 	public $ru_months=array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
 	public $en_months=array('','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+	
+	public $ru_months_simple=array('','январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь');
+	public $en_months_simple=array('','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+	
 	function __construct($params=array(''))
 	{
 
@@ -70,6 +76,11 @@ class Date extends UniversalHelper
 		
 		$this->ru_month = $this->ru_months[$this->month];
 		$this->en_month = $this->en_months[$this->month];
+		$this->ru_month_simple = $this->ru_months_simple[$this->month];
+		$this->en_month_simple = $this->en_months_simple[$this->month];
+		
+		
+		
 	}
 
 	function to_russian()
