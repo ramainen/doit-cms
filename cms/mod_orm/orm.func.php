@@ -692,6 +692,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 					doitClass::$instance->Scaffold->create_field($this->_options['table'],$value);
 				}
 			}
+			foreach(array('sort','created_at','updated_at') as  $value){
+				if(!in_array($value,$list_of_existing_columns)){
+					doitClass::$instance->Scaffold->create_field($this->_options['table'],$value);
+				}
+			}
 			doitClass::$instance->db->exec($_query_string);
 		}
 		
