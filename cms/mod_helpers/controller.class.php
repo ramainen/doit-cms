@@ -1,6 +1,6 @@
 <?php
 
-class Controller
+class Controller extends UniversalSingletoneHelper
 {
 	function obj_name()
 	{
