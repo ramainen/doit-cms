@@ -1438,9 +1438,9 @@ foreach($tmparr as $key=>$subval)
 		}
 		if($url==false) {
 			$url=$_SERVER['REQUEST_URI'];
-			header('Location: '.$url);
-			exit();
-		}	
+		}
+		header('Location: '.$url);
+		exit();
 	}
 }
 
