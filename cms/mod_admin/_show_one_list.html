@@ -4,17 +4,24 @@
 <thead>
 	<tr>
 		<th width=50>ID</th>
-		<th>Заголовок</th>
-		<th>url</th>
+		<?php foreach(d()->datapool['admin']['columns'] as $col_name => $col_title){
+			print '<th>'.$col_title.'</th>';
+		} ?>
+		
+		
+		 
 		<th>Действие</th>
 	</tr>
 </thead>
 	<foreach objectrow>
 	<tr>
 		<td>{.id}</td>
-		<td>{.title}</td>
-		<?php /*<td><a href="/admin/show/{curr_table}/{.id}">{.title}</a></td>*/ ?>
-		<td>{.url}</td>
+		
+		<?php foreach(d()->datapool['admin']['columns'] as $col_name => $col_title){
+			print '<td>'.h(d()->this[$col_name]).'</td>';
+		} ?>
+		 
+		 
 		<td><a href="/admin/edit/{curr_table}/{.id}" class="btn btn-mini">Править</a> {.addbuttons}
 		<a href="/admin/delete/{curr_table}/{.id}" target="_blank"   class="btn btn-danger btn-mini"   ><i class="icon-remove icon-white"></i></a>
 		 

@@ -193,9 +193,16 @@ function admin_show_one_list($table,$id1,$id2)
 {
 	unset (d()->datapool['admin']['bottombuttons']);
 	unset (d()->datapool['admin']['addbuttons']);
+	unset (d()->datapool['admin']['columns']);
+
 	d()->curr_table=$table;
 	d()->load_and_parse_ini_file('app/fields/'.$table.'.ini');
 
+	if(!isset(d()->datapool['admin']['columns']) || !is_array(d()->datapool['admin']['columns']) || count(d()->datapool['admin']['columns'])==0){
+		d()->datapool['admin']['columns']=array();
+		d()->datapool['admin']['columns']['title']='Заголовок';
+		d()->datapool['admin']['columns']['url']='URL';
+	}
 	if ($id1=='') {
 		//list/goods     просто список всех полей
 		$query='select * from '.et($table).'   order by '.DB_FIELD_DEL.'sort'.DB_FIELD_DEL;
