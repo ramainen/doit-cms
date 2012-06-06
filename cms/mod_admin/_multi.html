@@ -1,0 +1,55 @@
+<?php
+if(!defined('MULTISITE') || MULTISITE!=true){
+	return '
+	<div class="control-group">
+  <label class="control-label"  >Мультисайтовость</label>
+  <div class="controls">
+  
+  <div class="span4 alert alert-info">
+  <i class="icon  icon-exclamation-sign"></i> Многосайтовость отключена. Для включения, пожалуйста, напишите<br>
+  <pre>define(\'MULTISITE\', true);</pre>
+
+  в файле config.php
+  </div>
+  </div>
+</div>
+	
+	';
+}
+
+ ?>
+<div class="control-group">
+  <label class="control-label"  >Мультисайтовость</label>
+  <div class="controls">
+  <label class="radio">
+	<input type="radio"  name="multi" value="1" <?php
+	if(!d()->admin_current_page_is_multi){
+		//print ' onclick="$(\'.multi_alert_info\').show();return false;" ';
+	}else{
+		print ' checked ';
+	}
+	?> onclick="$('#admin_potential_multi_domain').val('')">Мультисайтовая страница (на всех сайтах)
+  </label>
+  
+    <label class="radio">
+	<input type="radio"  name="multi" value="0"  <?php
+	if(!d()->admin_current_page_is_multi){
+		print ' checked ';
+	} 
+	?>  onclick="$('#admin_potential_multi_domain').val('{admin_potential_multi_domain}')">Односайтовая страница <?php if(d()->admin_multi_domain) { ?>(привязана к <b>{admin_multi_domain}</b>)<?php } ?>
+  </label>
+  <div class="span4 alert alert-info multi_alert_info" style="display:none;">
+  <i class="icon  icon-exclamation-sign"></i> Вы не можете превратить односайтовую страницу в мультисайтовую, так как Вы можете затереть информацию других сайтов в том случае, если такая страница уже имеется.
+  
+  <br>
+  Возможно, для этого необходимо удалить страницу, и создать многосайтовую страницу либо отредактировать существующую.<br>
+  <a href="/admin/delete/<?php print url(3) ?>/<?php print url(4) ?>" class="btn btn-danger"><i class="icon-trash icon-white"></i> Удалить</a>
+  
+ 
+  </div>
+  </div>
+</div>
+
+ <input type="hidden" id="admin_potential_multi_domain" name="data[multi_domain]" value="{admin_multi_domain}"> 
+
+ 

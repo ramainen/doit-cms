@@ -334,6 +334,7 @@ function admin_edit()
 	$rows=array();
 	$scenario=0;
 	$tableortype = url(3);
+	d()->admin_potential_multi_domain = SERVER_NAME;
 	//Перенаправление
 	if(!is_numeric(url(4)) && url(4)!='add'){
 			$scenario=1;
@@ -398,6 +399,21 @@ function admin_edit()
 		}
 		if (isset($line[$field['name']])) {
 			d()->value=$line[$field['name']];
+		}
+		//Мультисайтовость
+		
+		if($field['type']=='multi'){
+
+			//d()->admin_current_page_is_multi = true;
+			if(isset($line['multi_domain']) && $line['multi_domain']!=''){
+				d()->admin_current_page_is_multi = false;
+				d()->admin_multi_domain = $line['multi_domain'];
+				d()->admin_potential_multi_domain = $line['multi_domain'];
+			}else{
+				d()->admin_current_page_is_multi = true;
+			}
+
+			
 		}
 		$rows[]=d()->call('admin_'.$field['type']);
 	}	

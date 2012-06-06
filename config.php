@@ -12,6 +12,8 @@ if($_SERVER["SERVER_ADDR"]=='127.0.0.1' || $_SERVER["SERVER_ADDR"]=='192.168.0.1
 	define('DB_PASSWORD','');
 }
 
+define('MULTISITE',true);
+
 /*
 define('DB_TYPE','pgsql');
 define('DB_HOST','localhost');

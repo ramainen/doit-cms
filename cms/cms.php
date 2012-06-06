@@ -477,7 +477,13 @@ foreach($tmparr as $key=>$subval)
 		
 		$_files=array();
 		//сначала инициализируются файлы из ./cms, затем из ./app
-		foreach(array('cms','app') as $dirname) { 
+		$_work_folders = array('cms','app');
+		
+		define('SERVER_NAME',preg_replace('/^www./i','',$_SERVER['SERVER_NAME']));
+		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/sites/'.SERVER_NAME)){
+			$_work_folders[]='sites/'.SERVER_NAME;
+		}
+		foreach($_work_folders as $dirname) { 
 			$_files[$dirname]['/']=array();
 			$_handle = opendir($dirname);
 
@@ -495,10 +501,9 @@ foreach($tmparr as $key=>$subval)
 			}
 			closedir($_handle);
 		}
-
 		$for_include=array();
 		$for_ini=array();
-		foreach(array('cms','app') as $dirname) {
+		foreach($_work_folders as $dirname) {
 			foreach($_files[$dirname] as $_dir => $_subfiles) {
 				foreach($_subfiles as $_file) {
 
@@ -545,7 +550,7 @@ foreach($tmparr as $key=>$subval)
 				}
 			}
 		}
- 
+		
 		foreach($this->for_include as $value) {
 			include($value);
 		}

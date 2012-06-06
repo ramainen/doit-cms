@@ -313,21 +313,23 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 		if (is_numeric($id)) {
 			$this->_options['id']=(int)$id;
-			$this->_options['queryready']=false;
 			$id = 1 * $id;
-			$this->_options['condition'] = array ('( id = '.(int)$id.' )');
+			$this->find_by('id',(int)$id);
 		} else {
-			$this->_options['queryready']=false;
-			$name = doitClass::$instance->db->quote($id);
-			$this->_options['condition']=   array ("( ". DB_FIELD_DEL .$this->_options['namefield'].DB_FIELD_DEL . " = ". $name ." )");
+			$this->find_by($this->_options['namefield'], $id);
 		}
-		$this->order_by('')->limit(1);
+		$this->limit(1);
 		return $this;
 	}
 	
 	public function find_by($by,$what)
 	{
 		$this->_options['queryready']=false;
+		if(defined('MULTISITE') &&  MULTISITE==true && ($this->_options['namefield'] == $by || $by=='id')){
+			$this->order_by('multi_domain DESC');
+		}elseif ($this->_options['namefield'] == $by || $by=='id'){
+			$this->order_by('');
+		}
 		$this->_options['condition'] = array("( ".DB_FIELD_DEL .$by. DB_FIELD_DEL . " = ".doitClass::$instance->db->quote($what)." )");
 		return $this;
 	}
@@ -336,8 +338,8 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 		if(substr($name,0,8)=='find_by_') {
 			$by=substr($name,8);
-			$this->_options['queryready']=false;
-			$this->_options['condition'] = array("( ".DB_FIELD_DEL .$by.DB_FIELD_DEL ." = ".doitClass::$instance->db->quote($arguments[0])." )");
+			$what=$arguments[0];
+			$this->find_by($by,$what);
 		}
 		if($name == 'new'){
 			$this->_options['new']=true;
@@ -562,6 +564,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$_query_string .= ' SQL_CALC_FOUND_ROWS ';
 		}
 		$_query_string .= ' ' . $this->_options['select'] . ' FROM '.DB_FIELD_DEL.''.$this->_options['table'].''.DB_FIELD_DEL.' ';
+		
+		if(defined('MULTISITE') &&  MULTISITE==true){
+			$this->_options['condition'][] =   "( multi_domain = '". SERVER_NAME ."' or multi_domain = '' or multi_domain is null )";
+		}
+		
 		if(count($this->_options['condition'])>0) {
 			$_condition = implode(' AND ',$this->_options['condition']);
 			$_query_string .= 'WHERE '.$_condition;
