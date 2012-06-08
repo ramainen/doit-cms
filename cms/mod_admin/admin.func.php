@@ -342,6 +342,7 @@ function admin_edit()
 	$scenario=0;
 	$tableortype = url(3);
 	d()->admin_potential_multi_domain = SERVER_NAME;
+	d()->admin_multi_domain_title = SERVER_NAME;
 	//Перенаправление
 	if(!is_numeric(url(4)) && url(4)!='add'){
 			$scenario=1;
@@ -450,6 +451,13 @@ function admin_edit()
 		d()->tabletitle = 'Добавление нового элемента';
 	}
 	d()->tablerow = $rows;
+	if(d()->admin_multi_domain){
+		d()->admin_multi_domain_title = d()->admin_multi_domain;
+	}
+	/*if(d()->admin_potential_multi_domain)
+	{
+		d()->admin_multi_domain_title = d()->admin_potential_multi_domain;
+	}*/
 	print d()->view(); //Эту функцию можно переопределять
 }
 

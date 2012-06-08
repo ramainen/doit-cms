@@ -14,7 +14,8 @@
 <?php } else { ?>
 	{{form 'admin_save_data', 'class'=>"form-horizontal admin_edit_form"}}
 	<fieldset>
-		<?php  if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/')===false || (strpos($_SERVER['HTTP_REFERER'],$_SERVER['REQUEST_URI'])!==false)) { ?>
+	<?php /*  Страница НЕ закрывается в случаях: 1. отсуствие реферера  */ ?>
+		<?php  if( strpos($_SERVER['HTTP_REFERER'],'/admin/')===false  ) { ?>
 			<input type="hidden" name="admin_command_redirect_close" value="yes">
 		<?php } ?>
 
