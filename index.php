@@ -7,7 +7,7 @@
 	header('Content-type: text/html; Charset=UTF-8');
 
 	/*
-	//Âàğèàíò äëÿ âêëş÷åíèÿ ìîäóëÿ SEO
+	//Ğ’Ğ°Ñ€Ğ¸Ğ°Ğ½Ñ‚ Ğ´Ğ»Ñ Ğ²ĞºĞ»ÑÑ‡ĞµĞ½Ğ¸Ñ Ğ¼Ğ¾Ğ´ÑƒĞ»Ñ SEO
 	d()->Seo->init();
 	$result= d()->Seo->process(d()->main());
 	*/
