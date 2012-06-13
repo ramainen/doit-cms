@@ -11,7 +11,7 @@
 	d()->Seo->init();
 	$result= d()->Seo->process(d()->main());
 	*/
-	d()->main();
+	print d()->main();
 	
 	$exec_time = microtime(true) - $start_time;
 	header("X-CMS-Runtime: {$exec_time}s, ". memory_get_usage(true).'b');
