@@ -845,6 +845,7 @@ function admin_scaffold_install_plugin()
 	if(!iam('developer')){ 
 		return 'Устанавливать расширения могут только разработчики';
 	}
+	set_time_limit(0);
 	if(d()->validate('admin_scaffold_install_plugin')) {
 		
 		$plugin=d()->params['plugin'];
@@ -867,15 +868,17 @@ function admin_update_system()
 	if(!iam('developer')){ 
 		return 'Устанавливать обновления могут только разработчики';
 	}
+	
+	set_time_limit(0);
 	if(d()->validate('admin_update_system')) {
-		
+		$_SESSION['renamed_cms']='';	
 		if(d()->PluginInstaller->update_cms()){
 			d()->message='Процесс обновления проведён';
 			if(d()->params['leave_old_cms'] == 'yes'){
-			d()->message .= '<br>Резервная копия сохранена';
+			d()->message .= '<br>Резервная копия сохранена в папке '.d()->renamed_cms;
 			} else {
 				d()->PluginInstaller->delete_backup_cms();
-				d()->message .= '<br>Резервная копия удалена';
+			//	d()->message .= '<br>Резервная копия удалена';
 			}
 		} else {
 			d()->message='Процесс обновления прошёл неудачно. Проверьте ваше соединение к Интернету и права на запись.';

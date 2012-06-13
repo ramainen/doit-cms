@@ -147,6 +147,7 @@ class PluginInstaller extends UniversalSingletoneHelper
 			
 			//Эту папку можно сохранить при желании
 			d()->renamed_cms = $_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d-').'-'.time();
+			$_SESSION['renamed_cms']=  $_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d-').'-'.time();
 			if(!copy_r($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name . '/' . $container . '/cms' , $_SERVER['DOCUMENT_ROOT'].'/cms' )) {
 				$ok=false;
 			}

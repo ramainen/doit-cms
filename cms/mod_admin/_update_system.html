@@ -30,12 +30,14 @@ $(function(){
 <div class="row"> 
  
 
-	<div class="span4" >
+	<div class="span6" >
 	<div class="well">
 		{{form 'admin_update_system'}}
 			
+			
 			Последняя версия ядра будет загружена с репозитория, папка <b>cms</b> будет удалена и заменена на новую.<br>
-			<label class="checkbox">{{input 'leave_old_cms', 'value'=>'yes', 'type'=>'checkbox'}} Оставить резервную копию папки <b>cms</b></label>
+			Возможные изменения в остальных директориях и файлах затронуты не будут. Для информации о изменениях в новых версиях читайте новости на сайте системы.<br>
+			<!-- <label class="checkbox">{{input 'leave_old_cms', 'value'=>'yes', 'type'=>'checkbox'}} Оставить резервную копию папки <b>cms</b></label> -->
 			<hr>
 			Вы уверены в том, что делаете?
 			<input type="submit" value="Да" class="btn btn-primary">
