@@ -102,4 +102,110 @@ class PluginInstaller extends UniversalSingletoneHelper
 	{
 		return json_decode(file_get_contents( $this->download_url));
 	}
+	
+	
+	function update_cms()
+	{
+		$ok=true;
+		$name = 'cms'.date('Y-m-d-').time();
+		
+		$url='http://github.com/ramainen/doit-cms/zipball/master';
+		$result=$_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name .'.zip';
+		file_put_contents($result,file_get_contents($url));
+		chmod($result, 0777);
+		 
+		
+		$zip = new ZipArchive;
+		if ($zip->open( $result) === TRUE) {
+			$zip->extractTo($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name);
+			chmod($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name, 0777);
+			$zip->close();
+			
+			
+			$container = '';
+			$dir_reader = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name);
+				while($file = readdir($dir_reader)){
+					if ($file != '.' && $file != '.'){
+						$container = $file;
+					}
+				}
+				if($container == ''){
+					$ok=false;	
+				}
+
+			if($ok==false){
+				return false;
+			}
+
+			if(!rename($_SERVER['DOCUMENT_ROOT'].'/cms',$_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d-').'-'.time())){
+				$ok=false;	
+			}
+			
+			if($ok==false){
+				return false;
+			}
+			
+			//Эту папку можно сохранить при желании
+			d()->renamed_cms = $_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d-').'-'.time();
+			if(!copy_r($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name . '/' . $container . '/cms' , $_SERVER['DOCUMENT_ROOT'].'/cms' )) {
+				$ok=false;
+			}
+			
+			if($ok==false){
+				return false;
+			}
+			
+			
+			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name),
+                                              RecursiveIteratorIterator::CHILD_FIRST);
+			foreach ($iterator as $path) {
+				if ($path->isDir()) {
+					rmdir($path->__toString());
+				} else {
+					unlink($path->__toString());
+				}
+			}
+		
+			rmdir($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name);
+			unlink($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name .'.zip');
+			
+		}else{
+			$ok=false;
+		}
+		return $ok;
+	}
+	
+	
+	 
+
+}
+
+function copy_r( $path, $dest ) {
+	if( is_dir($path) ) {
+		if(!mkdir( $dest )){
+			return false;
+		}
+		chmod($dest , 0777);
+		$objects = scandir($path);
+		if( sizeof($objects) > 0 ) {
+		
+			foreach( $objects as $file ) {
+				if( $file == "." || $file == ".." ) {
+					continue;
+				}
+				
+				if( is_dir( $path.DIRECTORY_SEPARATOR.$file ) ) {
+					copy_r( $path.DIRECTORY_SEPARATOR.$file, $dest.DIRECTORY_SEPARATOR.$file );
+				} else {
+					copy( $path.DIRECTORY_SEPARATOR.$file, $dest.DIRECTORY_SEPARATOR.$file );
+					chmod($dest.DIRECTORY_SEPARATOR.$file  , 0777);
+				}
+			}
+		}
+		return true;
+	} elseif( is_file($path) ) {
+		return copy($path, $dest);
+	} else {
+		return false;
+	}
 }

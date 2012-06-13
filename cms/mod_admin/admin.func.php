@@ -862,6 +862,33 @@ function admin_scaffold_install_plugin()
 }
 
 
+function admin_update_system()
+{
+	if(!iam('developer')){ 
+		return 'Устанавливать обновления могут только разработчики';
+	}
+	if(d()->validate('admin_update_system')) {
+		
+		if(d()->PluginInstaller->update_cms()){
+			d()->message='Процесс обновления проведён';
+			if(d()->params['leave_old_cms'] == 'yes'){
+			d()->message .= '<br>Резервная копия сохранена';
+			} else {
+				d()->PluginInstaller->delete_backup_cms();
+				d()->message .= '<br>Резервная копия удалена';
+			}
+		} else {
+			d()->message='Процесс обновления прошёл неудачно. Проверьте ваше соединение к Интернету и права на запись.';
+		}
+		
+		
+	}
+	
+	
+	print d()->view();
+}
+
+
 //Открытие шаблона либо вывод формы авторизации
 function admin()
 {

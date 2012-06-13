@@ -1,0 +1,54 @@
+ 
+
+<h1>Обновление системы</h1>
+
+<?php if(d()->message){ ?>
+
+
+<div class="modal fade" id="message_modal">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Результаты</h3>
+  </div>
+  <div class="modal-body">
+    <p>{message}</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">OK</a>
+    
+  </div>
+</div>
+<script>
+$(function(){
+	$('#message_modal').modal()
+})
+</script>
+<?php } ?>
+
+<div class="row">
+<div class="span12" >
+<div class="row"> 
+ 
+
+	<div class="span4" >
+	<div class="well">
+		{{form 'admin_update_system'}}
+			
+			Последняя версия ядра будет загружена с репозитория, папка <b>cms</b> будет удалена и заменена на новую.<br>
+			<label class="checkbox">{{input 'leave_old_cms', 'value'=>'yes', 'type'=>'checkbox'}} Оставить резервную копию папки <b>cms</b></label>
+			<hr>
+			Вы уверены в том, что делаете?
+			<input type="submit" value="Да" class="btn btn-primary">
+			
+		{{/form}}
+		
+	</div>
+	</div>
+ 
+		<div class="clear"></div>
+	 
+ 
+
+	</div>
+</div>
+</div>
