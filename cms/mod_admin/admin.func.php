@@ -871,19 +871,36 @@ function admin_update_system()
 	
 	set_time_limit(0);
 	if(d()->validate('admin_update_system')) {
-		$_SESSION['renamed_cms']='';	
-		if(d()->PluginInstaller->update_cms()){
-			d()->message='Процесс обновления проведён';
-			if(d()->params['leave_old_cms'] == 'yes'){
-			d()->message .= '<br>Резервная копия сохранена в папке '.d()->renamed_cms;
+		
+		if(d()->params['i_am_sure']=='yes'){
+			$_SESSION['renamed_cms']='';	
+			if(d()->PluginInstaller->update_cms()){
+				d()->message='Процесс обновления проведён';
+				d()->message .= '<br>Резервная копия сохранена в папке '.d()->renamed_cms;
 			} else {
-				d()->PluginInstaller->delete_backup_cms();
-			//	d()->message .= '<br>Резервная копия удалена';
+				d()->message='Процесс обновления прошёл неудачно. Проверьте ваше соединение к Интернету и права на запись.';
 			}
 		} else {
-			d()->message='Процесс обновления прошёл неудачно. Проверьте ваше соединение к Интернету и права на запись.';
+			d()->message='Похоже, Вы не уверены в том, что делаете. Обновление отменено.';
 		}
 		
+	}
+
+	if(d()->validate('admin_update_system_delete_backup')) {
+		
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($_SESSION['renamed_cms']),
+													  RecursiveIteratorIterator::CHILD_FIRST);
+		foreach ($iterator as $path) {
+			if ($path->isDir()) {
+				rmdir($path->__toString());
+			} else {
+				unlink($path->__toString());
+			}
+		}			
+		rmdir($_SESSION['renamed_cms']);
+		unset($_SESSION['renamed_cms']);
+		d()->message='Резервная копия удалена.';
+		 
 		
 	}
 	

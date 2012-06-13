@@ -35,21 +35,44 @@ $(function(){
 		{{form 'admin_update_system'}}
 			
 			
-			Последняя версия ядра будет загружена с репозитория, папка <b>cms</b> будет удалена и заменена на новую.<br>
+			Последняя версия ядра будет загружена с репозитория, папка <b>cms</b> будет переименована и заменена на новую.<br>
 			Возможные изменения в остальных директориях и файлах затронуты не будут. Для информации о изменениях в новых версиях читайте новости на сайте системы.<br>
 			<!-- <label class="checkbox">{{input 'leave_old_cms', 'value'=>'yes', 'type'=>'checkbox'}} Оставить резервную копию папки <b>cms</b></label> -->
 			<hr>
-			Вы уверены в том, что делаете?
-			<input type="submit" value="Да" class="btn btn-primary">
+			Вы уверены в том, что делаете?<br>
+			
+			<label class="checkbox">{{input 'i_am_sure', 'value'=>'yes', 'type'=>'checkbox'}} Да, я уверен в том, что я делаю</label><br>
+			
+			<input type="submit" value="Продолжить" class="btn btn-primary">
 			
 		{{/form}}
 		
 	</div>
 	</div>
+	<?php if(isset($_SESSION['renamed_cms']) && $_SESSION['renamed_cms']!=''){ ?>
+	
+
+		<div class="clear"></div>
+	 
+		 <div class="span6" >
+			<div class="well">
+				{{form 'admin_update_system_delete_backup'}}
+					
+					
+					После установки обновления осталась резервная копия старой папки (<?php print $_SESSION['renamed_cms'] ?>). Удалить её?
+					
+					<hr>
+					
+					<input type="submit" value="Да, удалить эту папку" class="btn btn-primary">
+					
+				{{/form}}
+				
+			</div>
+			</div>
  
 		<div class="clear"></div>
 	 
- 
+	<?php } ?>
 
 	</div>
 </div>

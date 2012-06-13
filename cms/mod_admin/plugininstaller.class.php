@@ -136,8 +136,9 @@ class PluginInstaller extends UniversalSingletoneHelper
 			if($ok==false){
 				return false;
 			}
-
-			if(!rename($_SERVER['DOCUMENT_ROOT'].'/cms',$_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d-').'-'.time())){
+			
+			$new_name = $_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d').'-'.time();
+			if(!rename($_SERVER['DOCUMENT_ROOT'].'/cms',$new_name)){
 				$ok=false;	
 			}
 			
@@ -146,8 +147,8 @@ class PluginInstaller extends UniversalSingletoneHelper
 			}
 			
 			//Эту папку можно сохранить при желании
-			d()->renamed_cms = $_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d-').'-'.time();
-			$_SESSION['renamed_cms']=  $_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d-').'-'.time();
+			d()->renamed_cms = $new_name;
+			$_SESSION['renamed_cms']=  $new_name;
 			if(!copy_r($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name . '/' . $container . '/cms' , $_SERVER['DOCUMENT_ROOT'].'/cms' )) {
 				$ok=false;
 			}
