@@ -26,6 +26,7 @@ class Scaffold extends UniversalHelper
 				`title`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
 				`template`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
 				`type`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+				`multi_domain`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
 				`sort`  int(11) NULL DEFAULT NULL ,
 				PRIMARY KEY (`id`)
 				)
@@ -41,6 +42,7 @@ class Scaffold extends UniversalHelper
 				`".$one_element."_id`  int(11) NULL DEFAULT NULL ,
 				`template`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
 				`type`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+				`multi_domain`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,				
 				`sort`  int(11) NULL DEFAULT NULL ,
 				PRIMARY KEY (`id`)
 				)
