@@ -119,18 +119,27 @@ class PluginInstaller extends UniversalSingletoneHelper
 		if ($zip->open( $result) === TRUE) {
 			$zip->extractTo($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name);
 			chmod($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name, 0777);
+			
+			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name),
+                                              RecursiveIteratorIterator::CHILD_FIRST);
+			foreach ($iterator as $path) {
+				chmod($path->__toString() , 0777);
+			}
+			
+			
 			$zip->close();
 			
 			
 			$container = '';
 			$dir_reader = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name);
 				while($file = readdir($dir_reader)){
-					if ($file != '.' && $file != '.'){
+					if ($file != '.' && $file != '..'){
 						$container = $file;
 					}
 				}
 				if($container == ''){
-					$ok=false;	
+					print 'Обновление завершилось неудачей  - в архиве не найдена система';
+					exit();
 				}
 
 			if($ok==false){
@@ -139,7 +148,8 @@ class PluginInstaller extends UniversalSingletoneHelper
 			
 			$new_name = $_SERVER['DOCUMENT_ROOT'].'/cms'.date('Y-m-d').'-'.time();
 			if(!rename($_SERVER['DOCUMENT_ROOT'].'/cms',$new_name)){
-				$ok=false;	
+				print 'Обновление завершилось неудачей на этапе переименования папки cms в резервную копию';
+				return false;
 			}
 			
 			if($ok==false){
@@ -151,6 +161,8 @@ class PluginInstaller extends UniversalSingletoneHelper
 			$_SESSION['renamed_cms']=  $new_name;
 			if(!copy_r($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name . '/' . $container . '/cms' , $_SERVER['DOCUMENT_ROOT'].'/cms' )) {
 				$ok=false;
+				print 'Обновление завершилось неудачей на этапе копирования папки cms в корень сайта';
+				exit();
 			}
 			
 			if($ok==false){
@@ -172,7 +184,8 @@ class PluginInstaller extends UniversalSingletoneHelper
 			unlink($_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/'.$name .'.zip');
 			
 		}else{
-			$ok=false;
+			print 'Обновление завершилось неудачей на этапе распаковки архива';
+			return false;
 		}
 		return $ok;
 	}
@@ -185,6 +198,7 @@ class PluginInstaller extends UniversalSingletoneHelper
 function copy_r( $path, $dest ) {
 	if( is_dir($path) ) {
 		if(!mkdir( $dest )){
+			print "Не удаётся создать директорию ".$dest ;
 			return false;
 		}
 		chmod($dest , 0777);
@@ -206,8 +220,14 @@ function copy_r( $path, $dest ) {
 		}
 		return true;
 	} elseif( is_file($path) ) {
-		return copy($path, $dest);
+		$fl	= copy($path, $dest);
+		chmod($dest  , 0777);
+		if(!$fl){
+			print "Не удаётся скопировать файл ".$dest ;
+		}
+		return $fl;
 	} else {
+		print "Не знаю, чем вы там занимаетесь, но Вы копируете не файл и не директорию (".$path  . ' копируется в '. $dest.') ';
 		return false;
 	}
 }
