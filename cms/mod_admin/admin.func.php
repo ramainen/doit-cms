@@ -632,7 +632,7 @@ function admin_scaffold_new()
 		if(d()->params['create_show']=='yes' || d()->params['create_list']=='yes' || d()->params['create_model']=='yes' ) {
 			$result_messages .=  "Создаём папку mod_".h($table)."... ";
 			$result=mkdir($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table);
- 
+			chmod($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table, 0777);
 			if($result){
 				$result_messages .=  "<span style='color:#198E58'>готово</span><br>";
 			} else {
