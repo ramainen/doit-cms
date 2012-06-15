@@ -20,11 +20,12 @@ class Seo extends UniversalSingletoneHelper
 
 	function init()
 	{
+		$request_uri = (urldecode($_SERVER['REQUEST_URI']));
 		$this->title = '';
 		$this->keywords = '';
 		$this->description = '';
 		$this->text = '';
-		$this->seo_object = d()->Seoparam->where('page_url = ?',$_SERVER['REQUEST_URI'])->order_by('multi_domain DESC');
+		$this->seo_object = d()->Seoparam->where('page_url = ?',$request_uri)->order_by('multi_domain DESC');
 		$this->seo_object_allsite = d()->Seoparam->where('page_url = ?','*')->order_by('multi_domain DESC');
 		if($this->seo_object->count == 0){
 			$this->seo_object = $this->seo_object_allsite;
