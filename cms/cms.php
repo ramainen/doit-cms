@@ -1391,6 +1391,10 @@ foreach($tmparr as $key=>$subval)
 	
 	function error($error_page)
 	{
+		if($error_page == '404'){
+			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found"); 
+			header("Status: 404 Not Found");
+		}
 		return d()->redirect('/error_'.$error_page);
 	}
 	

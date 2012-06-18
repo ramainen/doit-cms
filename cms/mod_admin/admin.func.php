@@ -498,7 +498,7 @@ function admin_save_data($params)
 			$params['url']=substr($params['url'],1);
 		}
 		
-		$params['url']=str_replace('/','_',$params['url']);
+		//$params['url']=str_replace('/','_',$params['url']);
 	}
 	$params['sort']=$elemid;
     $result_str="update `".et(url(3))."` set  ";
