@@ -395,7 +395,7 @@ function admin_edit()
 	//список элементов, для которых переопределелили скрытые параметры
 	//при помощи GET. Если их нет, то создаются новые скрытые е параметры.
 	$setted_flag=array();
-	
+	d()->row_data = $line;
 	foreach ($fields as $field) {
 		d()->title=$field['title'];
 		d()->name='data['.$field['name'].']';
