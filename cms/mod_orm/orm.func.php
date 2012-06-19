@@ -308,6 +308,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 		return $this->find($id)->me[0];
 	}
+	
+	public function init_seo()
+	{
+		d()->Seo->from_object($this);
+	}
 	//Функция find указывает на то, что необходимо искать нечто по полю ID
 	public function find($id)
 	{
