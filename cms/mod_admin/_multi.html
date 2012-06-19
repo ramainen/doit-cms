@@ -1,4 +1,7 @@
 <?php
+if((!defined('MULTISITE') || MULTISITE!=true) && iam('admin')){
+	return '';
+}
 if(!defined('MULTISITE') || MULTISITE!=true){
 	return '
 	<div class="control-group">
