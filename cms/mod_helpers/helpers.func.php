@@ -4,6 +4,21 @@
 function input ($params=array())
 {
 
+	 
+	
+	if(isset($params['type'])) {
+		$attr .= ' type="'.$params['type'].'" ';
+	} else {
+		$attr .= ' type="text" '; 
+	}
+	
+	
+	print '<input ' . inputparams($params) . ' >';
+}
+
+function inputparams($params=array())
+{
+
 	$cfo = d()->current_form_object;
 	$attr='';
 	if(isset($params['style'])) {
@@ -74,15 +89,6 @@ function input ($params=array())
 		$attr .= ' '.$params['attr'].' ';
 	}
 	
-	
-	
-	
-	if(isset($params['type'])) {
-		$attr .= ' type="'.$params['type'].'" ';
-	} else {
-		$attr .= ' type="text" '; 
-	}
-	
 	if(isset($params['value'])) {
 		$attr .= ' value="'.$params['value'].'" ';
 	}else{
@@ -97,7 +103,7 @@ function input ($params=array())
 		}
 	}
 	
-	print '<input ' . $attr . '>';
+	return ' ' . $attr . ' ';
 }
 
 
