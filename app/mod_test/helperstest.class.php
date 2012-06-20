@@ -196,6 +196,9 @@ class HelpersTest extends Test
 		
 		$this->assertEquals(d()->prepare_smart_array(" \"input\" class=\"admin\""),array('input','class'=>'admin'));
 		$this->assertEquals(d()->prepare_smart_array(" class = \"admin\" selected='false'"),array('class'=>'admin', 'selected'=>'false'));
+		$this->assertEquals(d()->prepare_smart_array('  "srok"  class = "textinput type3 inp11 col3 row8"'),array('srok', 'class'=>'textinput type3 inp11 col3 row8'));
+		
+		
 		
 	}
 	
