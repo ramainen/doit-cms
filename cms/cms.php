@@ -359,6 +359,10 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
 		$this->template_replacements[]='<'.'?php print $doit->call("$1",array(array($2))); ?'.'>';
 
+		// <@helper 'parame' param2 = 'any'>
+		$this->template_patterns[]='/<@([#a-zA-Z0-9_]+)\s+(.*?)>/';
+		$this->template_replacements[]='<'.'?php print $doit->call("$1",d()->prepare_smart_array(\'$2\')); ?'.'>';
+
 		
 		
 
@@ -1450,6 +1454,29 @@ foreach($tmparr as $key=>$subval)
 		}
 		header('Location: '.$url);
 		exit();
+	}
+	
+	
+	function prepare_smart_array($string)
+	{
+		$res=array();
+		$res_keyvalue=array();
+		$p_arr= array();
+		preg_match_all('/[\'\"]?([a-zA-Z0-9_]+)[\'\"]?\s*\=\s*[\'\"](.*?)[\'\"]/i',$string,$p_arr);
+		foreach($p_arr[1] as $key=>$value){
+			$res_keyvalue[$value] = $p_arr[2][$key];
+			$string = str_replace($p_arr[0][$key], '',$string);
+		}
+		$p_arr= array();
+		preg_match_all('/[\'\"]([a-zA-Z0-9_]*)[\'\"]/i',$string,$p_arr);
+		foreach($p_arr[1] as $key=>$value){
+			$res[] = $p_arr[1][$key];
+		}
+		foreach($res_keyvalue as $key=>$value){
+			$res[$key] = $value;
+		}
+		
+		return $res;
 	}
 }
 

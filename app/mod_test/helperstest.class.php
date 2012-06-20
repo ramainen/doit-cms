@@ -186,7 +186,19 @@ class HelpersTest extends Test
 		$_GET=$tmp2;
 	}
 
-
+	function test_nice_input()
+	{
+		
+		//$this->assertEquals(d()->prepare_smart_array(" 'asdasd' 'asdas'   'input' class = \"admin\" 'use' ='as asd asd asd'"),array('input','class'=>'admin'));
+		$this->assertEquals(d()->prepare_smart_array(" 'input' "),array('input'));
+		$this->assertEquals(d()->prepare_smart_array(" 'input' 'another' "),array('input','another'));
+		$this->assertEquals(d()->prepare_smart_array(" 'input' 'select' = '23'"),array('input','select'=>'23'));
+		
+		$this->assertEquals(d()->prepare_smart_array(" \"input\" class=\"admin\""),array('input','class'=>'admin'));
+		$this->assertEquals(d()->prepare_smart_array(" class = \"admin\" selected='false'"),array('class'=>'admin', 'selected'=>'false'));
+		
+	}
+	
 	
 }
  
