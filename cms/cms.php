@@ -361,9 +361,11 @@ foreach($tmparr as $key=>$subval)
 
 		// <@helper 'parame' param2 = 'any'>
 		$this->template_patterns[]='/<@([#a-zA-Z0-9_]+)\s+(.*?)>/';
-		$this->template_replacements[]='<'.'?php print $doit->call("$1",d()->prepare_smart_array(\'$2\')); ?'.'>';
+		$this->template_replacements[]='<'.'?php print $doit->call("$1",array(d()->prepare_smart_array(\'$2\'))); ?'.'>';
 
-		
+		// {{@helper 'parame' param2 = 'any'}}
+		$this->template_patterns[]='/\{{\@([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
+		$this->template_replacements[]='<'.'?php print $doit->call("$1",array(d()->prepare_smart_array(\'$2\'))); ?'.'>';
 		
 
 		
