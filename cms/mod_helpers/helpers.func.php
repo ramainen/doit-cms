@@ -3,16 +3,9 @@
 //helper input для отображения текстового поля
 function input ($params=array())
 {
-
-	 
-	
-	if(isset($params['type'])) {
-		$attr .= ' type="'.$params['type'].'" ';
-	} else {
-		$attr .= ' type="text" '; 
+	if(!isset($params['type'])) {
+		$params['type'] = 'text';
 	}
-	
-	
 	print '<input ' . inputparams($params) . ' >';
 }
 
@@ -28,6 +21,10 @@ function inputparams($params=array())
 	//TODO: проверка на класс error
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
+	}
+	
+	if(isset($params['type'])) {
+		$attr .= ' type="'.$params['type'].'" ';
 	}
 	
 	if(isset($params['title'])) {
