@@ -20,13 +20,17 @@ function edit($params=false){
 	if(isset($params['title'])) {
 		$attr .= ' title="'.$params['title'].'" ';
 	}
-	
+	if(isset($params['fields'])) {
+		$addition_params = '?fields='.$params['fields'];
+	}else{
+		$addition_params = '';
+	}	
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
 		
 
-	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id. $addition_params .'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 }
 
 /**
@@ -168,7 +172,12 @@ function admin_show()
 	unset (d()->datapool['admin']['bottombuttons']);
 	unset (d()->datapool['admin']['addbuttons']);
 	unset (d()->datapool['admin']['show']);
-	d()->load_and_parse_ini_file('app/fields/'.url(3).'.ini');
+	if (isset($_GET['fields']) && $_GET['fields']!=''){
+		$field = $_GET['fields'];
+	} else {
+		$field = url(3);
+	}
+	d()->load_and_parse_ini_file('app/fields/'.$field.'.ini');
 	if(!empty(d()->admin['show'])){
 		foreach(d()->admin['show'] as $value){
 
@@ -328,7 +337,12 @@ function admin_edit()
  </form>
 */
 	if(isset($_POST['admin_action']) && $_POST['admin_action']=='edit_field'){
-		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
+		if (isset($_GET['fields']) && $_GET['fields']!=''){
+			$field = $_GET['fields'];
+		} else {
+			$field = url(3);
+		}
+		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',$field))).'.ini';
 		$fhandler=fopen($_SERVER['DOCUMENT_ROOT'].$filename,'w+');
 		fwrite($fhandler,$_POST['content']);
 		fclose($fhandler);
@@ -377,6 +391,7 @@ function admin_edit()
 			return d()->admin_error_create_table_tpl();
 		}
 	}
+	
 	if(isset($line['type']) && $line['type']!='') {
 		$tableortype = to_p($line['type']);
 	}
@@ -384,6 +399,11 @@ function admin_edit()
 	if(isset($_GET['type']) && $_GET['type']!='') {
 		$tableortype = to_p($_GET['type']);
 	}
+	
+	if (isset($_GET['fields']) && $_GET['fields']!=''){
+		$tableortype = $_GET['fields'];
+	}
+	
 	$fields=d()->admin_get_fields($tableortype);
 	if(empty($fields)){
 		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
@@ -429,7 +449,7 @@ function admin_edit()
 	if(url(4)=='add' || $scenario==2) {
 		//Установка скрытых полей
 		foreach($_GET as $key=>$value) {
-			if (!isset($setted_flag[$key])) {
+			if (!isset($setted_flag[$key]) && $key!='fields') {
 				d()->name = 'data['.$key.']';		
 				d()->value = $value;
 				$rows[]=d()->call('admin_hidden');

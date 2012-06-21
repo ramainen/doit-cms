@@ -37,7 +37,11 @@
 
 
 <?php if(iam('developer') && url(1,2)=='admin/edit'){ 
-$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
+$fields =url(3);
+if (isset($_GET['fields']) && $_GET['fields']!=''){
+	$fields = $_GET['fields'];
+}
+$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',$fields))).'.ini';
 ?>
  <div class="field_edit_dialog modal fade " style="display:none"  >
  <div class="modal-header">
