@@ -84,7 +84,33 @@ $(function () {
 			$('.field_edit_dialog form').submit();
 			return false;
 	})
+	
+	
+	$('.input_elements input, .input_elements select, .input_elements textarea').on('change',function(){
+		rehide_containers();
+		
+	})
+	rehide_containers();
+	
+	
+	
+	
 });
+function rehide_containers(){
+	var element='';
+	var value='';
+	$('.hiddenable_container').each(function(){
+		element = $(this).data('element');
+		value = $(this).data('value');
+		if($('[name="data['+element+']"]').val() == value){
+			$(this).show();
+		} else {
+			$(this).hide();
+		}
+	
+	})
+}
+
 function create_field_template()
 {
 	$('.field_template_question').hide();
