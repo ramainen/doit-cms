@@ -127,6 +127,7 @@ function add($params){
 
 function sort_icon($params){
  
+ 
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
@@ -162,7 +163,7 @@ function sort_icon($params){
 	}
 	
 	$params_string .= '?sort=yes';
-	
+
 	print '<a href="/admin/list/'.$params[0].''.$params_string.'" '.$attr.' target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
 }
 
@@ -281,11 +282,17 @@ function admin_show_one_list($table,$id1,$id2)
 		}
 		$data = $all_lines;
 	}
-	
-	
-	foreach ($data as $key=>$value){
-		if($data[$key]['title']=='' && isset($data[$key]['ru_title']) && $data[$key]['ru_title']!=''){
-			$data[$key]['title']=$data[$key]['ru_title'];
+	$sort_title='';
+	if(isset(d()->admin['sortoptions']) && isset(d()->admin['sortoptions']['title'])){
+		$sort_title = d()->admin['sortoptions']['title'];
+		foreach ($data as $key=>$value){
+			$data[$key]['title']=$data[$key][$sort_title];
+		}
+	}  else {
+		foreach ($data as $key=>$value){
+			if($data[$key]['title']=='' && isset($data[$key]['ru_title']) && $data[$key]['ru_title']!=''){
+				$data[$key]['title']=$data[$key]['ru_title'];
+			}
 		}
 	}
 	
