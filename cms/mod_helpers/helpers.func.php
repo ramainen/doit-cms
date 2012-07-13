@@ -241,7 +241,7 @@ function notice($params=array())
 	}else{
 		//Пользуемся оттсестированной функцией tag()
 		if(!isset($params['style'])){
-			$params['style']='';
+			$params['style']='padding:15px;padding-left:25px;border:1px solid red;';
 		}
 		$params[0]='ul';
 		
