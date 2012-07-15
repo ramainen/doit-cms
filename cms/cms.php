@@ -509,7 +509,10 @@ foreach($tmparr as $key=>$subval)
 		}
 		$for_include=array();
 		$for_ini=array();
+		$ini_files_dirs=array();
+		$ini_files_local=array();
 		foreach($_work_folders as $dirname) {
+
 			foreach($_files[$dirname] as $_dir => $_subfiles) {
 				foreach($_subfiles as $_file) {
 
@@ -549,14 +552,36 @@ foreach($tmparr as $key=>$subval)
 						} else {
 							//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
 							//Хранит адрес ini-файла, запускаемого перед определённой функцией //DEPRECATED
-							$this->ini_database[substr($_file,0,-4)]=$dirname.$_dir.$_file;
+
+							$_dir_file=($_dir.$_file);
+
+							
+							//Реалзация приоритетов: одноимённый файл из папки app переопределит тотже из папки cms
+							if(isset($ini_files_dirs[$_dir_file])){
+								foreach($this->ini_database as $_key=> $_ininame){
+									foreach($_ininame as $key=>$value){
+										if($value==$ini_files_dirs[$_dir_file]){
+											unset($this->ini_database[$_key][$key]);
+										}
+									}
+								}
+							}
+							$ini_files_dirs[$_dir_file]=$dirname.$_dir.$_file;
+							if(isset($this->ini_database[substr($_file,0,-4)])){
+								$this->ini_database[substr($_file,0,-4)][]=$dirname.$_dir.$_file;
+							}else{
+								$this->ini_database[substr($_file,0,-4)]=array($dirname.$_dir.$_file);
+							}
 						}
 						continue;
 					}
 				}
 			}
+			
+			
+			
 		}
-		
+
 		foreach($this->for_include as $value) {
 			include($value);
 		}
@@ -583,8 +608,8 @@ foreach($tmparr as $key=>$subval)
 		unset($additional_funcs[0]);
 		$is_ok=true;
 		
-		if (isset($this->datapool['validator'][$validator_name])) {
-			$rules=$this->datapool['validator'][$validator_name];
+		if (isset($this->validator[$validator_name])) {
+			$rules=$this->validator[$validator_name];
 	//		if(!isset($this->datapool['notice'])) {
 				$this->datapool['notice']=array();
 	//		}
@@ -845,10 +870,7 @@ foreach($tmparr as $key=>$subval)
 		for($i=0;$i<=count($_newnames)-1;$i++) {
 			$_newname = $_newnames[$i];
 			//DEPRECATED - сделать явные вызовы
-			if (isset($this->ini_database[$_newname])) {
-				$this->load_and_parse_ini_file($this->ini_database[$_newname]);
-				unset ($this->ini_database[$_newname]);
-			}
+
 			$name=$_newname;
 			//Проверка на существование фрагмента fragment_tpl, если самой функции нет
 			if ( (!function_exists($name)) && (!isset($this->php_files_list[$name])) && (isset( $this->fragmentslist[$name."_tpl"]))) {
@@ -1080,6 +1102,7 @@ foreach($tmparr as $key=>$subval)
 		//Одиночная загрузка .ini файла при первом обращении к переменной
 		if (isset($this->ini_database[$name])) {
 			$this->load_and_parse_ini_file($this->ini_database[$name]);
+			
 			unset ($this->ini_database[$name]);
 		}
 		
@@ -1310,6 +1333,11 @@ foreach($tmparr as $key=>$subval)
 	 */
 	function load_and_parse_ini_file($filename){
 	 
+		if(is_array($filename)){
+			foreach($filename as $name){
+				$this->load_and_parse_ini_file($name);
+			}
+		}
 		if(!$ini=file($filename,FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) return false;
 		$res=array();
 		$currentGroup='';
