@@ -1201,7 +1201,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			return $this->expand_all_to(substr($name,14));
 		}
  		
-		return $this->get($name);
+		return $this->get($name,true);
 	}
 	
 	/* 
@@ -1216,7 +1216,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	}
 	print doitClass::$instance->User->find(1)->title;
 	*/
-	public function get($name)
+	public function get($name, $mutilang=false)
 	{
 
 		if ($this->_options['queryready']==false) {
@@ -1225,6 +1225,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		
 		if(isset($this->_future_data[$name])){
 			return $this->_future_data[$name];
+		}
+		
+		if($mutilang && doitClass::$instance->lang != '' && doitClass::$instance->lang!=''){
+			if (isset($this->_data[$this->_cursor]) && isset($this->_data[$this->_cursor][doitClass::$instance->lang.'_'.$name]) && $this->_data[$this->_cursor][doitClass::$instance->lang.'_'.$name]!='') {	
+				return $this->get(doitClass::$instance->lang.'_'.$name);
+			}
 		}
 		
 		if (isset($this->_data[$this->_cursor])) {
