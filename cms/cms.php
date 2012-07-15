@@ -821,14 +821,6 @@ foreach($tmparr as $key=>$subval)
 			return $content;
 		}
 		
-		//Одиночная загрузка .ini файла при первом обращении к функции
-		//Также мы можем вручную привязать ini-файл к любой функции/шаблону
-		//DEPRECATED - сделать явные вызовы
-		if (isset($this->ini_database[$name])) {
-			$this->load_and_parse_ini_file($this->ini_database[$name]);
-			unset ($this->ini_database[$name]);
-		}
-		
 		//DEPRECATED, отмена использования конструкции
 		/*
 		if (count($arguments)!=0 && is_array($arguments[0])) {
@@ -1085,6 +1077,12 @@ foreach($tmparr as $key=>$subval)
 	 */
 	function __get($name)
 	{
+		//Одиночная загрузка .ini файла при первом обращении к переменной
+		if (isset($this->ini_database[$name])) {
+			$this->load_and_parse_ini_file($this->ini_database[$name]);
+			unset ($this->ini_database[$name]);
+		}
+		
 		if(isset($this->datapool[$name])) {
 			return $this->datapool[$name];
 		}
