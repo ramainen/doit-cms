@@ -1,0 +1,40 @@
+<div class="control-group">
+ 
+  <label class="control-label"  >{title}</label>
+  <div class="controls">
+	<select   name="{name}"  class="input-xlarge">
+	<?php 
+	$_modelname=ActiveRecord::plural_to_one(strtolower(d()->field_params[3]));
+	$_first_letter=strtoupper(substr($_modelname,0,1));
+	$_modelname = $_first_letter.substr($_modelname,1);
+
+	d()->list_of_rows =  new $_modelname ();
+	 
+	?>
+	<foreach list_of_rows>
+	
+			<?php
+				$_id = d()->this->id;
+				$_title = d()->this->title;
+			?>
+			<option <?php 
+
+			if(!isset($_GET['$_field'])){
+				if(d()->value==$_id) {
+					print 'selected';
+				}
+			}else{
+				if($_GET['$_field']==$_id) {
+					print 'selected';
+				}
+			}
+			
+			?> value="<?=$_id ?>"><?=$_title?></option>
+		
+		
+	</foreach>
+	</select>
+	 
+  </div>
+</div>
+
