@@ -1241,11 +1241,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 					
 					if(isset($admin_options[$name])){
 						return preg_replace_callback(
-							'/\<img\ssrc=\"\/cms\/external\/tiny_mce\/plugins\/mymodules\/module\.php\?([\-\_0-9a-zA-Z\&]+)\=([\-\_0-9a-zA-Z\&]+)\"\s\/\>/',
+							'/\<img\ssrc=\"\/cms\/external\/tiny_mce\/plugins\/mymodules\/module\.php\?([\@\-\_0-9a-zA-Z\&]+)\=([\-\_0-9a-zA-Z\&]+)\"\s\/\>/',
 							create_function(
 								 
 								'$matches',
-								'return d()->call($matches[1],array($matches[2]));'
+								'return d()->call(str_replace("@","#",$matches[1]),array($matches[2]));'
 							),
 							$this->_data[$this->_cursor][$name]
 						);

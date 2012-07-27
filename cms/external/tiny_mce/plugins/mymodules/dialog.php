@@ -24,6 +24,7 @@
   <?php
  foreach(d()->plugins as $key =>$value)
  {
+ $key=str_replace('#','@',$key);
  print "<option value='$key'   >$value</option>";  
  }
  ?>

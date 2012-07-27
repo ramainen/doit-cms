@@ -9,8 +9,11 @@ header('Content-type: image/gif');
 foreach($_GET as $key=>$value)
 {
 $mname=$key;
+
 break;
 }  
+
+ $mname=str_replace('@','#',$mname);
 $c="неизвестно";
 if(!is_array(d()->plugins)){
 	d()->plugins=array(d()->plugins);
