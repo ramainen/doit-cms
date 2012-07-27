@@ -13,7 +13,7 @@ var mymodulesDialog = {
 		// Insert the contents from the input into the document
 		a=new Date();
 		
-		tinyMCEPopup.editor.execCommand('mceInsertContent', false, '<br /><img src="/i/ar/module.php?'+document.forms[0].someval.value+'='+a.getTime()+'" /><br />');
+		tinyMCEPopup.editor.execCommand('mceInsertContent', false, '<img src="/cms/external/tiny_mce/plugins/mymodules/module.php?'+document.forms[0].someval.value+'=plugin'+a.getTime()+'" />');
 		tinyMCEPopup.close();
 	}
 };

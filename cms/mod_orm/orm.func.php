@@ -1236,6 +1236,23 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		if (isset($this->_data[$this->_cursor])) {
 			//Item.title         //Получение одного свойства
 			if (isset($this->_data[$this->_cursor][$name])) {
+				if(isset($this->_data[$this->_cursor]['admin_options']) &&  ($this->_data[$this->_cursor]['admin_options']!='')   ){
+					$admin_options = unserialize( $this->_data[$this->_cursor]['admin_options']);
+					
+					if(isset($admin_options[$name])){
+						return preg_replace_callback(
+							'/\<img\ssrc=\"\/cms\/external\/tiny_mce\/plugins\/mymodules\/module\.php\?([\-\_0-9a-zA-Z\&]+)\=([\-\_0-9a-zA-Z\&]+)\"\s\/\>/',
+							create_function(
+								 
+								'$matches',
+								'return d()->call($matches[1],array($matches[2]));'
+							),
+							$this->_data[$this->_cursor][$name]
+						);
+						 
+						
+					}
+				}
 				return $this->_data[$this->_cursor][$name];
 			}
 

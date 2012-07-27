@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<?php
+	include_once ($_SERVER['DOCUMENT_ROOT'].'/config.php');
+	include_once ($_SERVER['DOCUMENT_ROOT'].'/cms/cms.php');
+	$doit = d();
+?><!DOCTYPE html>
 <html>
 <head>
 	<title>Вставка модуля</title>
@@ -9,52 +13,18 @@
 <body>
 
 <form onsubmit="ExampleDialog.insert();return false;" action="#">
-	<p>Выберите модуль для вставки в aas.</p>
+	<p>Выберите модуль для вставки на страницу.</p>
+	<?php
+	if(!is_array(d()->plugins)){
+		d()->plugins=array(d()->plugins);
+	}
+	 
+	?>
 	<select id="someval" name="someval">
- 
-	 <?php
-	 $b1=array();
-	 $fl=" selected ";
- $a = @opendir('../../../../functions/modules');
- while ($b= readdir($a))
+  <?php
+ foreach(d()->plugins as $key =>$value)
  {
- if(substr( $b,-4,4)=='.php' && substr( $b,0,1)!='#'  && substr( $b,0,1)!='-'  && substr( $b,0,6)!='class.')
- {
- $f=@fopen('../../../../functions/modules/'.$b,'r');
- $b=substr($b,0,-4);
- $c = fread ($f,255);
- $c=substr($c,0,strpos($c,"\n",1));
- $c=str_replace('<?php//','',$c);
-  $c=str_replace('<?php //','',$c);
-  $c=str_replace('?>','',$c);
-  $b1[$b]=$c;
- 
-
- fclose($f);
- }
- } 
-  ////////////////////////////
-  $a = @opendir('../../../../templates/modules');
- while ($b= readdir($a))
- {
- if(substr( $b,-4,4)=='.php'  && substr( $b,0,1)!='#'  && substr( $b,0,1)!='-' && substr( $b,0,6)!='class.')
- {
- $f=@fopen('../../../../templates/modules/'.$b,'r');
- $b=substr($b,0,-4);
- $c = fread ($f,255);
- $c=substr($c,0,strpos($c,"\n",1));
- $c=str_replace('<?php//','',$c);
- $c=str_replace('<?php //','',$c);
-  $c=str_replace('?>','',$c);
-  $b1[$b]=$c;
- 
-
- fclose($f);
- }
- }
- foreach($b1 as $key =>$value)
- {
- print "<option value='$key' $fl >$value</option>"; $fl="";
+ print "<option value='$key'   >$value</option>";  
  }
  ?>
 	</select>

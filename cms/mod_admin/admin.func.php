@@ -530,8 +530,18 @@ function admin_save_data($params)
 	$params['sort']=$elemid;
     $result_str="update `".et(url(3))."` set  ";
     $i=0;
-	
-	
+	 
+	$options_field=array();
+	foreach($params as $key=>$value) {
+		if(preg_match('/\<img\ssrc=\"\/cms\/external\/tiny_mce\/plugins\/mymodules\/module\.php\?[\-\_0-9a-z\=A-Z\&]+\"\s\/\>/',$value)){
+			$options_field[$key]=1;
+		}
+	}
+	if(count($options_field)!=0){
+		$params['admin_options']=serialize($options_field);
+	}else{
+		$params['admin_options']='';
+	}
 	foreach($params as $key=>$value) {
 		$i++;
 		if (substr($key,-3)=='_id' && $value == '') {

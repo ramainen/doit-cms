@@ -70,7 +70,7 @@ function doit_parse_error_exception()
 	
 		if($error['type']==4 || $error['type']==64 || $error['type']==4096){
 			$errfile = substr($error['file'],strlen($_SERVER['DOCUMENT_ROOT'])) ;
-			$lines=file($error['file']);
+			$lines=file($_SERVER['DOCUMENT_ROOT'].'/'.$error['file']);
 			$wrongline=$lines[$error['line']];
 			print print_error_message($wrongline,$error['line'],$errfile ,$error['message'],'Ошибка при разборе кода');
 		}
@@ -447,7 +447,7 @@ foreach($tmparr as $key=>$subval)
 		
 		//Обрезка GET-параметров
 		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
-
+		
         //Проверка на мультиязычность сайта
         if(substr($_tmpurl,3,1)=='/'){
             $probablyLang=substr($_tmpurl,1,2);
@@ -491,11 +491,11 @@ foreach($tmparr as $key=>$subval)
 		}
 		foreach($_work_folders as $dirname) { 
 			$_files[$dirname]['/']=array();
-			$_handle = opendir($dirname);
+			$_handle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname);
 
 			while (false !== ($_file = readdir($_handle))) {
 				 if(substr($_file,0,4)=='mod_') {
-					$_subhandle = opendir($dirname.'/'.$_file);
+					$_subhandle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname.'/'.$_file);
 					$_files[$dirname]['/'.$_file.'/']=array();
 					while (false !== ($_subfile = readdir($_subhandle))) {
 						$_files[$dirname]['/'.$_file.'/'][]=$_subfile;
@@ -507,6 +507,7 @@ foreach($tmparr as $key=>$subval)
 			}
 			closedir($_handle);
 		}
+		
 		$for_include=array();
 		$for_ini=array();
 		$ini_files_dirs=array();
@@ -583,7 +584,7 @@ foreach($tmparr as $key=>$subval)
 		}
 
 		foreach($this->for_include as $value) {
-			include($value);
+			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
 		}
 
 		foreach($this->for_ini as $value) {
@@ -901,7 +902,7 @@ foreach($tmparr as $key=>$subval)
 				$_executionResult=call_user_func_array($name, $arguments);
 				$been_controller=true;
 			} elseif(isset($this->php_files_list[$name])){
-				include ($this->php_files_list[$name]);
+				include ($_SERVER['DOCUMENT_ROOT'].'/'.$this->php_files_list[$name]);
 				$been_controller=true;
 			} else {
 				$_fsym=strpos($name,'#');
@@ -1099,6 +1100,7 @@ foreach($tmparr as $key=>$subval)
 	 */
 	function __get($name)
 	{
+	;
 		//Одиночная загрузка .ini файла при первом обращении к переменной
 		if (isset($this->ini_database[$name])) {
 			$this->load_and_parse_ini_file($this->ini_database[$name]);
@@ -1109,7 +1111,7 @@ foreach($tmparr as $key=>$subval)
 		if(isset($this->datapool[$name])) {
 			return $this->datapool[$name];
 		}
-
+		
 		//$fistrsim =  ord(substr($name,0,1));
 		//if($fistrsim>64 && $fistrsim<91){
 		if(preg_match('/^[A-Z].+/', $name)) {
@@ -1338,7 +1340,7 @@ foreach($tmparr as $key=>$subval)
 				$this->load_and_parse_ini_file($name);
 			}
 		}
-		if(!$ini=file($filename,FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) return false;
+		if(!$ini=file($_SERVER['DOCUMENT_ROOT'].'/'.$filename,FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) return false;
 		$res=array();
 		$currentGroup='';
 		$arrayKeys=array();
@@ -1531,9 +1533,9 @@ function __autoload($class_name) {
 	$lover_class_name=strtolower($class_name);
 
 	if(file_exists(d()->php_files_list[$lover_class_name.'_class'])){
-		require d()->php_files_list[$lover_class_name.'_class'];
+		require $_SERVER['DOCUMENT_ROOT'].'/'.d()->php_files_list[$lover_class_name.'_class'];
 	}elseif(file_exists($fileName)){
-		require $fileName;
+		require $_SERVER['DOCUMENT_ROOT'].'/'.$fileName;
 	}else{
 		//Если совсем ничего не найдено, попытка использовать ActiveRecord.
 		eval ("class ".$class_name." extends ActiveRecord {}");
