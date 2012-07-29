@@ -232,6 +232,7 @@ class doitClass
 	private $must_be_stopped=false; //Устанавливается в true при необходимости прервать текущее выполнение
 	private $_prepared_content=array();
 	private $validate_disabled=false;
+	public $langlink='';
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -465,6 +466,10 @@ foreach($tmparr as $key=>$subval)
 			if(file_exists('app/lang/'.$this->lang.'.ini')){
 				$this->load_and_parse_ini_file('app/lang/'.$this->lang.'.ini');
 			}
+		}
+		$this->langlink='';
+		if($this->lang != '' && $this->lang!='ru'){
+			$this->langlink='/'.$this->lang;
 		}
 
 		$_where_question_sign = strpos($_tmpurl,'?');
