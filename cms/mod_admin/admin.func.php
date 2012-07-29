@@ -432,9 +432,15 @@ function admin_edit()
 		if ((url(4)=='add' || $scenario==2) && isset($_GET[$field['name']])) {
 			d()->value=$_GET[$field['name']];
 		}
+		
 		if (isset($line[$field['name']])) {
 			d()->value=$line[$field['name']];
 		}
+		
+		if (  isset($_GET[$field['name']])) {
+			d()->value=$_GET[$field['name']];
+		}
+		
 		//Мультисайтовость
 		
 		if($field['type']=='multi'){
