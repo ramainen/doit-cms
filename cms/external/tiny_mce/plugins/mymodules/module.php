@@ -29,7 +29,7 @@ $c=d()->plugins[$mname];
   $black = imagecolorallocate($im, 0, 0, 0);
   
   // Replace path by your own font path
-  imagettftext($im,9, 0,35,23, $black, "ubuntu.ttf",  $c);
+  imagettftext($im,9, 0,35,23, $black, $_SERVER['DOCUMENT_ROOT']."/cms/external/tiny_mce/plugins/mymodules/ubuntu.ttf",  $c);
   imagegif($im);
   imagedestroy($im);
  
