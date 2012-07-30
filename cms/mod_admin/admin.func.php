@@ -29,8 +29,12 @@ function edit($params=false){
 		return ""; //Проверка на права администратора
 	}
 		
-
-	print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id. $addition_params .'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+	if(is_string($params[0]) && strpos($params[0],'/')!==false){
+		print '<a href="/admin/edit/'.$params[0] . $addition_params .'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+	}else{
+		print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id. $addition_params .'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+	}
+	
 }
 
 /**
