@@ -345,11 +345,23 @@ function admin_edit()
 */
 	if(isset($_POST['admin_action']) && $_POST['admin_action']=='edit_field'){
 		if (isset($_GET['fields']) && $_GET['fields']!=''){
-			$field = $_GET['fields'];
+			if(substr($field,0,1)=='/'){
+				$field = $_GET['fields'];
+				$filename= str_replace('.','',substr($field,1)).'.ini';
+			} else {
+				$field = $_GET['fields'];
+				$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',$field))).'.ini';
+			}
+			
 		} else {
 			$field = url(3);
+			$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',$field))).'.ini';
 		}
-		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',$field))).'.ini';
+		
+				
+	
+		
+		 
 		$fhandler=fopen($_SERVER['DOCUMENT_ROOT'].$filename,'w+');
 		fwrite($fhandler,$_POST['content']);
 		fclose($fhandler);
@@ -615,9 +627,14 @@ function admin_get_fields($tableortype='')
 		$tableortype=url(3);
 	}
 	
-	d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');
-	
-	
+	 
+	if(substr($tableortype,0,1)=='/'){
+		$correcttableortype= str_replace('.','',substr($tableortype,1)).'.ini';
+		d()->load_and_parse_ini_file($correcttableortype);
+	} else{
+		d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');	
+	}
+
 	if ($handle = opendir('app/fields/')) {
 		while (false !== ($file = readdir($handle))) {
 			if(preg_match('/'.$tableortype.'\..*?.ini/i', $file)){
@@ -627,6 +644,7 @@ function admin_get_fields($tableortype='')
 		closedir($handle);
 	}
 	$rows = d()->admin['fields'];
+ 
 	foreach ($rows as $key=>$value) {
 		$data[]=array('name'=>$value[1],'type'=>$value[0],'title'=>$value[2],'all'=>$value);
 	}
