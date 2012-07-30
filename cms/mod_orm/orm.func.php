@@ -1245,7 +1245,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 							create_function(
 								 
 								'$matches',
-								'return d()->call(str_replace("@","#",$matches[1]),array($matches[2]));'
+								'if(isset(d()->plugins[str_replace("@","#",$matches[1])])){return d()->call(str_replace("@","#",$matches[1]),array($matches[2]));};return "";'
 							),
 							$this->_data[$this->_cursor][$name]
 						);
