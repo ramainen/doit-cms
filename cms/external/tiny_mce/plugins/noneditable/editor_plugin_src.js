@@ -14,10 +14,7 @@
 	var VK = tinymce.VK;
 
 	function handleContentEditableSelection(ed) {
-		var dom = ed.dom, selection = ed.selection, invisibleChar, caretContainerId = 'mce_noneditablecaret';
-
-		// Setup invisible character use zero width space on Gecko since it doesn't change the height of the container
-		invisibleChar = tinymce.isGecko ? '\u200B' : '\uFEFF';
+		var dom = ed.dom, selection = ed.selection, invisibleChar, caretContainerId = 'mce_noneditablecaret', invisibleChar = '\uFEFF';
 
 		// Returns the content editable state of a node "true/false" or null
 		function getContentEditable(node) {
@@ -261,6 +258,85 @@
 				selection.collapse(start);
 			}
 
+			function canDelete(backspace) {
+				var rng, container, offset, nonEditableParent;
+
+				function removeNodeIfNotParent(node) {
+					var parent = container;
+
+					while (parent) {
+						if (parent === node) {
+							return;
+						}
+
+						parent = parent.parentNode;
+					}
+
+					dom.remove(node);
+					moveSelection();
+				}
+
+				function isNextPrevTreeNodeNonEditable() {
+					var node, walker, nonEmptyElements = ed.schema.getNonEmptyElements();
+
+					walker = new tinymce.dom.TreeWalker(container, ed.getBody());
+					while (node = (backspace ? walker.prev() : walker.next())) {
+						// Found IMG/INPUT etc
+						if (nonEmptyElements[node.nodeName.toLowerCase()]) {
+							break;
+						}
+
+						// Found text node with contents
+						if (node.nodeType === 3 && tinymce.trim(node.nodeValue).length > 0) {
+							break;
+						}
+
+						// Found non editable node
+						if (getContentEditable(node) === "false") {
+							removeNodeIfNotParent(node);
+							return true;
+						}
+					}
+
+					// Check if the content node is within a non editable parent
+					if (getNonEditableParent(node)) {
+						return true;
+					}
+
+					return false;
+				}
+
+				if (selection.isCollapsed()) {
+					rng = selection.getRng(true);
+					container = rng.startContainer;
+					offset = rng.startOffset;
+					container = getParentCaretContainer(container) || container;
+
+					// Is in noneditable parent
+					if (nonEditableParent = getNonEditableParent(container)) {
+						removeNodeIfNotParent(nonEditableParent);
+						return false;
+					}
+
+					// Check if the caret is in the middle of a text node
+					if (container.nodeType == 3 && (backspace ? offset > 0 : offset < container.nodeValue.length)) {
+						return true;
+					}
+
+					// Resolve container index
+					if (container.nodeType == 1) {
+						container = container.childNodes[offset] || container;
+					}
+
+					// Check if previous or next tree node is non editable then block the event
+					if (isNextPrevTreeNodeNonEditable()) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+
 			startElement = selection.getStart()
 			endElement = selection.getEnd();
 
@@ -303,6 +379,7 @@
 									positionCaretOnElement(nonEditableParent, true);
 								} else {
 									dom.remove(nonEditableParent);
+									return;
 								}
 							} else {
 								removeCaretContainer(caretContainer);
@@ -320,11 +397,17 @@
 									positionCaretOnElement(nonEditableParent, false);
 								} else {
 									dom.remove(nonEditableParent);
+									return;
 								}
 							} else {
 								removeCaretContainer(caretContainer);
 							}
 						}
+					}
+
+					if ((keyCode == VK.BACKSPACE || keyCode == VK.DELETE) && !canDelete(keyCode == VK.BACKSPACE)) {
+						e.preventDefault();
+						return false;
 					}
 				}
 			}

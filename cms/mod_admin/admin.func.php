@@ -30,9 +30,9 @@ function edit($params=false){
 	}
 		
 	if(is_string($params[0]) && strpos($params[0],'/')!==false){
-		print '<a href="/admin/edit/'.$params[0] . $addition_params .'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+		print '<a href="/admin/edit/'.$params[0] . $addition_params .'" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
 	}else{
-		print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id. $addition_params .'" target="_blank" '.$attr.' ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+		print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id. $addition_params .'" target="_blank" '.$attr.' onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 	}
 	
 }
@@ -82,7 +82,7 @@ function delete($params=false){
 	}
 		
 
-	print '<a href="/admin/delete/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" '.$attr.'><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
+	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/delete/'.$params[0]->table.'/'.$params[0]->id.'" target="_blank" '.$attr.'><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
 }
 
 function add($params){
@@ -126,7 +126,7 @@ function add($params){
 		}
 	}
 	
-	print '<a href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr.' target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
+	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr.' target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
 }
 
 function sort_icon($params){
@@ -599,6 +599,7 @@ function admin_save_data($params)
 		}
 		doitClass::$instance->db->exec($result_str);
 	}
+	
 
 	if($_POST['admin_command_redirect_close']=='yes') {
 		

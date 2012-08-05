@@ -43,7 +43,7 @@ if (isset($_GET['fields']) && $_GET['fields']!=''){
 }
 $filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',$fields))).'.ini';
 ?>
- <div class="field_edit_dialog modal fade " style="display:none"  >
+ <div class="field_edit_dialog modal " style="display:none"  >
  <div class="modal-header">
     <button class="close" data-dismiss="modal">×</button>
     <h3>Редактирование файла  <?php print $filename ?></h3>
