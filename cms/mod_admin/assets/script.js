@@ -1,3 +1,4 @@
+var admin_dropdown_timer;
 $(function () {
 
 	$('.closewindow').bind('click', function () {
@@ -90,6 +91,19 @@ $(function () {
 		rehide_containers();
 		
 	})
+ 
+	$('.dropdown-menu').bind('mouseout',function(e){
+	
+		if($.contains(this, e.relatedTarget) == false) {
+			$('.dropdown.open .dropdown-toggle').dropdown('toggle');
+		}
+			//alert(e.eventPhase+' '+e.target.tagName)
+			//debugger
+		
+	})
+	function hide_dropdowns(){
+		 
+	}
 	rehide_containers();
 	
 	
@@ -152,6 +166,8 @@ function show_field_editor()
 			}});*/
 			
 			$('.field_edit_dialog').modal()
+			
+			$('.dropdown.open .dropdown-toggle').dropdown('toggle');
 	return false;
 }
 
