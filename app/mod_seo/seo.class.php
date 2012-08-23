@@ -27,7 +27,6 @@ class Seo extends UniversalSingletoneHelper
 		$this->text = '';
 		$this->seo_object = d()->Seoparam->where('page_url = ?',$request_uri);
 		$this->seo_object_allsite = d()->Seoparam->where('page_url = ?','*');
-		var_dump($this->seo_object->to_sql);
 		if(defined('MULTISITE') &&  MULTISITE==true){
 			$this->seo_object->order_by('multi_domain DESC');
 			$this->seo_object_allsite->order_by('multi_domain DESC');
