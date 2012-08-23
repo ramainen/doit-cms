@@ -29,8 +29,17 @@
 
 class UniversalHelper
 {
+	private $is_initialised=false;
+	function try_to_init()
+	{
+		if(!$this->is_initialised){
+			$this->init();
+			$this->is_initialised=true;
+		}
+	}
 	function __get($name)
 	{
+		$this->try_to_init();
 		//Item.something
 		if (method_exists($this, $name)) {
 			return $this->{$name}();
@@ -48,7 +57,7 @@ class UniversalHelper
 	}
 	function __call($name,$params)
 	{
-
+		$this->try_to_init();
 		//Item.ml_title()
 		if (substr($name, 0, 3) == 'ml_') {
 			$lang = d()->lang;
@@ -71,5 +80,9 @@ class UniversalHelper
 	function after()
 	{
 	
+	}
+	function init()
+	{
+		
 	}
 }

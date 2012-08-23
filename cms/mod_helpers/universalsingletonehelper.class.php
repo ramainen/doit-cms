@@ -34,5 +34,6 @@ class UniversalSingletoneHelper extends UniversalHelper
 	function __construct()
 	{
 		d()->{get_class($this)} = $this;
+		$this->try_to_init();
 	}
 }
