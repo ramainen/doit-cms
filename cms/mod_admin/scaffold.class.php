@@ -52,5 +52,85 @@ class Scaffold extends UniversalHelper
 		}
 		return $result;
 	}
-	
+	/* Обновление по схеме данных. Создаются таблицы, не существующие на данный момент, а также создаются некоторые столбцы */
+	function update_scheme()
+	{
+		//1. Получение списка существующих таблиц
+		
+		
+		$tables_data = d()->db->query("SELECT  TABLE_NAME FROM information_schema.tables WHERE table_schema = '".DB_NAME."'")->fetchAll();
+		
+		
+		$tables=array();
+		foreach ($tables_data as $key=> $value){
+			$tables[$value['TABLE_NAME']]=array();
+			$columns = d()->db->query("SELECT * FROM `pages` LIMIT 0");	
+			 
+			$columns_count =  $columns->columnCount();
+ 
+			for($i=0;$i<=$columns_count-1;$i++){
+				$column = $columns->getColumnMeta($i);
+				$tables[$value['TABLE_NAME']][]=$column['name'];
+			}
+				 
+		
+		}
+		
+
+		//получение всех возможных таблиц
+		$schema_tables=array();
+		foreach (d()->schema as $key => $value)
+		{
+			if(is_numeric($key)){
+				foreach ($value as $table){
+					$schema_tables[$table]=array();
+				}
+			}else{
+				$table=$key;
+				$schema_tables[$table]=array();
+			}
+		}
+		//плучение всех возможных полей
+		foreach (d()->schema as $key => $value)
+		{
+			if(!is_numeric($key)){
+				$table=$key;
+				$schema_tables[$table]=array();
+				foreach($value as $subkey=>$subvalue){
+					if(!is_numeric($subkey)){
+						if(is_array($subvalue)){
+							//Будет записано первое попавшееся значение, ибо нефиг
+							$schema_tables[$table][$subkey]=$subvalue[0];
+						}else{
+							$schema_tables[$table][$subkey]=$subvalue;
+						}
+					}else{
+						if(is_array($subvalue)){
+							foreach($subvalue as $element){
+								$schema_tables[$table][$element]=true;
+							}
+						}else{
+							//такой ситуации быть не может
+						}
+					}
+				}
+			} 
+		}
+
+		foreach($schema_tables as $table=>$fields){
+			if(!isset($tables[$table])){
+				$this->create_table($table);
+			}
+		}
+		
+		foreach($schema_tables as $table=>$fields){
+			foreach($fields as $field=>$type){
+				if(!in_array($field,$tables[$table])){
+					//создать поле $field в таблице $table
+					$this->create_field($table,$field);
+				}
+			}
+		}
+		 
+	}
 }

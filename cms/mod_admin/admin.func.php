@@ -943,6 +943,7 @@ function admin_update_system()
 			if(d()->PluginInstaller->update_cms()){
 				d()->message='Процесс обновления проведён';
 				d()->message .= '<br>Резервная копия сохранена в папке '.d()->renamed_cms;
+				
 			} else {
 				d()->message='Процесс обновления прошёл неудачно. Проверьте ваше соединение к Интернету и права на запись.';
 			}
@@ -971,6 +972,19 @@ function admin_update_system()
 	}
 	
 	
+	print d()->view();
+}
+
+
+function admin_update_scheme()
+{
+	if(!iam('developer')){ 
+		return 'Обновлять схему из интерфейса могут только разработчики';
+	}
+	
+	set_time_limit(0);
+	
+	d()->Scaffold->update_scheme();
 	print d()->view();
 }
 
