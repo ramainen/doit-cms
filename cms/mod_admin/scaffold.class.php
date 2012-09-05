@@ -64,7 +64,7 @@ class Scaffold extends UniversalHelper
 		$tables=array();
 		foreach ($tables_data as $key=> $value){
 			$tables[$value['TABLE_NAME']]=array();
-			$columns = d()->db->query("SELECT * FROM `pages` LIMIT 0");	
+				$columns = d()->db->query("SELECT * FROM `".$value['TABLE_NAME']."` LIMIT 0");
 			 
 			$columns_count =  $columns->columnCount();
  
