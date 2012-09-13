@@ -357,6 +357,12 @@ function h($html)
 {
 	return htmlspecialchars($html);
 }
+
+function hnl2br($html)
+{
+	return nl2br(htmlspecialchars($html));
+}
+
 function et($string)
 {
 	$string=str_replace(array('"',"'",'\\',' ','.','*','/','`',')'),array('','','','','','','','',''),$string);
