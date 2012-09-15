@@ -393,7 +393,7 @@ foreach($tmparr as $key=>$subval)
 
 
         // {(endif)} или {/}
-        $this->template_patterns[]='/\{endif|\/\}/';
+        $this->template_patterns[]='/\{(endif|\/)\}/';
         $this->template_replacements[]='<'.'?php }  ?'.'>';
 
         // {title}
