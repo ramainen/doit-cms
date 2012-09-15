@@ -4,8 +4,13 @@ ul#admin_main_user_menu, ul#admin_main_user_menu li, ul#admin_main_user_menu a, 
 	padding:0;
 	margin:0;
 	text-indent:0;
+    text-align:left;
 	border:none;
 	
+}
+ul#admin_main_user_menu ul li {
+    list-style:none;
+
 }
 ul#admin_main_user_menu
 {
@@ -18,11 +23,11 @@ ul#admin_main_user_menu
 
 ul#admin_main_user_menu>li
 {
-	list-style:none;
+
 	float:left;
 	position:relative;
-	
-	
+
+    list-style:none;
 	line-height:30px;
 	font-family:Arial, sans-serif;
 	font-size:12px;
@@ -31,7 +36,12 @@ ul#admin_main_user_menu>li
 }
 ul#admin_main_user_menu li a
 {
-	
+
+    line-height:30px;
+    font-family:Arial, sans-serif;
+    font-size:12px;
+    color:white;
+
 	margin:0;
 	padding-left:15px;
 	padding-right:15px;
@@ -63,5 +73,10 @@ ul#admin_main_user_menu>li:hover>ul
 ul#admin_main_user_menu>li>ul li
 {
 	width:200px;
+    list-style:none;
+    line-height:30px;
+    font-family:Arial, sans-serif;
+    font-size:12px;
+    color:white;
 	
 }
