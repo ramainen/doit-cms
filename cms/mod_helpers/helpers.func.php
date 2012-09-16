@@ -173,6 +173,12 @@ function form ($params=array())
 		
 	}
 	
+	if(isset($params['style'])) {
+		$attr .= ' style="'.$params['style'].'" ';
+	}
+	
+
+	
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
 	}
