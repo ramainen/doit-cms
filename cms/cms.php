@@ -370,10 +370,33 @@ foreach($tmparr as $key=>$subval)
 		// {{@helper 'parame' param2 = 'any'}}
 		$this->template_patterns[]='/\{{\@([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
 		$this->template_replacements[]='<'.'?php print $doit->call("$1",array(d()->prepare_smart_array(\'$2\'))); ?'.'>';
-		
 
-		
-		// {title}
+
+
+        // {if url()==23?}
+        $this->template_patterns[]='/\{if\s(.*)\?\}/';
+        $this->template_replacements[]='<'.'?php if ($doit->$1) { ?'.'>';
+
+        // {or url()==23?}
+        $this->template_patterns[]='/\{(or|elseif)\s(.*)\?\}/';
+        $this->template_replacements[]='<'.'?php } elseif($doit->$1) { ?'.'>';
+
+
+        // {url()==23?}
+        $this->template_patterns[]='/\{(.*)\?\}/';
+        $this->template_replacements[]='<'.'?php if ($doit->$1) { ?'.'>';
+
+
+        // {else}
+        $this->template_patterns[]='/\{else\}/';
+        $this->template_replacements[]='<'.'?php } else { ?'.'>';
+
+
+        // {(endif)} или {/}
+        $this->template_patterns[]='/\{(endif|\/)\}/';
+        $this->template_replacements[]='<'.'?php }  ?'.'>';
+
+        // {title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$1; ?'.'>';
 
@@ -1301,7 +1324,8 @@ foreach($tmparr as $key=>$subval)
 	}
 /* ================================================================================= */
 	function shablonize($_str)
-	{			return  preg_replace($this->template_patterns,$this->template_replacements,str_replace(array("\r\n","\r"),array("\n","\n"),$_str));	
+	{	
+		return  preg_replace($this->template_patterns,$this->template_replacements,str_replace(array("\r\n","\r"),array("\n","\n"),$_str));	
 	}
 
 	/**
