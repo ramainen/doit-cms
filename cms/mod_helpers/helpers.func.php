@@ -342,8 +342,58 @@ function path_to($params)
 	
 }
 
-function preview($adress,$num=1 )
+function preview($adress,$param1=false,$param2=false )
 {
+	if(is_array($adress)){
+		if(isset($adress['height']) || isset($adress[2])){
+			if(isset($adress['width'])){
+				$width=$adress['width'];
+			}else{
+				$width=$adress[1];
+			}
+			if(isset($adress['height'])){
+				$height=$adress['height'];
+			}else{
+				$height=$adress[2];
+			}
+			$adress = $adress[0];
+		} else {
+			$num=1;
+			if(isset($adress[1])){
+				$num=$adress[1];
+			}
+			$adress = $adress[0];
+			if($adress==''){
+				return '';
+			}
+			$ext=strtolower(strrchr($adress, '.'));
+			if(!in_array($ext,array('.gif','.jpg','.png','.jpeg'))){
+				return '';
+			}
+			return substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$num."_" . substr($adress, strrpos($adress, "/") + 1);
+		}
+		//Массив значений
+	}else{
+		if($param2===false){
+			//обычная превью
+			$num=1;
+			if($param1!==false){
+				$num=$param1;
+			}
+			if($adress==''){
+				return '';
+			}
+			$ext=strtolower(strrchr($adress, '.'));
+			if(!in_array($ext,array('.gif','.jpg','.png','.jpeg'))){
+				return '';
+			}
+			return substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$num."_" . substr($adress, strrpos($adress, "/") + 1);
+		}else{
+			//необычная превью без массива значений
+			$width=$param1;
+			$height=$param2;
+		}
+	}
 	if($adress==''){
 		return '';
 	}
@@ -351,8 +401,100 @@ function preview($adress,$num=1 )
 	if(!in_array($ext,array('.gif','.jpg','.png','.jpeg'))){
 		return '';
 	}
-	return substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$num."_" . substr($adress, strrpos($adress, "/") + 1);
+	$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1);
+	
+	//генерирование изображения при его отсуствии
+	if(!file_exists($_SERVER['DOCUMENT_ROOT'].$preview_adress)){
+		
+		//Создание превью
+		
+		$filename = $_SERVER['DOCUMENT_ROOT'].$adress;
+		$dest = $_SERVER['DOCUMENT_ROOT'].$preview_adress;
+		
+		$dest_folder = $_SERVER['DOCUMENT_ROOT'].substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs";
+		if(!file_exists($dest_folder)){
+			mkdir($dest_folder);
+			chmod($dest_folder, 0777);
+		}
+		
+		$format = strtolower(substr(strrchr($filename,"."),1));
+		switch($format) {
+			case 'gif' :
+				$type ="gif";
+				$img = ImageCreateFromGif($filename);
+				break;
+			case 'png' :
+				$type ="png";
+				$img = ImageCreateFromPng($filename);
+				imageSaveAlpha($img, true);
+				break;
+			case 'jpg' :
+				$type ="jpg";
+				$img = ImageCreateFromJpeg($filename);
+				break;
+			case 'jpeg' :
+				$type ="jpg";
+				$img = ImageCreateFromJpeg($filename);
+				break;
+			default :
+				return false;
+				break;
+		}
+
+		list($org_width, $org_height) = getimagesize($filename);
+		$xoffset = 0;
+		$yoffset = 0;
+
+		if($height=='auto'){
+			$height=round($width* ($org_height/$org_width));
+		}else{
+			if($width=='auto'){
+				$width=round($height* ($org_width/$org_height));
+			}
+		}
+		if ($width / $height <   $org_width / $org_height) {
+			$dy=0;
+			$xtmp = $org_width;
+			$org_width= ($width*$org_height)/$height;
+
+			$dx = 0.5*(  	$xtmp - $org_width);
+			$xoffset=$dx;
+			$yoffset=$dy;
+		} else {
+			$dx=0;
+			$ytmp = $org_height;
+			$org_height= ($height*$org_width)/$width;
+
+			$dy = 0.5*($ytmp - $org_height);
+			$xoffset=$dx;
+			$yoffset=$dy;
+		}
+
+		$img_n=imagecreatetruecolor ($width, $height);
+		imagealphablending($img_n, false);
+		imagesavealpha($img_n, true);
+		$black = imagecolorallocate($img_n, 0, 0, 0);
+		$black2 = imagecolorallocate($img, 0, 0, 0);
+		imageSaveAlpha($img, true);
+		
+		imagecopyresampled($img_n, $img, 0, 0, $xoffset, $yoffset, $width, $height, $org_width, $org_height);
+  
+		if($type=="gif") {
+			imagegif($img_n, $dest);
+		} elseif($type=="jpg") {
+			imagejpeg($img_n, $dest, 100);
+		} elseif($type=="png") {
+			imagepng($img_n, $dest);
+		} elseif($type=="bmp") {
+			imagewbmp($img_n, $dest);
+		}
+		chmod($dest, 0777);
+	}
+	return $preview_adress;
 }
+
+
+
 function h($html)
 {
 	return htmlspecialchars($html);
