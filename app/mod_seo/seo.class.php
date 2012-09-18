@@ -8,6 +8,7 @@ class Seo extends UniversalSingletoneHelper
 	private $seo_object = false;
 	private $seo_object_allsite = false;
 	public $title;
+	public $text;
 	public $description;
 	public $keywords;
 	/*
@@ -40,6 +41,10 @@ class Seo extends UniversalSingletoneHelper
 			$this->title = $this->seo_object->title;
 		} else {
 			$this->title = $this->seo_object_allsite->title;
+		}
+		
+		if($this->seo_object->text){
+			$this->text = $this->seo_object->text;
 		}
 		
 		if($this->seo_object->keywords){
