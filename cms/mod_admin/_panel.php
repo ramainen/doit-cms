@@ -17,9 +17,9 @@
  	<?php foreach (d()->admin['leftmenu'] as $_value) { ?>
 	
 		<?php if(substr( $_value[0],0,7)!='/admin/'){ ?>
-			<li><a href="/admin/list/<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
+			<li><a target="_blank" href="/admin/list/<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
 		<?php }else{ ?>
-			<li><a href="<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
+			<li><a target="_blank" href="<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
 		<?php } ?>
 	<?php } ?>
         
@@ -41,13 +41,13 @@
 			<ul >
 			
 			
-			<li><a href="/admin/scaffold/new">Создать</a></li>
+			<li><a target="_blank" href="/admin/scaffold/new">Создать</a></li>
 				
 
 				
-				<li><a href="/admin/scaffold/install_plugin">Установить расширение</a></li>
-				<li><a href="/admin/scaffold/update_system">Обновить систему</a></li>	
-				<li><a href="/admin/scaffold/update_scheme">Обработать схему</a></li>
+				<li><a target="_blank" href="/admin/scaffold/install_plugin">Установить расширение</a></li>
+				<li><a target="_blank" href="/admin/scaffold/update_system">Обновить систему</a></li>	
+				<li><a target="_blank" href="/admin/scaffold/update_scheme">Обработать схему</a></li>
 				
 			</ul>
 		  </li>
