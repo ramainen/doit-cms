@@ -522,6 +522,7 @@ function admin_save_data($params)
 		$scenario=1;
 	}
 	if($elemid=='add' || $scenario=='2') {
+		$params['sort']=$elemid;
 		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
 		d()->db->exec("insert into `".et(url(3))."`  () values ()");
 		$elemid=d()->db->lastInsertId();
@@ -549,7 +550,7 @@ function admin_save_data($params)
 		
 		//$params['url']=str_replace('/','_',$params['url']);
 	}
-	$params['sort']=$elemid;
+	
     $result_str="update `".et(url(3))."` set  ";
     $i=0;
 	 
