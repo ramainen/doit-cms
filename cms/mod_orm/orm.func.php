@@ -801,6 +801,15 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		return $this->_count;
 	}
+	//ОН сука медленный
+	function only_count()
+	{
+		if ($this->_options['queryready']==false) {
+			$this->select('count(id) as _only_count');
+			$this->fetch_data_now();
+		}
+		return $this->_data[0]['_only_count'];
+	}
 
 	function current()
 	{
