@@ -139,6 +139,17 @@ function sort_icon($params){
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
+	$addition_params_string='?sort=yes';
+	
+	if(isset($params['sort_field'])) {
+		$addition_params_string .= '&sort_field='.$params['sort_field'];
+		unset($params['sort_field']);
+	}
+	if(isset($params['sort_direction'])) {
+		$addition_params_string .= '&sort_direction='.$params['sort_direction'];
+		unset($params['sort_direction']);
+	}
+	
 	
 	$attr='';
 	if(isset($params['style'])) {
@@ -166,7 +177,7 @@ function sort_icon($params){
 		}
 	}
 	
-	$params_string .= '?sort=yes';
+	$params_string .= $addition_params_string;
 
 	print '<a href="/admin/list/'.$params[0].''.$params_string.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
 }
@@ -233,25 +244,39 @@ function admin_show_one_list($table,$id1,$id2)
 
 
 	} else {
+	
+		$sort_field = 'sort';
+		if(isset($_GET['sort_field'])){
+			$sort_field = et($_GET['sort_field']);
+		}
+		$sort_direction='';
+		if(isset($_GET['sort_direction'])){
+			$sort_direction =  strtoupper($_GET['sort_direction']);
+			if($sort_direction !='DESC' && $sort_direction!='ASC'){
+				$sort_direction = '';
+			}
+			$sort_direction = ' '.$sort_direction;
+		}
+		
 		if($id2 == '') {
 			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
-				$query='select * from '.DB_FIELD_DEL . et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL  order by '.DB_FIELD_DEL .'sort'.DB_FIELD_DEL;
+				$query='select * from '.DB_FIELD_DEL . et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL  order by '.DB_FIELD_DEL .$sort_field.DB_FIELD_DEL.$sort_direction;
 				d()->list_addbutton='<a class="btn" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				if(is_numeric($id1)) {
-					$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL.' where '.DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1)." order by ".DB_FIELD_DEL. "sort".DB_FIELD_DEL;
+					$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL.' where '.DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1)." order by ".DB_FIELD_DEL. $sort_field.DB_FIELD_DEL.$sort_direction;
 					d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
-					$query='select * from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).")  order by ".DB_FIELD_DEL . "sort".DB_FIELD_DEL;
+					$query='select * from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).")  order by ".DB_FIELD_DEL . $sort_field.DB_FIELD_DEL.$sort_direction;
 					d()->list_addbutton=' ';
 				}
 
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
-			$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL .' where '.DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2)."  order by ".DB_FIELD_DEL."sort".DB_FIELD_DEL;
+			$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL .' where '.DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2)."  order by ".DB_FIELD_DEL.$sort_field.DB_FIELD_DEL.$sort_direction;
 			d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.et($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}
