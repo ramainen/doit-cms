@@ -8,6 +8,15 @@ $(function(){
 </script>
 
 {{form 'admin_do_sort'}}
+
+<?php  if(! isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'],'/admin/')===false || (strpos($_SERVER['HTTP_REFERER'],$_SERVER['REQUEST_URI'])!==false)) { ?>
+	<?php if( strpos($_SERVER['HTTP_REFERER'],'/admin/')===false  ||  $_SERVER['REQUEST_URI'] != $_SERVER['HTTP_REFERER'] )  { ?>
+		<input type="hidden" name="admin_command_redirect_close" value="yes">
+	<?php } ?>
+<?php } ?>
+
+		
+		
 <div class="sortable">
 
 	<foreach objectrow>

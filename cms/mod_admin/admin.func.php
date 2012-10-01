@@ -341,8 +341,19 @@ function admin_show_one_list($table,$id1,$id2)
 					// Элементу с ID = $value присваеваем новый SORT, тот которы йбыл под номером $key ( $oldlist[$key]['sort'] ) 
 					d()->db->exec('UPDATE  `'.et($table).'` set `sort` = '.((int)$oldlist[$key]['sort']).' WHERE `id` = '.((int)$value)).'';
 				}
-			}			 
-			header('Location: '.$url) ;
+			}
+			
+			if($_POST['admin_command_redirect_close']=='yes') {
+		
+				return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
+			}else{
+
+				header('Location: '.$url) ;
+				exit();
+			}
+			
+			
+			
 			exit();
 		}
 		print d()->admin_show_one_sortable_list();		
