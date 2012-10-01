@@ -228,35 +228,38 @@ function admin_show_one_list($table,$id1,$id2)
 		d()->datapool['admin']['columns']['title']='Заголовок';
 		d()->datapool['admin']['columns']['url']='URL';
 	}
+	$sort_field = 'sort';
+	if(isset($_GET['sort_field'])){
+		$sort_field = et($_GET['sort_field']);
+	}
+	$sort_direction='';
+	if(isset($_GET['sort_direction'])){
+		$sort_direction =  strtoupper($_GET['sort_direction']);
+		if($sort_direction !='DESC' && $sort_direction!='ASC'){
+			$sort_direction = '';
+		}
+		$sort_direction = ' '.$sort_direction;
+	}
+	
+	
 	if ($id1=='') {
 		//list/goods     просто список всех полей
-		$query='select * from '.et($table).'   order by '.DB_FIELD_DEL.'sort'.DB_FIELD_DEL;
+		$query='select * from '.et($table).'   order by '.DB_FIELD_DEL.$sort_field .DB_FIELD_DEL.$sort_direction;
 		d()->list_addbutton='';
 		d()->list_addbutton.='<a class="btn" href="/admin/edit/'. $table .'/add"><i class="icon-plus"></i> Добавить</a>';
 
 		if(isset(d()->admin['bottombuttons'])) {
-		$bottombuttons=d()->admin['bottombuttons'];
+			$bottombuttons=d()->admin['bottombuttons'];
 
-		foreach($bottombuttons as $bottombutton) {
-			d()->list_addbutton.=' <a class="btn" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
+			foreach($bottombuttons as $bottombutton) {
+				d()->list_addbutton.=' <a class="btn" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
+			}
 		}
-	}
 
 
 	} else {
 	
-		$sort_field = 'sort';
-		if(isset($_GET['sort_field'])){
-			$sort_field = et($_GET['sort_field']);
-		}
-		$sort_direction='';
-		if(isset($_GET['sort_direction'])){
-			$sort_direction =  strtoupper($_GET['sort_direction']);
-			if($sort_direction !='DESC' && $sort_direction!='ASC'){
-				$sort_direction = '';
-			}
-			$sort_direction = ' '.$sort_direction;
-		}
+		
 		
 		if($id2 == '') {
 			if($id1=='index') {
