@@ -171,6 +171,17 @@ function sort_icon($params){
 	
 	$params_string='';
 
+	
+	
+	if(isset($params['href'])) {
+		$href = $params['href'];
+		unset($params['href']);
+	} else {
+		$href = '';
+		unset($params['href']);
+	}
+	
+	
 	foreach($params as $key=>$value){
 		if(!is_numeric($key)) {
 			$params_string.= '/'.$key.'/'.$value;
@@ -178,8 +189,12 @@ function sort_icon($params){
 	}
 	
 	$params_string .= $addition_params_string;
-
-	print '<a href="/admin/list/'.$params[0].''.$params_string.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
+	
+	if($href ==''){
+		$href = '/admin/list/'.$params[0].''.$params_string;
+	}
+	
+	print '<a href="'.$href.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
 }
 
 
