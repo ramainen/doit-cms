@@ -412,7 +412,7 @@ function admin_edit()
 		header('Location: '.$_SERVER['REQUEST_URI']);
 		exit();
 	}
-
+	$tableortype = url(3);
 	print action('admin_save_data');
 	$rows=array();
 	$scenario=0;
@@ -642,8 +642,27 @@ function admin_save_data($params)
 	
 
 	if($_POST['admin_command_redirect_close']=='yes') {
+		$tableortype = url(3);
+		if(isset($line['type']) && $line['type']!='') {
+			$tableortype = to_p($line['type']);
+		}
+
+		if(isset($_GET['type']) && $_GET['type']!='') {
+			$tableortype = to_p($_GET['type']);
+		}
+
+		if (isset($_GET['fields']) && $_GET['fields']!=''){
+			$tableortype = $_GET['fields'];
+		}
+		d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');	
 		
-		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
+		
+		if(isset(d()->admin['urlredirect'])){
+			return  "<script> window.opener.document.location.href='".d()->admin['urlredirect']. h($_POST['data']['url']) ."';window.open('','_self','');window.close();</script>";		
+		}else{
+			return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";		
+		}
+		
 	}else{
 
 		header('Location: '.$_POST['_http_referer']);
