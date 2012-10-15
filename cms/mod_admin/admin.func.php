@@ -658,7 +658,7 @@ function admin_save_data($params)
 		
 		
 		if(isset(d()->admin['urlredirect'])){
-			return  "<script> window.opener.document.location.href='".d()->admin['urlredirect']. h($_POST['data']['url']) ."';window.open('','_self','');window.close();</script>";		
+			return  "<script> window.opener.document.location.href='".d()->admin['urlredirect']. h($params['url']) ."';window.open('','_self','');window.close();</script>";		
 		}else{
 			return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";		
 		}
