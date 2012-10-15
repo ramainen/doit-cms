@@ -672,7 +672,7 @@ function admin_save_data($params)
 		d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');	
 		
 		
-		if(isset(d()->admin['urlredirect'])){
+		if(isset(d()->admin['urlredirect']) && url(4)!='add'){
 			return  "<script> window.opener.document.location.href='".d()->admin['urlredirect']. h($params['url']) ."';window.open('','_self','');window.close();</script>";		
 		}else{
 			return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";		
