@@ -428,7 +428,10 @@ function admin_edit()
 		exit();
 	}
 	$tableortype = url(3);
-	print action('admin_save_data');
+	$action_needed =  action('admin_save_data');
+	if($action_needed){
+		return $action_needed;
+	}
 	$rows=array();
 	$scenario=0;
 	$tableortype = url(3);
