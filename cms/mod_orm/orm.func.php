@@ -104,6 +104,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			'men' => 'man',
 			'women' =>	'woman',
 			'mice' =>'mouse',
+			'konkurses' =>'konkurs',
 			'teeth' =>	'tooth',
 			'feet' => 'foot',
 			'children' =>'child',
@@ -156,6 +157,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			'woman' => 'women',
 			'mouse' => 'mice',
 			'tooth' => 'teeth',
+			'konkurs' =>'konkurses',
 			'foot' => 'feet',
 			'child' => 'children',
 			'ox' => 'oxen',
@@ -799,6 +801,15 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		return $this->_count;
 	}
+	//ОН сука медленный
+	function only_count()
+	{
+		if ($this->_options['queryready']==false) {
+			$this->select('count(id) as _only_count');
+			$this->fetch_data_now();
+		}
+		return $this->_data[0]['_only_count'];
+	}
 
 	function current()
 	{
@@ -1082,6 +1093,9 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
+		}
+		foreach ($this->_data as $key=>&$value){
+			$value['table'] = $this->_options['table'];
 		}
 		return $this->_data;
 	}

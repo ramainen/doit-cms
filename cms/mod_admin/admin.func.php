@@ -5,9 +5,19 @@ function edit($params=false){
         $params=array(d()->this);
     }
 	if(!is_array($params)) {
-		$params=array($params);	
+		$params=array($params);
+		$obj_table = $params[0]->table;
+		$obj_id = $params[0]->id;
+	}else{
+		if(!is_object($params[0])){
+			$obj_table = $params[0]['table'];
+			$obj_id = $params[0]['id'];
+		}else{
+			$obj_table = $params[0]->table;
+			$obj_id = $params[0]->id;
+		}
 	}
-		
+	
 	$attr='';
 	if(isset($params['style'])) {
 		$attr .= ' style="'.$params['style'].'" ';
@@ -32,7 +42,7 @@ function edit($params=false){
 	if(is_string($params[0]) && strpos($params[0],'/')!==false){
 		print '<a href="/admin/edit/'.$params[0] . $addition_params .'"  style="display:inline;" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
 	}else{
-		print '<a href="/admin/edit/'.$params[0]->table.'/'.$params[0]->id. $addition_params .'"  style="display:inline;" target="_blank" '.$attr.' onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+		print '<a href="/admin/edit/'.$obj_table.'/'.$obj_id. $addition_params .'"  style="display:inline;" target="_blank" '.$attr.' onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 	}
 	
 }
@@ -74,7 +84,17 @@ function delete($params=false){
 	}
 	
 	if(!is_array($params)) {
-		$params=array($params);	
+		$params=array($params);
+		$obj_table = $params[0]->table;
+		$obj_id = $params[0]->id;
+	}else{
+		if(!is_object($params[0])){
+			$obj_table = $params[0]['table'];
+			$obj_id = $params[0]['id'];
+		}else{
+			$obj_table = $params[0]->table;
+			$obj_id = $params[0]->id;
+		}
 	}
 		
 	if(!isset($_SESSION['admin'])) {
@@ -82,7 +102,7 @@ function delete($params=false){
 	}
 		
 
-	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/delete/'.$params[0]->table.'/'.$params[0]->id.'"  style="display:inline;" target="_blank" '.$attr.'><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
+	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/delete/'.$obj_table.'/'.$obj_id.'"  style="display:inline;" target="_blank" '.$attr.'><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
 }
 
 function add($params){
@@ -139,6 +159,17 @@ function sort_icon($params){
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
+	$addition_params_string='?sort=yes';
+	
+	if(isset($params['sort_field'])) {
+		$addition_params_string .= '&sort_field='.$params['sort_field'];
+		unset($params['sort_field']);
+	}
+	if(isset($params['sort_direction'])) {
+		$addition_params_string .= '&sort_direction='.$params['sort_direction'];
+		unset($params['sort_direction']);
+	}
+	
 	
 	$attr='';
 	if(isset($params['style'])) {
@@ -160,15 +191,30 @@ function sort_icon($params){
 	
 	$params_string='';
 
+	
+	
+	if(isset($params['href'])) {
+		$href = $params['href'];
+		unset($params['href']);
+	} else {
+		$href = '';
+		unset($params['href']);
+	}
+	
+	
 	foreach($params as $key=>$value){
 		if(!is_numeric($key)) {
 			$params_string.= '/'.$key.'/'.$value;
 		}
 	}
 	
-	$params_string .= '?sort=yes';
-
-	print '<a href="/admin/list/'.$params[0].''.$params_string.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
+	$params_string .= $addition_params_string;
+	
+	if($href ==''){
+		$href = '/admin/list/'.$params[0].''.$params_string;
+	}
+	
+	print '<a href="'.$href.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
 }
 
 
@@ -217,41 +263,58 @@ function admin_show_one_list($table,$id1,$id2)
 		d()->datapool['admin']['columns']['title']='Заголовок';
 		d()->datapool['admin']['columns']['url']='URL';
 	}
+	$sort_field = 'sort';
+	if(isset($_GET['sort_field'])){
+		$sort_field = et($_GET['sort_field']);
+	}
+	$sort_direction='';
+	if(isset($_GET['sort_direction'])){
+		$sort_direction =  strtoupper($_GET['sort_direction']);
+		if($sort_direction !='DESC' && $sort_direction!='ASC'){
+			$sort_direction = '';
+		}
+		$sort_direction = ' '.$sort_direction;
+	}
+	
+	
 	if ($id1=='') {
 		//list/goods     просто список всех полей
-		$query='select * from '.et($table).'   order by '.DB_FIELD_DEL.'sort'.DB_FIELD_DEL;
+		$query='select * from '.et($table).'   order by '.DB_FIELD_DEL.$sort_field .DB_FIELD_DEL.$sort_direction;
 		d()->list_addbutton='';
 		d()->list_addbutton.='<a class="btn" href="/admin/edit/'. $table .'/add"><i class="icon-plus"></i> Добавить</a>';
 
 		if(isset(d()->admin['bottombuttons'])) {
-		$bottombuttons=d()->admin['bottombuttons'];
+			$bottombuttons=d()->admin['bottombuttons'];
 
-		foreach($bottombuttons as $bottombutton) {
-			d()->list_addbutton.=' <a class="btn" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
+			foreach($bottombuttons as $bottombutton) {
+				d()->list_addbutton.=' <a class="btn" href="/admin'.$bottombutton[0].'">'.$bottombutton[1].'</a>';
+			}
 		}
-	}
 
 
 	} else {
+	
+		
+		
 		if($id2 == '') {
 			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
-				$query='select * from '.DB_FIELD_DEL . et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL  order by '.DB_FIELD_DEL .'sort'.DB_FIELD_DEL;
+				$query='select * from '.DB_FIELD_DEL . et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL  order by '.DB_FIELD_DEL .$sort_field.DB_FIELD_DEL.$sort_direction;
 				d()->list_addbutton='<a class="btn" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				if(is_numeric($id1)) {
-					$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL.' where '.DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1)." order by ".DB_FIELD_DEL. "sort".DB_FIELD_DEL;
+					$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL.' where '.DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1)." order by ".DB_FIELD_DEL. $sort_field.DB_FIELD_DEL.$sort_direction;
 					d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
-					$query='select * from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).")  order by ".DB_FIELD_DEL . "sort".DB_FIELD_DEL;
+					$query='select * from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).")  order by ".DB_FIELD_DEL . $sort_field.DB_FIELD_DEL.$sort_direction;
 					d()->list_addbutton=' ';
 				}
 
 			}
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
-			$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL .' where '.DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2)."  order by ".DB_FIELD_DEL."sort".DB_FIELD_DEL;
+			$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL .' where '.DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2)."  order by ".DB_FIELD_DEL.$sort_field.DB_FIELD_DEL.$sort_direction;
 			d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.et($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}
@@ -316,8 +379,19 @@ function admin_show_one_list($table,$id1,$id2)
 					// Элементу с ID = $value присваеваем новый SORT, тот которы йбыл под номером $key ( $oldlist[$key]['sort'] ) 
 					d()->db->exec('UPDATE  `'.et($table).'` set `sort` = '.((int)$oldlist[$key]['sort']).' WHERE `id` = '.((int)$value)).'';
 				}
-			}			 
-			header('Location: '.$url) ;
+			}
+			
+			if($_POST['admin_command_redirect_close']=='yes') {
+		
+				return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
+			}else{
+
+				header('Location: '.$url) ;
+				exit();
+			}
+			
+			
+			
 			exit();
 		}
 		print d()->admin_show_one_sortable_list();		
@@ -373,8 +447,11 @@ function admin_edit()
 		header('Location: '.$_SERVER['REQUEST_URI']);
 		exit();
 	}
-
-	print action('admin_save_data');
+	$tableortype = url(3);
+	$action_needed =  action('admin_save_data');
+	if($action_needed){
+		return $action_needed;
+	}
 	$rows=array();
 	$scenario=0;
 	$tableortype = url(3);
@@ -522,6 +599,7 @@ function admin_save_data($params)
 		$scenario=1;
 	}
 	if($elemid=='add' || $scenario=='2') {
+		$params['sort']=$elemid;
 		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
 		d()->db->exec("insert into `".et(url(3))."`  () values ()");
 		$elemid=d()->db->lastInsertId();
@@ -549,7 +627,7 @@ function admin_save_data($params)
 		
 		//$params['url']=str_replace('/','_',$params['url']);
 	}
-	$params['sort']=$elemid;
+	
     $result_str="update `".et(url(3))."` set  ";
     $i=0;
 	 
@@ -602,8 +680,27 @@ function admin_save_data($params)
 	
 
 	if($_POST['admin_command_redirect_close']=='yes') {
+		$tableortype = url(3);
+		if(isset($line['type']) && $line['type']!='') {
+			$tableortype = to_p($line['type']);
+		}
+
+		if(isset($_GET['type']) && $_GET['type']!='') {
+			$tableortype = to_p($_GET['type']);
+		}
+
+		if (isset($_GET['fields']) && $_GET['fields']!=''){
+			$tableortype = $_GET['fields'];
+		}
+		d()->load_and_parse_ini_file('app/fields/'.$tableortype.'.ini');	
 		
-		return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
+		
+		if(isset(d()->admin['urlredirect']) && url(4)!='add'){
+			return  "<script> window.opener.document.location.href='".d()->admin['urlredirect']. h($params['url']) ."';window.open('','_self','');window.close();</script>";		
+		}else{
+			return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";		
+		}
+		
 	}else{
 
 		header('Location: '.$_POST['_http_referer']);
