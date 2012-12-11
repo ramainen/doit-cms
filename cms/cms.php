@@ -623,7 +623,13 @@ foreach($tmparr as $key=>$subval)
 		}
 		
 		d()->bootstrap();
-
+		
+		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static') && strpos($_SERVER['REQUEST_URI'],'..')===false && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI'])){
+			
+			$this->compiled_fragments['doit_open_static_file'] = $this->shablonize(file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI']));
+			$this->_prepared_content['main'] = $this->compile_and_run_template('doit_open_static_file');
+		}
+		 
 	}
 
 	/**
