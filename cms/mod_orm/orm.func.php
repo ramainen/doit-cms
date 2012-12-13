@@ -66,7 +66,7 @@ sum
 calculate
 
 */	
-define('SQL_NULL',md5(time()).'MYSQL_NULL_CONST'.rand());
+define('SQL_NULL','CONST'.md5(time()).'MYSQL_NULL_CONST'.rand());
 	
 //Класс Active Record, обеспечивающий простую добычу данных
 abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extends ArrayIterator
