@@ -681,7 +681,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
 				$attributes=array();
 				foreach($this->_future_data as $key => $value) {
-					if(SQL_NULL == $value){
+					if(SQL_NULL === $value){
 						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = NULL ";
 					}else{
 						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = ". doitClass::$instance->db->quote($value)." ";
