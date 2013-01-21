@@ -24,7 +24,7 @@
 
 
 		<?php if(!empty($_SERVER['HTTP_REFERER'])){?>
-			<input type="hidden" name="_http_referer" value="<?=h($_SERVER['HTTP_REFERER']);?>">
+			<input type="hidden" name="_http_referer" value="<?php print h($_SERVER['HTTP_REFERER']);?>">
 		<?php } ?>
 
 
