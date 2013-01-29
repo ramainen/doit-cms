@@ -5,7 +5,7 @@
 
 <input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
 <div class="ui-state-highlight ui-widget" style="padding:10px;margin-bottom:10px;">
-		   <div style="float:left" class="ui-icon ui-icon-alert"></div>  Объект с ID<?=h(url(4))?> из таблицы <?=h(url(3))?> будет удалён. Согласны?	 </div>
+		   <div style="float:left" class="ui-icon ui-icon-alert"></div>  Объект с ID<?php print h(url(4))?> из таблицы <?php print h(url(3))?> будет удалён. Согласны?	 </div>
 <input type="submit" class="btn btn-danger" value="Удалить">
 <input type="button" class="btn" onclick="window.open('','_self','');window.close();return false;" value="Отменить">
 {{/form}}
