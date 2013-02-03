@@ -469,7 +469,14 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		return $this;
 	}	
-
+	
+	private function calc_many_to_many_table_name($table1,$table2){
+		if($table1 > $table2){
+			return $table2.'_to_'.$table1;
+		}
+		return $table1.'_to_'.$table2;
+	}
+	
 	public function order_by($order_by)
 	{
 		$this->_options['queryready']=false;
@@ -935,9 +942,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		return '';
 	}
-	
 
-	
 	public function columns($tablename='')
 	{
 		if($tablename=='') {
@@ -1330,11 +1335,40 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 					return $_tmpael->find_by('url',$name);
 				}
 				*/
+				
+				//при запросе users возможны несколько случаев
+				//Три варианта: 1. есть И user_id, 2. и (или) users_to_groups
+				
+				$many_to_many_table = $this->calc_many_to_many_table_name($name,$this->_options['table']);
+				$many_to_many_table_columns = $this->columns($many_to_many_table);
 
 				foreach($columns as $key=>$value) {
 					if ($value == $this->_options['plural_to_one']."_id") {
 						$_tmpael  = activerecord_factory_from_table($name);
+						//Проверка на факт наличия таблицы users_to_groups
+						if($many_to_many_table_columns !=false){
+							$many_to_many_table_columns  = array_flip($many_to_many_table_columns);
+							$first_table_column = $this->_options['plural_to_one']."_id"; //group_id
+							$second_table_column = ActiveRecord::plural_to_one(strtolower($name)).'_id'; //user_id
+							if(isset($many_to_many_table_columns[$first_table_column]) && isset($many_to_many_table_columns[$second_table_column])){
+								//Таблица users_to_groups существует, и нужные столбцы есть в наличии
+								return $_tmpael->where($this->_options['plural_to_one']."_id = ? OR `id` IN (SELECT {$second_table_column} FROM ".et($many_to_many_table)." WHERE {$first_table_column} =  ?)",$this->_data[$this->_cursor]['id'],$this->_data[$this->_cursor]['id']);								
+							}
+						}
 						return $_tmpael->where($this->_options['plural_to_one']."_id = ?",$this->_data[$this->_cursor]['id']);
+					}
+				}
+				
+				//Третий вариант: есть только users_to_groups
+				$_tmpael  = activerecord_factory_from_table($name);
+				//Проверка на факт наличия таблицы users_to_groups
+				if($many_to_many_table_columns !=false){
+					$many_to_many_table_columns  = array_flip($many_to_many_table_columns);
+					$first_table_column = $this->_options['plural_to_one']."_id"; //group_id
+					$second_table_column = ActiveRecord::plural_to_one(strtolower($name)).'_id'; //user_id
+					if(isset($many_to_many_table_columns[$first_table_column]) && isset($many_to_many_table_columns[$second_table_column])){
+						//Таблица users_to_groups существует, и нужные столбцы есть в наличии
+						return $_tmpael->where("`id` IN (SELECT {$second_table_column} FROM ".et($many_to_many_table)." WHERE {$first_table_column} =  ?)",$this->_data[$this->_cursor]['id']);								
 					}
 				}
 			}
