@@ -279,13 +279,19 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		
 		//TODO: брать таблицу из родительского объекта
-		if(!isset($this->_options['table'])) {
-			if(strtolower(get_class($this))=='ActiveRecord') {
-				$this->_options['table']='options';
-			} else {
-				$this->_options['table']=self::one_to_plural(strtolower(get_class($this)));
+		if(!isset($this->_options['table'])) {			
+			$_current_class = get_class($this);
+			if(substr($_current_class,-5)=='_safe'){
+				$_current_class = substr($_current_class,0,-5);
+			}
+			$this->_options['table']=self::one_to_plural(strtolower($_current_class));
+		}else{
+			if(substr($this->_options['table'],-5)=='_safe'){
+				$this->_options['table'] = substr($this->_options['table'],0,-5);
 			}
 		}
+		
+		
 		
 		if(!isset($this->_options['plural_to_one'])) {
 			$this->_options['plural_to_one']=self::plural_to_one($this->_options['table']);
@@ -660,8 +666,75 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this;
 	}
 
+	function save_connecton_array($id,$table,$rules){
+		//Сохранение каждого из списка элементов. Если это не массив, сделать его таким
+		foreach($rules as $key=>$data){
+			if(!is_array($data)){
+				if($data==''){
+					$data = array();
+				}else{
+					$data=explode(',',$data);
+				}
+			}
+			$second_table =substr($key,3);
+			
+			$first_field = to_o($table).'_id';
+			$second_field = to_o($second_table).'_id';
+
+			$many_to_many_table = $this->calc_many_to_many_table_name($table,$second_table);
+
+			
+			//0. проверяем наличие таблицы, при её отсуствии, создаём её
+			if(false == $this->columns($many_to_many_table)){
+				//таблицы many_to_many не существует  - создаем автоматически
+				$one_element=to_o($many_to_many_table);
+				d()->Scaffold->create_table($many_to_many_table,$one_element);
+				
+				d()->Scaffold->create_field($many_to_many_table,$second_field);
+				d()->Scaffold->create_field($many_to_many_table,$first_field);
+			}
+			$columns_names=array_flip($this->columns($many_to_many_table));
+			if(!isset($columns_names[$first_field])){
+				d()->Scaffold->create_field($many_to_many_table,$first_field);
+			}
+			if(!isset($columns_names[$second_field])){
+				d()->Scaffold->create_field($many_to_many_table,$second_field);
+			}
+			
+			//1.удаляем существующие данные из таблицы
+			if(count($data)>0){
+				$_query_string='delete from '.DB_FIELD_DEL.''.$many_to_many_table . DB_FIELD_DEL." where ".DB_FIELD_DEL. $second_field .DB_FIELD_DEL." NOT IN (". implode(', ',$data) .") AND ".DB_FIELD_DEL. $first_field .DB_FIELD_DEL." =  ". e($id) . "";
+			}else{
+				$_query_string='delete from '.DB_FIELD_DEL.''.$many_to_many_table . DB_FIELD_DEL." where ".DB_FIELD_DEL. $first_field .DB_FIELD_DEL." =  ". e($id) . "";
+			}
+			doitClass::$instance->db->exec($_query_string);
+			//2.добавляем нове записи в таблицу
+			$exist = doitClass::$instance->db->query("SELECT ".DB_FIELD_DEL.''.$second_field . DB_FIELD_DEL." as cln FROM ".DB_FIELD_DEL.''.$many_to_many_table . DB_FIELD_DEL."  where ".DB_FIELD_DEL. $first_field .DB_FIELD_DEL." =  ". e($id) . "")->fetchAll(PDO::FETCH_COLUMN);
+			$exist = array_flip($exist);
+
+			foreach($data as $second_id){
+				if(!isset($exist[$second_id])){
+					$_query_string='insert into '.DB_FIELD_DEL. $many_to_many_table .DB_FIELD_DEL." (".DB_FIELD_DEL. $first_field .DB_FIELD_DEL.", ".DB_FIELD_DEL. $second_field .DB_FIELD_DEL." ) values (". e($id) . ",". e( $second_id) . " )";
+					doitClass::$instance->db->exec($_query_string);
+				}
+			}
+		}
+	}
+	
 	public function save()  //CrUd - Create & Update
 	{
+		$to_array_cache=array();
+		$tmp_future_data = array();
+		$current_id=0;
+		foreach($this->_future_data as $key=>$value){
+			if(substr($key,0,3)=='to_'){
+				$to_array_cache[$key]=$value;
+			}else{
+				$tmp_future_data[$key]=$value;
+			}
+		}
+		$this->_future_data = $tmp_future_data;
+		
 		if($this->_options['new']==true) {
 			$this->insert_id=false;
 			//Тут идёт вставка
@@ -686,6 +759,9 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 			}
+			if(isset($this->_data[0])){
+				$current_id = $this->_data[0]['id'];
+			}
 			//Тут проверка на апдейт
 			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
 				$attributes=array();
@@ -699,7 +775,6 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				}
 				$attribute_string=implode (',',$attributes);
 				$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.$attribute_string.", ". DB_FIELD_DEL ."updated_at". DB_FIELD_DEL ." = NOW()  where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->_data[0]['id']."'";
-
 			}
 		}
 		doitClass::$instance->db->exec($_query_string);
@@ -727,6 +802,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		
 		if($this->_options['new']==true) {
 			$this->insert_id = doitClass::$instance->db->lastInsertId();
+			$current_id = $this->insert_id;
 			$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.
 			DB_FIELD_DEL ."sort". DB_FIELD_DEL ." = '".$this->insert_id."', ".
 			DB_FIELD_DEL ."created_at". DB_FIELD_DEL ." = NOW(), ".
@@ -751,6 +827,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			
 		}
 		$this->_future_data=array();
+		
+		//Сохранение связей
+		if(count($to_array_cache)!=0){
+			$this->save_connecton_array($current_id,$this->_options['table'],$to_array_cache);
+		}
 		return $this;
 	}
 
@@ -795,8 +876,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		$_tmparr=array();
 		$_class_name = get_class($this);
 		foreach($this->_data as $element){
-			//TODO: Вот тут особенно важно возвращать правильное имя, хотя имеено тут всё верно
-			$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'], 'data'=>array( $element ) ));
+			$_tmparr[] = new  $_class_name (array('data'=>array( $element ) ));
 		}
 		  
 		return $_tmparr;
