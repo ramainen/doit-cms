@@ -598,11 +598,15 @@ function admin_save_data($params)
 	if(isset($_POST['_scenario']) && $_POST['_scenario']=='edit'){
 		$scenario=1;
 	}
+	
+	//FIXME: костыль
 	if($elemid=='add' || $scenario=='2') {
-		$params['sort']=$elemid;
+	//	$params['sort']=$elemid;
 		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
-		d()->db->exec("insert into `".et(url(3))."`  () values ()");
-		$elemid=d()->db->lastInsertId();
+		$model =  activerecord_factory_from_table(et(url(3)), '_safe')->new;
+		$model->save();
+		//d()->db->exec("insert into `".et(url(3))."`  () values ()");
+		$elemid= $model->insert_id;
 	}
 	if($scenario=='1') {
 		//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
@@ -611,10 +615,14 @@ function admin_save_data($params)
 			$line=$result->fetch();
 			$elemid=$line['id'];
 		}else{
-			d()->db->exec("insert into `".et(url(3))."`  () values ()");
-			$elemid=d()->db->lastInsertId();
+		//	d()->db->exec("insert into `".et(url(3))."`  () values ()");
+		//	$elemid=d()->db->lastInsertId();
+			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->new;
+			$model->save();
+			$elemid= $model->insert_id;
 		}
 	}
+
 	//FIXME: костыль
 	if(isset($params['url'])){
 		if($params['url']=='') {
@@ -627,10 +635,11 @@ function admin_save_data($params)
 		
 		//$params['url']=str_replace('/','_',$params['url']);
 	}
-	
+	/*
     $result_str="update `".et(url(3))."` set  ";
+	*/
     $i=0;
-	 
+	
 	$options_field=array();
 	foreach($params as $key=>$value) {
 		if(preg_match('/\<img\ssrc=\"\/cms\/external\/tiny_mce\/plugins\/mymodules\/module\.php\?[\@\-\_0-9a-z\=A-Z\&]+\"\s\/\>/',$value)){
@@ -641,7 +650,22 @@ function admin_save_data($params)
 		$params['admin_options']=serialize($options_field);
 	}else{
 		$params['admin_options']='';
+	
 	}
+	$model =  activerecord_factory_from_table(et(url(3)), '_safe')->find($elemid);
+	
+	
+	foreach ($params as $field_name => $value){
+		$model->{$field_name} = $value;
+	}
+	$model->save();
+	/*
+
+	//Устаревший вариант, комментарий будет удалён в ближайших версиях
+	
+	
+	//todo: обеспечить в API
+	
 	foreach($params as $key=>$value) {
 		$i++;
 		if (substr($key,-3)=='_id' && $value == '') {
@@ -651,7 +675,7 @@ function admin_save_data($params)
 		}
         if ($i<count($params)) $result_str.=' , ';
     }
-		
+	
     $result_str.=" where `id`=".(int)($elemid);
 
  
@@ -677,6 +701,8 @@ function admin_save_data($params)
 		}
 		doitClass::$instance->db->exec($result_str);
 	}
+	*/
+	
 	
 
 	if($_POST['admin_command_redirect_close']=='yes') {

@@ -744,7 +744,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				foreach($this->_future_data as $key => $value) {
 					$fields[]=" ".DB_FIELD_DEL . $key . DB_FIELD_DEL." ";
 					
-					if(SQL_NULL === $value){
+					if(SQL_NULL === $value || (substr($key,-3)=='_id' && $value==='')){
 						$values[]=" NULL ";
 					}else{
 						$values[]=" ". doitClass::$instance->db->quote ($value)." ";
@@ -754,6 +754,8 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				$fields_string=implode (',',$fields);
 				$values_string=implode (',',$values);
 				$_query_string='insert into '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' ('.$fields_string.') values ('.$values_string.')';
+			}else{
+				$_query_string='insert into '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' () values ()';
 			}
 		} else {
 			if ($this->_options['queryready']==false) {
@@ -766,7 +768,8 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			if(isset($this->_data[0]) && (count($this->_future_data)>0)){
 				$attributes=array();
 				foreach($this->_future_data as $key => $value) {
-					if(SQL_NULL === $value){
+
+					if(SQL_NULL === $value  || (substr($key,-3)=='_id' && $value==='')){
 						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = NULL ";
 					}else{
 						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = ". doitClass::$instance->db->quote($value)." ";
@@ -1468,7 +1471,7 @@ function activerecord_factory($_modelname)
 	return new $_modelname ();
 	//return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
 }
-function activerecord_factory_from_table($_tablename)
+function activerecord_factory_from_table($_tablename, $suffix = '')
 {
 	if(is_array($_tablename)) {
 		$_tablename=$_tablename[0];
@@ -1476,7 +1479,7 @@ function activerecord_factory_from_table($_tablename)
 	
 	$_modelname=ActiveRecord::plural_to_one(strtolower($_tablename));
 	$_first_letter=strtoupper(substr($_modelname,0,1));
-	$_modelname = $_first_letter.substr($_modelname,1);
+	$_modelname = $_first_letter.substr($_modelname,1) . $suffix;
 
 	return new $_modelname ();
 	//return new ar(array('table'=>ar::one_to_plural(strtolower($_modelname))));
