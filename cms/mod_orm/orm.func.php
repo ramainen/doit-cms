@@ -88,7 +88,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	private $_must_revind=false;
 	private $_slice_size=5;
 	private $_objects_cache=array();
-	
+	private $_safe_mode = false;
 	//TODO: Выполняет limit 1 SQL запрос
 	//DEPRECATED: Это не Rails, тут всё гораздо проще.
 	function first()
@@ -283,6 +283,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$_current_class = get_class($this);
 			if(substr($_current_class,-5)=='_safe'){
 				$_current_class = substr($_current_class,0,-5);
+				$this->_safe_mode = true;
 			}
 			$this->_options['table']=self::one_to_plural(strtolower($_current_class));
 		}else{
@@ -1290,6 +1291,21 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			return $this->all_of(substr($name,4));
 		}
 		
+		if (substr($name,0,3)=='to_') {
+			if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+			}
+			$many_to_many_table = $this->calc_many_to_many_table_name(substr($name,3),$this->_options['table']);	
+			$column = ActiveRecord::plural_to_one(strtolower(substr($name,3))).'_id';
+			$current_column = $this->_options['plural_to_one']."_id";
+			if(isset($this->_data[0])){
+				$result = doitClass::$instance->db->query("SELECT " . DB_FIELD_DEL . $column . DB_FIELD_DEL . " FROM ".et($many_to_many_table )." WHERE ". DB_FIELD_DEL . $current_column . DB_FIELD_DEL ." = ". e($this->_data[$this->_cursor]['id']))->fetchAll(PDO::FETCH_COLUMN);
+				return implode(',',$result);
+			}else{
+				return '';
+			}
+			
+		}
 		
 		//d()->User->groups_throw_roles
 		$throw_substr= strpos($name,'_throw_');
@@ -1325,7 +1341,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 
 		if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
+			$this->fetch_data_now();
 		}
 		
 		if(isset($this->_future_data[$name])){
@@ -1341,7 +1357,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		if (isset($this->_data[$this->_cursor])) {
 			//Item.title         //Получение одного свойства
 			if (isset($this->_data[$this->_cursor][$name])) {
-				if(isset($this->_data[$this->_cursor]['admin_options']) &&  ($this->_data[$this->_cursor]['admin_options']!='')   ){
+				if(isset($this->_data[$this->_cursor]['admin_options']) &&  ($this->_data[$this->_cursor]['admin_options']!='') && $this->_safe_mode === false  ){
 					$admin_options = unserialize( $this->_data[$this->_cursor]['admin_options']);
 					
 					if(isset($admin_options[$name])){

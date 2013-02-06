@@ -463,16 +463,31 @@ function admin_edit()
 	}
 	if (url(4)!='add') {
 		if($scenario==1){
-			$result=d()->db->query("select * from `".et(url(3))."` where `url` = ".e(url(4)));
+			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->where('`url` = ?',url(4));
+			if(count($model)==0){
+				$scenario=2;
+				$_GET['url']=url(4);
+				$line=array();
+			}else{
+				$line = $model;
+			}
+			/*$result=d()->db->query("select * from `".et(url(3))."` where `url` = ".e(url(4)));
 			if ($result===false ||  ($line=$result->fetch())===false) {
 				$scenario=2;
 				$_GET['url']=url(4);
 				$line=array();
-			}
+			}*/
 		} else {
-			$result=d()->db->query("select * from `".et(url(3))."` where `id` = ".(int)url(4));
+			/*$result=d()->db->query("select * from `".et(url(3))."` where `id` = ".(int)url(4));
 			if ($result===false ||  ($line=$result->fetch())===false) {
 				$line=array();
+			}
+			*/
+			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->find(url(4));
+			if(count($model)==0){
+				$line=array();
+			}else{
+				$line = $model;
 			}
 		}
 	} else {
