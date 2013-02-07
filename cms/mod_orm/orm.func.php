@@ -1436,10 +1436,30 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				*/
 				
 				//при запросе users возможны несколько случаев
-				//Три варианта: 1. есть И user_id, 2. и (или) users_to_groups
+				//Четрые варианта: 1. есть И user_id, 2. и (3. или) users_to_groups, 4. только вспомогательная таблица
+				//При запросе users_over_memberships преобразуем $name в users
 				
-				$many_to_many_table = $this->calc_many_to_many_table_name($name,$this->_options['table']);
-				$many_to_many_table_columns = $this->columns($many_to_many_table);
+				$over_position = strpos($name,'_over_');
+				if($over_position!==false){
+					$over_method = substr($name, $over_position+6);
+					$name = substr($name, 0, $over_position);
+					$_tmpael  = activerecord_factory_from_table($name);
+					$second_table_column = ActiveRecord::plural_to_one(strtolower($name)).'_id';
+					//Проверка на факт наличия таблицы users_to_groups
+					$ids_array = $this->{$over_method}->select($second_table_column)->to_array;
+					$ids = array();
+					foreach($ids_array as $key=>$value){
+						$ids[] = $value[$second_table_column];
+					}
+					return $_tmpael->where("`id` IN (?)", $ids);
+					
+					
+				}else{
+					$many_to_many_table = $this->calc_many_to_many_table_name($name,$this->_options['table']);
+					$many_to_many_table_columns = $this->columns($many_to_many_table);
+				}
+				
+				
 
 				foreach($columns as $key=>$value) {
 					if ($value == $this->_options['plural_to_one']."_id") {
