@@ -265,7 +265,21 @@ function notice($params=array())
 	
 	
 	$str .= '</ul>';
+
+
 	return $str;
+}
+
+function jquery_notice(){
+	if(isset(d()->datapool['inputs_with_errors']) && count(d()->datapool['inputs_with_errors'])!=0 && isset($_POST['_element'])){
+	$noticed_inputs = array_values(d()->datapool['inputs_with_errors']);
+	$response.=  "$('.error').removeClass('error');\n";
+	foreach($noticed_inputs as $key=>$input){
+		$element_name = "'input[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
+		$response .=  '$('.$element_name.').parent().parent().addClass("error");'."\n";
+	}
+	print "\n<script>".'$(function(){'.$response.'});'."</script>\n";
+}
 }
 
 function flash($params=array())

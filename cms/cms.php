@@ -650,6 +650,7 @@ foreach($tmparr as $key=>$subval)
 			$rules=$this->validator[$validator_name];
 	//		if(!isset($this->datapool['notice'])) {
 				$this->datapool['notice']=array();
+				$this->datapool['inputs_with_errors']=array();
 	//		}
 
 			foreach($rules as $key=>$value) {
@@ -658,10 +659,12 @@ foreach($tmparr as $key=>$subval)
 				}
 				if(isset($value['required']) && (!isset ($params[$key]) || trim($params[$key])=='')) {
 					$this->datapool['notice'][] = $value['required']['message'];
+					$this->datapool['inputs_with_errors'][] = $key;
 					$is_ok=false;
 				}
 				if(isset($value['confirmation']) && (!isset ($params[$key.'_confirmation']) || $params[$key.'_confirmation']!=$params[$key])) {
 					$this->datapool['notice'][] = $value['confirmation']['message'];
+					$this->datapool['inputs_with_errors'][] = $key.'_confirmation';
 					$is_ok=false;
 				}
 				if(isset($value['unique'])) {
@@ -675,6 +678,7 @@ foreach($tmparr as $key=>$subval)
 					}
 					if (! d()->$model->find_by($key,$params[$key])->is_empty){
 						$this->datapool['notice'][] = $value['unique']['message'];
+						$this->datapool['inputs_with_errors'][] = $key;
 						$is_ok=false;
 					}
 				}
@@ -696,6 +700,7 @@ foreach($tmparr as $key=>$subval)
 						 $rez = $this->call($rule,array($params[$key],$rule_array));
 						 if($rez===false){
 							 $this->datapool['notice'][] = $value[$rule]['message'];
+							 $this->datapool['inputs_with_errors'][] = $key;
 							 $is_ok=false;
 						 }
 					}
@@ -743,9 +748,13 @@ foreach($tmparr as $key=>$subval)
 	 *
 	 * @param $text Текст ошибки
 	 */
-	public function add_notice($text)
+	public function add_notice($text,$element=false)
 	{
 		$this->datapool['notice'][] = $text;
+		if($element!==false){
+			$this->datapool['inputs_with_errors'][] = $element;
+		}
+		
 	}	
 
 	/**
