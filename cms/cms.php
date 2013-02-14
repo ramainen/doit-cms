@@ -397,7 +397,7 @@ foreach($tmparr as $key=>$subval)
         $this->template_replacements[]='<'.'?php }  ?'.'>';
 
         // {title}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\}/';
+		$this->template_patterns[]='/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$1; ?'.'>';
 
 		// {:title}
