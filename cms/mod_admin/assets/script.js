@@ -123,6 +123,20 @@ $(function () {
 	function hide_dropdowns(){
 		 
 	}
+	$('.admin_edit_form').on('submit',function(){
+		$('.hiddenable_container').each(function(){
+			element = $(this).data('element');
+			value = $(this).data('value');
+			if($('[name="data['+element+']"]').val() == value){
+				$(this).show();
+			} else {
+				if($(this).data('deletable')==true){
+					$(this).remove();
+				}
+			}
+	
+		})
+	});
 	rehide_containers();
 	
 	
