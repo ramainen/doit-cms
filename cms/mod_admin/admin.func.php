@@ -463,7 +463,7 @@ function admin_edit()
 	}
 	if (url(4)!='add') {
 		if($scenario==1){
-			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->where('`url` = ?',url(4));
+			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->where('`url` = ?',url(4))->to_array; //для избавления от багов
 			if(count($model)==0){
 				$scenario=2;
 				$_GET['url']=url(4);
@@ -483,7 +483,7 @@ function admin_edit()
 				$line=array();
 			}
 			*/
-			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->find(url(4));
+			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->find(url(4))->to_array;//для избавления от багов
 			if(count($model)==0){
 				$line=array();
 			}else{
