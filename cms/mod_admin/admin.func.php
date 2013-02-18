@@ -257,7 +257,36 @@ function admin_show_one_list($table,$id1,$id2)
 
 	d()->curr_table=$table;
 	d()->load_and_parse_ini_file('app/fields/'.$table.'.ini');
-
+	
+	//модель для опасного запроса к списку сущностей
+	
+	
+	$model_suffix = '_safe';
+	if(empty($_GET['sort'])){
+		if(d()->admin['use_model']['list']){
+			$param = trim(strtolower( d()->admin['use_model']['list']));
+			if(in_array($param,array('1','true','yes','use'))){
+				//используем опасную модель
+				$model_suffix='';
+			}
+		}		
+	}else{
+		if(d()->admin['use_model']['sort']){
+			$param = trim(strtolower( d()->admin['use_model']['sort']));
+			if(in_array($param,array('1','true','yes','use'))){
+				//используем опасную модель
+				$model_suffix='';
+			}
+		}
+	}	
+	
+	$model =  activerecord_factory_from_table(et($table),$model_suffix);
+ 
+	d()->another_field=false;
+	if(!empty($_GET['show_field'])){
+		d()->another_field=$_GET['show_field'];//TODO: возможна подмена
+	}
+	
 	if(!isset(d()->datapool['admin']['columns']) || !is_array(d()->datapool['admin']['columns']) || count(d()->datapool['admin']['columns'])==0){
 		d()->datapool['admin']['columns']=array();
 		d()->datapool['admin']['columns']['title']='Заголовок';
@@ -275,7 +304,8 @@ function admin_show_one_list($table,$id1,$id2)
 		}
 		$sort_direction = ' '.$sort_direction;
 	}
-	
+
+	$model->order_by(DB_FIELD_DEL . $sort_field . DB_FIELD_DEL . ' ' . $sort_direction);
 	
 	if ($id1=='') {
 		//list/goods     просто список всех полей
@@ -300,14 +330,25 @@ function admin_show_one_list($table,$id1,$id2)
 			if($id1=='index') {
 				//list/goods/    список полей с goods_id = NULL
 				$query='select * from '.DB_FIELD_DEL . et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL  order by '.DB_FIELD_DEL .$sort_field.DB_FIELD_DEL.$sort_direction;
+				
+				$model->where(DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL.' is NULL ');
+				
 				d()->list_addbutton='<a class="btn" href="/admin/edit/'. $table .'/add">Добавить</a>';
 			} else {
 				//list/goods/4    список полей с goods_id = 4
 				if(is_numeric($id1)) {
 					$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL.' where '.DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1)." order by ".DB_FIELD_DEL. $sort_field.DB_FIELD_DEL.$sort_direction;
+					
+					$model->where(DB_FIELD_DEL .et(to_o($table))."_id".DB_FIELD_DEL ." = ".e($id1));
+					
 					d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.h(to_o($table)).'_id='.h($id1).'">Добавить</a>';
 				}else{
 					$query='select * from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL . ' where '.DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).")  order by ".DB_FIELD_DEL . $sort_field.DB_FIELD_DEL.$sort_direction;
+					
+					
+					
+					$model->where(DB_FIELD_DEL .et(to_o($table)).'_id'.DB_FIELD_DEL . ' IN (select id from '.DB_FIELD_DEL .et($table).DB_FIELD_DEL ." where ".DB_FIELD_DEL."url".DB_FIELD_DEL." = ".e($id1).") ");
+					
 					d()->list_addbutton=' ';
 				}
 
@@ -315,10 +356,13 @@ function admin_show_one_list($table,$id1,$id2)
 		} else {
 			//list/goods/catalog_id/4             список полей с catalog_id = 4
 			$query='select * from '.DB_FIELD_DEL.et($table).DB_FIELD_DEL .' where '.DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2)."  order by ".DB_FIELD_DEL.$sort_field.DB_FIELD_DEL.$sort_direction;
+			
+			$model->where(DB_FIELD_DEL .et($id1).DB_FIELD_DEL. " = ".e($id2));
+			
 			d()->list_addbutton='<a class="btn" href="/admin/edit/'. h($table) .'/add?'.et($id1).'='.h($id2).'">Добавить</a>';
 		}
 	}
-	print '<!-- '.$query.' -->';
+	print '<!-- OLD MODE! Dangerous! '.$query.' -->';
 	//Определение дополнительных кнопок
 
 
@@ -333,8 +377,11 @@ function admin_show_one_list($table,$id1,$id2)
 	$data=array();
 	if($result===false){
 		$err= d()->db->errorInfo(); //Отладка
+		//todo: хз как заработает на модели
 		print $err[2];
 	}else{
+	
+		/*
 		$all_lines=$result->fetchAll();
 		foreach($all_lines as $key0=> $line){
 			$all_lines[$key0]['addbuttons']='';
@@ -347,6 +394,26 @@ function admin_show_one_list($table,$id1,$id2)
 				d()->db->exec('UPDATE  `'.et($table).'` set `sort` = `id` where `id` = '.((int)$line['id']));
 			}
 		}
+		*/
+		 
+		//Версия 2-на модели
+		$all_lines=array();
+		foreach($model->all as $key0=> $line){
+			$all_lines[$key0] =  $line;
+			$all_lines[$key0]['addbuttons']='';
+			foreach($addbuttons as $key => $value) {
+				$all_lines[$key0]['addbuttons'] .= '<a href="/admin'.  $value[0] . $line['id'] . '" class="btn btn-mini">'.$value[1].'</a> ';
+			}
+			if (empty($line['sort'])) {
+				//ВНЕЗАПНО сортировка пустая
+				//TODO: ХЕРОВО
+				d()->db->exec('UPDATE  `'.et($table).'` set `sort` = `id` where `id` = '.((int)$line['id']));
+			}
+		}
+		
+		
+		
+		
 		$data = $all_lines;
 	}
 	$sort_title='';

@@ -204,13 +204,37 @@ function create_field_template()
 	';image image "Изображение" galleries 180 auto\n'+
 	';file file  Файл "files"\n'+
 	';select razdel Раздел "Оборудование(1)" "Обучение(2)"\n'+
+	';checkbox is_active "Активный?"\n'+
+	
 	'\n'+
 	';<тип поля> <имя поля> <название для администратора>\n'+
 	
+ 
 	'\n'+
 	';[admin.addbuttons]\n'+
 	';/list/texts/	Подстраницы\n'+
-	';/list/goods/catalog_id/   "Связанные товары"')
+	';/list/goods/catalog_id/   "Связанные товары"\n'+
+	
+	
+	'\n'+
+	';[admin.use_model]\n'+
+	';sort=yes\n'+
+	';list=yes\n'+
+	';edit=yes\n'+
+	
+ 
+	'\n'+
+	';[admin.columns]\n'+
+	';page_url=Адрес\n'+
+	';title=TITLE\n'+
+	';multi_domain = Домен\n'+
+ 
+	'\n'+
+	';[admin]\n'+
+	';urlredirect=/\n' 
+	
+	
+	)
 }
 function show_field_editor()
 {

@@ -22,7 +22,12 @@ $(function(){
 	<foreach objectrow>
 	<div class="sorting_element">
 	
-		{.title} <?php if(d()->this->url != ''){ ?>({.url})<?php } ?>
+		<?php if(d()->another_field){ ?>
+			<?php print d()->this[d()->another_field]; ?>
+		<?php }else{ ?>
+			{.title} <?php if(d()->this->url != ''){ ?>({.url})<?php } ?>
+		<?php } ?>
+		
 		<input type="hidden" name="data[elements][]" value="{.id}">
 		</div>
 	</tr>
