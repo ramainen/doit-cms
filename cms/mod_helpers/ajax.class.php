@@ -36,7 +36,7 @@ class Ajax extends UniversalSingletoneHelper
 			$noticed_inputs = array_values(d()->datapool['inputs_with_errors']);
 			$this->response.=  "$('.error').removeClass('error');\n";
 			foreach($noticed_inputs as $key=>$input){
-				$element_name = "'input[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
+				$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
 				$this->response .=  '$('.$element_name.').parent().parent().addClass("error");'."\n";
 			}
 			
