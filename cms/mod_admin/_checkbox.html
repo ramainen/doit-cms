@@ -1,0 +1,13 @@
+<?php $cur_id=rand(1111,9999); ?>
+<div class="control-group" style="margin-bottom:0;padding:0;">
+  
+  <div class="controls">
+  <label class="checkbox" style="margin-bottom:0; " for ="checkbox_<?php print $cur_id ?>" > <input type="checkbox" class="automatic_checkbox" id="checkbox_<?php print $cur_id ?>"> {title}</label>
+  
+	<input type="hidden"  name="{name}" value="{value|h}" class="input-small automatic_checkbox_input"  >
+	<span class="help-inline"><?php print d()->field_params[3]; ?></span>
+  </div>
+</div>
+
+ 
+ 

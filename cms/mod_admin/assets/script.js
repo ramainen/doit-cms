@@ -110,6 +110,26 @@ $(function () {
 		rehide_containers();
 		
 	})
+	
+	$('.automatic_checkbox_input').each(function(){
+	
+		if($(this).val()=='1'){
+	
+			$(this).parent().find('.automatic_checkbox').attr('checked', true)
+		
+		}else{
+			$(this).parent().find('.automatic_checkbox').attr('checked', false)
+		}
+	})
+ 
+	$('.automatic_checkbox').bind('click',function(){
+		if($(this).is(':checked')){
+			$(this).parent().parent().find('.automatic_checkbox_input').val('1');
+		}else{
+			$(this).parent().parent().find('.automatic_checkbox_input').val('0');
+		}
+		rehide_containers();
+	})
  
 	$('.dropdown-menu').bind('mouseout',function(e){
 	
@@ -120,10 +140,24 @@ $(function () {
 			//debugger
 		
 	})
+	
+	
 	function hide_dropdowns(){
 		 
 	}
 	$('.admin_edit_form').on('submit',function(){
+	
+		$('.automatic_checkbox').each(function(){
+			if($(this).is(':checked')){
+				$(this).parent().parent().find('.automatic_checkbox_input').val('1');
+			}else{
+				$(this).parent().parent().find('.automatic_checkbox_input').val('0');
+			}
+		})
+	 
+	
+	
+	
 		$('.hiddenable_container').each(function(){
 			element = $(this).data('element');
 			value = $(this).data('value');
