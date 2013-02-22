@@ -201,10 +201,15 @@ function sort_icon($params){
 		unset($params['href']);
 	}
 	
-	
+	$counted=0;
 	foreach($params as $key=>$value){
-		if(!is_numeric($key)) {
+		if(!is_numeric($key) && $counted==0) {
 			$params_string.= '/'.$key.'/'.$value;
+			$counted++;
+			continue;
+		}
+		if(!is_numeric($key) && $counted>0) {
+			$addition_params_string.='&'.$key.'='.$value;
 		}
 	}
 	
@@ -305,6 +310,15 @@ function admin_show_one_list($table,$id1,$id2)
 		$sort_direction = ' '.$sort_direction;
 	}
 
+	/* Дополнительная сортировка по различным параметрам */
+	foreach($_GET as $key=>$value){
+		if(! in_array($key, array('sort_field', 'sort_direction', 'style', 'class', 'title', 'sort', 'href'))){
+			$model->where(DB_FIELD_DEL . $key .DB_FIELD_DEL . " = ?",$value);
+
+			
+		}
+	}
+	
 	$model->order_by(DB_FIELD_DEL . $sort_field . DB_FIELD_DEL . ' ' . $sort_direction);
 	
 	if ($id1=='') {
