@@ -158,6 +158,7 @@ function textarea ($params=array())
 function form ($params=array()) 
 {
 	$attr="";
+	$additions = '';
 	if (isset($params[1])) {
 		d()->current_form_object = $params[1];
 	} else {
@@ -170,6 +171,15 @@ function form ($params=array())
 	
 	if(isset($params['ajax']) && $params['ajax']==true) {
 		$attr .= ' onsubmit="$.ajax({\'type\':\'post\',\'url\': $(this).attr(\'action\')?$(this).attr(\'action\'):document.location.href ,\'data\':$(this).serialize(),\'success\':function(recieved_data){eval(recieved_data)}});return false;" ';
+		
+	}
+		
+	if(isset($params['iframe']) && $params['iframe']==true) {
+		$iframe_id = "hidden_".rand(111,999);
+		$attr .= ' target="'.$iframe_id.'" ';
+		
+		$additions .= '<iframe style="display:none" id="'.$iframe_id.'"></iframe>';
+		$additions .= ' <input type="hidden" name="_is_iframe" value="1" >';
 		
 	}
 	
@@ -194,6 +204,7 @@ function form ($params=array())
 	$result =  "<form method='POST' ".$attr.">";
 	$result .= ' <input type="hidden" name="_element" value="' . d()->current_form_object .'" >';
 	$result .= ' <input type="hidden" name="_action" value="'.$params[0].'" >';
+	$result .= $additions;
 	return $result;
 	
 }
