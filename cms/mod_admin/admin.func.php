@@ -123,7 +123,11 @@ function add($params){
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
 		unset($params['class']);
+	}else{
+		$attr .= ' class="adm_icon" ';
 	}
+	
+	
 	if(isset($params['title'])) {
 		$attr .= ' title="'.$params['title'].'" ';
 		unset($params['title']);
@@ -179,6 +183,8 @@ function sort_icon($params){
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
 		unset($params['class']);
+	}else{
+		$attr .= ' class="adm_icon" ';
 	}
 	if(isset($params['title'])) {
 		$attr .= ' title="'.$params['title'].'" ';
