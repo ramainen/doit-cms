@@ -41,11 +41,19 @@ class Mail extends UniversalSingletoneHelper
 		$this->options['file_name']=$file_name;
 		
 	}
+
+	function attach_file_contents($file_contents,$file_name='')
+	{
+
+		$this->options['file_contents']=$file_contents;
+		$this->options['file_name']=$file_name;
+		
+	}
 	
 	function send()
 	{
 	
-		if(!isset($this->options['file_adress'])){
+		if(!isset($this->options['file_adress']) && !isset($this->options['file_contents'])){
 			$result =  mail($this->options['to'],"=?UTF-8?B?".base64_encode( $this->options['subject'])."?=",
 				$this->options['message'],
 				"Content-Type: text/html; charset=\"UTF-8\"");
@@ -59,8 +67,11 @@ class Mail extends UniversalSingletoneHelper
 			$headers .= "MIME-Version: 1.0\n"."Content-Type: multipart/mixed;\n"." boundary=\"{$mime_boundary}\""; 
 
 			$email_message = "This is a multi-part message in MIME format.\n\n"."--{$mime_boundary}\n"."Content-Type:text/html; charset=\"UTF-8\"\n"."\n". $this->options['message'] ."\n\n";
-			$data = chunk_split(base64_encode(file_get_contents($this->options['file_adress'])));
-
+			if(isset($this->options['file_contents'])){
+				$data = chunk_split(base64_encode($this->options['file_contents']));
+			}else{
+				$data = chunk_split(base64_encode(file_get_contents($this->options['file_adress'])));
+			}
 			$email_message .= "--{$mime_boundary}\n"."Content-Type: application/octet-stream;\n"." name=\"".$this->options['file_name']."\"\n"."Content-Transfer-Encoding: base64\n\n".$data."\n\n"."--{$mime_boundary}--\n"; 
 			 
 			
