@@ -48,7 +48,7 @@
 				<li><a target="_blank" href="/admin/scaffold/install_plugin">Установить расширение</a></li>
 				<li><a target="_blank" href="/admin/scaffold/update_system">Обновить систему</a></li>	
 				<li><a target="_blank" href="/admin/scaffold/update_scheme">Обработать схему</a></li>
-				
+				<li><a target="_blank" href="/admin/scaffold/migrate_scheme">Миграция схемы</a></li>
 			</ul>
 		  </li>
 		  

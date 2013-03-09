@@ -1214,6 +1214,46 @@ function admin_update_scheme()
 }
 
 
+function admin_migrate_scheme()
+{
+	if(!iam('developer')){ 
+		return 'Производить миграцию схемы могут только разработчики';
+	}
+	
+	set_time_limit(0);
+	
+	//d()->Scaffold->update_scheme();
+	print d()->view();
+}
+
+function admin_generate_scheme()
+{
+	$non_migrate_columns=array('id','sort','admin_options','type','multi_domain');
+	if(!iam('developer')){ 
+		return 'Производить генерацию схемы могут только разработчики';
+	}
+	
+	set_time_limit(0);
+	header("Content-Disposition: attachment; filename=schema.ini");
+
+	header("Content-Type: application/octet-stream");
+	header("Content-transfer-encoding: binary");
+	$tables = d()->db->query('SHOW TABLES')->fetchAll();
+	foreach ($tables as $row){
+		print "[schema.{$row[0]}]\r\n";
+		
+		$columns = d()->db->query('SHOW COLUMNS FROM '.DB_FIELD_DEL.$row[0].DB_FIELD_DEL)->fetchAll();
+		foreach ($columns as $column){
+			if(!in_array($column['Field'], $non_migrate_columns)){
+				print "{$column['Field']}\r\n";
+			}
+		}
+	}
+	//d()->Scaffold->update_scheme();
+	//print d()->view();
+}
+
+
 //Открытие шаблона либо вывод формы авторизации
 function admin()
 {
