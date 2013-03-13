@@ -49,12 +49,12 @@ class Mail extends UniversalSingletoneHelper
 		$this->options['file_name']=$file_name;
 		
 	}
-	function set_smtp($adress,$port,$login,$password){
+	function set_smtp($adress,$port,$login,$password,$ssl='ssl'){
 		$this->options['smtp']=$adress;
 		$this->options['port']=$port;
 		$this->options['login']=$login;
 		$this->options['password']=$password;
-
+		$this->options['ssl']=$ssl;
 		$this->options['use_smtp']=true;
 		 
 	}
@@ -78,12 +78,12 @@ class Mail extends UniversalSingletoneHelper
 				$mail->IsSMTP();
 				$mail->PluginDir  = 'cms/mod_helpers/vendors/';
 
-				$mail->SMTPAuth   = true;                  // enable SMTP authentication
-				$mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
-				$mail->Host       = $this->options['smtp'];      // sets GMAIL as the SMTP server
-				$mail->Port       = $this->options['port'];                   // set the SMTP port for the GMAIL server
-				$mail->Username   = $this->options['login'];  // GMAIL username
-				$mail->Password   = $this->options['password'];            // GMAIL password
+				$mail->SMTPAuth   = true;
+				$mail->SMTPSecure = $this->options['ssl'];
+				$mail->Host       = $this->options['smtp'];
+				$mail->Port       = $this->options['port'];
+				$mail->Username   = $this->options['login']; 
+				$mail->Password   = $this->options['password']; 
 
 				$mail->SetFrom($this->options['login'], $this->options['login']);
 
