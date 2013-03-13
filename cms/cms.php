@@ -764,9 +764,7 @@ foreach($tmparr as $key=>$subval)
 			$real_sign = sha1('salt_sign'.md5($_SESSION['_form_sign_key']).md5($_POST['_element']).md5($_POST['_action']).$run_before_sign);
 			if($real_sign===$current_sign){
 				//подпись верна, считаем данные верными
-				if(d()->validate($_POST['_action'])){
-					return d()->call($_POST['_action']);
-				}
+				return d()->call($_POST['_action']);
 			}
 		}
 		return '';
