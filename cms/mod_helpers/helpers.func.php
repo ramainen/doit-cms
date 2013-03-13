@@ -178,7 +178,7 @@ function form ($params=array())
 		$iframe_id = "hidden_".rand(111,999);
 		$attr .= ' target="'.$iframe_id.'" ';
 		
-		$additions .= '<iframe style="display:none" id="'.$iframe_id.'"></iframe>';
+		$additions .= '<iframe style="display:none" id="'.$iframe_id.'" name="'.$iframe_id.'"></iframe>';
 		$additions .= ' <input type="hidden" name="_is_iframe" value="1" >';
 		
 	}
