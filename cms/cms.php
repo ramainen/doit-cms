@@ -211,7 +211,7 @@ class doitClass
 {
 	public $datapool=array(); //Большой массив всех опций, данных и переменных, для быстрого прямого доступа доступен публично
 	public static $instance;
-	
+	private $_run_before = false;
 	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	public $php_files_list=array(); //Массив найденных php файлов.
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
@@ -629,6 +629,15 @@ foreach($tmparr as $key=>$subval)
 			$this->compiled_fragments['doit_open_static_file'] = $this->shablonize(file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI']));
 			$this->_prepared_content['main'] = $this->compile_and_run_template('doit_open_static_file');
 		}
+		
+		if(isset($_POST['_global']) && $_POST['_global']=='1'){
+			if(isset($_POST['_run_before']) && $_POST['_run_before']!=''){
+				$this->_run_before = $_POST['_run_before'];
+			}else{
+				$this->validate_global_handlers();
+			}
+		}
+		
 		 
 	}
 
@@ -742,6 +751,27 @@ foreach($tmparr as $key=>$subval)
 		return $is_ok;
 	}
 
+		
+	private function validate_global_handlers()
+	{
+		if(isset($_POST['_global_sign']) && isset($_SESSION['_form_sign_key']) && $_SESSION['_form_sign_key']!=''){
+			$current_sign = $_POST['_global_sign'];
+			$run_before_sign='';
+			if(isset($_POST['_run_before']) && $_POST['_run_before']!=''){
+				$run_before_sign = md5($_POST['_run_before']);
+			}
+			
+			$real_sign = sha1('salt_sign'.md5($_SESSION['_form_sign_key']).md5($_POST['_element']).md5($_POST['_action']).$run_before_sign);
+			if($real_sign===$current_sign){
+				//подпись верна, считаем данные верными
+				if(d()->validate($_POST['_action'])){
+					return d()->call($_POST['_action']);
+				}
+			}
+		}
+		return '';
+		
+	}
 
 	/**
 	 * Добавляет сообщение об ошибке валидации формы в существующий список
@@ -901,6 +931,13 @@ foreach($tmparr as $key=>$subval)
 			}
 		}
 		*/
+		
+		
+		if($this->_run_before !== false && $this->_run_before==$name){
+			$this->_run_before = false;
+			print $this->validate_global_handlers();
+		}	
+		
 		$_result_end='';
 		if (!is_array($arguments)) {
 			$_newnames = func_get_args();  //d()->call('first','second','clients#edit','clients_tpl');

@@ -182,6 +182,29 @@ function form ($params=array())
 		$additions .= ' <input type="hidden" name="_is_iframe" value="1" >';
 		
 	}
+		
+	if(isset($params['global']) && $params['global']==true) {
+		
+		$additions .= ' <input type="hidden" name="_global" value="1" >';
+		if(!isset($_SESSION['_form_sign_key']) || $_SESSION['_form_sign_key']==''){
+			
+			$key = sha1 (uniqid().mt_rand().microtime().'salt'.$_SERVER["REMOTE_PORT"].mt_rand());
+			$_SESSION['_form_sign_key'] = $key;
+			
+			 
+		}else{
+			$key = $_SESSION['_form_sign_key'];
+		}
+		$run_before='';
+		if(isset($params['run_before']) && $params['run_before']!='') {
+			$run_before = md5($params['run_before']);
+		}
+		
+		$sign = sha1('salt_sign'.md5($key).md5(d()->current_form_object).md5($params[0]).$run_before);
+		$additions .= ' <input type="hidden" name="_run_before" value="'.$params['run_before'].'" >';
+		$additions .= ' <input type="hidden" name="_global_sign" value="'.$sign.'" >';
+		
+	}
 	
 	if(isset($params['style'])) {
 		$attr .= ' style="'.$params['style'].'" ';
