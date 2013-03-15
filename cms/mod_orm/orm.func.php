@@ -73,6 +73,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 {
 	public $_options;
 	public $_data;
+	private $_get_by_id_cache = false;
 	public $insert_id=false;
 	private $_used_tree_branches;
 	private $_shift = 0;
@@ -1236,22 +1237,21 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	 */
 	function get_cursor_key_by_id($id)
 	{
-		static $_cache=false;
 		$key=0;
 		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
-		if($_cache===false){
-			$_cache=array();
+		if($this->_get_by_id_cache===false){
+			$this->_get_by_id_cache=array();
 			foreach ($this->_data as $key=>$value){
-				$_cache[$value['id']]=$key;
+				$this->_get_by_id_cache[$value['id']]=$key;
 			}
-			if(isset($_cache[$id])){
-				return $_cache[$id];
+			if(isset($this->_get_by_id_cache[$id])){
+				return $this->_get_by_id_cache[$id];
 			}
 		}else{
-			if(isset($_cache[$id])){
-				return $_cache[$id];
+			if(isset($this->_get_by_id_cache[$id])){
+				return $this->_get_by_id_cache[$id];
 			}
 		}
 		return $key;
