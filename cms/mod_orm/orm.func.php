@@ -628,7 +628,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		*/
 		
 		$db_result = doitClass::$instance->db->query($this->to_sql());
-		if( d()->db->errorCode()=='42S02'){
+		if( d()->db->errorCode()=='42S02' || d()->db->errorCode()=='42S22'){
 			d()->bad_table = $this->_options['table'];
 		}
 		$this->_data =  $db_result ->fetchAll(PDO::FETCH_ASSOC);

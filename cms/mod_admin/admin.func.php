@@ -1213,6 +1213,14 @@ function admin_update_scheme()
 	print d()->view();
 }
 
+function admin_create_column()
+{
+	if(!iam('developer')){ 
+		return 'Менять структуру могут только разработчики';
+	}
+	d()->Scaffold->create_field($_POST['table'], $_POST['column']);
+	print d()->view();
+}
 
 function admin_migrate_scheme()
 {

@@ -54,6 +54,17 @@ function doit_ob_error_handler($output)
 					
 					
 				}
+				if($db_err[1] == '1054'){
+					//Попытка создать столбик для таблицы
+					//Unknown column 'user_id'
+					$_column_name = array();
+					if( preg_match_all("/Unknown\scolumn\s\'(.*?)\'/",$db_err[2], $_column_name)==1){
+						$_column_name = 	$_column_name[1][0];
+					
+						$_message.='<br> Создать столбец <b>'.h($_column_name).'</b> в таблице '.h(d()->bad_table).'? <form method="post" action="/admin/scaffold/create_column" style="display:inline;" target="_blank"><input type="submit" value="Создать"><input type="hidden" name="table" value="'.h(d()->bad_table).'"><input type="hidden" name="column" value="'.h($_column_name).'"></form> ';
+					}
+					
+				}
 				$_message.='<br> Провести обработку схемы? <form method="get" action="/admin/scaffold/update_scheme" style="display:inline;" target="_blank"><input type="submit" value="Провести"></form><br>';
 			}
 			
