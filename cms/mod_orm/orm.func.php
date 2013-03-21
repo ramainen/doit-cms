@@ -224,13 +224,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$this->_options=array();
 		}
 
-		if(isset($this->_options['data'])) {
-			$this->_options['queryready']=true;
-			$this->_data=$this->_options['data'];
-		} else {
-			$this->_options['queryready']=false;
-			$this->_data=array();	
-		}
+
 		
 	//	$this->_options['queryready']=false;  //Сбрасывается при смене параметров запроса, при true запросы не выполняются
 		
@@ -293,6 +287,27 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			}
 		}
 		
+		
+		if(isset($this->_options['data'])) {
+			$this->_options['queryready']=true;
+			$this->_data=$this->_options['data'];
+			$this->_count=count($this->_options['data']);
+			if($this->_count>0){
+				if (!isset (doitClass::$instance->datapool['columns_registry'])) {
+					doitClass::$instance->datapool['columns_registry'] = array();
+					doitClass::$instance->datapool['_known_fields'] = array();
+				}
+
+				//if (!isset (doitClass::$instance->datapool['columns_registry'][$this->_options['table']])) {
+					doitClass::$instance->datapool['_known_fields'][$this->_options['table']]	=array_keys($this->_data[0]);
+					doitClass::$instance->datapool['columns_registry'][$this->_options['table']] =array_keys($this->_data[0]);
+				//}
+			}
+			$this->_data[0]['_only_count'] = count($this->_options['data']);
+		} else {
+			$this->_options['queryready']=false;
+			$this->_data=array();	
+		}		
 		
 		
 		if(!isset($this->_options['plural_to_one'])) {
@@ -881,7 +896,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		$_tmparr=array();
 		$_class_name = get_class($this);
 		foreach($this->_data as $element){
-			$_tmparr[] = new  $_class_name (array('data'=>array( $element ) ));
+			$_tmparr[] = new  $_class_name (array('table'=>$this->_options['table'],'data'=>array( $element ) ));
 		}
 		  
 		return $_tmparr;
@@ -1037,7 +1052,8 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			doitClass::$instance->datapool['columns_registry']=array();
 			doitClass::$instance->datapool['_known_fields']=array();
 		}
-		if(isset (doitClass::$instance->datapool['columns_registry'][$tablename])) {
+		//FIXME: ложные срабатывания
+		if(false && isset (doitClass::$instance->datapool['columns_registry'][$tablename])) {
 			return doitClass::$instance->datapool['columns_registry'][$tablename];
 		}
 		if ($tablename=='template') {
@@ -1459,7 +1475,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 					$many_to_many_table_columns = $this->columns($many_to_many_table);
 				}
 				
-				
+
 
 				foreach($columns as $key=>$value) {
 					if ($value == $this->_options['plural_to_one']."_id") {
