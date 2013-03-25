@@ -210,7 +210,9 @@ function form ($params=array())
 		$attr .= ' style="'.$params['style'].'" ';
 	}
 	
-
+	if(isset($params['target'])) {
+		$attr .= ' target="'.$params['target'].'" ';
+	}
 	
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
