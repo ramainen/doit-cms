@@ -18,7 +18,13 @@
 		<td>{.id}</td>
 		
 		<?php foreach(d()->datapool['admin']['columns'] as $col_name => $col_title){
-			print '<td>'.h(d()->this[$col_name]).'</td>';
+			print '<td>';
+			if(d()->_list_safe_data){
+				print h(d()->this[$col_name]);
+			}else{
+				print d()->this[$col_name];
+			}
+			print '</td>';
 		} ?>
 		 
 		 

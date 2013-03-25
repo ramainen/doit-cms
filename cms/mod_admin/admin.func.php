@@ -270,7 +270,7 @@ function admin_show_one_list($table,$id1,$id2)
 	d()->load_and_parse_ini_file('app/fields/'.$table.'.ini');
 	
 	//модель для опасного запроса к списку сущностей
-	
+	d()->_list_safe_data=true; //Если переопределяем, то safe пропадает,
 	
 	$model_suffix = '_safe';
 	if(empty($_GET['sort'])){
@@ -290,7 +290,9 @@ function admin_show_one_list($table,$id1,$id2)
 			}
 		}
 	}	
-	
+	if($model_suffix!='_safe'){
+		d()->_list_safe_data=false;
+	}
 	$model =  activerecord_factory_from_table(et($table),$model_suffix);
  
 	d()->another_field=false;
