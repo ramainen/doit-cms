@@ -71,6 +71,7 @@ define('SQL_NULL','CONST'.md5(time()).'MYSQL_NULL_CONST'.rand());
 //Класс Active Record, обеспечивающий простую добычу данных
 abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extends ArrayIterator
 {
+	public static $_queries_cache=array();
 	public static $_columns_cache=array();
 	public $_options;
 	public $_data;
@@ -645,13 +646,23 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		*/
 		
-		$db_result = doitClass::$instance->db->query($this->to_sql());
-		if( d()->db->errorCode()=='42S02' || d()->db->errorCode()=='42S22'){
-			d()->bad_table = $this->_options['table'];
+		
+		$_sql = $this->to_sql();
+		if(!$this->_options['calc_rows'] && isset(ActiveRecord::$_queries_cache[$_sql])){
+			$this->_data = ActiveRecord::$_queries_cache[$_sql];
+		}else{
+		
+			$db_result = doitClass::$instance->db->query($_sql);
+			if( d()->db->errorCode()=='42S02' || d()->db->errorCode()=='42S22'){
+				d()->bad_table = $this->_options['table'];
+			}
+			$this->_data =  $db_result ->fetchAll(PDO::FETCH_ASSOC);
+			
+			if($db_result!==false){
+				ActiveRecord::$_queries_cache[$_sql] = $this->_data;
+			}
+			
 		}
-		$this->_data =  $db_result ->fetchAll(PDO::FETCH_ASSOC);
-		
-		
 		
 		$this->_count = count($this->_data);
 		
