@@ -71,6 +71,7 @@ define('SQL_NULL','CONST'.md5(time()).'MYSQL_NULL_CONST'.rand());
 //Класс Active Record, обеспечивающий простую добычу данных
 abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extends ArrayIterator
 {
+	public static $_columns_cache=array();
 	public $_options;
 	public $_data;
 	private $_get_by_id_cache = false;
@@ -1044,12 +1045,37 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		return '';
 	}
-
+	
+	public static function show_columns_fast($tablename){
+	
+		if(isset(ActiveRecord::$_columns_cache [$tablename])){
+			return ActiveRecord::$_columns_cache [$tablename];
+		}
+	
+		//Функция получает имя таблицы. Если таблицы не существует, она возвращает false
+		$_res=doitClass::$instance->db->query('SELECT * FROM '.DB_FIELD_DEL.$tablename.DB_FIELD_DEL.' LIMIT 0');
+		if ($_res!==false) {
+			$columns  = array();
+			$columns_count =  $_res->columnCount();
+			for($i=0;$i<=$columns_count-1;$i++){
+				$column = $_res->getColumnMeta($i);
+				$columns[]=$column['name'];
+			}
+			ActiveRecord::$_columns_cache[$tablename] = $columns;
+			return $columns;
+		}
+		ActiveRecord::$_columns_cache[$tablename] = false;
+		return false;
+	}
+	
 	public function columns($tablename='')
 	{
 		if($tablename=='') {
 			$tablename = $this->_options['table'];
 		}
+		
+		return ActiveRecord::show_columns_fast($tablename);
+		
 		if(!isset (doitClass::$instance->datapool['columns_registry'])) {
 			doitClass::$instance->datapool['columns_registry']=array();
 			doitClass::$instance->datapool['_known_fields']=array();
