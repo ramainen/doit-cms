@@ -1253,10 +1253,15 @@ function admin_generate_scheme()
 		print "[schema.{$row[0]}]\r\n";
 		
 		$columns = d()->db->query('SHOW COLUMNS FROM '.DB_FIELD_DEL.$row[0].DB_FIELD_DEL)->fetchAll();
+		$printed_array=array();
 		foreach ($columns as $column){
 			if(!in_array($column['Field'], $non_migrate_columns)){
-				print "{$column['Field']}\r\n";
+				$printed_array[]=$column['Field'];
 			}
+		}
+		sort($printed_array);
+		foreach ($printed_array as $column){
+			print "{$column}\r\n";
 		}
 	}
 	//d()->Scaffold->update_scheme();
