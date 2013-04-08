@@ -745,7 +745,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 			foreach($data as $second_id){
 				if(!isset($exist[$second_id])){
-					$_query_string='insert into '.DB_FIELD_DEL. $many_to_many_table .DB_FIELD_DEL." (".DB_FIELD_DEL. $first_field .DB_FIELD_DEL.", ".DB_FIELD_DEL. $second_field .DB_FIELD_DEL." ) values (". e($id) . ",". e( $second_id) . " )";
+					$_query_string='insert into '.DB_FIELD_DEL. $many_to_many_table .DB_FIELD_DEL." (".DB_FIELD_DEL. $first_field .DB_FIELD_DEL.", ".DB_FIELD_DEL. $second_field .DB_FIELD_DEL." , ".DB_FIELD_DEL."created_at".DB_FIELD_DEL.",  ".DB_FIELD_DEL."updated_at".DB_FIELD_DEL.") values (". e($id) . ",". e( $second_id) . ", NOW(), NOW() )";
 					doitClass::$instance->db->exec($_query_string);
 				}
 			}
