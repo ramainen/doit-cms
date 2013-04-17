@@ -320,7 +320,7 @@ function admin_show_one_list($table,$id1,$id2)
 
 	/* Дополнительная сортировка по различным параметрам */
 	foreach($_GET as $key=>$value){
-		if(! in_array($key, array('sort_field', 'sort_direction', 'style', 'class', 'title', 'sort', 'href'))){
+		if(! in_array($key, array('sort_field','show_field', 'sort_direction', 'style', 'class', 'title', 'sort', 'href'))){
 			$model->where(DB_FIELD_DEL . $key .DB_FIELD_DEL . " = ?",$value);
 
 			
