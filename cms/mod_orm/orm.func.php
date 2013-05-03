@@ -811,14 +811,14 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.$attribute_string.", ". DB_FIELD_DEL ."updated_at". DB_FIELD_DEL ." = NOW()  where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->_data[0]['id']."'";
 			}
 		}
-		doitClass::$instance->db->exec($_query_string);
+		$_query_result = doitClass::$instance->db->exec($_query_string);
 		
 		
 		
 		$error_code=doitClass::$instance->db->errorInfo();
 		$error_code=$error_code[1];
 
-		if (1054 == $error_code) {
+		if ($_query_result === false && 1054 == $error_code) {
 			$list_of_existing_columns=$this->columns();
 			foreach($this->_future_data as  $value=>$key){
 				if(!in_array($value,$list_of_existing_columns)){
@@ -831,6 +831,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				}
 			}
 			doitClass::$instance->db->exec($_query_string);
+			ActiveRecord::$_columns_cache = array();
 		}
 		
 		
@@ -842,13 +843,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			DB_FIELD_DEL ."created_at". DB_FIELD_DEL ." = NOW(), ".
 			DB_FIELD_DEL ."updated_at". DB_FIELD_DEL ." = NOW() ".
 			"where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->insert_id."'";
-			doitClass::$instance->db->exec($_query_string);
+			$_query_result = doitClass::$instance->db->exec($_query_string);
 			
  
 			$error_code=doitClass::$instance->db->errorInfo();
 			$error_code=$error_code[1];
 			
-			if (1054 == $error_code) {
+			if ($_query_result === false && 1054 == $error_code) {
 				$list_of_existing_columns=$this->columns();
 				foreach(array('sort','created_at','updated_at') as  $value){
 					if(!in_array($value,$list_of_existing_columns)){
@@ -857,6 +858,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				}
 				
 				doitClass::$instance->db->exec($_query_string);
+				ActiveRecord::$_columns_cache = array();				
 			}
 			
 		}
