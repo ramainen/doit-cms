@@ -2,7 +2,7 @@
 <div class="control-group">
   <label class="control-label"  >{title}</label>
   <div class="controls">
-	<input type="text"  name="{name}" id="element_{name}" value="{value|h}_<?php print $suffix ?>" class="input-xlarge"  >
+	<input type="text"  name="{name}" id="element_{name}_<?php print $suffix ?>" value="{value|h}" class="input-xlarge"  >
  
  <iframe style="overflow:hidden;height:20px;width:80px;border:none;border:0;"  frameborder="0" border="0" src="/cms/mod_admin/imanager/upload.htm?element=element_{name}_<?php print $suffix ?>&folder=<?php print d()->field_params[3]?>&w=<?php print d()->field_params[4]?>&h=<?php print d()->field_params[5]?><?php
 			$j=1;
