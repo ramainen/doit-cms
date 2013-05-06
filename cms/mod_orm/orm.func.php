@@ -732,6 +732,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				d()->Scaffold->create_field($many_to_many_table,$second_field);
 			}
 			
+			$original_data = $data;
+			foreach($original_data as $key=>$value){
+				if(is_array($value)){
+					$data[$key] = $value[0];
+				}
+			}
 			//1.удаляем существующие данные из таблицы
 			if(count($data)>0){
 				$_query_string='delete from '.DB_FIELD_DEL.''.$many_to_many_table . DB_FIELD_DEL." where ".DB_FIELD_DEL. $second_field .DB_FIELD_DEL." NOT IN (". implode(', ',$data) .") AND ".DB_FIELD_DEL. $first_field .DB_FIELD_DEL." =  ". e($id) . "";
@@ -743,9 +749,28 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$exist = doitClass::$instance->db->query("SELECT ".DB_FIELD_DEL.''.$second_field . DB_FIELD_DEL." as cln FROM ".DB_FIELD_DEL.''.$many_to_many_table . DB_FIELD_DEL."  where ".DB_FIELD_DEL. $first_field .DB_FIELD_DEL." =  ". e($id) . "")->fetchAll(PDO::FETCH_COLUMN);
 			$exist = array_flip($exist);
 
-			foreach($data as $second_id){
+			foreach($original_data as $second_id){
+				$additional_keys = '';
+				$additional_values = '';
+				$need_keys = array();
+				$need_values = array();
+				//В случае, если при записи to_users = array() передали массив массивов с дополнительными полями
+				if(is_array($second_id)){
+					if(count($second_id)>1){
+						foreach ($second_id as $key=>$value){
+							if(!is_numeric($key)){
+								$need_keys[]=DB_FIELD_DEL . $key . DB_FIELD_DEL;
+								$need_values[]=e($value);
+							}
+						}
+						$additional_keys = ', ' . implode(', ',$need_keys);
+						$additional_values = ', ' . implode(', ',$need_values);
+					}
+					$second_id = $second_id[0];
+			
+				}
 				if(!isset($exist[$second_id])){
-					$_query_string='insert into '.DB_FIELD_DEL. $many_to_many_table .DB_FIELD_DEL." (".DB_FIELD_DEL. $first_field .DB_FIELD_DEL.", ".DB_FIELD_DEL. $second_field .DB_FIELD_DEL." , ".DB_FIELD_DEL."created_at".DB_FIELD_DEL.",  ".DB_FIELD_DEL."updated_at".DB_FIELD_DEL.") values (". e($id) . ",". e( $second_id) . ", NOW(), NOW() )";
+					$_query_string='insert into '.DB_FIELD_DEL. $many_to_many_table .DB_FIELD_DEL." (".DB_FIELD_DEL. $first_field .DB_FIELD_DEL.", ".DB_FIELD_DEL. $second_field .DB_FIELD_DEL." , ".DB_FIELD_DEL."created_at".DB_FIELD_DEL.",  ".DB_FIELD_DEL."updated_at".DB_FIELD_DEL . $additional_keys . ") values (". e($id) . ",". e( $second_id) . ", NOW(), NOW() " . $additional_values . " )";
 					doitClass::$instance->db->exec($_query_string);
 				}
 			}
