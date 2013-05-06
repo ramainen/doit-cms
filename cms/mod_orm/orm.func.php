@@ -760,7 +760,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 						foreach ($second_id as $key=>$value){
 							if(!is_numeric($key)){
 								$need_keys[]=DB_FIELD_DEL . $key . DB_FIELD_DEL;
-								$need_values[]=e($value);
+								if(SQL_NULL === $value){
+									$need_values[]='NULL';
+								}else{
+									$need_values[]=e($value);
+								}
+								
 							}
 						}
 						$additional_keys = ', ' . implode(', ',$need_keys);
