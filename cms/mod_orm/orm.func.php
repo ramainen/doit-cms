@@ -893,6 +893,8 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		if(count($to_array_cache)!=0){
 			$this->save_connecton_array($current_id,$this->_options['table'],$to_array_cache);
 		}
+		
+		ActiveRecord::$_queries_cache = array();
 		return $this;
 	}
 
