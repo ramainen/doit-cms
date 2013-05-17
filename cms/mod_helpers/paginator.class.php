@@ -89,6 +89,7 @@ class Paginator extends UniversalHelper
 				
 				$old_step = $i;
 			}
+			$result = str_replace('&','&amp;',$result);
 			return '<div class="pagination"><ul>'.$result.'</ul></div>';
 		}else{
 	
@@ -110,6 +111,7 @@ class Paginator extends UniversalHelper
 				
 				$old_step = $i;
 			}
+			$result = str_replace('&','&amp;',$result);
 			return $result;
 		}
 		
