@@ -31,12 +31,15 @@ class Date extends UniversalHelper
 	private $date;
 	public $month;
 	public $ru_month;
+	public $ru_month_mini;
 	public $en_month;
 	public $ru_month_simple;
 	public $en_month_simple;
 	public $year;
 	public $day;
 	public $ru_months=array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
+	public $ru_months_mini=array('','янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек');
+	
 	public $en_months=array('','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 	
 	public $ru_months_simple=array('','январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь');
@@ -75,6 +78,7 @@ class Date extends UniversalHelper
 		}
 		
 		$this->ru_month = $this->ru_months[$this->month];
+		$this->ru_month_mini = $this->ru_months_mini[$this->month];
 		$this->en_month = $this->en_months[$this->month];
 		$this->ru_month_simple = $this->ru_months_simple[$this->month];
 		$this->en_month_simple = $this->en_months_simple[$this->month];
@@ -95,9 +99,17 @@ class Date extends UniversalHelper
 	{
 		return $this->day." ".$this->ru_month." ".$this->year;
 	}
+	function ru_user_mini()
+	{
+		return $this->day." ".$this->ru_month_mini." ".$this->year;
+	}
 	function user()
 	{
 		return $this->ru_user();
+	}
+	function user_mini()
+	{
+		return $this->ru_user_mini();
 	}
 	function en_user()
 	{

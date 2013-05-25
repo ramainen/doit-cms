@@ -618,6 +618,10 @@ function userdate($date)
 {
 	return d()->Date($date)->user();
 }
+function userdate_mini($date)
+{
+	return d()->Date($date)->ru_user_mini();
+}
 
 function ml_userdate($date)
 {
