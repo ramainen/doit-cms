@@ -500,7 +500,26 @@ function preview($adress,$param1=false,$param2=false )
 		list($org_width, $org_height) = getimagesize($filename);
 		$xoffset = 0;
 		$yoffset = 0;
-
+	
+		if (strpos($height, 'in') !== false AND strpos($width, 'in') !== false) {
+			$height_temp = substr($height, 2);
+			$width_temp = substr($width, 2);
+			$h_index = ($org_height / $height_temp);
+			$w_index = ($org_width / $width_temp);
+			
+			$index = $h_index;
+			if ($h_index < $w_index) {
+				$index = $w_index;
+			}
+			$width = round($org_width / $index);
+			$height = round($org_height / $index);
+		} else {
+			if (strpos($height, 'in' === 0)) {
+				$height = substr($height, 2);
+			} elseif (strpos($width, 'in' === 0)) {
+				$width = substr($width, 2);
+			}
+		}
 		if($height=='auto'){
 			$height=round($width* ($org_height/$org_width));
 		}else{
