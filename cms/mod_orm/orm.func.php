@@ -697,6 +697,32 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this;
 	}
 
+	function save_dictionary_array($id,$table,$rules){
+		foreach($rules as $key=>$elements){
+		
+			if(!is_array($elements)){
+				$elements = array_map('trim',explode("\n",$elements));
+			}
+			
+			$second_table = substr( $key,11);
+			//удаление существующих строк
+			$_query_string='delete from '.DB_FIELD_DEL.''.$second_table . DB_FIELD_DEL." where ".DB_FIELD_DEL . to_o($table).'_id'  . DB_FIELD_DEL." = ". e($id);
+			doitClass::$instance->db->exec($_query_string);
+
+			$column =  to_o($table).'_id';
+			foreach($elements  as $element){
+				if($element != ''){
+					
+					$new = activerecord_factory_from_table($second_table)->new;
+					$new->{$column} = $id;
+					$new->title = $element;
+					$new->save;
+				}
+			}
+
+		}
+	}
+	
 	function save_connecton_array($id,$table,$rules){
 		//Сохранение каждого из списка элементов. Если это не массив, сделать его таким
 		foreach($rules as $key=>$data){
@@ -785,11 +811,14 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	public function save()  //CrUd - Create & Update
 	{
 		$to_array_cache=array();
+		$dictionary_array_cache=array();
 		$tmp_future_data = array();
 		$current_id=0;
 		foreach($this->_future_data as $key=>$value){
 			if(substr($key,0,3)=='to_'){
 				$to_array_cache[$key]=$value;
+			}elseif(substr($key,0,11)=='dictionary_'){
+				$dictionary_array_cache[$key]=$value;
 			}else{
 				$tmp_future_data[$key]=$value;
 			}
@@ -897,6 +926,10 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		//Сохранение связей
 		if(count($to_array_cache)!=0){
 			$this->save_connecton_array($current_id,$this->_options['table'],$to_array_cache);
+		}
+		//Сохранение связанного словаря
+		if(count($dictionary_array_cache)!=0){
+			$this->save_dictionary_array($current_id,$this->_options['table'],$dictionary_array_cache);
 		}
 		
 		ActiveRecord::$_queries_cache = array();
@@ -1395,6 +1428,19 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			}
 			
 		}
+		
+		
+		if (substr($name,0,11)=='dictionary_') {
+			if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
+			}
+			$second_table = substr( $name,11);
+			$column =  to_o($this->_options['table']).'_id';
+			//var_dump(activerecord_factory_from_table($second_table)->where($column.' = ?',$this->_data[$this->_cursor]['id'])->to_sql);
+			return implode("\n",activerecord_factory_from_table($second_table)->where($column.' = ?',$this->_data[$this->_cursor]['id'])->all_of('titles'));
+		}
+		
+		
 		
 		//d()->User->groups_throw_roles
 		$throw_substr= strpos($name,'_throw_');

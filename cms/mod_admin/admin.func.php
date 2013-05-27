@@ -552,7 +552,7 @@ function admin_edit()
 	}
 	if (url(4)!='add') {
 		if($scenario==1){
-			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->where('`url` = ?',url(4))->to_array[0]; //для избавления от багов
+			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->where('`url` = ?',url(4)); //для избавления от багов
 			if(count($model)==0){
 				$scenario=2;
 				$_GET['url']=url(4);
@@ -572,7 +572,7 @@ function admin_edit()
 				$line=array();
 			}
 			*/
-			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->find(url(4))->to_array[0];//для избавления от багов
+			$model =  activerecord_factory_from_table(et(url(3)), '_safe')->find(url(4));//для избавления от багов
 			if(count($model)==0){
 				$line=array();
 			}else{
@@ -629,15 +629,16 @@ function admin_edit()
 		if ((url(4)=='add' || $scenario==2) && isset($_GET[$field['name']])) {
 			d()->value=$_GET[$field['name']];
 		}
-		
-		if (isset($line[$field['name']])) {
-			d()->value=$line[$field['name']];
+		 
+		if($field['name']){
+			if (isset($line[$field['name']])) {
+				d()->value=$line[$field['name']];
+			}
+			
+			if (  isset($_GET[$field['name']])) {
+				d()->value=$_GET[$field['name']];
+			}
 		}
-		
-		if (  isset($_GET[$field['name']])) {
-			d()->value=$_GET[$field['name']];
-		}
-		
 		//Мультисайтовость
 		
 		if($field['type']=='multi'){
