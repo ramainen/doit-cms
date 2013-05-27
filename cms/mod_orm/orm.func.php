@@ -818,7 +818,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			if(substr($key,0,3)=='to_'){
 				$to_array_cache[$key]=$value;
 			}elseif(substr($key,0,11)=='dictionary_'){
-				$dictionary_array_cache[$key]=$value;
+				if($this->_options['new']!=true) {
+					if($this->{$key} != str_replace("\r","",$value)){
+						$dictionary_array_cache[$key]=$value;
+					}
+				}
 			}else{
 				$tmp_future_data[$key]=$value;
 			}
