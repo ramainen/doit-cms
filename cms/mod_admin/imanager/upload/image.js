@@ -84,7 +84,7 @@ if(jQuery)(
 				data.simUploadLimit = settings.simUploadLimit;
 				if (settings.hideButton)   data.hideButton   = true;
 				data.fileDesc     = 'Изображения (jpg, jpeg, gif, png)';
-				data.fileExt      = '*.jpg;*.jpeg;*.gif;*.png';
+				data.fileExt      = '*.jpg;*.jpeg;*.gif;*.png;*.svg';
 				if (settings.multi)        data.multi        = true;
 				if (settings.auto)         data.auto         = true;
 				if (settings.sizeLimit)    data.sizeLimit    = settings.sizeLimit;

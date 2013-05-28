@@ -146,11 +146,11 @@ class tinyimages {
 				print "error1";
                                 exit();
 			} else
-			if ( !($size = @getimagesize($file) ) ) {
+			if ( !($size = @getimagesize($file) ) &&  strtolower(substr($_FILES['Filedata']['name'],strrpos($_FILES['Filedata']['name'],'.')+1))!='svg') {
 					print "error2";
                                 exit();
 			} else
-			if (!$error && !in_array($size[2], array(1, 2, 3, 7, 8) ) ) {
+			if (!$error && !in_array($size[2], array(1, 2, 3, 7, 8) )        &&  strtolower(substr($_FILES['Filedata']['name'],strrpos($_FILES['Filedata']['name'],'.')+1))!='svg') {
 				print "error3";
                                 exit();
 			} else  {
@@ -192,7 +192,13 @@ class tinyimages {
 					{
 					if(isset($ioptions["w".$i]) && isset($ioptions["h".$i])) {
 					$thumb = DIR.$this->folder.'/.thumbs/preview'.$i.'_'.$name.'.'.$ext;
-						$this->Resize($source,$thumb,$ioptions["w".$i],$ioptions["h".$i],'thumb');
+					
+						if(strtolower($ext) != 'svg'){
+					
+							$this->Resize($source,$thumb,$ioptions["w".$i],$ioptions["h".$i],'thumb');
+						}else{
+							copy($source,$thumb);
+						}
 						$i++;
 					}else
 					{
@@ -207,6 +213,13 @@ class tinyimages {
 					if($newadress=="")$newadress="/storage";
 						print  $newadress."/".$newfilename;
  
+				}else{
+					$result['result'] = 'success';
+					$newadress="/storage";
+					$newfilename= $name.'.'.$ext;
+					if(isset ($_GET['uri']))$newadress=$_GET['uri'];
+					if($newadress=="")$newadress="/storage";
+						print  $newadress."/".$newfilename;
 				}
 			}
 		}
