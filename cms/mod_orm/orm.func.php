@@ -1464,6 +1464,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this->get($name,true);
 	}
 	
+	function by_id($id)
+	{
+		return $this[$this->get_cursor_key_by_id($id)];
+	}
+	
 	/* 
 	Получение переменных напрямую
 	В случае необходимости получения в модели непосредственно значения переменной
