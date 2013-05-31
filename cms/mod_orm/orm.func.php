@@ -1641,6 +1641,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			return '';
 		}
 	}
+	
+	
+	function get_procent_conversion()
+	{
+		return 'Процент конверсии';
+	}
 }
 
 function activerecord_factory($_modelname)
