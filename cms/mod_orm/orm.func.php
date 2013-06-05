@@ -1603,7 +1603,9 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 					$many_to_many_table_columns = $this->columns($many_to_many_table);
 				}
 				
-
+				if (strpos($name,' ')!==false) {
+					return '';
+				}
 
 				foreach($columns as $key=>$value) {
 					if ($value == $this->_options['plural_to_one']."_id") {
