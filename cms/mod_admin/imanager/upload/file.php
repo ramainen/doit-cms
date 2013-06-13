@@ -66,7 +66,7 @@ class tinyimages {
                                         
                                 exit();
 			} else
-			if (!preg_match('/\.(mp3|zip|flv|doc|rtf|swf|docx|xlsx|ies|pdf|zip|rar|xls|jpg|gif|png|jpeg)$/i', $_FILES['Filedata']['name']) ) {
+			if (!preg_match('/\.(mp3|zip|flv|doc|rtf|swf|docx|xlsx|ies|pdf|zip|rar|xls|jpg|gif|png|jpeg|pptx?)$/i', $_FILES['Filedata']['name']) ) {
 				print "ERROR_Invalid_filetype";
                                 exit();
 			} else  {
