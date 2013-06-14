@@ -53,6 +53,10 @@ class Date extends UniversalHelper
 		}else{
 			$this->date = time();
 		}
+		if(is_object ($this->date) && $this->date instanceof MongoDate){
+			$this->date = $this->date->sec;
+		}
+		
 		if(strpos($this->date,'-')!==false ){
 						
 			$this->year=substr($this->date,0,4);
