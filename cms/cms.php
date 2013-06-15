@@ -531,12 +531,16 @@ foreach($tmparr as $key=>$subval)
 		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/sites/'.SERVER_NAME)){
 			$_work_folders[]='sites/'.SERVER_NAME;
 		}
+		$disabled_modules=array();
+		if(defined('DISABLED_MODULES')){
+			$disabled_modules=explode(',',DISABLED_MODULES);
+		}
 		foreach($_work_folders as $dirname) { 
 			$_files[$dirname]['/']=array();
 			$_handle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname);
 
 			while (false !== ($_file = readdir($_handle))) {
-				 if(substr($_file,0,4)=='mod_') {
+				 if(substr($_file,0,4)=='mod_' && !in_array(substr($_file,4), $disabled_modules)) {
 					$_subhandle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname.'/'.$_file);
 					$_files[$dirname]['/'.$_file.'/']=array();
 					while (false !== ($_subfile = readdir($_subhandle))) {
