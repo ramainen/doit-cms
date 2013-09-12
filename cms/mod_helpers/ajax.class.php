@@ -35,9 +35,22 @@ class Ajax extends UniversalSingletoneHelper
 		if(isset(d()->datapool['inputs_with_errors']) && count(d()->datapool['inputs_with_errors'])!=0 && isset($_POST['_element'])){
 			$noticed_inputs = array_values(d()->datapool['inputs_with_errors']);
 			$this->response.=  "$('.error').removeClass('error');\n";
+			if ($_POST['_action'] == htmlspecialchars($_POST['_action'])){
+				$this->response.=  "var _tmp_form = $('input[value=".$_POST['_action']."]').parents('form');\n";
+			}else{
+				$this->response.=  "var _tmp_form = $($('form')[0]);\n";
+			}
+			
+			
+			$first_element=array();
 			foreach($noticed_inputs as $key=>$input){
 				$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
-				$this->response .=  '$('.$element_name.').parent().parent().addClass("error");'."\n";
+				
+				$this->response .=  '$('.$element_name.', _tmp_form).parent().parent().addClass("error");'."\n";
+				$first_element[] = "*[name=\"".$_POST['_element'].'['.$input.']'."\"]" ;
+			}
+			if ($first_element != ''){
+				$this->response .=  "$($('".implode(', ',$first_element)."',  _tmp_form)[0]).focus();"."\n";
 			}
 			
 		}
