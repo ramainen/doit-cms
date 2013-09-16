@@ -48,6 +48,9 @@ class Paginator extends UniversalHelper
 			$allcount= ceil($model->found_rows/$model->per_page);
 			$current = $model->current_page;
 		}
+		d()->paginator_left = '';
+		d()->paginator_right = '';
+		
 		if($allcount<=1){
 			return '';
 		}
@@ -97,7 +100,7 @@ class Paginator extends UniversalHelper
 				$i++;
 				 
 				if (($i-$old_step)>1) {
-					$result .= ' ... ';
+					$result .= ' <span class="paginator_dots">...</span> ';
 				}
 				
 				$current_url=$this->drawPageInAdress($all_url,$i-1);
@@ -110,6 +113,14 @@ class Paginator extends UniversalHelper
 			
 				
 				$old_step = $i;
+			}
+			
+			if($current > 0){
+				d()->paginator_left = $this->drawPageInAdress($all_url,$current-1);
+			}
+			
+			if($current < $allowed_pages[count($allowed_pages)-1]){
+				d()->paginator_right = $this->drawPageInAdress($all_url,$current+1);
 			}
 			$result = str_replace('&','&amp;',$result);
 			return $result;
