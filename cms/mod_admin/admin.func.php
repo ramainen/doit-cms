@@ -596,9 +596,7 @@ function admin_edit()
 		}
 	}
 	
-	if(isset($line['type']) && $line['type']!='') {
-		$tableortype = to_p($line['type']);
-	}
+
 	
 	if(isset($_GET['type']) && $_GET['type']!='') {
 		$tableortype = to_p($_GET['type']);
@@ -812,9 +810,7 @@ function admin_save_data($params)
 
 	if($_POST['admin_command_redirect_close']=='yes') {
 		$tableortype = url(3);
-		if(isset($line['type']) && $line['type']!='') {
-			$tableortype = to_p($line['type']);
-		}
+
 
 		if(isset($_GET['type']) && $_GET['type']!='') {
 			$tableortype = to_p($_GET['type']);
@@ -1239,7 +1235,7 @@ function admin_migrate_scheme()
 
 function admin_generate_scheme()
 {
-	$non_migrate_columns=array('id','sort','admin_options','type','multi_domain');
+	$non_migrate_columns=array('id','sort','admin_options','multi_domain');
 	if(!iam('developer')){ 
 		return 'Производить генерацию схемы могут только разработчики';
 	}
