@@ -223,7 +223,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 
 		if(is_array($_options)){
-			$this->_options=$_options;
+			if(array_key_exists(0,$_options)){
+				$this->_options=array();
+				$this->_options['data'] = $_options[0];
+			}else{
+				$this->_options=$_options;
+			}
 		} else {
 			$this->_options=array();
 		}
@@ -320,8 +325,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 		if(count($_options)==1 && is_numeric($_options[0])){
 			$this->find($_options[0]);
-		}
-		
+		}	
 		$this->init();
 	}
 
@@ -616,6 +620,19 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		$data = $this->_data;
 		array_multisort($column_values, $asc_or_desc, &$data);
 		$this->_data= $data;
+		$this->_count = count($this->_data);
+		return $this;
+	}
+	
+	
+	function add_rows($data)
+	{
+		if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		
+		$this->_data = array_merge($this->_data, $data);
+		$this->_count = count($this->_data);
 		return $this;
 	}
 	
