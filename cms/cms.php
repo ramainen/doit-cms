@@ -286,9 +286,10 @@ class doitClass
 			$doit->datapool[\'this\']=array();
 		}
 		array_push($doit->_this_cache,$doit->datapool[\'this\']);
-if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
+if(is_string($tmparr)) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
+		$doit->key = $key;
 		$doit->datapool["override"]="";
 		if(is_object($subval)){
 			 $doit->datapool[\'$2\']=$subval;
@@ -315,9 +316,10 @@ foreach($tmparr as $key=>$subval)
 			$doit->datapool[\'this\']=array();
 		}
 		array_push($doit->_this_cache,$doit->datapool[\'this\']);
-if(is_string($tmparr) || (is_array($tmparr) && (count($tmparr)!=0) && !array_key_exists(0,$tmparr))) $tmparr=array($tmparr);
+if(is_string($tmparr)) $tmparr=array($tmparr);
 foreach($tmparr as $key=>$subval)
 	if(is_string($subval)) print $subval;else {
+		$doit->key = $key;
 		$doit->datapool["override"]="";
 		if(is_object($subval)){
 			 $doit->datapool[\'this\']=$subval;

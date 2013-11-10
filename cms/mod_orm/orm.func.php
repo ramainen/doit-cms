@@ -568,6 +568,82 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}	
 	}
 	
+	function arrange_by_groups($group_name='id')
+	{
+		if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		
+		
+		$_tmparr=array();
+		$_class_name = get_class($this);
+		foreach($this->_data as $element){
+			if(isset ($element[$group_name])){
+				$key = $element[$group_name];
+			} else {
+				$key = '';
+			}
+			$_tmparr[$key][]=$element;
+		}
+		$result_arr=array();
+		foreach($_tmparr as $key => $value){
+			$result_arr[$key] = new  $_class_name (array('table'=>$this->_options['table'],'data'=>$value ));
+		}
+		  
+		return $result_arr;
+	}
+	
+	function sort_by($column_name='id',$asc_or_desc=SORT_ASC)
+	{
+		if($asc_or_desc === 'asc' || $asc_or_desc==='ASC'){
+			$asc_or_desc = SORT_ASC;
+		}
+		if($asc_or_desc === 'desc' || $asc_or_desc==='DESC'){
+			$asc_or_desc = SORT_DESC;
+		}
+		if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		$column_values = array();
+		foreach ($this->_data as $key => $row) {
+			if(isset($row[$column_name])){
+				$column_values[$key]  = $row[$column_name];
+			}else{
+				$column_values[$key]  = "";
+			}
+		}
+
+		$data = $this->_data;
+		array_multisort($column_values, $asc_or_desc, &$data);
+		$this->_data= $data;
+		return $this;
+	}
+	
+	function arrange_by($group_name='id')
+	{
+		if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		
+		
+		$_tmparr=array();
+		$_class_name = get_class($this);
+		foreach($this->_data as $element){
+			if(isset ($element[$group_name])){
+				$key = $element[$group_name];
+			} else {
+				$key = '';
+			}
+			$_tmparr[$key]=$element;
+		}
+		$result_arr=array();
+		foreach($_tmparr as $key => $value){
+			$result_arr[$key] = new  $_class_name (array('table'=>$this->_options['table'],'data'=>array($value) ));
+		}
+		  
+		return $result_arr;
+	}
+	
 	function search()
 	{
 		$args = func_get_args();
@@ -993,7 +1069,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		if ($this->_options['queryready']==false) {
 				$this->fetch_data_now();
 		}
-		return $this->_count;
+		return count($this->_data);
 	}
 	//ОН сука медленный
 	function only_count()
