@@ -15,6 +15,10 @@ class Mail extends UniversalSingletoneHelper
 	{
 		$this->options['to']=$to;
 	}
+	function from($from)
+	{
+		$this->options['from']=$from;
+	}
 	
 	function subject($subject)
 	{
@@ -37,8 +41,8 @@ class Mail extends UniversalSingletoneHelper
 			//TODO: mime типы
 			$file_name=self::filename_from($file_adress);
 		}
-		$this->options['file_adress'][]=$file_adress;
-		$this->options['file_name'][]=$file_name;
+		$this->options['file_adress']=$file_adress;
+		$this->options['file_name']=$file_name;
 		
 	}
 
@@ -84,36 +88,36 @@ class Mail extends UniversalSingletoneHelper
 				$mail->Port       = $this->options['port'];
 				$mail->Username   = $this->options['login']; 
 				$mail->Password   = $this->options['password']; 
-
-				$mail->SetFrom($this->options['login'], $this->options['login']);
-
+				
+				if($this->options['from']){
+					$mail->SetFrom($this->options['from'], $this->options['from']);
+				}else{
+					$mail->SetFrom($this->options['login'], $this->options['login']);
+				}
 
 				$mail->AddAddress($this->options['to'], $this->options['to']);
 				$mail->Subject    = $this->options['subject'];
 				
-				
-				foreach ($this->options['file_adress'] as $key => $val) {
-					$mail->AddAttachment($this->options['file_adress'][$key], $this->options['file_name'][$key]);
+				if(isset($this->options['file_adress'])){
+					$mail->AddAttachment($this->options['file_adress'], $this->options['file_name']);
 				}
-				
 				
 				if(isset($this->options['file_contents'])){
 					$mail->AddStringAttachment(($this->options['file_contents']), $this->options['file_name']);
 				}
 				
-				$this->options['file_adress']=array ();
-				$this->options['file_name']=array ();
- 
+ 		
 				$mail->MsgHTML($this->options['message']);
-				$mail->Send();			
+ 
+				$mail->Send();
+	var_dump($mail->ErrorInfo);
+	
 	}
 	
 	function send_pure_mail()
 	{
-		if (count($this->options['file_adress']) > 0) {
-			$adr = $this->options['file_adress'][count($this->options['file_adress']) - 1];
-		} 
-		if(!isset($adr) && !isset($this->options['file_contents'])){
+	
+		if(!isset($this->options['file_adress']) && !isset($this->options['file_contents'])){
 			$result =  mail($this->options['to'],"=?UTF-8?B?".base64_encode( $this->options['subject'])."?=",
 				$this->options['message'],
 				"Content-Type: text/html; charset=\"UTF-8\"");
@@ -130,7 +134,7 @@ class Mail extends UniversalSingletoneHelper
 			if(isset($this->options['file_contents'])){
 				$data = chunk_split(base64_encode($this->options['file_contents']));
 			}else{
-				$data = chunk_split(base64_encode(file_get_contents($adr)));
+				$data = chunk_split(base64_encode(file_get_contents($this->options['file_adress'])));
 			}
 			$email_message .= "--{$mime_boundary}\n"."Content-Type: application/octet-stream;\n"." name=\"".$this->options['file_name']."\"\n"."Content-Transfer-Encoding: base64\n\n".$data."\n\n"."--{$mime_boundary}--\n"; 
 			 
