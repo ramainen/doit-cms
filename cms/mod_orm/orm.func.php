@@ -223,7 +223,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 
 		if(is_array($_options)){
-			if(array_key_exists(0,$_options)){
+			if(array_key_exists(0,$_options && is_array($_options[0]))){
 				$this->_options=array();
 				$this->_options['data'] = $_options[0];
 			}else{
@@ -618,7 +618,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 
 		$data = $this->_data;
-		array_multisort($column_values, $asc_or_desc, &$data);
+		array_multisort($column_values, $asc_or_desc, $data);
 		$this->_data= $data;
 		$this->_count = count($this->_data);
 		return $this;
