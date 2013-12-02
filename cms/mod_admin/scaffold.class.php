@@ -5,7 +5,7 @@ class Scaffold extends UniversalHelper
 {
 	function create_field($table,$field)
 	{
-		if (substr($field,-3)=='_id') {
+		if (substr($field,-3)=='_id' || $field=='sort') {
 			d()->db->exec("ALTER TABLE `".$table."` ADD COLUMN `$field` int NULL");
 		} elseif (substr($field,0,3)=='is_') {
 			d()->db->exec("ALTER TABLE `".$table."` ADD COLUMN `$field` tinyint(4) NOT NULL DEFAULT 0");
