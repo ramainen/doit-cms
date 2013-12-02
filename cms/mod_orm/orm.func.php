@@ -746,6 +746,20 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}else{
 		
 			$db_result = doitClass::$instance->db->query($_sql);
+			if( d()->db->errorCode()=='42S22'){
+				$db_err=d()->db->errorInfo();
+				if($db_err[1] == '1054'){
+					$_column_name = array();
+					if( preg_match_all("/Unknown\scolumn\s\'(.*?)\'/",$db_err[2], $_column_name)==1){
+						$_column_name = 	$_column_name[1][0];
+						if($_column_name == 'sort'){
+							$scaffolder = new Scaffold();
+							$scaffolder->create_field( $this->_options['table'], 'sort');
+							$db_result = doitClass::$instance->db->query($_sql);
+						}
+					}
+				}
+			}
 			if( d()->db->errorCode()=='42S02' || d()->db->errorCode()=='42S22'){
 				d()->bad_table = $this->_options['table'];
 			}
