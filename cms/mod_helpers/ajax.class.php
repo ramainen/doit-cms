@@ -36,7 +36,8 @@ class Ajax extends UniversalSingletoneHelper
 			$noticed_inputs = array_values(d()->datapool['inputs_with_errors']);
 			$this->response.=  "$('.error').removeClass('error');\n";
 			if ($_POST['_action'] == htmlspecialchars($_POST['_action'])){
-				$this->response.=  "var _tmp_form = $('input[value=".$_POST['_action']."]').parents('form');\n";
+				//$this->response.=  "var _tmp_form = $('input[value=".$_POST['_action']."]').parents('form');\n";
+				$this->response.=  "var _tmp_form = _current_form[0];\n";
 			}else{
 				$this->response.=  "var _tmp_form = $($('form')[0]);\n";
 			}
