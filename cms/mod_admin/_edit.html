@@ -22,7 +22,8 @@
 			<?php } ?>
 		<?php } ?>
 
-
+			<input type="hidden" name="_enable_multiple" value="0">
+			
 		<?php if(!empty($_SERVER['HTTP_REFERER'])){?>
 			<input type="hidden" name="_http_referer" value="<?php print h($_SERVER['HTTP_REFERER']);?>">
 		<?php } ?>
@@ -31,7 +32,7 @@
 		<input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
 
 		<legend>{tabletitle}</legend>
-		 
+
 		<foreach tablerow>
 
 			<div class="control-group">

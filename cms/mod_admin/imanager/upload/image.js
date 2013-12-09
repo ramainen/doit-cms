@@ -24,7 +24,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
+var result_str_uploaded_images=[];
 if(jQuery)(
 	function(jQuery){
 		jQuery.extend(jQuery.fn,{
@@ -48,7 +48,7 @@ if(jQuery)(
 					queueID        : false, // The optional ID of the queue container
 					displayData    : 'percentage', // Set to "speed" to show the upload speed in the default queue item
 					onInit         : function() {}, // Function to run when uploadify is initialized
-					onSelect       : function() {}, // Function to run when a file is selected
+					onSelect       : function() {result_str_uploaded_images=[]}, // Function to run when a file is selected
 					onQueueFull    : function() {}, // Function to run when the queue reaches capacity
 					onCheck        : function() {}, // Function to run when script checks for duplicate files on the server
 					onCancel       : function() {}, // Function to run when an item is cleared from the queue
@@ -204,7 +204,8 @@ if(jQuery)(
                                                 }else{
                                                  
                                                     urfilename=response;
-                                                    completeme()
+													result_str_uploaded_images.push (urfilename)
+                                                   // completeme()
                                                 }
 					//	jQuery("#" + jQuery(this).attr('id') + ID + " .percentage").text(' - Completed');
 						jQuery("#" + jQuery(this).attr('id') + ID).fadeOut(250, function() { jQuery(this).remove()});
@@ -212,6 +213,8 @@ if(jQuery)(
 				});
 				if (typeof(settings.onAllComplete) == 'function') {
 					jQuery(this).bind("uploadifyAllComplete", {'action': settings.onAllComplete}, function(event, uploadObj) {
+						urfilename = result_str_uploaded_images.join(';')
+						completeme()
 						if (event.data.action(event, uploadObj) !== false) {
 							errorArray = [];
 						}

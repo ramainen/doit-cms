@@ -28,7 +28,13 @@ $(function () {
 	 */
  
 
-
+	$('.enable_multiple').bind('click',function(e){
+		$('input[name=_enable_multiple]').val(1)
+		$('.control-group').hide();
+		$('.multiple_mode').show();
+		
+		e.preventDefault();
+	})
 	
 	var isCurrentBrowserIE= /*@cc_on!@*/false;
 	var forIEscript_url = '/cms/external/tiny_mce/tiny_mce_gzip.php';
