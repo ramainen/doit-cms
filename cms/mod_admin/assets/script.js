@@ -32,7 +32,7 @@ $(function () {
 		$('input[name=_enable_multiple]').val(1)
 		$('.control-group').hide();
 		$('.multiple_mode').show();
-		
+		$($('.input_elements legend')[0]).html('Добавление нескольких элементов');
 		e.preventDefault();
 	})
 	
