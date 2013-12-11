@@ -9,6 +9,7 @@
 */
 class Mail extends UniversalSingletoneHelper
 {
+	public $error_info='';
 	private $options=array();
 	
 	function to($to)
@@ -111,7 +112,11 @@ class Mail extends UniversalSingletoneHelper
 		$this->options['file_name']=array ();
 
 		$mail->MsgHTML($this->options['message']);
-		return $mail->Send();
+		$result =  $mail->Send();
+		if(!$result){
+			$this->error_info = $mail->ErrorInfo;
+		}
+		return $result;
 	}
 	
 	function send_pure_mail()
