@@ -74,44 +74,44 @@ class Mail extends UniversalSingletoneHelper
 	function send_phpmailer()
 	{
 		
-				include_once('cms/mod_helpers/vendors/class.phpmailer.php');
-				
-				$mail             = new PHPMailer();
-				$mail->CharSet    = 'UTF-8';
-				$mail->IsSMTP();
-				$mail->PluginDir  = 'cms/mod_helpers/vendors/';
+		include_once('cms/mod_helpers/vendors/class.phpmailer.php');
+		
+		$mail             = new PHPMailer();
+		$mail->CharSet    = 'UTF-8';
+		$mail->IsSMTP();
+		$mail->PluginDir  = 'cms/mod_helpers/vendors/';
 
-				$mail->SMTPAuth   = true;
-				$mail->SMTPSecure = $this->options['ssl'];
-				$mail->Host       = $this->options['smtp'];
-				$mail->Port       = $this->options['port'];
-				$mail->Username   = $this->options['login']; 
-				$mail->Password   = $this->options['password']; 
+		$mail->SMTPAuth   = true;
+		$mail->SMTPSecure = $this->options['ssl'];
+		$mail->Host       = $this->options['smtp'];
+		$mail->Port       = $this->options['port'];
+		$mail->Username   = $this->options['login']; 
+		$mail->Password   = $this->options['password']; 
 
-				if($this->options['from']){
-					$mail->SetFrom($this->options['from'], $this->options['from']);
-				}else{
-					$mail->SetFrom($this->options['login'], $this->options['login']);
-				}
+		if($this->options['from']){
+			$mail->SetFrom($this->options['from'], $this->options['from']);
+		}else{
+			$mail->SetFrom($this->options['login'], $this->options['login']);
+		}
 
-				$mail->AddAddress($this->options['to'], $this->options['to']);
-				$mail->Subject    = $this->options['subject'];
-				
-				
-				foreach ($this->options['file_adress'] as $key => $val) {
-					$mail->AddAttachment($this->options['file_adress'][$key], $this->options['file_name'][$key]);
-				}
-				
-				
-				if(isset($this->options['file_contents'])){
-					$mail->AddStringAttachment(($this->options['file_contents']), $this->options['file_name']);
-				}
-				
-				$this->options['file_adress']=array ();
-				$this->options['file_name']=array ();
- 
-				$mail->MsgHTML($this->options['message']);
-				$mail->Send();			
+		$mail->AddAddress($this->options['to'], $this->options['to']);
+		$mail->Subject    = $this->options['subject'];
+		
+		
+		foreach ($this->options['file_adress'] as $key => $val) {
+			$mail->AddAttachment($this->options['file_adress'][$key], $this->options['file_name'][$key]);
+		}
+		
+		
+		if(isset($this->options['file_contents'])){
+			$mail->AddStringAttachment(($this->options['file_contents']), $this->options['file_name']);
+		}
+		
+		$this->options['file_adress']=array ();
+		$this->options['file_name']=array ();
+
+		$mail->MsgHTML($this->options['message']);
+		return $mail->Send();
 	}
 	
 	function send_pure_mail()
