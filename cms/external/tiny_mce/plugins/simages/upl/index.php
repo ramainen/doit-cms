@@ -192,7 +192,7 @@ header("Content-Type: text/html; charset=Windows-1251");
 		print '<script>';
 	//	print "	alert('<img src=\"".$return['filename']."\" />');";
 
-		print "window.parent.tinyMCE.getInstanceById(document.location.search.substr(1)).execCommand('mceInsertContent',false,'<img src=\"".$return['filename']."\" />');\n\n";
+		print "window.parent.tinyMCE.getInstanceById(document.location.search.substr(1)).execCommand('mceInsertContent',false,'<img src=\"".$return['filename']."\" alt=\"\" />');\n\n";
 //print "document.location.hash = '#".$_POST["inst"]."'";
 		print '</script>';
 	}
