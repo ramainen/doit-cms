@@ -127,6 +127,13 @@ function add($params){
 		$attr .= ' class="adm_icon" ';
 	}
 	
+	$need_add_button=false;
+	if(isset($params['panel_title'])) {
+		$need_add_button=true;
+		$panel_button_title = $params['panel_title'];
+		unset($params['panel_title']);
+	}
+	
 	
 	if(isset($params['title'])) {
 		$attr .= ' title="'.$params['title'].'" ';
@@ -149,7 +156,9 @@ function add($params){
 			$params_string.= $key.'='.$value;
 		}
 	}
-	
+	if($need_add_button){
+		d()->admin_add_panel_button('/admin/edit/'.$params[0].'/add'.$params_string,$panel_button_title);
+	}
 	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
 }
 
@@ -228,7 +237,14 @@ function sort_icon($params){
 	print '<a href="'.$href.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
 }
 
-
+function admin_add_panel_button($url,$title){
+	if(d()->admin_panel_buttons==''){
+		d()->admin_panel_buttons=array();
+	}
+	$tmp = d()->admin_panel_buttons;
+	$tmp[]=array('url'=>$url,'title'=>$title);
+	d()->admin_panel_buttons = $tmp;
+}
 function admin_show()
 {
 	unset (d()->datapool['admin']['bottombuttons']);

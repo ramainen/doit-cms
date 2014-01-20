@@ -53,7 +53,12 @@
 		  </li>
 		  
 		  
-		<?php } ?>  
+		<?php } ?>
+
+
+		<?php foreach(d()->admin_panel_buttons as $button){?>
+			<li><a href="<?php print $button['url']?>" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}" target="_blank"><?php print $button['title']?></a></li>
+		<?php } ?>
 		  <li><a href="/admin/logout">Выход</a></li>
 	</ul>
 	
