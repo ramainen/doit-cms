@@ -1,0 +1,44 @@
+<?php $table = (substr(d()->field_params[1],3));
+  
+	$_modelname=ActiveRecord::plural_to_one(strtolower($table));
+
+	$_first_letter=strtoupper(substr($_modelname,0,1));
+
+	$_modelname = $_first_letter.substr($_modelname,1);
+	d()->list_of_rows =  new $_modelname ();
+
+  ?>
+ 
+<script>
+if(!CHECKBOXES_INITIALIZED){
+	var CHECKBOXES_INITIALIZED=true;
+	$(function(){
+		$('.checkboxes_result').each(function(){
+			var ar=$(this).val().split(',')
+			for( key in ar){
+				$(this).parent().find('.checkboxes_onecheckbox[data-id='+ar[key]+']').attr('checked', true);
+			}
+		})
+	
+		$('.checkboxes_onecheckbox').on('click',function(){
+			var ids=[]
+			$(this).parent().parent().parent().find('.checkboxes_onecheckbox:checked').each(function(){
+				ids.push($(this).data('id'))
+			})
+			$(this).parent().parent().parent().find('.checkboxes_result').val(ids.join(','));
+		})
+	})
+}
+</script>
+<div class="control-group" style="margin-bottom:0;padding:0;">
+	<label class="control-label"  >{title}</label> 
+
+	<div class="controls">
+
+		<foreach list_of_rows>
+			<label class="checkbox" style="margin-bottom:0; "> <input type="checkbox" class="checkboxes_onecheckbox" data-id="{.id}">{.title}</label>
+		</foreach>
+		<input type="hidden"  name="{name}" value="{value|h}" class="checkboxes_result"  >
+	</div>
+</div>
+
