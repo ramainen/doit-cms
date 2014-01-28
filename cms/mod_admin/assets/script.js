@@ -202,10 +202,10 @@ function create_field_template()
 {
 	$('.field_template_question').hide();
 	$('.edit_field_content').val('[admin.fields]\n'+
+	'small url "Адрес" "(необязательно)"\n'+
 	'small title "Название"\n'+
 	'rich text "Текст"\n'+
 	'\n'+
-	';small url "Адрес страницы (необязательно)"\n'+
 	';userdate date Дата\n'+
 	';image image "Изображение" galleries 180 auto\n'+
 	';file file  Файл "files"\n'+
