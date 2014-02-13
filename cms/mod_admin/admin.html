@@ -8,17 +8,20 @@
  
 	
 	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap-theme.min.css" />
+
 	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/datepicker.css" />
 	
-	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap-responsive.min.css" />
 	
 	
 	<link rel="stylesheet" type="text/css" href="/cms/mod_admin/assets/style.css" />
 
 	<script type="text/javascript" src="/cms/external/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="/cms/external/jqueryui/jquery-ui-1.8.10.custom.min.js"></script>
+	<script type="text/javascript" src="/cms/external/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/cms/external/bootstrap/js/bootstrap.migrate.js"></script>
 	
-	<script src="/cms/external/bootstrap/js/bootstrap.js"></script>
+
 	<script src="/cms/external/bootstrap/js/bootstrap-datepicker.js"></script>
 	
  
@@ -82,6 +85,29 @@ $filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\'
 <?php } ?>		
 		
 <div class="container_12" >
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+  </div>
+  <div class="navbar-header navbar-right">
+  	<p class="navbar-text">
+  	 <a href="/admin/logout">Выход</a>
+           
+	</p>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
 
 
 <div class="navbar admin_header navbar-inverse">
