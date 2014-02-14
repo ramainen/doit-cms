@@ -783,7 +783,7 @@ function admin_save_data($params)
 		
 		$options_field=array();
 		foreach($params as $key=>$value) {
-			if(preg_match('/\<img\ssrc=\"\/cms\/external\/tiny_mce\/plugins\/mymodules\/module\.php\?[\@\-\_0-9a-z\=A-Z\&]+\"\s\/\>/',$value)){
+			if(preg_match('/\<img\ssrc=\"\/cms\/external\/tiny_mce\/plugins\/mymodules\/module\.php\?[\@\-\_0-9a-z\=A-Z\&]+\".[^\>]*\>/',$value)){
 				$options_field[$key]=1;
 			}
 		}
