@@ -14,7 +14,7 @@ class Mail extends UniversalSingletoneHelper
 	
 	function to($to)
 	{
-		$this->options['to']=$to;
+		$this->options['to']=strtolower($to);
 	}
 	function from($from)
 	{
