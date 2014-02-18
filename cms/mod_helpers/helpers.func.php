@@ -656,6 +656,7 @@ function ml_userdate($date)
  */
 function valid_email($value,$params)
 {
+	$value=strtolower($value);
 	return ( 1 == preg_match(
 		'/^[-a-z0-9\!\#\$\%\&\'\*\+\/\=\?\^\_\`\{\|\}\~]+(?:\.[-a-z0-9!' .
 			'\#\$\%\&\'\*\+\/\=\?\^\_\`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?\.)*'.
