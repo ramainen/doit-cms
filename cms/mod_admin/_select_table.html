@@ -2,15 +2,22 @@
  
   <label class="control-label"  >{title}</label>
   <div class="controls">
-	<select   name="{name}"  class="input-xlarge">
 	<?php 
-	$_modelname=ActiveRecord::plural_to_one(strtolower(d()->field_params[3]));
+	if(count(d()->field_params)>3){
+		$_table_name = d()->field_params[3];
+	
+	}else{
+		$_table_name = ActiveRecord::one_to_plural( substr(d()->field_params[1],0,-3));
+	}
+	$_modelname=ActiveRecord::plural_to_one(strtolower($_table_name));
 	$_first_letter=strtoupper(substr($_modelname,0,1));
 	$_modelname = $_first_letter.substr($_modelname,1);
 
 	d()->list_of_rows =  new $_modelname ();
 	 
 	?>
+	<select   name="{name}"  class="input-xlarge">
+	
 	<foreach list_of_rows>
 	
 			<?php
