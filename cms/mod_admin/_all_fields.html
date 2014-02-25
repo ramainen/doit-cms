@@ -1,0 +1,19 @@
+<!-- Данный модуль предназначен для выовда всех полей. -->
+<?php
+	$_table_name = d()->url(3).'__fields';
+	$_modelname=ActiveRecord::plural_to_one(strtolower($_table_name));
+	$_first_letter=strtoupper(substr($_modelname,0,1));
+	$_modelname = $_first_letter.substr($_modelname,1);
+
+	$user_fields =  new $_modelname ();
+
+	foreach($user_fields as $value){
+		d()->title = $value['title'];
+		d()->value = d()->row_data[$value['field_name']];
+		d()->name = 'data['. $value['field_name'] .']';	
+		print d()->admin_small();
+	}
+	
+?>
+
+ 

@@ -1,0 +1,17 @@
+<div class="control-group <?php if(d()->_field_name_error_situation){?> error<?php } ?>">
+  <label class="control-label"  >{title}</label>
+  <div class="controls">
+	<input type="text"  name="{name}" value="{value|h}" class="input-xlarge"  >
+	<span class="help-inline">
+	<?php if(d()->_field_name_error_situation){?>
+			{_field_name_error}
+	<?php } else{ ?>
+		<?php print d()->field_params[3]; ?>
+	<?php } ?>
+
+
+	</span>
+  </div>
+</div>
+
+ 

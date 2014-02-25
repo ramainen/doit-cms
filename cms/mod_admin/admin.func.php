@@ -623,6 +623,11 @@ function admin_edit()
 	}
 	
 	$fields=d()->admin_get_fields($tableortype);
+
+	if(substr(url(3),-8)=='__fields' && (url(4)=='add')){
+		array_unshift($fields,array('name'=>'field_name','type'=>'field_name','title'=>'Название поля на латинице','all'=>array('field_name','field_name','Название поля на латинице', 'Необязательно. Изменить это поле будет нельзя.')));
+	}
+
 	if(empty($fields)){
 		$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',url(3)))).'.ini';
 		$filename= $_SERVER['DOCUMENT_ROOT'].$filename;
@@ -643,7 +648,9 @@ function admin_edit()
 		if ((url(4)=='add' || $scenario==2) && isset($_GET[$field['name']])) {
 			d()->value=$_GET[$field['name']];
 		}
-		 
+		if ((url(4)=='add' || $scenario==2) && isset($_POST['data'][$field['name']])) {
+			d()->value=$_POST['data'][$field['name']];
+		} 
 		if($field['name']){
 			if (isset($line[$field['name']])) {
 				d()->value=$line[$field['name']];
@@ -741,6 +748,47 @@ function admin_save_data($params)
 	//FIXME: костыль
 	foreach($iterations as $params){
 		$elemid=url(4);
+		
+		if($elemid=='add'){
+			if(substr(url(3),-8)=='__fields' && isset($params['field_name']) && $params['field_name']!=''){
+				if(!preg_match('/^[a-z]+[a-z0-9_]+$/',$params['field_name'])){
+					d()->_field_name_error_situation=true;
+					d()->_field_name_error = 'Поле должно начинаться с буквы, содержать только латинские буквы и цифры.';
+					return d()->view();
+				}
+
+				if(substr($params['field_name'],0,8)=='deleted_'){
+					d()->_field_name_error_situation=true;
+					d()->_field_name_error = 'Поле не должно начинаться с deleted_ во избежания проблем в будущем.';
+					return d()->view();
+				}
+
+				//Проверка на уже существующий столбец в базе данных полей (метаинформации)
+				if(count( d()->db->query('select * from '. et(url(3)) .' where field_name = '.e($params['field_name']))->fetchAll())!=0){
+					d()->_field_name_error_situation=true;
+					d()->_field_name_error = 'Такое поле уже есть.';
+					return d()->view();	
+				}
+				
+				//Проверка на существование поля в искомой таблице
+				$tablename = substr(url(3),0,-8);
+				$res = d()->db->query('select * from '. et($tablename) .' limit 0');
+				
+				for ($i = 0; $i < $res->columnCount(); $i++) {
+				    $col = $res->getColumnMeta($i);
+				    $columns[] = $col['name'];
+				}
+
+				$columns =array_flip($columns);
+				if(isset($columns[$params['field_name']]))
+				{
+					d()->_field_name_error_situation=true;
+					d()->_field_name_error = 'Вы не можете управлять этим полем.';
+					return d()->view();	
+				}
+			}
+		}
+
 		if($elemid=='add' || $scenario=='2') {
 		//	$params['sort']=$elemid;
 			//Добавление элементов - делаем малой кровью - предварительно создаём строку в таблице
@@ -763,7 +811,9 @@ function admin_save_data($params)
 				$elemid= $model->insert_id;
 			}
 		}
-
+		if(substr(url(3),-8)=='__fields' &&  url(4)=='add' && (!isset($params['field_name']) || $params['field_name']=='')){
+			$params['field_name']='field'.$elemid;
+		}	
 		//FIXME: костыль
 		if(isset($params['url'])){
 			if($params['url']=='') {
@@ -776,6 +826,7 @@ function admin_save_data($params)
 			
 			//$params['url']=str_replace('/','_',$params['url']);
 		}
+
 		/*
 		$result_str="update `".et(url(3))."` set  ";
 		*/
@@ -800,6 +851,13 @@ function admin_save_data($params)
 			$model->{$field_name} = $value;
 		}
 		$model->save();
+
+		if(substr(url(3),-8)=='__fields' && url(4)=='add'){
+			//Добавление столбца в таблицу
+			$tablename = substr(url(3),0,-8);
+			d()->Scaffold->create_field($tablename, $params['field_name']);
+		}
+
 	}
 	
 	/*
@@ -884,6 +942,15 @@ function admin_delete()
 }
 function admin_delete_element($params)
 {
+
+	if(substr(url(3),-8)=='__fields'){
+		$tablename = substr(url(3),0,-8);
+		$columns = d()->db->query ('select * from '.et(url(3)).' where id = '.e(url(4)))->fetchAll();
+		if($columns){
+
+			d()->Scaffold->rename_column($tablename,$columns[0]['field_name'],'deleted_field_'. $columns[0]['id'] );
+		}
+	}
 	d()->db->exec("delete from `".et(url(3))."`  where id= ".e(url(4))." ");
 	return  "<script> window.opener.document.location.href=window.opener.document.location.href;window.open('','_self','');window.close();</script>";
 }

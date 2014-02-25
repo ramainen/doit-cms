@@ -15,7 +15,18 @@ class Scaffold extends UniversalHelper
 			d()->db->exec("ALTER TABLE `".$table."` ADD COLUMN `$field` text NULL, DEFAULT CHARACTER SET=utf8");
 		}
 	}
-	
+	function rename_column($table,$field,$new_name)
+	{
+		if (substr($field,-3)=='_id' || $field=='sort') {
+			d()->db->exec("ALTER TABLE `".$table."` CHANGE COLUMN `$field` " . et($new_name) ." int NULL");
+		} elseif (substr($field,0,3)=='is_') {
+			d()->db->exec("ALTER TABLE `".$table."` CHANGE COLUMN `$field` " . et($new_name) ." tinyint(4) NOT NULL DEFAULT 0");
+		} elseif (substr($field,-3)=='_at') {
+			d()->db->exec("ALTER TABLE `".$table."` CHANGE COLUMN `$field` " . et($new_name) ." datetime NULL");
+		} else {
+			d()->db->exec("ALTER TABLE `".$table."` CHANGE COLUMN `$field` " . et($new_name) ." text NULL, DEFAULT CHARACTER SET=utf8");
+		}
+	}	
 	function create_table($table,$one_element="")
 	{
 		if($one_element==''){
