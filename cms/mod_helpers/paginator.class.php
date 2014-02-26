@@ -31,6 +31,8 @@ class Paginator extends UniversalHelper
 {
 	public $active='active';
 	private $_is_bootstrap=false;
+	private $_is_bootstrap3=false;
+	
 	public function setActive($active)
 	{
 		$this->active = $active;
@@ -39,6 +41,12 @@ class Paginator extends UniversalHelper
 	public function bootstrap($is=true)
 	{
 		$this->_is_bootstrap=$is;
+		return $this;
+	}
+
+	public function bootstrap3($is=true)
+	{
+		$this->_is_bootstrap3=$is;
 		return $this;
 	}
 	public function generate($allcount=1, $current=false){
@@ -94,6 +102,32 @@ class Paginator extends UniversalHelper
 			}
 			$result = str_replace('&','&amp;',$result);
 			return '<div class="pagination"><ul>'.$result.'</ul></div>';
+		}elseif($this->_is_bootstrap3){
+
+			foreach ($allowed_pages as $i){
+				$i++;
+				 
+				if (($i-$old_step)>1) {
+					$result .= '<li class="disabled"><a href="#">...</a></li>';
+				}
+				
+				$current_url=$this->drawPageInAdress($all_url,$i-1);
+				$params=array('a',$i);
+				$params['href']=$current_url;
+				if($i-1==$current){
+					
+					$result .= '<li class="active">'.tag($params).'</li>';
+				}else{
+					$result .= '<li>'.tag($params).'</li>';
+					
+				}
+				
+			
+				
+				$old_step = $i;
+			}
+			$result = str_replace('&','&amp;',$result);
+			return '<ul class="pagination">'.$result.'</ul>';
 		}else{
 	
 			foreach ($allowed_pages as $i){
