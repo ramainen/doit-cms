@@ -65,6 +65,17 @@ class Scaffold extends UniversalHelper
 				DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
 				;");		
 		}
+
+		if(strpos($table,'_to_')!==false){
+			//Создаём дополнительные столбики
+			$tablefields = explode('_to_', $table);
+			foreach ($tablefields as $field){
+				$field = to_o($field).'_id';
+				d()->Scaffold->create_field($table,$field);
+			}
+
+		}
+
 		return $result;
 	}
 	/* Обновление по схеме данных. Создаются таблицы, не существующие на данный момент, а также создаются некоторые столбцы */
