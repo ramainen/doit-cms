@@ -454,6 +454,11 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$2($doit->$1); ?'.'>';
 
+
+		// {{.image|preview 'parame','param2'=>'any'}}
+		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\|([#a-zA-Z0-9_]+)\s+(.*?)\}/';
+		$this->template_replacements[]='<'.'?php print $doit->call("$2",array(array($doit->this[\'$1\'], $3))); ?'.'>';
+
 		// {"userlist"|t}
 		$this->template_patterns[]='/\{\"(.+?)\"\|([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$2("$1"); ?'.'>';
