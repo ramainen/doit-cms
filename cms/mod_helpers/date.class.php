@@ -101,6 +101,9 @@ class Date extends UniversalHelper
 	}
 	function ru_user()
 	{
+		if($this->ru_month == ''){
+			return '';
+		}
 		return $this->day." ".$this->ru_month." ".$this->year;
 	}
 	function ru_user_mini()
@@ -117,6 +120,9 @@ class Date extends UniversalHelper
 	}
 	function en_user()
 	{
+		if($this->en_month == ''){
+			return '';
+		}
 		return  $this->en_month." ".$this->day.", ".$this->year;
 	}
 	function ago()
