@@ -31,12 +31,20 @@ function inputparams($params=array())
 		$attr .= ' title="'.$params['title'].'" ';
 	}
 	
+	if(isset($params['placeholder'])) {
+		$attr .= ' placeholder="'.$params['placeholder'].'" ';
+	}
 	
 	if(isset($params['name'])) {
 		$attr .= ' name="'.$params['name'].'" ';
 		
 	} else {
-		$attr .= ' name="'.$cfo.'['.$params[0].']" ';		
+		if(d()->current_form_simple_names){
+			$attr .= ' name="'.$params[0].'" ';
+		}else{
+			$attr .= ' name="'.$cfo.'['.$params[0].']" ';
+		}
+		
 	}
 //	print '<!-- ';
 //	var_dump($_POST['document[document_type]']);
@@ -49,17 +57,34 @@ function inputparams($params=array())
 		if ($params['type']=='radio'){
 			if(isset($_POST['_action'])) {
 				//Был POST-запрос
-				if(isset($params['name'])){
 
-					if( isset($params['value']) && $_POST[$params['name']]==$params['value']) {
-						//Совпало значение
-						$attr .= ' checked="checked" ';
+				if(d()->current_form_simple_names){
+					if(isset($params['name'])){
+
+						if( isset($params['value']) && $_POST[$params['name']]==$params['value']) {
+							//Совпало значение
+							$attr .= ' checked="checked" ';
+						}
+					}else{
+						
+						if( isset($params['value']) && $_POST[$params[0]]==$params['value']) {
+							//Совпало значение
+							$attr .= ' checked="checked" ';
+						}
 					}
 				}else{
-					
-					if( isset($params['value']) && $_POST[$cfo][$params[0]]==$params['value']) {
-						//Совпало значение
-						$attr .= ' checked="checked" ';
+					if(isset($params['name'])){
+
+						if( isset($params['value']) && $_POST[$params['name']]==$params['value']) {
+							//Совпало значение
+							$attr .= ' checked="checked" ';
+						}
+					}else{
+						
+						if( isset($params['value']) && $_POST[$cfo][$params[0]]==$params['value']) {
+							//Совпало значение
+							$attr .= ' checked="checked" ';
+						}
 					}
 				}
 			} else {
@@ -89,11 +114,15 @@ function inputparams($params=array())
 	if(isset($params['value'])) {
 		$attr .= ' value="'.$params['value'].'" ';
 	}else{
-		if(isset($_POST['_action'])) {					
+		if(isset($_POST['_action'])) {				
 			if(isset($params['name'])) {
 				$attr .= ' value= "'.  htmlspecialchars( $_POST[$params['name']]) .'" ';
 			} else {
-				$attr .= ' value= "'.  htmlspecialchars($_POST[$cfo][$params[0]]) .'" ';
+				if(d()->current_form_simple_names){
+					$attr .= ' value= "'.  htmlspecialchars($_POST[$params[0]]) .'" ';
+				}else{
+					$attr .= ' value= "'.  htmlspecialchars($_POST[$cfo][$params[0]]) .'" ';
+				}
 			}
 		} else {
 			$attr .= ' value= "'.  htmlspecialchars(d()->{$cfo}->{$params[0]}) .'" ';
@@ -118,6 +147,14 @@ function textarea ($params=array())
 	if(isset($params['class'])) {
 		$attr .= ' class="'.$params['class'].'" ';
 	}
+
+	if(isset($params['placeholder'])) {
+		$attr .= ' placeholder="'.$params['placeholder'].'" ';
+	}
+
+	if(isset($params['rows'])) {
+		$attr .= ' rows="'.$params['rows'].'" ';
+	}
 	
 	if(isset($params['id'])) {
 		$attr .= ' id="'.$params['id'].'" ';
@@ -134,7 +171,12 @@ function textarea ($params=array())
 		$attr .= ' name="'.$params['name'].'" ';
 		
 	} else {
-		$attr .= ' name="'.$cfo.'['.$params[0].']" ';		
+		if(d()->current_form_simple_names){
+			$attr .= ' name="'.$params[0].'" ';
+		}else{
+			$attr .= ' name="'.$cfo.'['.$params[0].']" ';
+		}
+		
 	}
 	
 	$value="";
@@ -145,7 +187,11 @@ function textarea ($params=array())
 			if(isset($params['name'])) {
 				$value =  htmlspecialchars( $_POST[$params['name']]) ;
 			} else {
-				$value =   htmlspecialchars($_POST[$cfo][$params[0]]) ;
+				if(d()->current_form_simple_names){
+					$value =   htmlspecialchars($_POST[$params[0]]) ;
+				}else{
+					$value =   htmlspecialchars($_POST[$cfo][$params[0]]) ;
+				}
 			}
 		} else {
 			$value =  htmlspecialchars(d()->{$cfo}->{$params[0]}) ;
@@ -159,6 +205,7 @@ function form ($params=array())
 {
 	$attr="";
 	$additions = '';
+	d()->current_form_simple_names = false;
 	if (isset($params[1])) {
 		d()->current_form_object = $params[1];
 	} else {
@@ -173,7 +220,11 @@ function form ($params=array())
 		$attr .= ' onsubmit="_current_form=$(this);$.ajax({\'type\':\'post\',\'url\': $(this).attr(\'action\')?$(this).attr(\'action\'):document.location.href ,\'data\':$(this).serialize(),\'success\':function(recieved_data){eval(recieved_data)}});return false;" ';
 		
 	}
-		
+	
+	if(isset($params['simple_names']) && $params['simple_names']==true) {
+		d()->current_form_simple_names = true;
+		$additions .= ' <input type="hidden" name="_is_simple_names" value="1" >';
+	}	
 	if(isset($params['iframe']) && $params['iframe']==true) {
 		$iframe_id = "hidden_".rand(111,999);
 		$attr .= ' target="'.$iframe_id.'" ';
@@ -311,7 +362,12 @@ function jquery_notice(){
 	$noticed_inputs = array_values(d()->datapool['inputs_with_errors']);
 	$response.=  "$('.error').removeClass('error');\n";
 	foreach($noticed_inputs as $key=>$input){
-		$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
+		if(isset($_POST['_is_simple_names']) && $_POST['_is_simple_names']=='1'){
+			$element_name = "'*[name=\"".$input."\"]'";
+		}else{
+			$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";	
+		}
+		
 		$response .=  '$('.$element_name.').parent().parent().addClass("error");'."\n";
 	}
 	print "\n<script>".'$(function(){'.$response.'});'."</script>\n";

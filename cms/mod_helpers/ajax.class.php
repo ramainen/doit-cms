@@ -45,10 +45,18 @@ class Ajax extends UniversalSingletoneHelper
 			
 			$first_element=array();
 			foreach($noticed_inputs as $key=>$input){
-				$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
-				
+				if(isset($_POST['_is_simple_names']) && $_POST['_is_simple_names']=='1'){
+					$element_name = "'*[name=\"".$input."\"]'";
+				}else{
+					$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
+				}
 				$this->response .=  '$('.$element_name.', _tmp_form).parent().parent().addClass("error");'."\n";
-				$first_element[] = "*[name=\"".$_POST['_element'].'['.$input.']'."\"]" ;
+				if(isset($_POST['_is_simple_names']) && $_POST['_is_simple_names']=='1'){
+					$first_element[] = "*[name=\"".$input."\"]" ;
+				}else{
+					$first_element[] = "*[name=\"".$_POST['_element'].'['.$input.']'."\"]" ;	
+				}
+				
 			}
 			if ($first_element != ''){
 				$this->response .=  "$($('".implode(', ',$first_element)."',  _tmp_form)[0]).focus();"."\n";

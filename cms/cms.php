@@ -824,8 +824,19 @@ foreach($tmparr as $key=>$subval)
 		//Обработка actions. Ничего не выводится.
 		//параметры, тобы передавать в action(дополнительные функции для проверки)
 		$parameters = func_get_args();
-		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']],$parameters ))) {
-			$this->datapool['params'] =  $_POST[$_POST['_element']];
+
+		if(isset($_POST['_is_simple_names']) && $_POST['_is_simple_names']=='1'){
+			$values =  $_POST;
+			if(isset($_POST[$_POST['_element']]) && is_array($_POST[$_POST['_element']]) && count($_POST[$_POST['_element']])>0){
+				foreach($_POST[$_POST['_element']] as $key=>$value){
+					$values[$key]=$value;
+				}
+			}
+		}else{
+			$values =  $_POST[$_POST['_element']];
+		}
+		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $values,$parameters ))) {
+			$this->datapool['params'] =  $values;
 			return $this->call($_POST['_action'],array($_POST[$_POST['_element']]));
 		}
 	}
@@ -851,8 +862,20 @@ foreach($tmparr as $key=>$subval)
 			$action_name=$_POST['_action'];
 		}
 		$parameters = func_get_args();
-		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']],$parameters ))) {
-			$this->datapool['params'] =  $_POST[$_POST['_element']];
+
+				if(isset($_POST['_is_simple_names']) && $_POST['_is_simple_names']=='1'){
+			$values =  $_POST;
+			if(isset($_POST[$_POST['_element']]) && is_array($_POST[$_POST['_element']]) && count($_POST[$_POST['_element']])>0){
+				foreach($_POST[$_POST['_element']] as $key=>$value){
+					$values[$key]=$value;
+				}
+			}
+		}else{
+			$values =  $_POST[$_POST['_element']];
+		}
+		
+		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $values,$parameters ))) {
+			$this->datapool['params'] = $values;
 			return true;
 		}
 		return false;
