@@ -842,10 +842,13 @@ foreach($tmparr as $key=>$subval)
 	 * @param $action_name Имя валидатора/формы
 	 * @return bool Корректность заполненной информации
 	 */
-	public function validate($action_name)
+	public function validate($action_name=false)
 	{
 		if($this->validate_disabled){
 			return false;
+		}
+		if($action_name===false & isset($_POST['_action']) && strpos($_POST['_action'],'#')!==false && isset($_POST['_global']) && '1' == $_POST['_global']){
+			$action_name=$_POST['_action'];
 		}
 		$parameters = func_get_args();
 		if(isset($_POST) && isset($_POST['_action']) && ($action_name == $_POST['_action']) && ($this->validate_action($_POST['_action'], $_POST[$_POST['_element']],$parameters ))) {
