@@ -757,6 +757,11 @@ function admin_save_data($params)
 					return d()->view();
 				}
 
+				if(strlen($params['field_name'])>75){
+					d()->_field_name_error_situation=true;
+					d()->_field_name_error = 'Длина поля должна быть менее 80 символов.';
+					return d()->view();
+				}
 				if(substr($params['field_name'],0,8)=='deleted_'){
 					d()->_field_name_error_situation=true;
 					d()->_field_name_error = 'Поле не должно начинаться с deleted_ во избежания проблем в будущем.';
