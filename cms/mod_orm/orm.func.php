@@ -75,6 +75,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	public static $_columns_cache=array();
 	public $_options;
 	public $_data;
+	public $is_model=false;
 	private $_get_by_id_cache = false;
 	public $insert_id=false;
 	private $_used_tree_branches;
@@ -223,9 +224,10 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 
 		if(is_array($_options)){
-			if(array_key_exists(0,$_options && is_array($_options[0]))){
+			if($this->is_model && array_key_exists(0,$_options) && is_array($_options[0])){
 				$this->_options=array();
 				$this->_options['data'] = $_options[0];
+
 			}else{
 				$this->_options=$_options;
 			}
@@ -233,7 +235,9 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$this->_options=array();
 		}
 
-
+		if($this->is_model && !isset($this->_options['data'])){
+			$this->_options['data']=array();
+		}
 		
 	//	$this->_options['queryready']=false;  //Сбрасывается при смене параметров запроса, при true запросы не выполняются
 		
@@ -1784,4 +1788,8 @@ function activerecord_factory_from_table($_tablename, $suffix = '')
 class ar extends ActiveRecord
 {
 	
+}
+function upgrade($array=array())
+{
+	return d()->Model($array);
 }
