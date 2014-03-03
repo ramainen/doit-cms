@@ -1406,7 +1406,9 @@ foreach($tmparr as $key=>$subval)
 			if (is_numeric($key) && ($strlen_value_0 > $longest_url_length) && (
 				$_requri==$value[0]
 				|| substr($_requri,0,$strlen_value_0)==$value[0] 
-				|| preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri))) {
+				|| preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)
+				|| ($value[0]{0} === '^' &&  preg_match('#' . $value[0] . '#',$_requri))
+				)) {
 					$matched=$value;
 					$longest_url=$value[0];
 					$longest_url_length = strlen($longest_url);
