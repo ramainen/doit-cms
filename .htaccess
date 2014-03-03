@@ -13,4 +13,4 @@ RewriteBase /
 
 RewriteRule \.git - [F,L]
 
-RewriteRule  !\.jpg$|\.jpeg$|\.xlsx?$|\.pptx?$|\.docx?$|\.gif$|\.png$|\.bmp$|\.jpeg$|\.zip$|\.tar.gz$|\.swf$|\.pdf$|\.rar$|\.js$|\.css$|\.ico$|^cms/external|^docs\/docs\.php|^cms/mod_admin/imanager|^images/|^yandex|^robots\.txt/|^storage/(.*)        index.php   [L]
+RewriteRule  !\.jpg$|\.jpeg$|\.xlsx?$|\.pptx?$|\.docx?$|\.gif$|\.png$|\.bmp$|\.jpeg$|\.zip$|\.tar.gz$|\.swf$|\.pdf$|\.rar$|\.js$|\.css$|\.ico$|^cms/external|^docs\/docs\.php|^cms/mod_admin/imanager|^images/|^yandex|^robots\.txt|^storage/(.*)        index.php   [L]
