@@ -39,9 +39,16 @@
 			
 		 	
 </table>
+
+<?php if(d()->paginator){ ?>
+{paginator}
+<?php } ?>
 <div class="form-actions">
 {list_addbutton}
-			<a href="?sort=yes" class="btn"><i class=" icon-random"></i> Сортировать порядок</a>
+<?php if(!isset(d()->admin['use_model']['source'])){ ?>
+			<a href="?sort=yes<?php if(isset($_GET['page'])){ print '&page='.h($_GET['page']); } ?>" class="btn"><i class=" icon-random"></i> Сортировать порядок</a>
+
+<?php } ?>
           </div>
 		  
 		  
