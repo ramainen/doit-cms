@@ -432,6 +432,7 @@ function admin_show_one_list($table,$id1,$id2)
 
 	$all_lines=array();
 	if(d()->admin['use_model']['paginator']){
+		$model->paginate(d()->admin['use_model']['paginator']);
 		d()->paginator=d()->Paginator->bootstrap->generate($model);
 	}
 
