@@ -431,12 +431,14 @@ function admin_show_one_list($table,$id1,$id2)
 	$data=array();
 
 	$all_lines=array();
-	if(d()->admin['use_model']['paginator']){
-		$model->paginate(d()->admin['use_model']['paginator']);
-		d()->paginator=d()->Paginator->bootstrap->generate($model);
+	$paginator_per_page=100; //Константа, заданная по умолчанию
+	if(isset(d()->admin['use_model']['paginator']) && is_numeric(d()->admin['use_model']['paginator'])){
+		$paginator_per_page=d()->admin['use_model']['paginator'];
 	}
-
-
+	$model->paginate($paginator_per_page);
+	
+	d()->paginator=d()->Paginator->bootstrap->generate($model);
+	
 	foreach($model->all as $key0=> $line){
 		$all_lines[$key0] =  $line;
 		$all_lines[$key0]['addbuttons']='';
