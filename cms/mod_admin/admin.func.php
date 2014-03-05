@@ -432,11 +432,12 @@ function admin_show_one_list($table,$id1,$id2)
 
 	$all_lines=array();
 	$paginator_per_page=100; //Константа, заданная по умолчанию
-	if(isset(d()->admin['use_model']['paginator']) && is_numeric(d()->admin['use_model']['paginator'])){
+	if(isset(d()->admin['use_model']['paginator'])){
 		$paginator_per_page=d()->admin['use_model']['paginator'];
 	}
-	$model->paginate($paginator_per_page);
-	
+	if(is_numeric($paginator_per_page)){
+		$model->paginate($paginator_per_page);
+	}
 	d()->paginator=d()->Paginator->bootstrap->generate($model);
 	
 	foreach($model->all as $key0=> $line){
