@@ -271,6 +271,10 @@ function form ($params=array())
 	
 	if(isset($params['enctype'])) {
 		$attr .= ' enctype="'.$params['enctype'].'" ';
+	}else{
+		if(isset($params['upload']) && $params['upload']==true) {
+			$attr .= ' enctype="multipart/form-data" ';
+		}
 	}
 	if(isset($params['id'])) {
 		$attr .= ' id="'.$params['id'].'" ';
