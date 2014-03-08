@@ -33,7 +33,18 @@ $(function(){
 	<div class="span6" >
 	<div class="well">
 		{{form 'admin_update_system'}}
-			
+			Установленная версия системы: <b><?php
+if(iam('developer')){
+	print  file_get_contents($_SERVER['DOCUMENT_ROOT'].'/cms/VERSION.txt');
+}
+?></b><br>
+			Последняя доступная версия системы: <b><?php
+				if($ver = @file_get_contents('https://raw.github.com/ramainen/doit-cms/master/cms/VERSION.txt')){
+					print $ver;
+				}else{
+					print 'неизвестно';
+				}
+			?></b><br>
 			
 			Последняя версия ядра будет загружена с репозитория, папка <b>cms</b> будет переименована и заменена на новую.<br>
 			Возможные изменения в остальных директориях и файлах затронуты не будут. Для информации о изменениях в новых версиях читайте новости на сайте системы.<br>
