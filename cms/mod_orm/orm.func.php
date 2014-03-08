@@ -578,7 +578,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	
 	function arrange_by_groups($group_name='id')
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 			$this->fetch_data_now();
 		}
 		
@@ -631,7 +631,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	
 	function add_rows($data)
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 			$this->fetch_data_now();
 		}
 		
@@ -642,7 +642,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	
 	function arrange_by($group_name='id')
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 			$this->fetch_data_now();
 		}
 		
@@ -797,7 +797,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	//CRUD
 	public function delete()
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 				$this->fetch_data_now();
 		}
 			
@@ -1065,7 +1065,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 	public function one()
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 			$this->fetch_data_now();
 		}
 		return $this;
@@ -1085,7 +1085,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	
 	public function all()
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 			$this->fetch_data_now();
 		}
 
@@ -1101,7 +1101,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	//Итератор
 	function count()
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 				$this->fetch_data_now();
 		}
 		return count($this->_data);
@@ -1109,7 +1109,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	//ОН сука медленный
 	function only_count()
 	{
-		if ($this->_options['queryready']==false) {
+		if (!$this->_options['queryready']) {
 			$this->select('count(id) as _only_count');
 			$this->fetch_data_now();
 		}
@@ -1118,17 +1118,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 	function current()
 	{
-		if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
-		}
 		return $this;
 	}
 
 	function next()
 	{
-		if ($this->_options['queryready']==false) {
-			$this->fetch_data_now();
-		}
+
 		if(!$this->_is_sliced){
 			$this->_cursor++;
 			return;
@@ -1166,17 +1161,10 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 	function key()
 	{
-		if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
-		}
 		return $this->_cursor;
 	}
 	function rewind()
 	{
-	
-		if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
-		}
 		
 		if(!$this->_is_sliced){
 			$this->_cursor=0;
@@ -1192,9 +1180,6 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	}
 	function offsetGet( $index )
 	{
-		if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
-		}
 		if(is_numeric($index)){
 			$this->_cursor = $index;
 			return $this;
@@ -1220,9 +1205,6 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 	function seek ($position)
 	{
-		if ($this->_options['queryready']==false) {
-				$this->fetch_data_now();
-		}
 		$this->_cursor = $position;
 	}
 	function offsetUnset($offset) {
@@ -1267,32 +1249,25 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$tablename = $this->_options['table'];
 		}
 		
-		return ActiveRecord::show_columns_fast($tablename);
-		
-		if(!isset (doitClass::$instance->datapool['columns_registry'])) {
-			doitClass::$instance->datapool['columns_registry']=array();
-			doitClass::$instance->datapool['_known_fields']=array();
+		//return ActiveRecord::show_columns_fast($tablename);
+		if(isset(ActiveRecord::$_columns_cache [$tablename])){
+			return ActiveRecord::$_columns_cache [$tablename];
 		}
-		//FIXME: ложные срабатывания
-		if(false && isset (doitClass::$instance->datapool['columns_registry'][$tablename])) {
-			return doitClass::$instance->datapool['columns_registry'][$tablename];
+	
+		//Функция получает имя таблицы. Если таблицы не существует, она возвращает false
+		$_res=doitClass::$instance->db->query('SELECT * FROM '.DB_FIELD_DEL.$tablename.DB_FIELD_DEL.' LIMIT 0');
+		if ($_res!==false) {
+			$columns  = array();
+			$columns_count =  $_res->columnCount();
+			for($i=0;$i<=$columns_count-1;$i++){
+				$column = $_res->getColumnMeta($i);
+				$columns[]=$column['name'];
+			}
+			ActiveRecord::$_columns_cache[$tablename] = $columns;
+			return $columns;
 		}
-		if ($tablename=='template') {
-			//template - ключевое частозапрашиваемое поле, такой таблицы не существует
-			return doitClass::$instance->datapool['columns_registry'][$tablename]=false;
-		}
-		
-		$_res=doitClass::$instance->db->query('SHOW COLUMNS FROM '.DB_FIELD_DEL.$tablename.DB_FIELD_DEL);
-		if ($_res===false) {
-			//Если таблицы не существует
-			return doitClass::$instance->datapool['columns_registry'][$tablename]=false;
-		}
-		
-		$result_array=array();
-		foreach ($_res->fetchAll(PDO::FETCH_NUM) as $_tmpline) {
-			$result_array[] = $_tmpline[0];
-		}
-		return  doitClass::$instance->datapool['columns_registry'][$tablename] = $result_array;
+		ActiveRecord::$_columns_cache[$tablename] = false;
+		return false;
 	}
 
 	
