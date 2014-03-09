@@ -74,9 +74,20 @@
 Если файла не было прислано, или было неверное (запрещённое) расширение файла, или иные проблемы, то функция вернёт пустую строку и ничего не сохранит.
 
 
-### todo: `md5`
-### todo: `extension`
-### todo: `allow_files`
+### `md5`
+
+`d()->Upload->md5` возвраещет md5 от содержимого загруженного файла.
+
+### `extension`
+
+`d()->Upload->extension` возвраещет расширение загруженного файла.
+
+### `allow_files`
+
+`d()->Upload->allow_files` задаёт список разрешённых расширений. Например:
+
+	d()->Upload->allow_files('doc,docx,rtf,txt,xls,xlsx');
+
 ### todo: `allow_images`
 ### todo: `upload_dir`
 ### todo: `exists`
