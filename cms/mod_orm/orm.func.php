@@ -1421,6 +1421,15 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 		//Если создаём, то проверяем, был ли уже new
 		//Если редактируем, то предварительно надо сбрасывать в ноль
+		if(substr($name,-3)=='_at'){
+			$tmp_val = d()->Date($value)->to_mysql();
+			if($tmp_val==''){
+				$value=SQL_NULL;
+			}else{
+				$value=$tmp_val;
+			}
+			
+		}
 		$this->_future_data[$name]=$value;
 	}
 	
@@ -1428,6 +1437,15 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 		//Если создаём, то проверяем, был ли уже new
 		//Если редактируем, то предварительно надо сбрасывать в ноль
+		if(substr($name,-3)=='_at'){
+			$tmp_val = d()->Date($value)->to_mysql();
+			if($tmp_val==''){
+				$value=SQL_NULL;
+			}else{
+				$value=$tmp_val;
+			}
+			
+		}
 		$this->_future_data[$name]=$value;
 	}
 	

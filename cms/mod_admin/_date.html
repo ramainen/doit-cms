@@ -1,0 +1,15 @@
+ 
+
+<div class="control-group">
+  <label class="control-label"  >{title}</label>
+  <div class="controls">
+	<input type="text"  name="{name}" value="<?php if(d()->value!='' && d()->value!='0000-00-00 00:00:00'){
+
+			print d()->Date( d()->value)->to_simple();
+
+		}  ?>" class="input-xlarge admin_date"  >
+ 
+  </div>
+</div>
+
+ 

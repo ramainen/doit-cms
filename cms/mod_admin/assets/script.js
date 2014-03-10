@@ -206,6 +206,7 @@ function create_field_template()
 	'small title "Название"\n'+
 	'rich text "Текст"\n'+
 	'\n'+
+	';date posted_at Дата\n'+
 	';userdate date Дата\n'+
 	';image image "Изображение" galleries 180 auto\n'+
 	';file file  Файл "files"\n'+
@@ -224,6 +225,7 @@ function create_field_template()
 	
 	'\n'+
 	';[admin.use_model]\n'+
+	';source=d()->Page\n'
 	';sort=yes\n'+
 	';list=yes\n'+
 	';edit=yes\n'+

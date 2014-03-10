@@ -31,6 +31,7 @@ class Date extends UniversalHelper
 	private $date;
 	public $month;
 	public $ru_month;
+	public $stamp=false;
 	public $ru_month_mini;
 	public $en_month;
 	public $ru_month_simple;
@@ -57,13 +58,13 @@ class Date extends UniversalHelper
 			$this->date = $this->date->sec;
 		}
 		
-		if(strpos($this->date,'-')!==false ){
+		if(preg_match('#^\d\d\d\d-\d\d-\d\d.*#', $this->date)){
 						
 			$this->year=substr($this->date,0,4);
 			$this->month=1*substr($this->date,5,2);
 			$this->day=1*substr($this->date,8,2);
 			
-		}else {
+		}elseif(preg_match('#^\d\d\.\d\d\.\d\d(\d\d)*.*#', $this->date)) {
 			if(strpos($this->date,'.')===false ){
 				$this->date=Date('d.m.Y',$this->date);
 			}
@@ -79,8 +80,17 @@ class Date extends UniversalHelper
 				$this->year=1*('20'.$this->year);
 			}
 			$this->day=1*substr($this->date,0,2);
+		}elseif($this->date!=''){
+			$this->year = date('Y',strtotime($this->date));
+			$this->month = date('m',strtotime($this->date));
+			$this->day = 1*date('d',strtotime($this->date));
 		}
 		
+		if($this->date!='' && $this->date!='0000-00-00 00:00:00'){
+			$this->stamp = mktime (12,0,0, $this->month, $this->day, $this->year);
+		}
+
+
 		$this->ru_month = $this->ru_months[$this->month];
 		$this->ru_month_mini = $this->ru_months_mini[$this->month];
 		$this->en_month = $this->en_months[$this->month];
@@ -90,7 +100,13 @@ class Date extends UniversalHelper
 		
 		
 	}
-
+	function to_simple()
+	{
+		if($this->stamp == false){
+			return '';
+		}
+		return date('d.m.Y',$this->stamp);
+	}
 	function to_russian()
 	{
 		return $this->ru_user();
@@ -124,6 +140,13 @@ class Date extends UniversalHelper
 			return '';
 		}
 		return  $this->en_month." ".$this->day.", ".$this->year;
+	}
+	function to_mysql()
+	{
+		if($this->stamp==false){
+			return '';
+		}
+		return date("Y-m-d H:i:s",$this->stamp);
 	}
 	function ago()
 	{

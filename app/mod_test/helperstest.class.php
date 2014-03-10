@@ -106,10 +106,10 @@ class HelpersTest extends Test
 		$paginator = d()->Paginator;
 		
 		$_SERVER['REQUEST_URI'] = '/news/';
-		$this->assertEquals($paginator->generate(3,2),'<a href="/news/?page=0" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2"  class="active" >3</a>');
+		$this->assertEquals($paginator->generate(3,2),'<a href="/news/" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2"  class="active" >3</a>');
 		
 		$paginator->setActive('active_link');
-		$this->assertEquals($paginator->generate(3,2),'<a href="/news/?page=0" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2"  class="active_link" >3</a>');
+		$this->assertEquals($paginator->generate(3,2),'<a href="/news/" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2"  class="active_link" >3</a>');
 		
 		$_GET['page']='1';
 		
@@ -119,11 +119,11 @@ class HelpersTest extends Test
 		$this->assertEquals($paginator->generate(1),'');
 		
 		
-		$this->assertEquals($paginator->generate(3),'<a href="/news/?page=0" >1</a><a href="/news/?page=1"  class="active_link" >2</a><a href="/news/?page=2" >3</a>');
+		$this->assertEquals($paginator->generate(3),'<a href="/news/" >1</a><a href="/news/?page=1"  class="active_link" >2</a><a href="/news/?page=2" >3</a>');
 
-		$this->assertEquals($paginator->generate(3,0),'<a href="/news/?page=0"  class="active_link" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2" >3</a>');
+		$this->assertEquals($paginator->generate(3,0),'<a href="/news/"  class="active_link" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2" >3</a>');
 		$_GET=array();
-		$this->assertEquals($paginator->generate(3),'<a href="/news/?page=0"  class="active_link" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2" >3</a>');
+		$this->assertEquals($paginator->generate(3),'<a href="/news/"  class="active_link" >1</a><a href="/news/?page=1" >2</a><a href="/news/?page=2" >3</a>');
 
 		$this->assertEquals($paginator->clearPagesInAdress('/news/'),'/news/');
 		$this->assertEquals($paginator->clearPagesInAdress('/news/?'),'/news/');
@@ -202,7 +202,26 @@ class HelpersTest extends Test
 		
 	}
 	
-	
+	function test_date()
+	{
+		$this->assertCoverage('cms/mod_helpers/date.class.php');
+		$this->assertEquals(d()->Date('14.03.2015')->ru_user(), '14 марта 2015');
+		$this->assertEquals(d()->Date('14.01.2015')->ru_user(), '14 января 2015');
+		$this->assertEquals(d()->Date('')->ru_user(), '');
+		$this->assertEquals(d()->Date('2014-02-24 20:56:49')->ru_user(), '24 февраля 2014');
+		$this->assertEquals(d()->Date('02-12-2024')->ru_user(), '2 декабря 2024');
+		$this->assertEquals(d()->Date('02-12-2024')->to_simple(), '02.12.2024');
+		$this->assertEquals(d()->Date('01-01-2024')->to_simple(), '01.01.2024');
+		$this->assertEquals(d()->Date('0000-00-00 00:00:00')->to_simple(), '');
+
+		$this->assertEquals(d()->Date('22.03.2014')->to_mysql(), '2014-03-22 12:00:00');
+		$this->assertEquals(d()->Date('02-12-2014')->to_mysql(), '2014-12-02 12:00:00');
+		$this->assertEquals(d()->Date('31-01-2014')->to_mysql(), '2014-01-31 12:00:00');
+		$this->assertEquals(d()->Date('31.01.2014')->to_mysql(), '2014-01-31 12:00:00');
+		$this->assertEquals(d()->Date('')->to_mysql(), '');
+
+			
+	}
 }
  
 ?>
