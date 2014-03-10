@@ -38,7 +38,10 @@ function edit($params=false){
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
-		
+	if(!iam_allow($obj_table)){
+		return '';
+	}
+
 	if(is_string($params[0]) && strpos($params[0],'/')!==false){
 		print '<a href="/admin/edit/'.$params[0] . $addition_params .'"  style="display:inline;" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
 	}else{
@@ -69,6 +72,7 @@ function iam($username='')
 }
 function admin_logout()
 {
+	unset($_SESSION['whitelist']);
 	unset($_SESSION['admin']);
 	header('Location: /');
 }
@@ -96,7 +100,9 @@ function delete($params=false){
 			$obj_id = $params[0]->id;
 		}
 	}
-		
+	if(!iam_allow($obj_table)){
+		return '';
+	}		
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
@@ -114,7 +120,9 @@ function add($params){
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
-	
+	if(!iam_allow($params[0])){
+		return '';
+	}
 	$attr='';
 	if(isset($params['style'])) {
 		$attr .= ' style="'.$params['style'].'" ';
@@ -168,9 +176,11 @@ function sort_icon($params){
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
-	
 	if(!is_array($params)) {
 		$params=array($params);	
+	}
+	if(!iam_allow($params[0])){
+		return '';
 	}
 	$addition_params_string='?sort=yes';
 	
@@ -247,6 +257,8 @@ function admin_add_panel_button($url,$title){
 }
 function admin_show()
 {
+	
+
 	unset (d()->datapool['admin']['bottombuttons']);
 	unset (d()->datapool['admin']['addbuttons']);
 	unset (d()->datapool['admin']['show']);
@@ -271,6 +283,9 @@ function admin_show()
 				$subarray[2]='';
 			}
 			d()->curr_title=$value[1];
+			if(!iam_allow($subarray[0])){
+				return 'Вам запрещён доступ к этому разделу.';
+			}
 			print d()->admin_show_one_list($subarray[0],$subarray[1],$subarray[2]);
 		}
 	}
@@ -278,14 +293,20 @@ function admin_show()
 }
 function admin_show_one_list($table,$id1,$id2)
 {
+	if(!iam_allow($table)){
+		return 'Вам запрещён доступ к этому разделу.';
+	}
 	unset (d()->datapool['admin']['bottombuttons']);
 	unset (d()->datapool['admin']['addbuttons']);
 	unset (d()->datapool['admin']['columns']);
 
 	d()->curr_table=$table;
 	$curr_table = $table;
-	d()->load_and_parse_ini_file('app/fields/'.$table.'.ini');
-	
+	if($table == 'admin_users'){
+		d()->load_and_parse_ini_file('cms/mod_admin_users/admin_users_fields.ini');
+	}else{
+		d()->load_and_parse_ini_file('app/fields/'.$table.'.ini');
+	}
 	//модель для опасного запроса к списку сущностей
 	d()->_list_safe_data=true; //Если переопределяем, то safe пропадает,
 	
@@ -508,6 +529,9 @@ function admin_show_one_list($table,$id1,$id2)
 }
 function admin_list()
 {
+	if(!iam_allow(url(3))){
+		return 'Вам запрещён доступ к этому разделу.';
+	}
 	d()->curr_title='Список объектов из таблицы '.url(3);
 	print d()->admin_show_one_list(url(3),url(4),url(5));
 	
@@ -529,6 +553,9 @@ function admin_edit()
 	?></textarea>
  </form>
 */
+ 	if(!iam_allow(url(3))){
+		return 'Вам запрещён доступ к этому разделу.';
+	}
 	if(isset($_POST['admin_action']) && $_POST['admin_action']=='edit_field'){
 		if (isset($_GET['fields']) && $_GET['fields']!=''){
 			if(substr($field,0,1)=='/'){
@@ -722,6 +749,10 @@ function admin_edit()
 
 function admin_save_data($params)
 {
+
+	if(!iam_allow(url(3))){
+		return 'Вам запрещён доступ к этому разделу.';
+	}
 	//TODO: Новое API для добавление новых элементов в базу данных;  
 	$elemid=url(4);
 	$scenario=0;
@@ -945,12 +976,17 @@ function admin_save_data($params)
 
 function admin_delete()
 {
+	if(!iam_allow(url(3))){
+		return 'Вам запрещён доступ к этому разделу.';
+	}
 	print action('admin_delete_element');
 	print d()->admin_delete_tpl(); 
 }
 function admin_delete_element($params)
 {
-
+	if(!iam_allow(url(3))){
+		return 'Вам запрещён доступ к этому разделу.';
+	}
 	if(substr(url(3),-8)=='__fields'){
 		$tablename = substr(url(3),0,-8);
 		$columns = d()->db->query ('select * from '.et(url(3)).' where id = '.e(url(4)))->fetchAll();
@@ -1347,7 +1383,16 @@ function admin_migrate_scheme()
 	//d()->Scaffold->update_scheme();
 	print d()->view();
 }
+function iam_allow($tablename='pages'){
+	if(!isset($_SESSION['whitelist'])){
+		return true;
+	}
 
+	if(in_array($tablename,$_SESSION['whitelist'])){
+		return true;
+	}
+	return false;
+}
 function admin_generate_scheme()
 {
 	$non_migrate_columns=array('id','sort','admin_options','multi_domain');
@@ -1397,11 +1442,20 @@ function admin()
 			
 			if($login == $_POST['login'] && $password == md5($_POST['password'])) {
 				$_SESSION['admin']=$_POST['login'];
+				unset($_SESSION['whitelist']);
 				header('Location: /');
 				exit();
 			}
 		}
-		
+		if($_POST['login']!='admin' && $_POST['login']!='developer' && $_POST['login']!='' && $_POST['login']!='developer' && isset(d()->admin['users']) && isset(d()->admin['users']['enabled']) && d()->admin['users']['enabled']=='yes'){
+			//Активирован режим "людей из таблицы";
+			$user = d()->Admin_user->where('login = ? and password = ?',$_POST['login'],md5($_POST['password']));
+			if(!$user->is_empty){
+				$_SESSION['whitelist']=array_map('trim',explode(',',$user->whitelist));
+				$_SESSION['admin']=$_POST['login'];
+			}
+		}
+
 		d()->notice='Неверный логин или пароль';
 	}
 

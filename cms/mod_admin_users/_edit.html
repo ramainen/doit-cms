@@ -24,6 +24,8 @@
 					{{input 'password', 'type'=>'password', 'value'=>'', 'class'=>'input-xlarge'}}
 				</div>
 			</div>
+
+
 			<div class="control-group">
 				<label class="control-label"  >Подтверждение пароля*</label>
 				<div class="controls">
@@ -31,6 +33,13 @@
 				</div>
 			</div>
 
+
+			<div class="control-group">
+				<label class="control-label"  >Таблицы, к которым разрешён доступ</label>
+				<div class="controls">
+					{{input 'whitelist', 'class'=>'input-xlarge'}}
+				</div>
+			</div>
 		
 		<div class="form-actions">
 			<input type="submit"   value="Сохранить" class="btn btn-primary" > 

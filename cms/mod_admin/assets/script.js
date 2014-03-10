@@ -225,7 +225,7 @@ function create_field_template()
 	
 	'\n'+
 	';[admin.use_model]\n'+
-	';source=d()->Page\n'
+	';source=d()->Page\n'+
 	';sort=yes\n'+
 	';list=yes\n'+
 	';edit=yes\n'+

@@ -680,7 +680,12 @@ foreach($tmparr as $key=>$subval)
 		if (isset($this->validator[$validator_name])) {
 			$rules=$this->validator[$validator_name];
 	//		if(!isset($this->datapool['notice'])) {
-				$this->datapool['notice']=array();
+				if(isset($this->datapool['notice']) && is_array($this->datapool['notice']) && count($this->datapool['notice'])>0){
+					//некоторые правила были добавлены в валидатор. Остальные сработать не должны
+					return false;
+				}else{
+					$this->datapool['notice']=array();	
+				}
 				$this->datapool['inputs_with_errors']=array();
 	//		}
 
