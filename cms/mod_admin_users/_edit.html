@@ -1,0 +1,44 @@
+
+	{{form 'admin_users#save', 'user', 'global'=>true, 'ajax'=>true, 'run_before'=>'content', 'class'=>"form-horizontal admin_edit_form"}}
+	<fieldset class="input_elements">
+	
+	
+
+		<input type="hidden" name="_enable_multiple" value="0">
+		<input type="hidden" name="element_id" value="<?php print htmlspecialchars(url(4)); ?>">
+
+		<legend>Управление пользователями</legend>
+		<div class="notice_container"></div>
+	 
+
+			<div class="control-group">
+				<label class="control-label"  >Логин*</label>
+				<div class="controls">
+					{{input 'login', 'class'=>'input-xlarge'}}
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label"  >Пароль*</label>
+				<div class="controls">
+					{{input 'password', 'type'=>'password', 'value'=>'', 'class'=>'input-xlarge'}}
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label"  >Подтверждение пароля*</label>
+				<div class="controls">
+					{{input 'password_confirmation', 'type'=>'password', 'value'=>'', 'class'=>'input-xlarge'}}
+				</div>
+			</div>
+
+		
+		<div class="form-actions">
+			<input type="submit"   value="Сохранить" class="btn btn-primary" > 
+			<a href="/admin/list/admin_users"  class="btn">Отмена</a>
+		</div>
+
+
+	</fieldset>
+	{{/form}}
+		  
+		  
