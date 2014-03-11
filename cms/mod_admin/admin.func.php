@@ -1429,7 +1429,7 @@ function admin_generate_scheme()
 //Открытие шаблона либо вывод формы авторизации
 function admin()
 {
-
+	header('X-UA-Compatible: IE=edge,chrome=1');
 	//TODO: переписать на валидаторах
 	if(isset($_POST['action']) && $_POST['action']=='admin_login'){
 		if(!is_array(d()->admin['editor']['login']) && !is_array(d()->admin['editor']['password'] )){
