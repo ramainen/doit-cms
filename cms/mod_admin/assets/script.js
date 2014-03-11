@@ -103,6 +103,42 @@ $(function () {
 */
 	$('.admin_date').datepicker();
 
+
+
+
+		$('.fileupload').live('change',function(){
+
+		    var $targetfile =$(this).parent().parent().find('.str_input') 
+		    if($(this)[0].files){
+		    var file = $(this)[0].files[0];
+			var data = new FormData();
+			var btn = $(this).parent()
+			$this=$(this)
+        	btn.button('loading')
+			var url = $(this).data('url')
+			data.append('Filedata', file);
+			    $.ajax({
+			        url: url,
+			        data: data,
+   					cache: false,
+				    contentType: false,
+				    processData: false,
+				    type: 'POST',
+				    success: function(data){
+				    	if(data=='error2'){
+				    		alert('неверный тип файла');
+				    	}else{
+
+				        	$targetfile.val(data)
+				        	btn.button('reset')
+				        	$this.replaceWith($this.clone());
+				        }
+				    }
+			    });
+			  } 
+		})
+ 
+
 	$('.modal-edit-save').bind('click',function(){
 			if($('.edit_field_content').val().substr(0,14)!='[admin.fields]'){
 				$('.edit_field_content').val("[admin.fields]\n"+$('.edit_field_content').val());

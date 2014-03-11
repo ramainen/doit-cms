@@ -41,3 +41,28 @@ text-shadow: black 0px 1px 0px;
 	width:600px;
 	background:white;
 }
+
+.style-fileinput-button {
+  position: relative;
+  overflow: hidden;
+}
+.style-fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  font-size: 200px;
+  direction: ltr;
+  cursor: pointer;
+}
+
+/* Fixes for IE < 8 */
+@media screen\9 {
+  .style-fileinput-button input {
+    filter: alpha(opacity=0);
+    font-size: 100%;
+    height: 100%;
+  }
+}
