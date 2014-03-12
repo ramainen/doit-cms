@@ -58,11 +58,76 @@ text-shadow: black 0px 1px 0px;
   cursor: pointer;
 }
 
-/* Fixes for IE < 8 */
 @media screen\9 {
   .style-fileinput-button input {
     filter: alpha(opacity=0);
     font-size: 100%;
     height: 100%;
   }
+}
+.dragndrop_hover
+{
+	position:relative;
+	background:#eeefee;
+	border:2px dashed gray;
+	box-shadow:0 0 5px gray;
+	border-radius:4px;
+}
+.dragndrop_hover.hover
+{
+	background:#ded;
+	border:2px solid #333;
+	
+}
+.dragndrop_hover input[type=file]{
+	display:none;
+}
+.form-horizontal .control-group.dragndrop_hover
+{
+	
+	padding-bottom: 10px;
+	padding-top: 10px;
+
+}
+/* .dragndrop_hover .style-fileinput-button
+{
+	position:static;
+}
+.dragndrop_hover .style-fileinput-button input
+{
+	opacity:1;
+}*/
+.body_drag .control-group
+{
+	opacity:0.4;
+	cursor:not-allowed;
+}
+.body_drag .control-group
+{
+	opacity:0.2;
+}
+.body_drag .control-group.dragndrop_hover
+{
+	opacity:1;
+}
+.droplabel
+{
+	display:none;
+}
+.dragndrop_hover .btn
+{
+	/*display: none;*/
+}
+.dragndrop_hover .droplabel
+{
+/*	position:absolute;
+	text-align:center;
+	height:100%;
+	width:100%;
+	top:0;
+	left:0;
+	background:#efe;
+	font-size:20px;
+	line-height:100%;
+	display:block;*/
 }

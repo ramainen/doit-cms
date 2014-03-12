@@ -1,7 +1,8 @@
+ 
+//jquery paste image plugin include begin
 
 // Created by STRd6
 // MIT License
-//jquery paste image plugin
 (function($) {
   var defaults;
   $.event.fix = (function(originalFix) {
@@ -57,7 +58,7 @@
     });
   };
 })(jQuery);
-
+//end jquery image paste plugin
 //////////////////////////////////
 
 
@@ -167,7 +168,86 @@ $(function () {
 	$('.admin_date').datepicker();
 
 
+var timeout = -1;
+var showDrag=false;
+$('body').bind('dragenter', function () {
+	$("body").addClass('body_drag')
+	$('.drag-n-drop-target').addClass('dragndrop_hover');
+    showDrag = true; 
+});
+$('body').bind('dragover', function(){
+    showDrag = true; 
+    event.preventDefault();
+    return false;
+});
+$('body').bind('drop', function(){
+    
+    event.preventDefault();
+    
+});
+$('body').bind('dragleave', function (e) {
+    showDrag = false; 
+    clearTimeout( timeout );
+    timeout = setTimeout( function(){
+    if( !showDrag ){ 
+		$("body").removeClass('body_drag')
+		$('.drag-n-drop-target').removeClass('dragndrop_hover')
+     }
+    }, 200 );
+});
 
+
+
+$(".drag-n-drop-target").each(function(){
+	this.ondragover=function()
+	{
+		$(this).addClass('hover')
+	}
+	this.ondragleave=function()
+	{
+		$(this).removeClass('hover')
+	}
+	this.ondrop = function(event) {
+		//alert(1)
+		$('.dragndrop_hover').removeClass('hover').removeClass('dragndrop_hover')
+	    $("body").removeClass('body_drag')
+		
+	    event.preventDefault();
+	    
+
+	     var $targetfile =$(this).find('.str_input')
+		    if(event.dataTransfer.files[0]){
+			    var file = event.dataTransfer.files[0];
+				var data = new FormData();
+				var btn = $(this).find('.btn')
+				var url = $(this).find('.fileupload').data('url')
+				btn.button('loading')
+	        	
+				data.append('Filedata', file);
+			 
+				    $.ajax({
+				        url: url,
+				        data: data,
+	   					cache: false,
+					    contentType: false,
+					    processData: false,
+					    type: 'POST',
+					    success: function(data){
+					    	if(data=='error2'){
+					    		alert('неверный тип файла');
+					    	}else{
+					        	$targetfile.val(data)	
+					        }
+					        btn.button('reset')
+					        
+					    }
+				    });
+			  } 
+
+
+
+	};
+})
 $(".str_input").pasteImageReader(function(results) {
   var dataURL, filename;
 
@@ -192,11 +272,10 @@ $(".str_input").pasteImageReader(function(results) {
 					    	if(data=='error2'){
 					    		alert('неверный тип файла');
 					    	}else{
-
-					        	$targetfile.val(data)
-					        	btn.button('reset')
-					        	
+					        	$targetfile.val(data)	
 					        }
+					        btn.button('reset')
+					        
 					    }
 				    });
 			  } 
@@ -226,14 +305,15 @@ $(".str_input").pasteImageReader(function(results) {
 				    processData: false,
 				    type: 'POST',
 				    success: function(data){
-				    	if(data=='error2'){
+				    	
+				        if(data=='error2'){
 				    		alert('неверный тип файла');
 				    	}else{
-
-				        	$targetfile.val(data)
-				        	btn.button('reset')
-				        	$this.replaceWith($this.clone());
+				        	$targetfile.val(data)	
 				        }
+				        btn.button('reset')
+				        $this.replaceWith($this.clone());
+
 				    }
 			    });
 			  } 
