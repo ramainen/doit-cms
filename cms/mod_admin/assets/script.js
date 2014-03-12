@@ -1,3 +1,66 @@
+
+// Created by STRd6
+// MIT License
+//jquery paste image plugin
+(function($) {
+  var defaults;
+  $.event.fix = (function(originalFix) {
+    return function(event) {
+      event = originalFix.apply(this, arguments);
+      if (event.type.indexOf('copy') === 0 || event.type.indexOf('paste') === 0) {
+        event.clipboardData = event.originalEvent.clipboardData;
+      }
+      return event;
+    };
+  })($.event.fix);
+  defaults = {
+    callback: $.noop,
+    matchType: /image.*/
+  };
+  return $.fn.pasteImageReader = function(options) {
+    if (typeof options === "function") {
+      options = {
+        callback: options
+      };
+    }
+    options = $.extend({}, defaults, options);
+    return this.each(function() {
+      var $this, element;
+      element = this;
+      $this = $(this);
+      return $this.live('paste', function(event) {
+        var clipboardData, found;
+        found = false;
+        clipboardData = event.clipboardData;
+        return Array.prototype.forEach.call(clipboardData.types, function(type, i) {
+          var file, reader;
+          if (found) {
+            return;
+          }
+
+          if (type.match(options.matchType) || clipboardData.items[i].type.match(options.matchType)) {
+            file = clipboardData.items[i].getAsFile();
+            reader = new FileReader();
+            reader.onload = function(evt) {
+              return options.callback.call(element, {
+                dataURL: evt.target.result,
+                event: evt,
+                file: file,
+                name: file.name
+              });
+            };
+            reader.readAsDataURL(file);
+            return found = true;
+          }
+        });
+      });
+    });
+  };
+})(jQuery);
+
+//////////////////////////////////
+
+
 var admin_dropdown_timer;
 $(function () {
 
@@ -105,6 +168,44 @@ $(function () {
 
 
 
+$(".str_input").pasteImageReader(function(results) {
+  var dataURL, filename;
+
+		    var $targetfile =$(this)
+		    if(results.file){
+			    var file = results.file;
+				var data = new FormData();
+				var btn = $(this).parent().find('.btn')
+				var url = $(this).parent().find('.fileupload').data('url')
+				btn.button('loading')
+	        	
+				data.append('Filedata', file, "blob.png");
+			 
+				    $.ajax({
+				        url: url,
+				        data: data,
+	   					cache: false,
+					    contentType: false,
+					    processData: false,
+					    type: 'POST',
+					    success: function(data){
+					    	if(data=='error2'){
+					    		alert('неверный тип файла');
+					    	}else{
+
+					        	$targetfile.val(data)
+					        	btn.button('reset')
+					        	
+					        }
+					    }
+				    });
+			  } 
+
+
+  return filename = results.filename, dataURL = results.dataURL, results;
+});
+ 
+ 
 
 		$('.fileupload').live('change',function(){
 
