@@ -13,7 +13,7 @@
         <span>Обзор...</span>
  
 
- 		<input class="fileupload" type="file" accept="image/jpeg,image/gif,image/png" name="files[]" data-url="/cms/mod_admin/imanager/upload/image.php?folder=<?php print d()->field_params[3]?>&w=<?php print d()->field_params[4]?>&h=<?php print d()->field_params[5]?><?php
+ 		<input class="fileupload maybe_multiple" type="file" accept="image/jpeg,image/gif,image/png"   name="files[]" data-url="/cms/mod_admin/imanager/upload/image.php?folder=<?php print d()->field_params[3]?>&w=<?php print d()->field_params[4]?>&h=<?php print d()->field_params[5]?><?php
 			$j=1;
 			for($i=6;$i<=count(d()->field_params);$i+=2){
 				$j++;

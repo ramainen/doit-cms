@@ -96,6 +96,7 @@ $(function () {
 		$('input[name=_enable_multiple]').val(1)
 		$('.control-group').hide();
 		$('.multiple_mode').show();
+		$('.maybe_multiple').attr({'multiple':true})
 		$($('.input_elements legend')[0]).html('Добавление нескольких элементов');
 		e.preventDefault();
 	})
@@ -287,36 +288,68 @@ $(".str_input").pasteImageReader(function(results) {
  
 
 		$('.fileupload').live('change',function(){
-
+			var multple_current=-1;
+			var multple_all=0;
+			
+			var multiple_files = [];
 		    var $targetfile =$(this).parent().parent().find('.str_input') 
-		    if($(this)[0].files){
-		    var file = $(this)[0].files[0];
-			var data = new FormData();
+			 
+		    var file;
+			
 			var btn = $(this).parent()
-			$this=$(this)
-        	btn.button('loading')
-			var url = $(this).data('url')
-			data.append('Filedata', file);
-			    $.ajax({
-			        url: url,
-			        data: data,
-   					cache: false,
-				    contentType: false,
-				    processData: false,
-				    type: 'POST',
-				    success: function(data){
-				    	
-				        if(data=='error2'){
-				    		alert('неверный тип файла');
-				    	}else{
-				        	$targetfile.val(data)	
-				        }
-				        btn.button('reset')
-				        $this.replaceWith($this.clone());
+			var $this = $(this);
+	    	var url = $(this).data('url')
+			
 
-				    }
-			    });
-			  } 
+			if($(this)[0].files){
+				btn.button('loading')
+		    	multple_all = $(this)[0].files.length
+		     	
+
+
+			    var process_one_file=function(){
+			    	multple_current++;
+			    	if ($this[0].files[multple_current]){
+			    		
+			    		file = $this[0].files[multple_current];
+						var data = new FormData();
+						data.append('Filedata', file);
+					    $.ajax({
+					        url: url,
+					        data: data,
+		   					cache: false,
+						    contentType: false,
+						    processData: false,
+						    type: 'POST',
+						    success: function(data){
+						    
+						        if(data=='error2'){
+						    		alert('неверный тип файла');
+						    	}else{
+						    		multiple_files.push(data)
+						    		
+						        //		
+						        }
+								process_one_file()
+						       
+						        if(multple_current ==multple_all ){
+						        	$targetfile.val(multiple_files.join(';'))
+						        	btn.button('reset')
+						        	$this.replaceWith($this.clone());
+					    		}
+						        
+						        //
+
+						    }
+					    });
+			    		
+			    	}
+			    }
+
+	    		process_one_file()
+
+		    	 
+			} 
 		})
  
 
