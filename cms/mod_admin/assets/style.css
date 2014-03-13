@@ -50,8 +50,11 @@ text-shadow: black 0px 1px 0px;
   position: absolute;
   top: 0;
   right: 0;
+
+height:100%;
   margin: 0;
-  opacity: 0;
+  
+   opacity: 0;
   -ms-filter: 'alpha(opacity=0)';
   font-size: 200px;
   direction: ltr;
@@ -80,7 +83,8 @@ text-shadow: black 0px 1px 0px;
 	
 }
 .dragndrop_hover input[type=file]{
-	display:none;
+	/*display:none;*/
+	
 }
 .form-horizontal .control-group.dragndrop_hover
 {
@@ -117,6 +121,7 @@ text-shadow: black 0px 1px 0px;
 .dragndrop_hover .btn
 {
 	/*display: none;*/
+	position:static;
 }
 .dragndrop_hover .droplabel
 {
@@ -130,4 +135,9 @@ text-shadow: black 0px 1px 0px;
 	font-size:20px;
 	line-height:100%;
 	display:block;*/
+}
+
+.hidden_on_new_browsers
+{
+	display:none;
 }

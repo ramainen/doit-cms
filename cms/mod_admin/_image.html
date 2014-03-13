@@ -1,13 +1,33 @@
 <?php $suffix = rand(1111,9999); ?>
-<div class="control-group multiple_mode">
+<div class="control-group multiple_mode drag-n-drop-target">
+<div class="droplabel">
+Перетащите файл сюда.
+</div>
   <label class="control-label"  >{title}</label>
   <div class="controls">
-	<input type="text"  name="{name}" value="{value|h}"  id="element_{name}_<?php print $suffix ?>" class="input-xlarge"  >
- 
+	<input type="text"  name="{name}" value="{value|h}"   id="element_{name}_<?php print $suffix ?>" class="input-xlarge str_input"  >
  
  
 
-		<iframe style="overflow:hidden;height:20px;width:80px;border:none;border:0;"  frameborder="0" border="0" src="/cms/mod_admin/imanager/button.htm?element=element_{name}_<?php print $suffix ?>&folder=<?php print d()->field_params[3]?>&w=<?php print d()->field_params[4]?>&h=<?php print d()->field_params[5]?><?php
+    <span class="btn  style-fileinput-button hidden_on_old_browsers" data-loading-text="Загрузка...">
+        <span>Обзор...</span>
+ 
+
+ 		<input class="fileupload maybe_multiple" type="file" accept="image/jpeg,image/gif,image/png"   name="files[]" data-url="/cms/mod_admin/imanager/upload/image.php?folder=<?php print d()->field_params[3]?>&w=<?php print d()->field_params[4]?>&h=<?php print d()->field_params[5]?><?php
+			$j=1;
+			for($i=6;$i<=count(d()->field_params);$i+=2){
+				$j++;
+				if(!empty(d()->field_params[$i])){
+					print '&w'.$j.'='.d()->field_params[$i];
+					print '&h'.$j.'='.d()->field_params[$i+1];
+				}
+			}
+		
+		?>">
+
+ 
+    </span>
+    <iframe style="overflow:hidden;height:20px;width:80px;border:none;border:0;" class="hidden_on_new_browsers" frameborder="0" border="0" src="/cms/mod_admin/imanager/button.htm?element=element_{name}_<?php print $suffix ?>&folder=<?php print d()->field_params[3]?>&w=<?php print d()->field_params[4]?>&h=<?php print d()->field_params[5]?><?php
 			$j=1;
 			for($i=6;$i<=count(d()->field_params);$i+=2){
 				$j++;
@@ -18,6 +38,7 @@
 			}
 		
 		?>"></iframe>
+
 
 		
 		

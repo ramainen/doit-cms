@@ -169,6 +169,19 @@ $(function () {
 	$('.admin_date').datepicker();
 
 
+
+
+if( window.FormData === undefined ){
+	//Старый браузер
+	$('.hidden_on_old_browsers').hide();
+	$('.hidden_on_new_browsers').show();
+}else{
+	$('.hidden_on_new_browsers').hide();
+}
+
+
+
+
 var timeout = -1;
 var showDrag=false;
 $('body').bind('dragenter', function () {
@@ -181,9 +194,13 @@ $('body').bind('dragover', function(){
     event.preventDefault();
     return false;
 });
-$('body').bind('drop', function(){
-    
-    event.preventDefault();
+$('body').bind('drop', function(e){
+    if(!$(e.target).hasClass('fileupload')){
+		event.preventDefault();
+    }
+ //   
+	$("body").removeClass('body_drag')
+	$('.drag-n-drop-target').removeClass('dragndrop_hover')
     
 });
 $('body').bind('dragleave', function (e) {
@@ -208,6 +225,7 @@ $(".drag-n-drop-target").each(function(){
 	{
 		$(this).removeClass('hover')
 	}
+	/*
 	this.ondrop = function(event) {
 		//alert(1)
 		$('.dragndrop_hover').removeClass('hover').removeClass('dragndrop_hover')
@@ -248,6 +266,8 @@ $(".drag-n-drop-target").each(function(){
 
 
 	};
+
+	*/
 })
 $(".str_input").pasteImageReader(function(results) {
   var dataURL, filename;
@@ -333,7 +353,9 @@ $(".str_input").pasteImageReader(function(results) {
 								process_one_file()
 						       
 						        if(multple_current ==multple_all ){
-						        	$targetfile.val(multiple_files.join(';'))
+						        	if(multiple_files.length>0){
+						        		$targetfile.val(multiple_files.join(';'))
+						        	}
 						        	btn.button('reset')
 						        	$this.replaceWith($this.clone());
 					    		}
