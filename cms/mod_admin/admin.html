@@ -17,7 +17,7 @@
 	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap-responsive.min.css" />
 	
 	
-	<link rel="stylesheet" type="text/css" href="/cms/mod_admin/assets/style.css" />
+	<link rel="stylesheet" type="text/css" href="/cms/mod_admin/assets/style.css?ver=<?php print  file_get_contents($_SERVER['DOCUMENT_ROOT'].'/cms/VERSION.txt'); ?>" />
 
 	<script type="text/javascript" src="/cms/external/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="/cms/external/jqueryui/jquery-ui-1.8.10.custom.min.js"></script>
@@ -27,7 +27,7 @@
 	
  
 	<script type="text/javascript" src="/cms/external/tiny_mce/jquery.tinymce.js"></script>
-	<script type="text/javascript" src="/cms/mod_admin/assets/script.js"></script>
+	<script type="text/javascript" src="/cms/mod_admin/assets/script.js?ver=<?php print  file_get_contents($_SERVER['DOCUMENT_ROOT'].'/cms/VERSION.txt'); ?>"></script>
 </head>
 <body>
 
