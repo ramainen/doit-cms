@@ -1645,6 +1645,15 @@ foreach($tmparr as $key=>$subval)
 		
 		return $res;
 	}
+	
+	function current_version()
+	{
+		static $result = null;
+		if (!isset($result)) {
+			$result = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/cms/VERSION.txt') || 'default';
+		}
+		return $result;
+	}
 }
 
 
