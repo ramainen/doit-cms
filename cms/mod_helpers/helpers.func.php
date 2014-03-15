@@ -731,3 +731,12 @@ function antispam($value,$params)
 	}
 	return true;
 }
+
+function br($str=false)
+{
+	if($str===false){
+		print '<br />';
+	}else{
+		print nl2br($str);
+	}
+}

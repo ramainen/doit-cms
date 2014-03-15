@@ -43,6 +43,9 @@ class Date extends UniversalHelper
 	
 	public $en_months=array('','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 	
+	public $tt_months=array('','гыйнвар','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь');
+	public $tt_months_mini=array('','гыйн','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек');
+	
 	public $ru_months_simple=array('','январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь');
 	public $en_months_simple=array('','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 	
@@ -58,11 +61,59 @@ class Date extends UniversalHelper
 			$this->date = $this->date->sec;
 		}
 		
-		if(preg_match('#^\d\d\d\d-\d\d-\d\d.*#', $this->date)){
+		$regular_expression_matched=false;
+		$matches=array();
+		//Попытка разбить дату на три составляющие
+		if(preg_match('#(\d{1,4})[\s\.-](\d\d?)[\s\.-](\d{1,4})#', $this->date,$matches)){
+			/*var_dump($matches);
+			br();*/
+			if(count($matches)==4){
+				if($matches[1]>100){
+					$this->year = $matches[1];
+					$this->month = 1*$matches[2];
+					$this->day = 1*$matches[3];
+					$regular_expression_matched=true;					
+				}else{
+					$year =$matches[3];
+					if($year<=99 && $year>50){
+						$year=('19'.$year);
+					}
+					if($year<=99 && $year<50){
+						$year=('20'.$year);
+					}
+
+					$this->year =$year ; 
+					$this->month = 1*$matches[2];
+					$this->day = 1*$matches[1];
+					$regular_expression_matched=true;					
+				}
+			
+			}
+
+		}
+		// 25 января 04
+		if(!$regular_expression_matched){
+			if(preg_match('#([a-zA-Z0-9]+])[\s\.,-]+(\d\d?)[\s\.-,]+([a-zA-Z0-9]+)#', $this->date,$matches)){
+				/*var_dump($matches);
+				br();*/
+				if(count($matches)==4){
+					//Если вторая запись это месяц
+					if(preg_match('#[a-zA-Z0-9]+#',$matches[2])){
+						$this->year = $matches[3];
+						$this->month = 1*$this->str_to_month($matches[2]);
+						$this->day = 1*$matches[1];
+					}
+				}
+			}
+		}
+
+		if($regular_expression_matched){
+			//Всё хорошо
+		}elseif(preg_match('#^\d\d\d\d-\d\d-\d\d.*#', $this->date)){
 						
 			$this->year=substr($this->date,0,4);
-			$this->month=1*substr($this->date,5,2);
-			$this->day=1*substr($this->date,8,2);
+			$this->month=(int)substr($this->date,5,2);
+			$this->day=(int)substr($this->date,8,2);
 			
 		}elseif(preg_match('#^\d\d\.\d\d\.\d\d(\d\d)*.*#', $this->date)) {
 			if(strpos($this->date,'.')===false ){
@@ -70,20 +121,20 @@ class Date extends UniversalHelper
 			}
 			
 			$this->year=substr($this->date,6,4);
-			$this->month=1*substr($this->date,3,2);
+			$this->month=(int)substr($this->date,3,2);
 			
 			
 			if($this->year<99 && $this->year>50){
-				$this->year=1*('19'.$this->year);
+					$this->year=(int)('19'.$this->year);
 			}
 			if($this->year<99 && $this->year<50){
-				$this->year=1*('20'.$this->year);
+				$this->year=(int)('20'.$this->year);
 			}
 			$this->day=1*substr($this->date,0,2);
 		}elseif($this->date!=''){
 			$this->year = date('Y',strtotime($this->date));
-			$this->month = date('m',strtotime($this->date));
-			$this->day = 1*date('d',strtotime($this->date));
+			$this->month = (int)date('m',strtotime($this->date));
+			$this->day = (int)date('d',strtotime($this->date));
 		}
 		
 		if($this->date!='' && $this->date!='0000-00-00 00:00:00'){
@@ -92,12 +143,15 @@ class Date extends UniversalHelper
 
 
 		$this->ru_month = $this->ru_months[$this->month];
+		
 		$this->ru_month_mini = $this->ru_months_mini[$this->month];
 		$this->en_month = $this->en_months[$this->month];
 		$this->ru_month_simple = $this->ru_months_simple[$this->month];
 		$this->en_month_simple = $this->en_months_simple[$this->month];
 		
-		
+		$this->tt_month = $this->tt_months[$this->month];
+		$this->tt_month_mini = $this->tt_months_mini[$this->month];
+
 		
 	}
 	function to_simple()
@@ -122,9 +176,28 @@ class Date extends UniversalHelper
 		}
 		return $this->day." ".$this->ru_month." ".$this->year;
 	}
+
+	function tt_user()
+	{
+		if($this->tt_month == ''){
+			return '';
+		}
+		return $this->day." ".$this->tt_month." ".$this->year;
+	}
+
 	function ru_user_mini()
 	{
+		if($this->ru_month == ''){
+			return '';
+		}
 		return $this->day." ".$this->ru_month_mini." ".$this->year;
+	}
+	function tt_user_mini()
+	{
+		if($this->tt_month == ''){
+			return '';
+		}
+		return $this->day." ".$this->tt_month_mini." ".$this->year;
 	}
 	function user()
 	{
@@ -147,6 +220,12 @@ class Date extends UniversalHelper
 			return '';
 		}
 		return date("Y-m-d H:i:s",$this->stamp);
+	}
+	function str_to_month($str)
+	{
+		if(in_array($this->ru_months,$str)){
+			return array_search($str,$this->ru_months);
+		}
 	}
 	function ago()
 	{

@@ -84,17 +84,7 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->notice(array('style'=>'color:black;')),'<ul style="color:black;" ><li>Errorka</li><li>SecondError</li></ul>');
 	}
 	
-	function test_multilangl_userdate()
-	{
-		d()->lang='ru';
-		$this->assertEquals(d()->ml_userdate('11.11.2011'),'11 ноября 2011');
-		$this->assertEquals(d()->ml_userdate('11.11.11'),'11 ноября 2011');
-		d()->lang='en';
-		$this->assertEquals(d()->ml_userdate('31.01.2011'),'January 31, 2011');
-		$this->assertEquals(d()->ml_userdate('31.01.2011'),'January 31, 2011');
-		
-		
-	}
+
 	
 	
 	function test_paginator_class()
@@ -201,7 +191,22 @@ class HelpersTest extends Test
 		
 		
 	}
-	
+	function test_multilangl_userdate()
+	{
+		$this->assertCoverage('cms/mod_helpers/date.class.php');
+		d()->lang='tt';
+		$this->assertEquals(d()->ml_userdate('01.01.11'),'1 гыйнвар 2011');
+		
+		d()->lang='ru';
+		$this->assertEquals(d()->ml_userdate('11.11.2011'),'11 ноября 2011');
+		$this->assertEquals(d()->ml_userdate('11.11.11'),'11 ноября 2011');
+		d()->lang='en';
+		$this->assertEquals(d()->ml_userdate('31.01.2011'),'January 31, 2011');
+		$this->assertEquals(d()->ml_userdate('31.01.2011'),'January 31, 2011');
+		
+		
+	}
+
 	function test_date()
 	{
 		$this->assertCoverage('cms/mod_helpers/date.class.php');
@@ -220,7 +225,41 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->Date('31.01.2014')->to_mysql(), '2014-01-31 12:00:00');
 		$this->assertEquals(d()->Date('')->to_mysql(), '');
 
-			
+		$this->assertEquals(d()->Date('02-01-2024')->tt_user(), '2 гыйнвар 2024');
+		$this->assertEquals(d()->Date('02-12-2024')->tt_user(), '2 декабрь 2024');
+		
+		$this->assertEquals(d()->Date('02-09-2024')->tt_user(), '2 сентябрь 2024');
+
+		$this->assertEquals(d()->Date('02-09-2024')->ru_user_mini(), '2 сен 2024');
+		$this->assertEquals(d()->Date('2024-09-02')->ru_user_mini(), '2 сен 2024');
+		$this->assertEquals(d()->Date('2024-09-02')->ru_user(), '2 сентября 2024');
+
+
+		$this->assertEquals(d()->Date('02.09.2024')->ru_user_mini(), '2 сен 2024');
+		$this->assertEquals(d()->Date('')->ru_user_mini(), '');
+
+		$this->assertEquals(d()->Date('02-01-2024')->tt_user_mini(), '2 гыйн 2024');
+		
+		$this->assertEquals(d()->Date('2.2.98')->tt_user(), '2 февраль 1998');
+		$this->assertEquals(d()->Date('2.02.32')->ru_user(), '2 февраля 2032');
+		$this->assertEquals(d()->Date('2.02 32')->ru_user(), '2 февраля 2032');
+
+		$this->assertEquals(d()->Date('tomorrow')->to_simple(), date('d.m.Y', time() + 86400));
+
+		$this->assertEquals(d()->Date('24 февраля 2014')->ru_user(), '24 февраля 2014');
+		$this->assertEquals(d()->Date('1 гыйнвар 2014')->ru_user(), '1 января 2014');
+		$this->assertEquals(d()->Date('01 гыйнвар 2014')->ru_user(), '1 января 2014');
+		
+		$this->assertEquals(d()->Date('01 02 03')->ru_user(), '1 февраля 2003');
+		$this->assertEquals(d()->Date('01 02 1998')->ru_user(), '1 февраля 1998');
+		$this->assertEquals(d()->Date('1 2 3')->ru_user(), '1 февраля 2003');
+		$this->assertEquals(d()->Date('1 2 2003')->ru_user(), '1 февраля 2003');
+		$this->assertEquals(d()->Date('2001 02 03')->ru_user(), '3 февраля 2001');
+
+		$this->assertEquals(d()->Date('January 23, 2014')->ru_user(), '23 января 2014');
+		$this->assertEquals(d()->Date('01 сентябрь 2014')->ru_user(), '1 сентября 2014');
+		$this->assertEquals(d()->Date('01 сентябрь 2014')->tt_user(), '1 сентябрь 2014');
+
 	}
 }
  
