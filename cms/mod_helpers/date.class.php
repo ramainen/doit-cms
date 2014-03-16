@@ -49,14 +49,21 @@ class Date extends UniversalHelper
 	public $ru_months_simple=array('','январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь');
 	public $en_months_simple=array('','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 	
-	function __construct($params=array(''))
+	function __construct($params=array(false))
 	{
 
 		if($params[0]!==false){
 			$this->date = $params[0];
 		}else{
-			$this->date = time();
+			$this->date = 'today';
 		}
+		if(is_null($this->date)){
+			$this->date='';
+		}
+		if(is_numeric($this->date) && $this->date > 0){
+			$this->date=date("Y-m-d H:i:s",$this->date);
+		}
+
 		if(is_object ($this->date) && $this->date instanceof MongoDate){
 			$this->date = $this->date->sec;
 		}
@@ -117,29 +124,7 @@ class Date extends UniversalHelper
 
 		if($regular_expression_matched){
 			//Всё хорошо
-		}elseif(preg_match('#^\d\d\d\d-\d\d-\d\d.*#', $this->date)){
-						
-			$this->year=substr($this->date,0,4);
-			$this->month=(int)substr($this->date,5,2);
-			$this->day=(int)substr($this->date,8,2);
-			
-		}elseif(preg_match('#^\d\d\.\d\d\.\d\d(\d\d)*.*#', $this->date)) {
-			if(strpos($this->date,'.')===false ){
-				$this->date=Date('d.m.Y',$this->date);
-			}
-			
-			$this->year=substr($this->date,6,4);
-			$this->month=(int)substr($this->date,3,2);
-			
-			
-			if($this->year<99 && $this->year>50){
-					$this->year=(int)('19'.$this->year);
-			}
-			if($this->year<99 && $this->year<50){
-				$this->year=(int)('20'.$this->year);
-			}
-			$this->day=1*substr($this->date,0,2);
-		}elseif($this->date!=''){
+		}elseif($this->date!==''){
 			$this->year = date('Y',strtotime($this->date));
 			$this->month = (int)date('m',strtotime($this->date));
 			$this->day = (int)date('d',strtotime($this->date));
@@ -257,30 +242,32 @@ class Date extends UniversalHelper
 
 			return array_search($str,$this->ru_months_simple);
 		}
-		
-		if(in_array($str, $this->en_months_simple)){
 
-			return array_search($str,$this->en_months_simple);
-		}
 		
 
 		return 0;
 	}
-	function ago()
+	function ago($to=false)
 	{
-		return $this->ru_ago();
+		if($to===false){
+			$to=time();
+		}
+		return $this->ru_ago($to);
 	}
-	function when()
+	function when($to=false)
 	{
-		return $this->ru_when();
+		if($to===false){
+			$to=time();
+		}
+		return $this->ru_when($to);
 	}
 	//Предупреждение: не оттестировано, пока не работает
-	function ru_ago()
+	function ru_ago($to=false)
 	{
-		 
-	/*	 return $this->ru_user();*/
-
-		$timediff = time() - mktime(23,00,00,$this->month, $this->day, $this->year);    
+		if($to===false){
+			$to=time();
+		}
+		$timediff = $to - mktime(23,00,00,(int)$this->month, (int)$this->day, (int)$this->year);    
 		$timediff = intval($timediff); 
 		if($timediff < 60)   
 		  $time = "$timediff секунд назад";  
@@ -292,17 +279,20 @@ class Date extends UniversalHelper
 		   $time = "$timediff дней назад";  
 		else if(($weeks= intval($timediff/7)) < 4)   
 		  $time = "$weeks недели назад";  
-		else if(($months= intval($timediff/30.4)) < 12)   
-		   $time = "$monts месяцев назад";  
+		else if(($months= intval($timediff/30.4)) )   
+		   $time = "$months ". declOfNum($months,array('месяц','месяца','месяцев')). " назад";  
 		return $time; 
  
 	}
 	
-	function ru_when()
+	function ru_when($to=false)
 	{
 
+		if($to===false){
+			$to=time();
+		}
 
-		$timediff = time() - mktime(23,00,00,$this->month, $this->day, $this->year);    
+		$timediff = $to - mktime(23,00,00,$this->month, $this->day, $this->year);    
 		$timediff  = $timediff/(60 *60 );
 		
 		if($timediff  < -48) {

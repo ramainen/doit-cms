@@ -245,6 +245,8 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->Date('2.02 32')->ru_user(), '2 февраля 2032');
 
 		$this->assertEquals(d()->Date('tomorrow')->to_simple(), date('d.m.Y', time() + 86400));
+		$this->assertEquals(d()->Date('today')->to_simple(), date('d.m.Y'));
+		$this->assertEquals(d()->Date('today')->to_simple(), d()->Date->to_simple());
 
 		$this->assertEquals(d()->Date->str_to_month('ноября'), 11);
 		$this->assertEquals(d()->Date->str_to_month('февраля'), 2);
@@ -253,7 +255,42 @@ class HelpersTest extends Test
 
 
 		$this->assertEquals(d()->Date('24 февраля 2014')->ru_user(), '24 февраля 2014');
+		$this->assertEquals(d()->Date('2014-03-16 12:00:00')->ru_user(), '16 марта 2014');
 		$this->assertEquals(d()->Date('24 янв 2014')->ru_user(), '24 января 2014');
+		
+		$this->assertEquals(d()->Date('24 янв 2014')->user(), '24 января 2014');
+		$this->assertEquals(d()->Date('24 янв 2014')->user_mini(), '24 янв 2014');
+		$this->assertEquals(d()->Date('24 янв 2014')->tt_user_mini(), '24 гыйн 2014');
+
+		$this->assertEquals(d()->Date('16 марта 2014')->stamp, 1394956800);
+		$this->assertEquals(d()->Date(1394956800)->ru_user(), '16 марта 2014');
+		
+		//Мы не можем вставлять сегодняшнюю дату - тест отвалится завтра
+		$this->assertEquals(d()->Date('24 янв 2014')->ago(d()->Date('16 марта 2014')->stamp), '1 месяц назад');
+		$this->assertEquals(d()->Date('15 марта 2013')->ru_ago(d()->Date('16 марта 2014')->stamp), '12 месяцев назад');
+		$this->assertEquals(d()->Date('15 марта 2013')->ago(d()->Date('16 марта 2014')->stamp), '12 месяцев назад');
+		$this->assertEquals(d()->Date('15 марта 2014')->ru_when(d()->Date('16 марта 2014')->stamp), 'Вчера');
+		$this->assertEquals(d()->Date('16 марта 2014')->ru_when(d()->Date('16 марта 2014')->stamp), 'Сегодня');
+		$this->assertEquals(d()->Date('16 марта 2014')->when(d()->Date('16 марта 2014')->stamp), 'Сегодня');
+		$this->assertEquals(d()->Date('16 марта 2013')->when(d()->Date('16 марта 2014')->stamp), '16 марта 2013');
+		$this->assertEquals(d()->Date('16 марта 2015')->when(d()->Date('16 марта 2014')->stamp), '16 марта 2015');
+
+		$this->assertEquals(d()->Date('17 марта 2014')->ru_when(d()->Date('today')->stamp), d()->Date('17 марта 2014')->ru_when());
+		$this->assertEquals(d()->Date('17 марта 2014')->when(d()->Date('today')->stamp), d()->Date('17 марта 2014')->when());
+
+		$this->assertEquals(d()->Date('15 марта 2013')->ago(d()->Date('today')->stamp), d()->Date('15 марта 2013')->ago());
+		$this->assertEquals(d()->Date('15 марта 2013')->ru_ago(d()->Date('today')->stamp), d()->Date('15 марта 2013')->ru_ago());
+
+		$this->assertEquals(d()->Date('24 янв 2014')->to_russian(), '24 января 2014');
+		$this->assertEquals(d()->Date('24 янв 2014')->to_english(), 'January 24, 2014');
+		
+		$this->assertEquals(d()->Date('')->en_user(), '');
+		$this->assertEquals(d()->Date('')->tt_user(), '');
+		$this->assertEquals(d()->Date('')->tt_user_mini(), '');
+		$this->assertEquals(d()->Date(null)->en_user(), '');
+
+		$this->assertEquals(d()->Date('January 24, 2014')->to_russian(), '24 января 2014');
+		$this->assertEquals(d()->Date('Jan 24, 2014')->to_russian(), '24 января 2014');
 
 		$this->assertEquals(d()->Date('24 January 2014')->ru_user(), '24 января 2014');
 		$this->assertEquals(d()->Date('1 гыйнвар 2014')->ru_user(), '1 января 2014');
