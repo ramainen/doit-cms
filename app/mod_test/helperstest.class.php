@@ -248,6 +248,7 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->Date('today')->to_simple(), date('d.m.Y'));
 		$this->assertEquals(d()->Date('today')->to_simple(), d()->Date->to_simple());
 
+		//назваия месяецев
 		$this->assertEquals(d()->Date->str_to_month('ноября'), 11);
 		$this->assertEquals(d()->Date->str_to_month('февраля'), 2);
 		$this->assertEquals(d()->Date->str_to_month('гыйнвар'), 1);
@@ -284,6 +285,26 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->Date('24 янв 2014')->to_russian(), '24 января 2014');
 		$this->assertEquals(d()->Date('24 янв 2014')->to_english(), 'January 24, 2014');
 		
+		//Нули
+		$this->assertEquals(d()->Date('24 янв 00')->to_russian(), '24 января 2000');
+		$this->assertEquals(d()->Date('24 янв 99')->to_russian(), '24 января 1999');
+		$this->assertEquals(d()->Date('24 янв 73')->to_russian(), '24 января 1973');
+		$this->assertEquals(d()->Date('24 янв 61')->to_russian(), '24 января 1961');
+		$this->assertEquals(d()->Date('24 01 61')->to_russian(), '24 января 1961');
+		$this->assertEquals(d()->Date('24 01 60')->to_russian(), '24 января 2060');
+
+		$this->assertEquals(d()->Date('январь 12, 60')->to_russian(), '12 января 2060');
+		$this->assertEquals(d()->Date('январь 12, 73')->to_russian(), '12 января 1973');
+
+		$this->assertEquals(d()->Date('24 янв 60')->to_russian(), '24 января 2060');
+
+		//Числа, но не таймштамп
+		$this->assertEquals(d()->Date('20040302')->to_russian(), '2 марта 2004');
+		
+		//И по хардкору
+		$this->assertEquals(d()->Date('08.31.2015')->to_russian(), '31 августа 2015');
+
+		//Пустые значения
 		$this->assertEquals(d()->Date('')->en_user(), '');
 		$this->assertEquals(d()->Date('')->tt_user(), '');
 		$this->assertEquals(d()->Date('')->tt_user_mini(), '');

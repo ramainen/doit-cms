@@ -60,8 +60,12 @@ class Date extends UniversalHelper
 		if(is_null($this->date)){
 			$this->date='';
 		}
-		if(is_numeric($this->date) && $this->date > 0){
-			$this->date=date("Y-m-d H:i:s",$this->date);
+		if(is_numeric($this->date) && $this->date > 0 ){
+			if($this->date > 30000000){
+				$this->date=date("Y-m-d H:i:s",$this->date);
+			}else{
+				$this->date=date("Y-m-d H:i:s",strtotime($this->date));
+			}
 		}
 
 		if(is_object ($this->date) && $this->date instanceof MongoDate){
@@ -76,22 +80,35 @@ class Date extends UniversalHelper
 			br();*/
 			if(count($matches)==4){
 				if($matches[1]>100){
-					$this->year = $matches[1];
+					
+					$year = $matches[1];
+					
+
+
+					$this->year =$year ; 
+					
 					$this->month = 1*$matches[2];
 					$this->day = 1*$matches[3];
 					$regular_expression_matched=true;					
 				}else{
 					$year =$matches[3];
-					if($year<=99 && $year>50){
+					if($year<=99 && $year>60){
 						$year=(1900 + $year);
 					}
-					if($year<=99 && $year<50){
+					if($year<=99 && $year<61){
 						$year=(2000 + $year);
 					}
 
-					$this->year =$year ; 
-					$this->month = 1*$matches[2];
-					$this->day = 1*$matches[1];
+					$this->year =$year ;
+					
+					if (1*$matches[2] < 13 ){
+						$this->month = 1*$matches[2];
+						$this->day = 1*$matches[1];
+					}else{
+						$this->month = 1*$matches[1];
+						$this->day = 1*$matches[2];
+					}
+
 					$regular_expression_matched=true;					
 				}
 			
@@ -105,15 +122,35 @@ class Date extends UniversalHelper
 				if(count($matches)==4){
 					//Если вторая запись это месяц
 					if(preg_match('#[a-zA-Zа-яА-Я]+#ui',$matches[2]) && $this->str_to_month($matches[2])!=0){
-						$this->year = $matches[3];
+						$year = $matches[3];
+						
+						if($year<=99 && $year>60){
+							$year=(1900 + $year);
+						}
+						if($year<=99 && $year<61){
+							$year=(2000 + $year);
+						}
 
+						$this->year =$year ; 
+						
 						$this->month = 1*$this->str_to_month($matches[2]);
 						$this->day = 1*$matches[1];
 						$regular_expression_matched=true;
 					}
 					//Если первая часть это месяц
 					elseif(preg_match('#[a-zA-Zа-яА-Я]+#ui',$matches[1]) && $this->str_to_month($matches[1])!=0){
-						$this->year = $matches[3];
+						
+						$year = $matches[3];
+						
+						if($year<=99 && $year>60){
+							$year=(1900 + $year);
+						}
+						if($year<=99 && $year<61){
+							$year=(2000 + $year);
+						}
+
+						$this->year =$year ; 
+						
 						$this->month = 1*$this->str_to_month($matches[1]);
 						$this->day = 1*$matches[2];
 						$regular_expression_matched=true;
