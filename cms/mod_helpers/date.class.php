@@ -76,10 +76,10 @@ class Date extends UniversalHelper
 				}else{
 					$year =$matches[3];
 					if($year<=99 && $year>50){
-						$year=('19'.$year);
+						$year=(1900 + $year);
 					}
 					if($year<=99 && $year<50){
-						$year=('20'.$year);
+						$year=(2000 + $year);
 					}
 
 					$this->year =$year ; 
@@ -93,15 +93,23 @@ class Date extends UniversalHelper
 		}
 		// 25 января 04
 		if(!$regular_expression_matched){
-			if(preg_match('#([a-zA-Z0-9]+])[\s\.,-]+(\d\d?)[\s\.-,]+([a-zA-Z0-9]+)#', $this->date,$matches)){
-				/*var_dump($matches);
-				br();*/
+			if(preg_match('#([a-zA-Zа-яё0-9]+)[\s\.,-]+([a-zA-Zа-яё0-9]+)[\s\.\-,]+([a-zA-Zа-яё0-9]+)#ui', $this->date,$matches)){
+				
 				if(count($matches)==4){
 					//Если вторая запись это месяц
-					if(preg_match('#[a-zA-Z0-9]+#',$matches[2])){
+					if(preg_match('#[a-zA-Zа-яА-Я]+#ui',$matches[2]) && $this->str_to_month($matches[2])!=0){
 						$this->year = $matches[3];
+
 						$this->month = 1*$this->str_to_month($matches[2]);
 						$this->day = 1*$matches[1];
+						$regular_expression_matched=true;
+					}
+					//Если первая часть это месяц
+					elseif(preg_match('#[a-zA-Zа-яА-Я]+#ui',$matches[1]) && $this->str_to_month($matches[1])!=0){
+						$this->year = $matches[3];
+						$this->month = 1*$this->str_to_month($matches[1]);
+						$this->day = 1*$matches[2];
+						$regular_expression_matched=true;
 					}
 				}
 			}
@@ -223,9 +231,40 @@ class Date extends UniversalHelper
 	}
 	function str_to_month($str)
 	{
-		if(in_array($this->ru_months,$str)){
+		if(in_array($str, $this->ru_months)){
+
 			return array_search($str,$this->ru_months);
 		}
+		if(in_array($str, $this->tt_months)){
+
+			return array_search($str,$this->tt_months);
+		}
+		if(in_array($str, $this->en_months)){
+
+			return array_search($str,$this->en_months);
+		}
+		if(in_array($str, $this->ru_months_mini)){
+
+			return array_search($str,$this->ru_months_mini);
+		}
+		
+		if(in_array($str, $this->tt_months_mini)){
+
+			return array_search($str,$this->tt_months_mini);
+		}
+		
+		if(in_array($str, $this->ru_months_simple)){
+
+			return array_search($str,$this->ru_months_simple);
+		}
+		
+		if(in_array($str, $this->en_months_simple)){
+
+			return array_search($str,$this->en_months_simple);
+		}
+		
+
+		return 0;
 	}
 	function ago()
 	{

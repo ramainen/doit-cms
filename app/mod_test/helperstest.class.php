@@ -246,10 +246,25 @@ class HelpersTest extends Test
 
 		$this->assertEquals(d()->Date('tomorrow')->to_simple(), date('d.m.Y', time() + 86400));
 
+		$this->assertEquals(d()->Date->str_to_month('ноября'), 11);
+		$this->assertEquals(d()->Date->str_to_month('февраля'), 2);
+		$this->assertEquals(d()->Date->str_to_month('гыйнвар'), 1);
+
+
+
 		$this->assertEquals(d()->Date('24 февраля 2014')->ru_user(), '24 февраля 2014');
+		$this->assertEquals(d()->Date('24 янв 2014')->ru_user(), '24 января 2014');
+
+		$this->assertEquals(d()->Date('24 January 2014')->ru_user(), '24 января 2014');
 		$this->assertEquals(d()->Date('1 гыйнвар 2014')->ru_user(), '1 января 2014');
+		$this->assertEquals(d()->Date('1 гыйн 2014')->ru_user(), '1 января 2014');
 		$this->assertEquals(d()->Date('01 гыйнвар 2014')->ru_user(), '1 января 2014');
+		$this->assertEquals(d()->Date('01 январь 2014')->ru_user(), '1 января 2014');
+		$this->assertEquals(d()->Date('январь 01 2014')->ru_user(), '1 января 2014');
+		$this->assertEquals(d()->Date('2000-07-01T00:00:00+00:00')->ru_user(), '1 июля 2000');
+		$this->assertEquals(d()->Date('Thu, 21 Dec 2000 16:01:07 +0200')->ru_user(), '21 декабря 2000');
 		
+		$this->assertEquals(d()->Date('21 Dec 2000')->ru_user(), '21 декабря 2000');
 		$this->assertEquals(d()->Date('01 02 03')->ru_user(), '1 февраля 2003');
 		$this->assertEquals(d()->Date('01 02 1998')->ru_user(), '1 февраля 1998');
 		$this->assertEquals(d()->Date('1 2 3')->ru_user(), '1 февраля 2003');
