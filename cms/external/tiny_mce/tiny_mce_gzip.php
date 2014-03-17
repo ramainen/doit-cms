@@ -48,7 +48,7 @@ class TinyMCE_Compressor {
 	private static $defaultSettings = array(
 		"plugins"    => "",
 		"themes"     => "",
-		"languages"  => "ru",
+		"languages"  => "",
 		"disk_cache" => true,
 		"expires"    => "30d",
 		"cache_dir"  => "",
