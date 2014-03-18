@@ -45,7 +45,66 @@ class HelpersTest extends Test
 		
 		$this->assertEquals(d()->declOfNum(4,'попугай','попугая','попугаев'),'попугая');
 		$this->assertEquals(d()->declOfNum(1,'комментарий','комментария','комментариев'),'комментарий');
+		$this->assertEquals(d()->declOfNum(2,'комментарий','комментария','комментариев'),'комментария');
+
+		$this->assertEquals(declOfNum(2,'новость'),'новости');
+		$this->assertEquals(declOfNum(100,'новость'),'новостей');
+		$this->assertEquals(declOfNum(1,'комментарий'),'комментарий');
+
+		$this->assertEquals(declOfNum(21,'комментарий'),'комментарий');
+		$this->assertEquals(declOfNum(222,'комментарий'),'комментария');
+		$this->assertEquals(declOfNum(100,'комментарий'),'комментариев');
+		$this->assertEquals(declOfNum(100,'месяц'),'месяцев');
+		$this->assertEquals(declOfNum(2,'месяц'),'месяца');
+		$this->assertEquals(declOfNum(100,'магия'),'магий');
+		$this->assertEquals(declOfNum(2,'магия'),'магии');
+		$this->assertEquals(declOfNum(100,'секунда'),'секунд');
+		$this->assertEquals(declOfNum(22,'человек'),'человека');
+		$this->assertEquals(declOfNum(22,'человек'),'человека');
+		$this->assertEquals(declOfNum(22,'год'),'года');
+		$this->assertEquals(declOfNum(22,'ножницы'),'ножниц');
+		$this->assertEquals(declOfNum(1,'ножницы'),'ножницы');
+		$this->assertEquals(declOfNum(100,'ножницы'),'ножниц');
+		$this->assertEquals(declOfNum(100,'очки'),'очков');
+		$this->assertEquals(declOfNum(100,'очко'),'очков');
+		$this->assertEquals(declOfNum(2,'очко'),'очка');
+		$this->assertEquals(declOfNum(100,'пользователь'),'пользователей');
+		$this->assertEquals(declOfNum(100,'запись'),'записей');
+		$this->assertEquals(declOfNum(1002,'запись'),'записи');
+		$this->assertEquals(declOfNum(1002,'контрагент'),'контрагента');
+		$this->assertEquals(declOfNum(100,'контрагент'),'контрагентов');
+
+		$this->assertEquals(declOfNum(2,'индеец'),'индейца');
+		$this->assertEquals(declOfNum(100,'товар'),'товаров');
+		$this->assertEquals(declOfNum(2,'гонец'),'гонца');
+		$this->assertEquals(declOfNum(100,'гонец'),'гонцов');
+		$this->assertEquals(declOfNum(100,'товар'),'товаров');
+		$this->assertEquals(declOfNum(2,'товар'),'товара');
+		$this->assertEquals(declOfNum(2,'ноябрь'),'ноября');
+		$this->assertEquals(declOfNum(200,'ноябрь'),'ноябрей');
+		$this->assertEquals(declOfNum(2,'имперец'),'имперца');
+		$this->assertEquals(declOfNum(200,'имперец'),'имперцев');
+		$this->assertEquals(declOfNum(2,'норвежец'),'норвежца');
+		$this->assertEquals(declOfNum(200,'норвежец'),'норвежцев');
 		
+		$this->assertEquals(declOfNum(22,'child'),'children');
+		$this->assertEquals(declOfNum(1,'child'),'child');
+
+
+		//Админка
+		$this->assertEquals(d()->declOfNum(array(2,'комментарий')),'комментария');		
+/*
+		$lang = d()->lang;
+		
+		d()->lang='tt';
+		$this->assertEquals(d()->declOfNum(22,'язык'),'языклар');
+		$this->assertEquals(d()->declOfNum(22,'хайван'),'хайваннар');
+		$this->assertEquals(d()->declOfNum(1,'хайван'),'хайван');
+		
+
+
+		d()->lang=$lang;
+*/		
 		
 	}
 

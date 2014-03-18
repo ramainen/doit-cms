@@ -688,11 +688,115 @@ function t($text)
  */
 function declOfNum($number, $words=false,$word2=false,$word3=false)
 {
+	if(is_array($number)){
+		$arr = $number;
+		$number = $arr[0];
+		if(isset($arr[1])){
+			$words = $arr[1];
+		}
+		if(isset($arr[2])){
+			$word2 = $arr[2];
+		}
+		if(isset($arr[3])){
+			$word3 = $arr[3];
+		}
+
+
+	}
+	$words_result = $words;	
 	$checks = array (2, 0, 1, 1, 1, 2);
 	if(is_string($words) && is_string($word2) && is_string($word3)){
-		$words=array($words,$word2,$word3);
+		$words_result=array($words,$word2,$word3);
 	}
-	return $words[($number%100>4 && $number%100<20)? 2 : $checks[min($number%10, 5)]];
+	if(is_string($words) && $word2==false){
+		//Режим магии
+		$word1 = $words;
+		$word2=$words;
+		$word3=$words; 
+		if(preg_match('#[a-z]#i',$word1)){
+			if($number==1){
+				return $word1;
+			}else{
+				return to_p($word1);
+			}
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ий'){
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ия';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'иев';
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='еец'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'ейца';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'йцев';
+
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='нец'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'нца';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'нцов';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ец'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ца';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'цев';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='р'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'ра';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'ров';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='о'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'а';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'ов';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='ц'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'ца';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'цев';
+
+		}elseif(in_array(mb_substr($word1,-1,null,"UTF-8"),array('б','в','г', 'д', 'ж', 'з', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х',   'ч', 'ш', 'щ' ))){
+
+			$word2 = $word1.'а';
+			$word3 = $word1.'ов';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='сь'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'си';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'сей';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ть'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ти';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'тей';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='ь'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'я';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'ей';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='ы'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ия'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ии';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ий';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='а'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'ы';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='и'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'ов';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'ов';
+
+		}
+		$words_result=array($word1,$word2,$word3);
+
+	}
+	return $words_result[($number%100>4 && $number%100<20)? 2 : $checks[min($number%10, 5)]];
 }
 
 
