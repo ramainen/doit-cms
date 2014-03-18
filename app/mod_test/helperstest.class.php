@@ -40,6 +40,15 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->declOfNum('стопицот',array('попугай','попугая','попугаев')),'попугаев');
 		
 	}
+	function test_super_declOfNum()
+	{
+		
+		$this->assertEquals(d()->declOfNum(4,'попугай','попугая','попугаев'),'попугая');
+		$this->assertEquals(d()->declOfNum(1,'комментарий','комментария','комментариев'),'комментарий');
+		
+		
+	}
+
 	function test_preview()
 	{
 		//тестируем превью

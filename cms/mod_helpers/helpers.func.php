@@ -686,9 +686,12 @@ function t($text)
  * @param $titles
  * @return string
  */
-function declOfNum($number, $words)
+function declOfNum($number, $words=false,$word2=false,$word3=false)
 {
 	$checks = array (2, 0, 1, 1, 1, 2);
+	if(is_string($words) && is_string($word2) && is_string($word3)){
+		$words=array($words,$word2,$word3);
+	}
 	return $words[($number%100>4 && $number%100<20)? 2 : $checks[min($number%10, 5)]];
 }
 
