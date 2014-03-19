@@ -1573,6 +1573,15 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this[$this->get_cursor_key_by_id($id)];
 	}
 	
+	function truncate($are_you_sure=false)
+	{
+		if($are_you_sure===true){
+			d()->db->exec('TRUNCATE TABLE ' . et($this->_options['table']));
+		}else{
+			die('Произошла непредвиденная ошибка. Использование truncate без подтверждения запрещено. Возможно, это ошибка.');
+		}
+	}
+
 	/* 
 	Получение переменных напрямую
 	В случае необходимости получения в модели непосредственно значения переменной
