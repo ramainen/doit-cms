@@ -219,10 +219,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	}
 	function __construct($_options=array())
 	{
-
+		$need_find_array=false;
 		//Опции по умолчанию и переменные
-
-
+		if(!$this->is_model && is_array($_options) && array_key_exists(0,$_options) &&     array_key_exists(0,$_options[0]) && is_numeric($_options[0][0])     ){
+			$this->_options=array();
+			$need_find_array =  $_options[0];
+		}
 		if(is_array($_options)){
 			if($this->is_model && array_key_exists(0,$_options) && is_array($_options[0])){
 				$this->_options=array();
@@ -329,7 +331,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 		if(count($_options)==1 && is_numeric($_options[0])){
 			$this->find($_options[0]);
-		}	
+		}
+
+		if($need_find_array !== false){
+			$this->where('`id` IN (?)',$need_find_array);
+		}
+
+
 		$this->init();
 	}
 
