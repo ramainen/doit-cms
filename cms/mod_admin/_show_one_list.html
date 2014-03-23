@@ -1,11 +1,48 @@
 <h1>{curr_title}</h1>
-
 <table class="table table-striped table-bordered table-condensed"  width=100%>
 <thead>
 	<tr>
-		<th width=50>ID</th>
+		<th width=50><a href="?sort_field=id<?php
+			if(!isset($_GET['sort_direction']) || $_GET['sort_direction']=='asc'){
+				print '&sort_direction=desc';
+			}
+		?>">ID </a><?php
+
+			if(isset($_GET['sort_field']) && $_GET['sort_field'] == 'id'){
+				if (!isset($_GET['sort_direction']) || $_GET['sort_direction']=='asc'){
+					print ' ▲';
+				}else{
+					print ' ▼';
+				}
+
+			}
+		?></th>
 		<?php foreach(d()->datapool['admin']['columns'] as $col_name => $col_title){
-			print '<th>'.$col_title.'</th>';
+
+			print '<th>';
+			if(in_array($col_name,d()->available_columns)){
+				print  '<a href="?sort_field=' . h($col_name);
+				if(!isset($_GET['sort_direction']) || $_GET['sort_direction']=='asc'){
+					print '&sort_direction=desc';
+				}
+				print '">';
+
+			 	print $col_title;
+				
+				print '</a>';
+
+				if(isset($_GET['sort_field']) && $_GET['sort_field'] == $col_name){
+					if (!isset($_GET['sort_direction']) || $_GET['sort_direction']=='asc'){
+						print ' ▲';
+					}else{
+						print ' ▼';
+					}
+
+				}
+			}else{
+				print $col_title;
+			}
+			print  '</th>';
 		} ?>
 		
 		

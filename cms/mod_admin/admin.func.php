@@ -466,6 +466,7 @@ function admin_show_one_list($table,$id1,$id2)
 	if(is_numeric($paginator_per_page)){
 		$model->paginate($paginator_per_page);
 	}
+	d()->available_columns = $model->columns();
 	d()->paginator=d()->Paginator->bootstrap->generate($model);
 	
 	foreach($model->all as $key0=> $line){
