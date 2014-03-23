@@ -117,6 +117,8 @@ function add($params){
 		return ""; //Проверка на права администратора
 	}
 	
+	d()->_last_add_params = $params;
+
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
@@ -170,12 +172,17 @@ function add($params){
 	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
 }
 
-function sort_icon($params){
+function sort_icon($params=false){
  
  
 	if(!isset($_SESSION['admin'])) {
 		return ""; //Проверка на права администратора
 	}
+
+	if($params == false){
+		$params = (d()->_last_add_params);
+	}
+
 	if(!is_array($params)) {
 		$params=array($params);	
 	}
