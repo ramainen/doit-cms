@@ -830,6 +830,11 @@ function valid_email($value,$params)
 			'(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$/' ,$value));
 }
 
+function must_be_empty($value,$params)
+{
+	return $value=='';
+}
+
 function antispam($value,$params)
 {
 	$msg=strtolower($value);
