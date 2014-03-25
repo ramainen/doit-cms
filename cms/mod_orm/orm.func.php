@@ -416,6 +416,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this;
 	}
 	
+	public function where_equal($field,$value)
+	{
+		$this->where('`' . et($field) . '` = ?',$value);
+		return $this;
+	}
 	public function where()
 	{
 		//TODO: переписать на preg_replace с исполльзованием последнего параметра
