@@ -331,13 +331,15 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 		if(count($_options)==1 && is_numeric($_options[0])){
 			$this->find($_options[0]);
+		}elseif(count($_options)==1 && is_string($_options[0])){
+			$this->find_by_url($_options[0]);
 		}
 
 		if($need_find_array !== false){
 			$this->where('`id` IN (?)',$need_find_array);
 		}
 
-
+		
 		$this->init();
 	}
 
