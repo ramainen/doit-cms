@@ -1386,10 +1386,11 @@ foreach($tmparr as $key=>$subval)
 		if($rules_array===false) {	
 			$tmp_mached_list = array();
 			foreach($this->datapool['urls'] as $rule) {
-				if(!isset($tmp_mached_list[$rule[1]])) {
-					$tmp_mached_list[$rule[1]] = array();
+				$rule_place = str_replace('.html', '_tpl', $rule[1]);
+				if(!isset($tmp_mached_list[$rule_place])) {
+					$tmp_mached_list[$rule_place] = array();
 				}
-				$tmp_mached_list[$rule[1]][] = $rule;
+				$tmp_mached_list[$rule_place][] = $rule;
 			}
 			$rules_array = $tmp_mached_list;
 		}
@@ -1426,6 +1427,9 @@ foreach($tmparr as $key=>$subval)
 		}
 		unset($matched[0]);
 		unset($matched[1]);
+		
+		$matched = str_replace('.html', '_tpl', $matched );
+		
 		$matched=array_values($matched);
 		$cache_ansver[$name] = $matched;
 		$cache_longest_url_ansver[$name] = $longest_url;
