@@ -1547,6 +1547,9 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		*/
 		
 		if($name{0}=='_'){
+			if (substr($name,0,5)=='_all_') {
+				return $this->all_linked(substr($name,5));
+			}			
 			return $this->linked(substr($name,1));
 		}
 
@@ -1621,12 +1624,69 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 	}
 
+	function plus($elements=array()){
+		$to_add=array();
+		$curr_array = $this->fast_all_of('id');
+		if(is_numeric($elements)){
+			$curr_array[] = $elements;
+			return activerecord_factory_from_table($this->_options['table'])->where('id IN (?)', $curr_array);
+		}
+		if(is_object($elements)){
+			$elements = $elements->fast_all_of('id');
+			$curr_array= array_merge($curr_array, $elements);
+			return activerecord_factory_from_table($this->_options['table'])->where('id IN (?)', $curr_array);
+		}
+		if(is_array($elements) && is_numeric($elements[0])){
+			$curr_array= array_merge($curr_array, $elements);
+			return activerecord_factory_from_table($this->_options['table'])->where('id IN (?)', $curr_array);
+		}
+		if(is_array($elements) && isset($elements[0]) && is_numeric($elements[0]['id'])){
+
+		
+			$result_array=array();
+			foreach($elements[0] as $value) {
+				$result_array[]= $value['id'];
+			}
+			$curr_array= array_merge($curr_array, $result_array);
+			return activerecord_factory_from_table($this->_options['table'])->where('id IN (?)', $curr_array);
+		}
+		return $this;
+
+	}
+
+	function all_linked($what=false)
+	{
+		if($what == false){
+			return $this;
+		}
+		$antireqursy = 0;
+		$results = array();
+		$current_step = $this;
+		while (!$current_step->is_empty && $antireqursy < 100){
+			$results = array_merge($results, $current_step->fast_all_of('id'));
+			//$results = array_merge( $current_step->fast_all_of('id'),$results);
+			$current_step = $current_step->linked($what);
+			$antireqursy++;
+		}
+		return activerecord_factory_from_table($what)->where('id IN (?)', $results);
+
+	}
 	function linked($tablename=false){
 
 		if ($tablename==false){
 			return $this->_options['table'];
 		}
 
+
+//Случай первый: Catalog->goods (many_to_one):
+		$column_name = et(to_o( $this->_options['table']).'_id'); //catalog_id
+		if($this->column_exists($column_name, $tablename)){
+			//Получаем массив идентификаторов
+			$ids = $this->fast_all_of('id');
+			$model=activerecord_factory_from_table($tablename)->where($column_name.' IN (?)', $ids);
+			return $model;
+		}
+		
 
 		//Случай третий: Good->catalogs (one_to_many)
 		$column_name = et(to_o( $tablename).'_id'); //catalog_id
@@ -1638,22 +1698,8 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 
 
-		//Случай первый: Catalog->goods (many_to_one):
-		$column_name = et(to_o( $this->_options['table']).'_id'); //catalog_id
-		if($this->column_exists($column_name, $tablename)){
-			//Получаем массив идентификаторов
-			$ids = $this->fast_all_of('id');
-			$model=activerecord_factory_from_table($tablename)->where($column_name.' IN (?)', $ids);
-			return $model;
-		}
 		
 		//Случай второй: Catalog->goods (many_to_many)
-
-
-
-
-
-		
 
 
 
