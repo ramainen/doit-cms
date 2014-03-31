@@ -444,13 +444,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 						foreach ($param as $key=>$value){
 							$newparam[$key] = doitClass::$instance->db->quote($param[$key]->id);
 						}
-						$param=implode(", ",$newparam);
+						$param=implode(", ", array_unique ($newparam));
 						
 					}else{
 						foreach ($param as $key=>$value){
 							$param[$key] = doitClass::$instance->db->quote($param[$key]);
 						}
-						$param=implode(", ",$param);
+						$param=implode(", ", array_unique ($param));
 					}
 				}
 			}else{
@@ -1099,7 +1099,19 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		return $result_array;
 	}
-	
+
+	public function fast_all_of($field = 'title') {
+		
+		if (!$this->_options['queryready']) {
+			$this->fetch_data_now();
+		}
+		
+		$result_array=array();
+		foreach($this->_data as $value) {
+			$result_array[]= $value[$field];
+		}
+		return $result_array;
+	}	
 	public function all()
 	{
 		if (!$this->_options['queryready']) {
@@ -1534,6 +1546,10 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		*/
 		
+		if($name{0}=='_'){
+			return $this->linked(substr($name,1));
+		}
+
 		if (substr($name,0,4)=='all_') {
 			return $this->all_of(substr($name,4));
 		}
@@ -1585,6 +1601,67 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this->get($name,true);
 	}
 	
+	function column_exists($column,$table=false){
+		if($table===false){
+			$table = $this->_options['table'];
+		}
+
+		$_is_column_exists=false;
+		if (isset($this->_data[0][$column])) {
+			return true;
+		} else {
+			$columns = $this->columns($table);
+			if($columns !== false) {
+				$columns = array_flip($columns);//TODO: возможно, array_keys будет быстрее
+				if (isset($columns[$column])) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	function linked($tablename=false){
+
+		if ($tablename==false){
+			return $this->_options['table'];
+		}
+
+
+		//Случай третий: Good->catalogs (one_to_many)
+		$column_name = et(to_o( $tablename).'_id'); //catalog_id
+		if($this->column_exists($column_name)){
+			//Получаем массив идентификаторов
+			$ids = $this->fast_all_of($column_name);
+			$model=activerecord_factory_from_table($tablename)->where('id IN (?)', $ids);
+			return $model;
+		}
+
+
+		//Случай первый: Catalog->goods (many_to_one):
+		$column_name = et(to_o( $this->_options['table']).'_id'); //catalog_id
+		if($this->column_exists($column_name, $tablename)){
+			//Получаем массив идентификаторов
+			$ids = $this->fast_all_of('id');
+			$model=activerecord_factory_from_table($tablename)->where($column_name.' IN (?)', $ids);
+			return $model;
+		}
+		
+		//Случай второй: Catalog->goods (many_to_many)
+
+
+
+
+
+		
+
+
+
+		//Случай непонятный
+		return '';
+
+	}
+
 	function by_id($id)
 	{
 		return $this[$this->get_cursor_key_by_id($id)];
