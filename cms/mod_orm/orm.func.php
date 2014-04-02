@@ -1372,7 +1372,20 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			return false;
 		}
 		return true;
+	}	
+
+	public function is_not_empty()
+	{
+		if ($this->_options['queryready']==false) {
+			$this->fetch_data_now();
+		}
+		if(isset($this->_data[0])) {
+			return true;
+		}
+		return false;
 	}
+
+
 	//Возвращает размер массива
 	public function size()
 	{
