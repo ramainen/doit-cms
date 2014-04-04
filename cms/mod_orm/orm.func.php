@@ -291,6 +291,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		//TODO: брать таблицу из родительского объекта
 		if(!isset($this->_options['table'])) {			
 			$_current_class = get_class($this);
+			
+			$parent_class = strtolower(get_parent_class ($this));
+			//print $parent_class ;
+			if($parent_class != 'activerecord' && $parent_class != 'ar'){
+				$_current_class = $parent_class;
+			}
 			if(substr($_current_class,-5)=='_safe'){
 				$_current_class = substr($_current_class,0,-5);
 				$this->_safe_mode = true;
@@ -1634,7 +1640,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 
 		$_is_column_exists=false;
-		if (isset($this->_data[0][$column])) {
+		if (isset($this->_data[0][$column])) { //FIXME: кажется, тут баг, так как имя таблицы не чекается
 			return true;
 		} else {
 			$columns = $this->columns($table);
@@ -1648,6 +1654,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 	}
 
+	function table_exists($table=false){
+		if($table===false){
+			$table = $this->_options['table'];
+		}
+		return ($this->columns($table) !== false);
+	}
+	
 	function plus($elements=array()){
 		$to_add=array();
 		$curr_array = $this->fast_all_of('id');
@@ -1702,25 +1715,48 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 
 
-//Случай первый: Catalog->goods (many_to_one):
-		$column_name = et(to_o( $this->_options['table']).'_id'); //catalog_id
-		if($this->column_exists($column_name, $tablename)){
-			//Получаем массив идентификаторов
-			$ids = $this->fast_all_of('id');
-			$model=activerecord_factory_from_table($tablename)->where($column_name.' IN (?)', $ids);
-			return $model;
+		//Случай первый: Catalog->_goods (many_to_one): дочерние
+		
+		if($this->table_exists( strtolower( to_p(get_class($this))))){
+			$column_name = et(to_o( $this->_options['table']).'_id'); //catalog_id
+			if($this->column_exists($column_name, $tablename)){
+				//Получаем массив идентификаторов
+				$ids = $this->fast_all_of('id');
+				$model=activerecord_factory_from_table($tablename)->where($column_name.' IN (?)', $ids);
+				return $model;
+			}
+		}else{
+
+			$column_name = et(  strtolower(get_class($this)) .'_id'); //catalog_id
+			if($this->column_exists($column_name, $tablename)){
+				//Получаем массив идентификаторов
+				$ids = $this->fast_all_of('id');
+				$model=activerecord_factory_from_table($tablename)->where($column_name.' IN (?)', $ids);
+				return $model;
+			}
 		}
 		
 
-		//Случай третий: Good->catalogs (one_to_many)
-		$column_name = et(to_o( $tablename).'_id'); //catalog_id
-		if($this->column_exists($column_name)){
-			//Получаем массив идентификаторов
-			$ids = $this->fast_all_of($column_name);
-			$model=activerecord_factory_from_table($tablename)->where('id IN (?)', $ids);
-			return $model;
+		//Случай третий: Good->_catalogs (one_to_many): родительские
+		if($this->table_exists($tablename)){
+			$column_name = et(to_o( $tablename).'_id'); //catalog_id
+			if($this->column_exists($column_name)){
+				//Получаем массив идентификаторов
+				$ids = $this->fast_all_of($column_name);
+				$model=activerecord_factory_from_table($tablename)->where('id IN (?)', $ids);
+				return $model;
+			}
+		}else{
+			if(class_exists(to_o($tablename))){
+				$column_name = et(to_o( $tablename).'_id'); //catalog_id
+				if($this->column_exists($column_name)){
+					//Получаем массив идентификаторов
+					$ids = $this->fast_all_of($column_name);
+					$model=activerecord_factory_from_table($tablename)->where('id IN (?)', $ids);
+					return $model;
+				}
+			}
 		}
-
 
 		
 		//Случай второй: Catalog->goods (many_to_many)
