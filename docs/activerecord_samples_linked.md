@@ -56,6 +56,29 @@ Linked-связи Active Record
 
 	d()->Product->where('cost > 100')->_catalogs;
 
+Пример второй: мы имеем список клиентов, каждый из которых имеет указанный город из таблицы `cities`.
+
+![связь вторая](http://doit-cms.ru/storage/8d4c4fbb2a7e36700b6feae99cd43587.png)
+
+Получить все города, которые имеются в данном списке клиентов:
+
+	d()->Client->search('name', $_GET['s'])->_cities;
+
+Получить всех клиентов, которые имеются в массиве городов 
+
+	<?php
+	// http://site/clients/?cities_list[]=3&cities_list[]=34&cities_list=37&cities_list=71
+	d()->City($_GET['cities_list'])->_clients;
+
+Пример третий. Есть таблица брендов. У каждого товара есть указанный бренд (производитель).
+
+![связь третья](http://doit-cms.ru/storage/1fc292b1de718a18c5bc0b103ad6c41a.png)
+
+Получить список всех товаров каталога с ID=3. Над списком товаров вывести список брендов, которые присутсвуют в данном списке:
+
+	d()->products = d()->Catalog(3)->_products;
+	d()->brands = d()->products->_brands;
+
 Уровень 3
 ---------
 
