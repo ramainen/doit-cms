@@ -28,9 +28,24 @@
 ?><!doctype html>
 <html>
 <head>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	<meta charset="UTF-8">
-	<script src="http://yandex.st/highlightjs/6.0/highlight.min.js"></script>
-	<link rel="stylesheet" href="http://yandex.st/highlightjs/6.0/styles/github.min.css">
+	  <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+	<link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/railscasts.min.css">
+	<script>
+
+$(function(){
+
+	$('pre code:contains("d()->")').addClass('language-php')
+hljs.configure({'languages':['php','javascript','html','ini']})
+hljs.initHighlightingOnLoad();
+
+})
+</script>
+<div class="row">
+
+
 	<script>hljs.initHighlightingOnLoad();</script>
 	<title>Документация по системе doit cms</title>
 	<style>
