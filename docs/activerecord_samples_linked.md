@@ -70,6 +70,14 @@ Linked-связи Active Record
 
 	d()->Catalog(4)->_products->where('cost > 100');
 
+**TODO: Полиморф**
+
+Есть таблица users у каждого пользователя есть отец (`father_id`). В таблице fathers есть столбец `user_id`, указывающий на пользователя. Вывести отца пользователя с ID=4:
+
+	d()->User(4)->_fathers->_users;
+	//Альтернатива:
+	d()->User(4)->father->user;
+	
 Уровень 2
 ---------
 
@@ -168,7 +176,13 @@ Linked-связи Active Record
 	d()->Region(4)->_cities->_employees->_clients->_users;
 
 
+**TODO: Полиморф**
 
+Есть таблица users у каждого пользователя есть отец (`father_id`). В таблице fathers есть столбец `user_id`, указывающий на пользователя. Вывести детей пользователя с ID=4:
+
+	d()->User(4)->_fathers->_users;//Шозана?
+
+	
 Уровень 3
 ---------
 
@@ -182,6 +196,11 @@ Linked-связи Active Record
 
 
 
+**TODO: Полиморфы**
+	
+У нас есть таблица товаров products. Есть рекомендуемые аксессуары, которые тоже находятся в таблице products. Есть таблица `accessories_to_products`. В каждой строке таблицы аксессуаров есть строка `product_id`, указывающая на товар. Получить список аксессуаров товара c ID=4:
+	
+	d()->Good(4)->_accessories_to_goods->_accessories->_goods;
 
 `many_to_many`, `many-to-many` to `many-to-many`.
 
@@ -203,6 +222,8 @@ Linked-связи Active Record
 
 Уровень X
 ---------
+
+Товары и каталоги. Всё находится в одной таблице (каталог можно купить).
 
 Друзьяшки!
 
