@@ -1058,8 +1058,13 @@ foreach($tmparr as $key=>$subval)
 							}
 						}
 					}
-
-					$_classname=substr($name,0,$_fsym).'Controller';
+					$fistrsim = $name{0};
+					if($fistrsim>='A' && $fistrsim<='Z'){
+						$_classname=substr($name,0,$_fsym);
+						$name = strtolower($name);
+					}else{
+						$_classname=substr($name,0,$_fsym).'Controller';
+					}
 					
 					$_first_letter=strtoupper(substr($_classname,0,1));
 					$_classname = $_first_letter.substr($_classname,1);
@@ -1082,10 +1087,14 @@ foreach($tmparr as $key=>$subval)
 						$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]]=$name.$_methodname;
 					}
 
+					if($fistrsim>='A' && $fistrsim<='Z'){
+						$_methodname=$_methodname.'_action';
+					}
+
 					//$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
-					call_user_func_array(array($this->{$_classname}, 'before'), array($_methodname, $arguments));
+			//		call_user_func_array(array($this->{$_classname}, 'before'), array($_methodname, $arguments));
 					$_executionResult=call_user_func_array(array($this->{$_classname}, $_methodname), $arguments);
-					call_user_func_array(array($this->{$_classname}, 'after'), array($_methodname, $arguments));
+			//		call_user_func_array(array($this->{$_classname}, 'after'), array($_methodname, $arguments));
 					$been_controller=true;
 				
 				} else {
@@ -1103,7 +1112,7 @@ foreach($tmparr as $key=>$subval)
 				$parent_function =  $this->_active_function();
 				if(substr($parent_function,-4)!='_tpl'){
 					$parent_function .= '_tpl';
-					$parent_function =  str_replace('#','_',$parent_function);
+					$parent_function =  strtolower(str_replace('#','_',$parent_function));
 					if(isset($this->fragmentslist[$parent_function])){
 						ob_start('doit_ob_error_handler');
 						$_executionResult= $this->call($parent_function);
@@ -1308,7 +1317,7 @@ foreach($tmparr as $key=>$subval)
 		if(substr($parent_function,-4)!='_tpl'){
 			$parent_function .= '_tpl';
 		}
-		$parent_function =  str_replace('#','_',$parent_function);
+		$parent_function =  strtolower(str_replace('#','_',$parent_function));
 		return $this->call($parent_function);
 	}
 
