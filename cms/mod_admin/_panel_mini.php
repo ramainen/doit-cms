@@ -4,7 +4,7 @@
 		document.body.style.position="relative"
 		document.body.style.top="30px"
 	</script>
-	<div style="position:fixed;width:400px;height:30px;background:#2C2C2C;left:0;top:0;z-index:6900;border-bottom:1px solid white;">
+	<div style="position:fixed;width:400px;height:30px;background:#2C2C2C;left:0;top:0;z-index:6900;border-bottom:1px solid white;min-width:400px;" class="adm_panel_mini">
 	<ul id="admin_main_user_menu">
 	<li>
     <a href="#" >
