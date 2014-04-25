@@ -773,6 +773,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}else{
 		
 			$db_result = doitClass::$instance->db->query($_sql);
+			
 			if( d()->db->errorCode()=='42S22'){
 				$db_err=d()->db->errorInfo();
 				if($db_err[1] == '1054'){
@@ -790,6 +791,32 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			if( d()->db->errorCode()=='42S02' || d()->db->errorCode()=='42S22'){
 				d()->bad_table = $this->_options['table'];
 			}
+			
+						if( d()->db->errorCode()=='HY000' ){
+				if(DB_TYPE == 'mysql') {
+					doitClass::$instance->db = new PDO(DB_TYPE.':host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+					doitClass::$instance->db->exec('SET CHARACTER SET utf8');
+					doitClass::$instance->db->exec('SET NAMES utf8');
+				} else {
+					doitClass::$instance->db = new PDO(DB_TYPE.':host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+				}
+				$db_result = doitClass::$instance->db->query($_sql);
+			}
+			if( d()->db->errorCode()=='HY000' ){
+				print 'Mysql недоступен. Попытка переподключения не удалась. ';
+			}
+			if(!is_object($db_result)){
+				if (iam()){
+					print 'Неизвестная ошибка базы данных. Запрос, который не удалось выполнить: ' . h($_sql) . '<br> Код ошибки: ';
+				}else{
+					print 'Неизвестная ошибка базы данных. Запрос, который не удалось выполнить, можно узнать только под аккаунтом разработчика.<br> Код ошибки: ';
+				}
+				
+				print d()->db->errorCode().'<br> Данные ошибки: ';
+				var_dump(d()->db->errorInfo());
+				die('<br>Это всё, что мы знаем.');
+			}
+			
 			$this->_data =  $db_result ->fetchAll(PDO::FETCH_ASSOC);
 			
 			if($db_result!==false){
