@@ -805,6 +805,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			if( d()->db->errorCode()=='HY000' ){
 				print 'Mysql недоступен. Попытка переподключения не удалась. ';
 			}
+			/*
 			if(!is_object($db_result)){
 				if (iam()){
 					print 'Неизвестная ошибка базы данных. Запрос, который не удалось выполнить: ' . h($_sql) . '<br> Код ошибки: ';
@@ -816,6 +817,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				var_dump(d()->db->errorInfo());
 				die('<br>Это всё, что мы знаем.');
 			}
+			*/
 			
 			$this->_data =  $db_result ->fetchAll(PDO::FETCH_ASSOC);
 			
