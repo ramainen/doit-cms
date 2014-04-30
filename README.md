@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/ramainen/doit-cms.png?label=ready&title=Ready)](https://waffle.io/ramainen/doit-cms)
 DoIt CMS
 =============
 
