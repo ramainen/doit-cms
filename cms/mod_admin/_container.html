@@ -1,0 +1,42 @@
+
+<script>
+if(!CONTAINERS_INITIALIZED){
+	var CONTAINERS_INITIALIZED=true;
+	$(function(){
+		$('.container_add_plugin').bind('change',function(){
+			var result = $(this).find('option:selected');
+			if(result == ''){
+				return;
+			}
+			
+			
+			$($(this).find('option')[0]).attr("selected", "selected")
+		})
+	})
+}
+</script>
+<div class="admin_one_container_dummy">
+	<div class="admin_container_one_plugin"></div>
+</div>
+<div class="control-group">
+  <label class="control-label"  >{title}</label>
+  <div class="controls">
+	<select class="container_add_plugin">
+		<option value="">Добавить контейнер</option>
+		<?php foreach (d()->container as $key=>$value){ ?>
+			<option value="<?php print h($key) ?>"><?php print h($value) ?></option>
+		<?php } ?>
+	</select>
+	<div class="admin_container_plugins">
+	
+	
+	</div>
+	
+	<textarea  name="{name}" class="ui-widget-content ui-corner-all span3" style="height:200px;width:500px;">{value|h}</textarea>
+  </div>
+</div>
+
+ 
+ 
+ 
+ 
