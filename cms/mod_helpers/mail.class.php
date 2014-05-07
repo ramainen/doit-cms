@@ -125,14 +125,22 @@ class Mail extends UniversalSingletoneHelper
 			$adr = $this->options['file_adress'][count($this->options['file_adress']) - 1];
 		} 
 		if(!isset($adr) && !isset($this->options['file_contents'])){
+			$headers = '';
+			if($this->options['from']){
+				$headers = "From: ".$this->options['from']."\r\n";
+			}
+			$headers .= "Content-Type: text/html; charset=\"UTF-8\"";
 			$result =  mail($this->options['to'],"=?UTF-8?B?".base64_encode( $this->options['subject'])."?=",
 				$this->options['message'],
-				"Content-Type: text/html; charset=\"UTF-8\"");
+				$headers);
 			$this->options=array();
 			return $result;
 		} else {
 			 
 			$headers = "";
+			
+			
+			
 			$semi_rand = md5(time().rand()); 
 			$mime_boundary = "==Multipart_Boundary_x{$semi_rand}x"; 
 			$headers .= "MIME-Version: 1.0\n"."Content-Type: multipart/mixed;\n"." boundary=\"{$mime_boundary}\""; 
