@@ -16,9 +16,20 @@ class Mail extends UniversalSingletoneHelper
 	{
 		$this->options['to']=strtolower($to);
 	}
-	function from($from)
+	function from($from,$name=false)
 	{
+		$longfrom = $from;
+		if($name!==false){
+			if(substr($from,-1) !='>'){
+				$longfrom = ' <'.$from.'>';
+			}
+
+			$name = "=?UTF-8?B?".base64_encode( $name )."?=";
+			$longfrom = $name . $longfrom;
+		}
 		$this->options['from']=$from;
+		$this->options['longfrom']=$longfrom;
+		
 	}	
 	function subject($subject)
 	{
@@ -126,8 +137,8 @@ class Mail extends UniversalSingletoneHelper
 		} 
 		if(!isset($adr) && !isset($this->options['file_contents'])){
 			$headers = '';
-			if($this->options['from']){
-				$headers = "From: ".$this->options['from']."\r\n";
+			if($this->options['longfrom']){
+				$headers = "From: ".$this->options['longfrom']."\r\n";
 			}
 			$headers .= "Content-Type: text/html; charset=\"UTF-8\"";
 			$result =  mail($this->options['to'],"=?UTF-8?B?".base64_encode( $this->options['subject'])."?=",
