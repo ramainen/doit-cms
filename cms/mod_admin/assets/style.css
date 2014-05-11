@@ -141,14 +141,3 @@ height:100%;
 {
 	display:none;
 }
-.admin_container_plugins
-{
-	background:gray;
-	border:1px solid red;
-	width:400px;
-}
-.admin_container_one_plugin
-{
-	border:1px solid gray;
-	border-radius:3px;
-}

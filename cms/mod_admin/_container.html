@@ -1,4 +1,26 @@
+<style>
+.connected_highload
+{
+	outline:1px solid gray;
+	height:38px
+}
 
+.connected_sortable
+{
+	min-height:1em;
+}
+
+.connected_sortable a
+{
+	cursor:move;
+}
+
+.dummy_connected_list
+{
+	display:none;
+}
+ 
+</style>
 <script>
 if(!CONTAINERS_INITIALIZED){
 	var CONTAINERS_INITIALIZED=true;
@@ -12,27 +34,107 @@ if(!CONTAINERS_INITIALIZED){
 			
 			$($(this).find('option')[0]).attr("selected", "selected")
 		})
+		
+		
+		$('.connected_sortable a').live('click',function(){
+			return false;
+		})
+		$('.container_textarea').each(function(){
+			if($(this).val()==''){
+				$(this).val("[container]\n");
+			}
+			var str = $(this).val();
+			var arr = str.split("\n");
+			var result_str = ''
+			for(key in arr){
+				if(arr[key]!='' && arr[key]!='[container]'){
+					
+					
+					var code  = arr[key].split('?')
+					if(code.length != 2){
+						continue;
+					}
+					var name = code[0];
+					if(name=='undefined' || name == null){
+						continue;
+					}
+					var url = code[1];
+					var title = $('.dummy_connected_list li[data-name="'+ name +'"] a').html();
+					if(title=='undefined' || title == null){
+						continue;
+					}
+					var result_li = '<li data-name="'+name+'" data-url="'+url+'" ><a href="#">'+ title +'</a></li>';
+					result_str = result_str+result_li;
+				}
+			}
+			$(this).parent().find('.first_sortable').html(result_str);
+		})
+		
+		$('.second_sortable').html($('.dummy_connected_list').html());
+		$( ".first_sortable, .second_sortable" ).sortable({
+			connectWith: ".connected_sortable",
+			placeholder: "connected_highload",
+			stop: function( event, ui ) {
+				//Сбросить второй список
+				
+				//Добавить data-url тем полм списка,у которых его нет
+				//Math.floor(Math.random()* 100000) + new Date().getTime()
+				
+				var $ul = $(event.target).parent().parent().parent().parent().find('.first_sortable');
+				$ul.find('li').each(function(){
+					if(typeof ($(this).attr('data-url'))=='undefined'){
+						$(this).attr('data-url', 'plugin'+Math.floor(Math.random()* 100000) + new Date().getTime())
+					}
+				})
+				var result="[container]\n";
+				$ul.find('li').each(function(){
+					result += $(this).attr('data-name')+ '?' +$(this).attr('data-url')+"\n"
+				})
+				$ul.parent().find('textarea').val(result)
+				$('.second_sortable').html($('.dummy_connected_list').html());
+			}
+		}).disableSelection();
+
+
 	})
 }
 </script>
 <div class="admin_one_container_dummy">
 	<div class="admin_container_one_plugin"></div>
 </div>
+
+
 <div class="control-group">
   <label class="control-label"  >{title}</label>
   <div class="controls">
-	<select class="container_add_plugin">
-		<option value="">Добавить контейнер</option>
-		<?php foreach (d()->container as $key=>$value){ ?>
-			<option value="<?php print h($key) ?>"><?php print h($value) ?></option>
-		<?php } ?>
-	</select>
-	<div class="admin_container_plugins">
-	
-	
+
+	<div class="row">
+		<div class="span3">
+
+			<ul class="first_sortable connected_sortable  well nav nav-tabs nav-stacked  ">
+			</ul>
+		<textarea  name="{name}" class=" container_textarea" style="display:none;"  >{value|h}</textarea>
+
+		</div>
+		<div class="span3">
+			<ul class="second_sortable connected_sortable nav nav-tabs nav-stacked">
+			</ul>
+		</div>
+
 	</div>
+
+	 
+	<ul   class="dummy_connected_list nav nav-list">
+		<?php
+		foreach (d()->container as $key => $value){
+		?>
+		<li data-name="<?php print $key ?>" ><a href="#"><?php print $value ?></a></li>
+		<?php } ?>
+	</ul>
+
+	 
 	
-	<textarea  name="{name}" class="ui-widget-content ui-corner-all span3" style="height:200px;width:500px;">{value|h}</textarea>
+	
   </div>
 </div>
 

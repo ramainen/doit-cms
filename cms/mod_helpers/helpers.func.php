@@ -852,3 +852,24 @@ function br($str=false)
 		print nl2br($str);
 	}
 }
+
+function container($param)
+{
+	$result='';
+	$rows=explode("\n",$param);
+	foreach($rows as $row){
+		$row = trim($row);
+		if($row=='[container]' || $row == ''){
+			continue;
+		}
+		$row = explode("?",$row);
+		if(count($row)!=2){
+			continue;
+		}
+		if(d()->container[$row[0]]){
+			d()->plugin_id = $row[1];
+			$result .=  d()->call($row[0]);
+		}
+	}
+	return $result;
+}
