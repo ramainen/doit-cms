@@ -27,6 +27,14 @@ function edit($params=false){
 	}else{
 		$attr .= ' class="adm_icon" ';
 	}
+
+	$need_add_button=false;
+	if(isset($params['panel_title'])) {
+		$need_add_button=true;
+		$panel_button_title = $params['panel_title'];
+		unset($params['panel_title']);
+	}
+
 	if(isset($params['title'])) {
 		$attr .= ' title="'.$params['title'].'" ';
 	}
@@ -44,8 +52,16 @@ function edit($params=false){
 
 	if(is_string($params[0]) && strpos($params[0],'/')!==false){
 		print '<a href="/admin/edit/'.$params[0] . $addition_params .'"  style="display:inline;" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
+	
+		if($need_add_button){
+			d()->admin_add_panel_button('/admin/edit/'.$params[0] . $addition_params,$panel_button_title);
+		}
 	}else{
 		print '<a href="/admin/edit/'.$obj_table.'/'.$obj_id. $addition_params .'"  style="display:inline;" target="_blank" '.$attr.' onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+	
+		if($need_add_button){
+			d()->admin_add_panel_button('/admin/edit/'.$obj_table.'/'.$obj_id. $addition_params,$panel_button_title);
+		}
 	}
 	
 }

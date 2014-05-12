@@ -74,6 +74,8 @@ if(!CONTAINERS_INITIALIZED){
 		$( ".first_sortable, .second_sortable" ).sortable({
 			connectWith: ".connected_sortable",
 			placeholder: "connected_highload",
+			revert: 200,
+			tolerance: "pointer",
 			stop: function( event, ui ) {
 				//Сбросить второй список
 				
