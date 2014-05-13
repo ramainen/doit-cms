@@ -50,7 +50,13 @@ function edit($params=false){
 		return '';
 	}
 
-	if(is_string($params[0]) && strpos($params[0],'/')!==false){
+	if(isset($params['href'])) {
+		print '<a href="'.$params['href'] . $addition_params .'"  style="display:inline;" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
+	
+		if($need_add_button){
+			d()->admin_add_panel_button('/admin/edit/'.$params['href'] . $addition_params,$panel_button_title);
+		}
+	}elseif(is_string($params[0]) && strpos($params[0],'/')!==false){
 		print '<a href="/admin/edit/'.$params[0] . $addition_params .'"  style="display:inline;" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
 	
 		if($need_add_button){
