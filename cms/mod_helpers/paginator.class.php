@@ -100,6 +100,13 @@ class Paginator extends UniversalHelper
 				
 				$old_step = $i;
 			}
+			if($current > 0){
+				d()->paginator_left = $this->drawPageInAdress($all_url,$current-1);
+			}
+			
+			if($current < $allowed_pages[count($allowed_pages)-1]){
+				d()->paginator_right = $this->drawPageInAdress($all_url,$current+1);
+			}
 			$result = str_replace('&','&amp;',$result);
 			return '<div class="pagination"><ul>'.$result.'</ul></div>';
 		}elseif($this->_is_bootstrap3){
@@ -125,6 +132,13 @@ class Paginator extends UniversalHelper
 			
 				
 				$old_step = $i;
+			}
+			if($current > 0){
+				d()->paginator_left = $this->drawPageInAdress($all_url,$current-1);
+			}
+			
+			if($current < $allowed_pages[count($allowed_pages)-1]){
+				d()->paginator_right = $this->drawPageInAdress($all_url,$current+1);
 			}
 			$result = str_replace('&','&amp;',$result);
 			return '<ul class="pagination">'.$result.'</ul>';
