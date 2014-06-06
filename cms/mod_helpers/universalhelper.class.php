@@ -29,7 +29,7 @@
 
 class UniversalHelper
 {
-	private $is_initialised=false;
+	protected $is_initialised=false;
 	function try_to_init()
 	{
 		if(!$this->is_initialised){
