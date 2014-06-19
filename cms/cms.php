@@ -480,6 +480,10 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3; ?'.'>';
 
+		// {page.user.title|h}
+		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
+		$this->template_replacements[]='<'.'?php print $doit->$4( $doit->$1->$2->$3); ?'.'>';
+
 		// {page.parent.user.title}
 		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
 		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3->$4; ?'.'>';
