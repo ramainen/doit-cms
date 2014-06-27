@@ -1066,11 +1066,18 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		if($this->_options['new']==true) {
 			$this->insert_id = doitClass::$instance->db->lastInsertId();
 			$current_id = $this->insert_id;
-			$_query_string='update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set '.
-			DB_FIELD_DEL ."sort". DB_FIELD_DEL ." = '".$this->insert_id."', ".
-			DB_FIELD_DEL ."created_at". DB_FIELD_DEL ." = NOW(), ".
-			DB_FIELD_DEL ."updated_at". DB_FIELD_DEL ." = NOW() ".
-			"where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->insert_id."'";
+			$_query_fields = array();
+			if (empty($this->_future_data["sort"])) {
+				$_query_fields[] = DB_FIELD_DEL ."sort". DB_FIELD_DEL ." = '".$this->insert_id."'";
+			}
+			if (empty($this->_future_data["created_at"])) {
+				$_query_fields[] = DB_FIELD_DEL ."created_at". DB_FIELD_DEL ." = NOW()";
+			}
+			if (empty($this->_future_data["updated_at"])) {
+				$_query_fields[] = DB_FIELD_DEL ."updated_at". DB_FIELD_DEL ." = NOW()";
+			}
+		     if (!empty($_query_fields)) {
+			$_query_string = 'update '.DB_FIELD_DEL.$this->_options['table'].DB_FIELD_DEL.' set ' . implode(', ', $_query_fields) . " where ". DB_FIELD_DEL ."id". DB_FIELD_DEL ." = '".$this->insert_id."'";
 			$_query_result = doitClass::$instance->db->exec($_query_string);
 			
  
@@ -1088,7 +1095,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				doitClass::$instance->db->exec($_query_string);
 				ActiveRecord::$_columns_cache = array();				
 			}
-			
+		     }
 		}
 		$this->_future_data=array();
 		
