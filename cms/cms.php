@@ -1245,7 +1245,7 @@ foreach($tmparr as $key=>$subval)
 	 * @param $name Имя переменной
 	 * @return mixed Значение
 	 */
-	function __get($name)
+	function &__get($name)
 	{
 	;
 		//Одиночная загрузка .ini файла при первом обращении к переменной
@@ -1285,6 +1285,15 @@ foreach($tmparr as $key=>$subval)
 		return '';
 	}
 
+
+	public function __isset($name) {
+		return isset($this->datapool[$name]);
+	}
+	 
+	public function __unset($name) {
+		unset($this->datapool[$name]);
+	}
+ 
 	/**
 	 * Возвращает имя текущей функции (триады). Даже если в её теле запускались другие функции, текущая не потеряется
 	 * Внутри вложенных функций текущая функция будет другой. Внутренняя. Используется при обработке ошибок
