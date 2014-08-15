@@ -459,7 +459,8 @@ function path_to($params)
 }
 
 function preview($adress,$param1=false,$param2=false )
-{
+{	
+	$orig_params = $adress;
 	if(is_array($adress)){
 		if(isset($adress['height']) || isset($adress[2])){
 			if(isset($adress['width'])){
@@ -517,7 +518,15 @@ function preview($adress,$param1=false,$param2=false )
 	if(!in_array($ext,array('.gif','.jpg','.png','.jpeg'))){
 		return '';
 	}
-	$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1);
+	if(is_array($orig_params) && isset($orig_params['watermark'])){
+		$is_watermark = true;
+		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview_watermark". md5($orig_params['watermark'].$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1)) . $ext;
+	}else{
+		$is_watermark = false;
+		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$watermark_suffix.$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1);
+	}
+	
+	
 	
 	//генерирование изображения при его отсуствии
 	if(!file_exists($_SERVER['DOCUMENT_ROOT'].$preview_adress)){
@@ -614,6 +623,18 @@ function preview($adress,$param1=false,$param2=false )
 		
 		imagecopyresampled($img_n, $img, 0, 0, $xoffset, $yoffset, $width, $height, $org_width, $org_height);
   
+		/* watermark*/
+		if($is_watermark){
+			$imgwater = ImageCreateFromPng($_SERVER['DOCUMENT_ROOT']. $orig_params['watermark']  );
+			imagealphablending($imgwater, false);
+			imageSaveAlpha($imgwater, true);
+			imagealphablending($img_n, false);
+			imageSaveAlpha($img_n, true);
+			$watermark = new Watermark_creator();
+
+			$img_n=$watermark->create($img_n,$imgwater,100);
+		}
+		
 		if($type=="gif") {
 			imagegif($img_n, $dest);
 		} elseif($type=="jpg") {
