@@ -859,6 +859,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$_query_string='delete from '.DB_FIELD_DEL.''.$this->_options['table'] . DB_FIELD_DEL." where ".DB_FIELD_DEL."id".DB_FIELD_DEL." = '".$this->_data[0]['id']."'";
 			doitClass::$instance->db->exec($_query_string);
 		}
+		ActiveRecord::$_queries_cache = array();
 		return $this;
 	}
 
