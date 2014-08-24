@@ -921,3 +921,8 @@ function route($url='/',$what=false,$to=false)
 	}
 	doitClass::$instance->datapool['urls'][]=array($url,$what,$to);
 }
+
+function route_all()
+{
+	doitClass::$instance->is_using_route_all=true;
+}

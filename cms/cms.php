@@ -220,6 +220,7 @@ class PDODummy
  */
 class doitClass
 {
+	public $is_using_route_all=false;
 	public $callables=array();
 	public $datapool=array(); //Большой массив всех опций, данных и переменных, для быстрого прямого доступа доступен публично
 	public static $instance;
@@ -659,6 +660,28 @@ foreach($tmparr as $key=>$subval)
 			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
 		}
 
+		//Отрабатывает роутинг
+		if($this->is_using_route_all){
+
+			$url = $_SERVER['REQUEST_URI'];
+			$uparts = array();
+			preg_match_all('#\/([0-9a-zA-Z_]+)\/.*#',$url,$uparts);
+			$upart_found=false;
+			if(isset($uparts[1][0]) && (class_exists($uparts[1][0].'controller'))){
+				//Мы находимся по адресу /users/ и у нас есть контроллер users. Строго гоовря, мы готовы.
+				$sub_uparts = array();
+				foreach (doitClass::$instance->datapool['urls'] as $rule){
+					preg_match_all('#\^?\/([0-9a-zA-Z_]+)\/.*#',$rule[0],$sub_uparts);
+					if(isset($sub_uparts[1][0]) && $sub_uparts == $uparts[1][0]){
+						$upart_found=true;
+						break;
+					}					
+				}
+				if(!$upart_found){
+					route($uparts[1][0]);
+				}
+			}
+		}
 		
 		d()->bootstrap();
 		
@@ -1078,23 +1101,34 @@ foreach($tmparr as $key=>$subval)
 					$_classname = $_first_letter.substr($_classname,1);
 
 					$_methodname=substr($name,$_fsym+1);
-
+					$_chain_method=$_methodname;
 					if($_methodname=='') {
 						if(is_numeric($arguments[0])){
 							$_methodname = 'show';
+							$_chain_method=$_methodname;
 						}else{
-
 							if($arguments[0]==''){
 								$_methodname='index';
-							}else{
-								$_methodname=$arguments[0];
+								$_chain_method=$_methodname;
+							}else{		
+								if(method_exists($_classname,$arguments[0])){
+									$_methodname=$arguments[0];
+									$_chain_method=$_methodname;
+								}else{
+									$_methodname='show';
+									//Если файл controller_$arguments.html существует то все нормально
+									if(isset($this->fragmentslist[substr($name,0,$_fsym).'_'.$arguments[0].'_tpl'])){
+										$_chain_method=$arguments[0];
+									}else{
+										$_chain_method='show';
+									}
+								}
 							}
 							unset($arguments[0]);
 						}
 						//В случае вызова controller# переменовывается цепочка для нормального определения вида исход из имени метода
-						$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]]=$name.$_methodname;
+						$this->call_chain[$this->call_chain_level][$this->call_chain_current_link[$this->call_chain_level]]=$name.$_chain_method;
 					}
-
 					//$_executionResult=call_user_func_array(array($this->universal_controller_factory($_classname), $_methodname), $arguments);
 					call_user_func_array(array($this->{$_classname}, 'before'), array($_methodname, $arguments));
 					$_executionResult=call_user_func_array(array($this->{$_classname}, $_methodname), $arguments);
@@ -1714,8 +1748,10 @@ function __autoload($class_name) {
 	}elseif(file_exists($fileName)){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.$fileName;
 	}else{
-		//Если совсем ничего не найдено, попытка использовать ActiveRecord.
-		eval ("class ".$class_name." extends ActiveRecord {}");
+		if(substr(strtolower($class_name),-10)!='controller'){
+			//Если совсем ничего не найдено, попытка использовать ActiveRecord.
+			eval ("class ".$class_name." extends ActiveRecord {}");	
+		}
 	}
 
 }
