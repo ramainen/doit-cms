@@ -894,3 +894,30 @@ function container($param)
 	}
 	return $result;
 }
+
+
+//Всё, что связано с новым роутером
+function route($url='/',$what=false,$to=false)
+{
+	static $anonymous_functions_count = 0;
+	if($what==false && $url{0} != '^' && $url{0} != '/'){
+		//route('/news/index', 'content', 'news#index');
+		$what = 'content';
+		$to = $url.'#';
+		$url = '/'.$url.'/';
+	}
+
+	if($to == false){
+		$to = $what;
+		$what = 'content';
+	}
+	
+
+	if(is_callable($to)){
+		$anonymous_functions_count++;
+		doitClass::$instance->callables['anonymous_callable'.$anonymous_functions_count]=$to;
+		$to='anonymous_callable'.$anonymous_functions_count;
+	//print serialize ($what);
+	}
+	doitClass::$instance->datapool['urls'][]=array($url,$what,$to);
+}

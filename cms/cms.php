@@ -220,10 +220,11 @@ class PDODummy
  */
 class doitClass
 {
+	public $callables=array();
 	public $datapool=array(); //Большой массив всех опций, данных и переменных, для быстрого прямого доступа доступен публично
 	public static $instance;
 	private $_run_before = false;
-	private $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
+	public $fragmentslist=array(); //Массив кода фрагментов и шаблонов.
 	public $php_files_list=array(); //Массив найденных php файлов.
 	private $ini_database=array(); //Названия существующих ini-файлов, а также факт их использования
 	private $for_include=array(); //Массив файлов для последующего инклуда
@@ -649,13 +650,15 @@ foreach($tmparr as $key=>$subval)
 			
 		}
 
-		foreach($this->for_include as $value) {
-			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
-		}
 
 		foreach($this->for_ini as $value) {
 			$this->load_and_parse_ini_file ($value);
 		}
+		
+		foreach($this->for_include as $value) {
+			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
+		}
+
 		
 		d()->bootstrap();
 		
@@ -1051,6 +1054,8 @@ foreach($tmparr as $key=>$subval)
 			} elseif(isset($this->php_files_list[$name])){
 				include ($_SERVER['DOCUMENT_ROOT'].'/'.$this->php_files_list[$name]);
 				$been_controller=true;
+			}elseif(isset($this->callables[$name])){
+				$_executionResult=call_user_func_array($this->callables[$name], $arguments);
 			} else {
 				$_fsym=strpos($name,'#');
 				if($_fsym !== false) {
