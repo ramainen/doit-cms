@@ -1117,7 +1117,7 @@ foreach($tmparr as $key=>$subval)
 								}else{
 									$_methodname='show';
 									//Если файл controller_$arguments.html существует то все нормально
-									if(isset($this->fragmentslist[substr($name,0,$_fsym).'_'.$arguments[0].'_tpl'])){
+									if(substr($name,0,$_fsym) == 'pages' && isset($this->fragmentslist[substr($name,0,$_fsym).'_'.$arguments[0].'_tpl'])){
 										$_chain_method=$arguments[0];
 									}else{
 										$_chain_method='show';
