@@ -32,7 +32,7 @@ body
 	margin-left:-210px;
 	top:50%;
 	margin-top:-120px;
-	 
+	height:220px;
 	
 	width:400px;
 	background:red;
@@ -50,11 +50,55 @@ body
 }
 .text_input
 {
-	width:190px;
-	height:30px;
-	font-size:14px;
+	width:200px;
+	height:40px;
+	font-size:15px;
+	
 	padding-left:5px;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	 border: solid 2px #e5e5e5;
+    border-radius: 4px;
+    background: #fff;
+    -webkit-transition: border-color 0.3s;
+    -moz-transition: border-color 0.3s;
+    -ms-transition: border-color 0.3s;
+    -o-transition: border-color 0.3s;
+    transition: border-color 0.3s;
+    resize: none;
+
+    outline: medium none;
+  
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+   
+	
+	
 }
+.text_input:active,  .text_input:hover
+{
+border-color: #8dc9e5;
+}
+.text_input:focus
+{
+border-color: #5DACD1;
+}
+
 .submit_input
 {
 	width:200px;
@@ -62,22 +106,73 @@ body
 	font-size:14px;
 	
 	display:block;
+	
+	cursor:pointer;
+}
+
+
+.button {
+	outline: medium none;
+    display: inline-block;
+    background: #82B311;
+    -webkit-box-shadow: 0px 3px 0px 0px #6C940D, 0px -1px 0px 0px #9cd418 inset, 0px 2px 5px 0px #858585;
+    -moz-box-shadow: 0px 3px 0px 0px #6C940D, 0px -1px 0px 0px #9cd418 inset, 0px 2px 5px 0px #858585;
+    box-shadow: 0px 3px 0px 0px #6C940D, 0px -1px 0px 0px #9cd418 inset, 0px 2px 5px 0px #858585;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-transition: all 0.1s 0;
+    -moz-transition: all 0.1s 0;
+    -o-transition: all 0.1s 0;
+    transition: all 0.1s 0;
+    text-shadow: 0px -1px 0px #6C940D;
+    padding: 5px 15px;
+    margin: 5px 0px;
+    border-color: #6C940D;
+    border-width: 1px;
+    border-style: solid;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 100;
+    font-style: normal;
+	position:relative;
+	top:5px;
+}
+.button:hover {
+    background: #398fa1;
+    -webkit-box-shadow: 0px 3px 0px 0px #316396, 0px -1px 0px 0px #41c0ad inset, 0px 2px 5px 0px #858585;
+    -moz-box-shadow: 0px 3px 0px 0px #316396, 0px -1px 0px 0px #41c0ad inset, 0px 2px 5px 0px #858585;
+    box-shadow: 0px 3px 0px 0px #316396, 0px -1px 0px 0px #41c0ad inset, 0px 2px 5px 0px #858585;
+    text-shadow: 0px -1px 0px #316496;
+    border-color: #316496;
+}
+.button:active {
+    background: #398fa1;
+    -webkit-box-shadow: 0px 1px 0px 0px #316396, 0px -1px 0px 0px #41c0ad inset;
+    -moz-box-shadow: 0px 1px 0px 0px #316396, 0px -1px 0px 0px #41c0ad inset;
+    box-shadow: 0px 1px 0px 0px #316396, 0px -1px 0px 0px #41c0ad inset;
+    text-shadow: 0px -1px 0px #316496;
+    margin: 7px 0px 3px 0px;
+    border-color: #316496;
 }
 
 </style>
 </head>
-<body>
-<div class="enter_form">
-	<form method="POST">
-	<?php if(d()->notice) { ?>
-	<div style="border:1px solid lightblue;padding:6px;">{notice}</div>
+<body onload="document.getElementById('login').focus()">
+<div class="enter_form">	<?php if(d()->notice) { ?>
+<div style="text-align:center;padding:8px;margin:3px;">
+	<span style="border:1px solid lightblue;padding:6px;border-radius: 3px;">{notice}</span>
+</div>
+	
 	<?php } ?>
+	<form method="POST">
+
 		<input type="hidden" name="action" value="admin_login">
 		Логин:<br>
-		<input type="text" class="text_input" name="login"><br>
+		<input type="text" id="login" class="text_input" name="login"><br>
 		Пароль:<br>
-		<input type="password" class="text_input" name="password"><br><br>
-		<input type="submit" class="submit_input" value="Войти">
+		<input type="password" class="text_input" name="password"><br> 
+		<input type="submit" class="submit_input button" value="Войти">
 	</form>
 </div>
 </body>
