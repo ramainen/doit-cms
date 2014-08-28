@@ -589,7 +589,10 @@ function preview($adress,$param1=false,$param2=false )
 				$width = substr($width, 2);
 			}
 		}
-		if($height=='auto'){
+		if($height=='auto' && $width=='auto'){
+			$height= $org_height;
+			$width= $org_width;
+		}else if($height=='auto'){
 			$height=round($width* ($org_height/$org_width));
 		}else{
 			if($width=='auto'){
