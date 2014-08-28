@@ -1,13 +1,31 @@
 <!doctype html>
 <html>
 <head>
-<title>Авторизация</title>
+<title>Авторизация</title><link href='http://fonts.googleapis.com/css?family=Ubuntu:300,500&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 <style>
+
+ 
 body
 {
-	font-family: Ubuntu, Tahoma, Arial, sans-serif;
-}
- 
+	font-family: 'Ubuntu', Times, Arial, sans-serif;
+font-size:18px;
+	/*
+	background: rgba(255,255,255,0);
+	background: -webkit-linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));
+	background: -moz-linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));
+	background: -ms-linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));
+	background: -o-linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));
+	background: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));
+	background-color: #e8ebef;
+	background-repeat: no-repeat;
+*/
+background:url(/cms/external/grey_wash_wall.png);
+	}
+ *
+ {
+ font-family: 'Ubuntu', Times, Arial, sans-serif;
+ }
+
 .enter_form:before,
 .enter_form:after {
     content:"";
@@ -25,17 +43,19 @@ body
 
 .enter_form
 {
+font-weight:300;
 	padding:20px;
- 
+ font-size:14px;
 	position:absolute;
 	left:50%;
-	margin-left:-210px;
+	margin-left:-160px;
 	top:50%;
 	margin-top:-120px;
-	height:220px;
+	 height:215px;
+	 padding-top:40px;
 	
-	width:400px;
-	background:red;
+	width:300px;
+/*	background:red;
  
     
     background:#fff;
@@ -45,25 +65,55 @@ body
     -webkit-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
        -moz-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
             box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-			
+	*/		
 	
+}
+
+.nice_block
+{
+	background: #f2f6f9;
+	background: -webkit-linear-gradient(#fff,#f2f6f9);
+	background: -moz-linear-gradient(#fff,#f2f6f9);
+	background: -ms-linear-gradient(#fff,#f2f6f9);
+	background: -o-linear-gradient(#fff,#f2f6f9);
+	background: linear-gradient(#fff,#f2f6f9);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-box-shadow: 0 0 0 1px rgba(14,41,57,0.12),0 2px 5px rgba(14,41,57,0.44),inset 0 -1px 2px rgba(14,41,57,0.15);
+	-moz-box-shadow: 0 0 0 1px rgba(14,41,57,0.12),0 2px 5px rgba(14,41,57,0.44),inset 0 -1px 2px rgba(14,41,57,0.15);
+	-ms-box-shadow: 0 0 0 1px rgba(14,41,57,0.12),0 2px 5px rgba(14,41,57,0.44),inset 0 -1px 2px rgba(14,41,57,0.15);
+	-o-box-shadow: 0 0 0 1px rgba(14,41,57,0.12),0 2px 5px rgba(14,41,57,0.44),inset 0 -1px 2px rgba(14,41,57,0.15);
+	box-shadow: 0 0 0 1px rgba(14,41,57,0.12),0 2px 5px rgba(14,41,57,0.44),inset 0 -1px 2px rgba(14,41,57,0.15);
+	background-color: none;
+
+	
+
+ 
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 0 2px rgba(0,0,0,0.3),0 3px 5px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 0 2px rgba(0,0,0,0.3),0 3px 5px rgba(0,0,0,0.2);
+	-ms-box-shadow: 0 0 2px rgba(0,0,0,0.3),0 3px 5px rgba(0,0,0,0.2);
+	-o-box-shadow: 0 0 2px rgba(0,0,0,0.3),0 3px 5px rgba(0,0,0,0.2);
+	box-shadow: 0 0 2px rgba(0,0,0,0.3),0 3px 5px rgba(0,0,0,0.2);
+
+	-webkit-font-smoothing: subpixel-antialiased;
 }
 .text_input
 {
 	width:200px;
-	height:40px;
-	font-size:18px;
+	height:45px;
+	font-size:22px;
 	
 	padding-left:5px;
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	 border: solid 2px #e5e5e5;
     border-radius: 4px;
@@ -121,19 +171,22 @@ border-color: #5DACD1;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
-    -webkit-transition: all 0.1s 0;
-    -moz-transition: all 0.1s 0;
-    -o-transition: all 0.1s 0;
-    transition: all 0.1s 0;
-    text-shadow: 0px -1px 0px #6C940D;
+	
+    -webkit-transition: all 0.3s 0;
+    -moz-transition: all 0.3s 0;
+    -o-transition: all 0.3s 0;
+    transition: all 0.3s 0;
+	
+    text-shadow: 0px -1px 0px #6C940D, 0px -1px 0px #6C940D;
     padding: 5px 15px;
     margin: 5px 0px;
     border-color: #6C940D;
     border-width: 1px;
     border-style: solid;
-    font-size: 16px;
+    font-size: 20px;
     color: #fff;
     font-weight: 100;
+	font-weight:500;
     font-style: normal;
 	position:relative;
 	top:5px;
@@ -154,7 +207,14 @@ border-color: #5DACD1;
     text-shadow: 0px -1px 0px #316496;
     margin: 7px 0px 3px 0px;
     border-color: #316496;
-}
+	
+	
+		
+    -webkit-transition: all 0.1s 0;
+    -moz-transition: all 0.1s 0;
+    -o-transition: all 0.1s 0;
+    transition: all 0.1s 0;
+} 
 
 
 @-webkit-keyframes shake {
@@ -215,14 +275,51 @@ border-color: #5DACD1;
 	animation-name: shake;
 }
 
+.nice_error
+{
 
+padding:20px;
+ 
+	position:absolute;
+	left:50%;
+	margin-left:-212px;
+	top:50%;
+	margin-top:-200px;
+	 
+	
+	width:410px;
+	
+	
+	display: block;
+	padding: 15px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
+	border-radius: 6px;
+	background:rgba(14,41,57,0.1);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5),0 1px 0 rgba(255,255,255,0.5);
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5),0 1px 0 rgba(255,255,255,0.5);
+	-ms-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5),0 1px 0 rgba(255,255,255,0.5);
+	-o-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5),0 1px 0 rgba(255,255,255,0.5);
+	box-shadow: inset 0 1px 0 rgba(255,255,255,0.5),0 1px 0 rgba(255,255,255,0.5);
+	border: 1px solid rgba(14,41,57,0.1);
+	color: white;
+	font-size: 18px;
+ 
+	text-align: center;
+}
 </style>
 </head>
 <body onload="document.getElementById('login').focus()">
-<div class="enter_form <?php if(d()->notice) { ?>shake<?php } ?>">	<?php if(d()->notice) { ?>
+	<?php if(d()->notice) { ?>
+<div class="nice_error nice_block">
 <div style="text-align:center;padding:8px;margin:3px;">
-	<span style="border:1px solid lightblue;padding:6px;border-radius: 3px;">{notice}</span>
+	 {notice} 
 </div>
+</div><?php } ?>
+<div class="nice_block enter_form <?php if(d()->notice) { ?>shake<?php } ?>">	<?php if(d()->notice) { ?>
+
 	
 	<?php } ?>
 	<form method="POST">
@@ -230,7 +327,7 @@ border-color: #5DACD1;
 		<input type="hidden" name="action" value="admin_login">
 		Логин:<br>
 		<input type="text" id="login" class="text_input" name="login"><br>
-		Пароль:<br>
+		<div style="margin-top:9px;">Пароль:</div>
 		<input type="password" class="text_input" name="password"><br> 
 		<input type="submit" class="submit_input button" value="Войти">
 	</form>
