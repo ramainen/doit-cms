@@ -1,12 +1,15 @@
 <?php
 class SocketIOController
 {
-	public $url = '';// Можно использовать http://doit-cms.ru:32800
+	public $url = '';// Можно использовать http://cloud.doit-cms.ru
 	public $userid;// По умолчанию используется md5(session_id());
 	function init($arr = array())
 	{
+		if(!isset($arr[0])){
+			$arr[0]='http://cloud.doit-cms.ru';
+		}
 		d()->SocketIO->url = $arr[0];
-		$this->url = $arr[0]; //Можно использовать http://doit-cms.ru:32800
+		$this->url = $arr[0]; //Можно использовать http://cloud.doit-cms.ru
 		if(!isset($arr[1])){
 			$arr[1]=md5(session_id());
 		}
