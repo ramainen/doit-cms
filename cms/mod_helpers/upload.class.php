@@ -24,13 +24,13 @@
 class Upload extends UniversalHelper
 {
 	public $upload_dir = 'storage';
-	private $input_name='file';
-	private $_new_name='';
-	private $_exists = false;
-	private $_md5=false;
-	private $_extension = '';
+	protected $input_name='file';
+	protected $_new_name='';
+	protected $_exists = false;
+	protected $_md5=false;
+	protected $_extension = '';
 
-	private $_allowed_files=array('jpg','jpeg','zip','png','doc','docx','xlsx','xls','gif','pdf');
+	protected $_allowed_files=array('jpg','jpeg','zip','png','doc','docx','xlsx','xls','gif','pdf');
 	function __construct($input_name=false)
 	{
 		if($input_name===false)
