@@ -8,11 +8,19 @@ TODO: сервер Поддержка групп (SocketIO->register_group('grou
 
 class SocketIO extends UniversalSingletoneHelper
 {
-	public $url = 'http://cloud.doit-cms.ru';// Облачный сервер по умолчанию
+	public $url;// Облачный сервер по умолчанию
 	public $userid;// = md5(session_id());
 	
+	
+	function __construct()
+	{
+		//Установка значений по умолчанию
+		$this->url = 'http://cloud.doit-cms.ru'; // Облачный сервер по умолчанию
+		$this->userid  = md5(session_id());
+	}
+	
 	/**
-	* Генерация запроса к серверу по чистому GET запросу
+	* Генерация запроса к серверу по чистому GET запросу; урезанный вариант
 	*/
 	function emit_get($userid, $event, $data=array()){
 		
@@ -22,7 +30,9 @@ class SocketIO extends UniversalSingletoneHelper
 			$data['_type'] = 'string';
 			$data['_data'] = $string;
 		}
-		
+		if(is_array($userid)){
+			$userid = $userid[0];
+		}
 		$data['id'] = $userid;
 		$data['message'] = $event;
 		
