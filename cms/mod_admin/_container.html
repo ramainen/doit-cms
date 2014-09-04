@@ -59,11 +59,18 @@ if(!CONTAINERS_INITIALIZED){
 						continue;
 					}
 					var url = code[1];
+					var parts  = url.split(';')
+					url = parts[0];
+					
 					var title = $('.dummy_connected_list li[data-name="'+ name +'"] a').html();
+					if(parts[1]!='' && typeof(parts[1])!='undefined'){
+						
+						title = parts[1];
+					}
 					if(title=='undefined' || title == null){
 						continue;
 					}
-					var result_li = '<li data-name="'+name+'" data-url="'+url+'" ><a href="#">'+ title +'</a></li>';
+					var result_li = '<li data-name="'+name+'" data-url="'+url+'" data-title="'+title+'"  ><a href="#">'+ title +'</a></li>';
 					result_str = result_str+result_li;
 				}
 			}
@@ -71,6 +78,23 @@ if(!CONTAINERS_INITIALIZED){
 		})
 		
 		$('.second_sortable').html($('.dummy_connected_list').html());
+		$( ".first_sortable a").live('dblclick',function(){
+			var title =  prompt('Введите название', $(this).text());
+			$(this).text(title)
+			$(this).parent().attr('data-title', title);
+			var $ul = $(event.target).parent().parent().parent().parent().find('.first_sortable');
+			$ul.find('li').each(function(){
+				if(typeof ($(this).attr('data-url'))=='undefined'){
+					$(this).attr('data-url', 'plugin'+Math.floor(Math.random()* 100000) + new Date().getTime())
+				}
+			})
+			var result="[container]\n";
+			$ul.find('li').each(function(){
+				result += $(this).attr('data-name')+ '?' +$(this).attr('data-url')+ ';' +  ($(this).attr('data-title') ? $(this).attr('data-title') : "") +"\n"
+			})
+			$ul.parent().find('textarea').val(result)
+			$('.second_sortable').html($('.dummy_connected_list').html());
+		})
 		$( ".first_sortable, .second_sortable" ).sortable({
 			connectWith: ".connected_sortable",
 			placeholder: "connected_highload",
@@ -81,7 +105,7 @@ if(!CONTAINERS_INITIALIZED){
 				
 				//Добавить data-url тем полм списка,у которых его нет
 				//Math.floor(Math.random()* 100000) + new Date().getTime()
-				
+				$(event.target).parent().attr('data-title', $(event.target).text());	
 				var $ul = $(event.target).parent().parent().parent().parent().find('.first_sortable');
 				$ul.find('li').each(function(){
 					if(typeof ($(this).attr('data-url'))=='undefined'){
@@ -90,7 +114,7 @@ if(!CONTAINERS_INITIALIZED){
 				})
 				var result="[container]\n";
 				$ul.find('li').each(function(){
-					result += $(this).attr('data-name')+ '?' +$(this).attr('data-url')+"\n"
+					result += $(this).attr('data-name')+ '?' +$(this).attr('data-url')+ ';' +  ($(this).attr('data-title') ? $(this).attr('data-title') : "") +"\n"
 				})
 				$ul.parent().find('textarea').val(result)
 				$('.second_sortable').html($('.dummy_connected_list').html());

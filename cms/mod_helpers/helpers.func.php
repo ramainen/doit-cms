@@ -890,8 +890,10 @@ function container($param)
 		if(count($row)!=2){
 			continue;
 		}
+		$plugin_id = explode(";", $row[1]);
 		if(d()->container[$row[0]]){
-			d()->plugin_id = $row[1];
+			d()->plugin_id = $plugin_id[0];
+			d()->plugin_title = $plugin_id[1];
 			$result .=  d()->call($row[0]);
 		}
 	}
