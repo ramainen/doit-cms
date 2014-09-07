@@ -699,6 +699,7 @@ function admin_edit()
 	//при помощи GET. Если их нет, то создаются новые скрытые е параметры.
 	$setted_flag=array();
 	d()->row_data = $line;
+	d()->admin_current_scenario = $scenario;
 	foreach ($fields as $field) {
 		d()->title=$field['title'];
 		d()->name='data['.$field['name'].']';
@@ -1494,4 +1495,43 @@ function admin()
 	}
 	d()->content = d()->content();
 	return d()->render('admin_tpl');
+}
+function form_row($field=array())
+{
+	if(!isset($field['name'])){
+		$field['name'] = $field[1];
+	}
+	
+	if(!isset($field['title'])){
+		$field['title'] = $field[2];
+	}
+	
+	if(!isset($field['type'])){
+		$field['type'] = $field[0];
+	}
+	
+	$line = d()->row_data;
+	$scenario = d()->admin_current_scenario ;
+	
+	d()->title=$field['title'];
+	d()->name='data['.$field['name'].']';
+	
+	d()->value='';
+	d()->field_params=$field;
+	if ((url(4)=='add' || $scenario==2) && isset($_GET[$field['name']])) {
+		d()->value=$_GET[$field['name']];
+	}
+	if ((url(4)=='add' || $scenario==2) && isset($_POST['data'][$field['name']])) {
+		d()->value=$_POST['data'][$field['name']];
+	} 
+	if($field['name']){
+		if (isset($line[$field['name']])) {
+			d()->value=$line[$field['name']];
+		}
+		
+		if (  isset($_GET[$field['name']])) {
+			d()->value=$_GET[$field['name']];
+		}
+	}
+	return d()->call('admin_'.$field['type']);
 }

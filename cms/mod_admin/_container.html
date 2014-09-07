@@ -148,11 +148,16 @@ if(!CONTAINERS_INITIALIZED){
 		</div>
 
 	</div>
-
-	 
+	
 	<ul   class="dummy_connected_list nav nav-list">
 		<?php
-		foreach (d()->container as $key => $value){
+		if(isset(d()->field_params[3])){
+			$cname = d()->field_params[3];
+			$container = d()->{$cname};
+		}else{
+			$container = d()->container;
+		}
+		foreach ($container as $key => $value){
 		?>
 		<li data-name="<?php print $key ?>" ><a href="#"><?php print $value ?></a></li>
 		<?php } ?>
