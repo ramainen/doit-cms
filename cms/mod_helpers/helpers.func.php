@@ -881,8 +881,10 @@ function container($param)
 {
 	$result='';
 	$rows=explode("\n",$param);
+
 	foreach($rows as $row){
 		$row = trim($row);
+	
 		if($row=='[container]' || $row == ''){
 			continue;
 		}

@@ -25,6 +25,7 @@
 if(!CONTAINERS_INITIALIZED){
 	var CONTAINERS_INITIALIZED=true;
 	$(function(){
+	
 		$('.container_add_plugin').bind('change',function(){
 			var result = $(this).find('option:selected');
 			if(result == ''){
@@ -130,7 +131,7 @@ if(!CONTAINERS_INITIALIZED){
 </div>
 
 
-<div class="control-group">
+<div class="control-group container_container">
   <label class="control-label"  >{title}</label>
   <div class="controls">
 
@@ -153,7 +154,9 @@ if(!CONTAINERS_INITIALIZED){
 		<?php
 		if(isset(d()->field_params[3])){
 			$cname = d()->field_params[3];
+			d()->container = array();
 			$container = d()->{$cname};
+			$container = d()->datapool['container'];
 		}else{
 			$container = d()->container;
 		}
