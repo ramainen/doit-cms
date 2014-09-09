@@ -8,7 +8,11 @@ tinymce.create('tinymce.plugins.PasteImage', {
         ed.onPaste.add(function(ed, e) {
             if ('clipboardData' in e) {
                 if ('items' in e.clipboardData) {
-                    var item = e.clipboardData.items[0];
+					if(typeof(e.clipboardData.items[1])!='undefined'){
+						var item = e.clipboardData.items[1];
+					}else{
+						var item = e.clipboardData.items[0];
+					}
                     var blob, reader;
 
                     if (item) {
@@ -23,6 +27,7 @@ tinymce.create('tinymce.plugins.PasteImage', {
                                 that.insertImage(ed, event.target.result);
                                 that.onLoadEnd();
                             };
+							e.preventDefault();
                         }
                     }
                 } else if ('types' in e.clipboardData) {
