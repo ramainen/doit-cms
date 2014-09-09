@@ -15,7 +15,7 @@ class SocketIO extends UniversalSingletoneHelper
 	function __construct()
 	{
 		//Установка значений по умолчанию
-		$this->url = 'http://cloud.doit-cms.ru'; // Облачный сервер по умолчанию
+		$this->url =  'http://cloud.doit-cms.ru'; // Облачный сервер по умолчанию
 		$this->userid  = md5(session_id());
 	}
 	
@@ -35,7 +35,7 @@ class SocketIO extends UniversalSingletoneHelper
 		}
 		$data['id'] = $userid;
 		$data['message'] = $event;
-		
+		print $this->url . '/emit?'. http_build_query($data);
 		
 		return file_get_contents($this->url . '/emit?'. http_build_query($data));
 	}
@@ -56,6 +56,7 @@ class SocketIO extends UniversalSingletoneHelper
 			
 			curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($post_data));
 			$out = curl_exec($curl);
+			print curl_error ($curl);
 			curl_close($curl);
 			return $out;
 		}else{

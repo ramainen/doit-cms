@@ -10,7 +10,7 @@
 			ed.addButton('simages', {
 				title : 'Загрузка изображений',
 				cmd : 'mcesImages',
-				image : url + '/upl/icon.gif" style="display:none;"><iframe style="overflow:hidden;height:20px;width:20px;border:none;border:0;"  frameborder="0" border="0" src="'+url+'/upl/index.php?'+ed.id+'"></iframe><img style="display:none;" src="/cms/external/pixel.gif'
+				image : url + '/upl/icon.gif" style="display:none;"><iframe class="simage_iframe" style="overflow:hidden;height:20px;width:20px;border:none;border:0;"  frameborder="0" border="0" src="'+url+'/upl/index.php?'+ed.id+'"></iframe><img style="display:none;" src="/cms/external/pixel.gif'
 
 		
 			});

@@ -89,12 +89,28 @@ header("Content-Type: text/html; charset=Windows-1251");
 
 		$result = array();
 
-		if (isset($_FILES['image'])) {
-			$file = $_FILES['image']['tmp_name'];
+		if (isset($_FILES['image']) || !empty($_POST['base64'])) {
+			if(!empty($_POST['base64'])){
+				 
+				
+				$file = '/storage/tmp_base64.png';
+				list($type, $data) = explode(';', $_POST['base64']);
+				list(, $data)      = explode(',', $data);
+				$data = base64_decode($data);
+				$file = $_SERVER['DOCUMENT_ROOT'].'/storage/tmp_base64.png';
+				file_put_contents($file, $data);
+				$filename = 'blob.png';
+
+			}else{
+				$file = $_FILES['image']['tmp_name'];
+				$filename = $_FILES['image']['name'];
+			}
+			
 			$error = false;
 			$size = false;
-
-			if (!is_uploaded_file($file) || ($_FILES['image']['size'] > 2 * 1024 * 1024) ) {
+			
+			$is_uploaded =   ( !empty($_POST['base64']) || is_uploaded_file($file));
+			if (!$is_uploaded /*|| ($_FILES['image']['size'] > 2 * 1024 * 1024)*/ ) {
 				if($_GET['lng']=='ru') {
 					$error = 'Пожалуйста, загружайте файлы не более 2Мб!';
 				} else {
@@ -127,11 +143,11 @@ header("Content-Type: text/html; charset=Windows-1251");
 				$result['error'] = $error;
 			}
 			else {
-				$ext = substr($_FILES['image']['name'],strrpos($_FILES['image']['name'],'.')+1);
-				$name = md5_file($_FILES['image']['tmp_name']);
+				$ext = substr($filename,strrpos($filename,'.')+1);
+				$name = md5_file($file);
 				$source = $our_folder.'/'.$name.'.'.$ext;
 				
-				if(!copy($_FILES['image']['tmp_name'], $source)) {
+				if(!copy($file, $source)) {
 					$result['result'] = 'error';
 					if($_GET['lng']=='ru') {
 						$result['error'] = 'Ошибка при копировании файла!';
@@ -196,9 +212,11 @@ header("Content-Type: text/html; charset=Windows-1251");
 //print "document.location.hash = '#".$_POST["inst"]."'";
 		print '</script>';
 	}
-	if (isset($_FILES['image'])) {
+	if (isset($_FILES['image']) || !empty($_POST['base64'])) {
 	UploadFiles();
 	
+	
+	}else{
 	
 	}
 	
@@ -207,7 +225,7 @@ header("Content-Type: text/html; charset=Windows-1251");
 	<form id="form1"  enctype="multipart/form-data" method="POST" action="" >
         <input id="File1" style="position:absolute;left:0px;top:0px;"  name="image" type="file" /> 
 		 <input id="inst" name="inst"  type="hidden" /> 
-		
+		 <input  name="base64" id="base64" value=""  type="hidden" /> 
 		</form>
     </div>
     <script type="text/javascript">
