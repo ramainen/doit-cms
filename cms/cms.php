@@ -1742,10 +1742,9 @@ function __autoload($class_name) {
     $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
 	$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
 	$lover_class_name=strtolower($class_name);
-
-	if(file_exists($_SERVER['DOCUMENT_ROOT'].'/'.d()->php_files_list[$lover_class_name.'_class'])){
+	if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. d()->php_files_list[$lover_class_name.'_class'])){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.d()->php_files_list[$lover_class_name.'_class'];
-	}elseif(file_exists($fileName)){
+	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.($fileName))){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.$fileName;
 	}else{
 		if(substr(strtolower($class_name),-10)!='controller'){
