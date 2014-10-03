@@ -166,9 +166,22 @@ class Date extends UniversalHelper
 			$this->month = (int)date('m',strtotime($this->date));
 			$this->day = (int)date('d',strtotime($this->date));
 		}
-		
+		$time_matches = array();
+		$h=12;
+		$m=0;
+		$s=0;
+		if(preg_match('#.*?\s(\d\d):(\d\d):(\d\d)$#',$this->date,$time_matches)){
+			$h=$time_matches[1];
+			$m=$time_matches[2];
+			$s=$time_matches[3];
+		}
+		if(preg_match('#.*?\s(\d\d):(\d\d)$#',$this->date,$time_matches)){
+			$h=$time_matches[1];
+			$m=$time_matches[2];
+			$s=0;
+		}		
 		if($this->date!='' && $this->date!='0000-00-00 00:00:00'){
-			$this->stamp = mktime (12,0,0, $this->month, $this->day, $this->year);
+			$this->stamp = mktime ($h,$m,$s, $this->month, $this->day, $this->year);
 		}
 
 
