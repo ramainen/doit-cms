@@ -746,15 +746,46 @@ function declOfNum($number, $words=false,$word2=false,$word3=false)
 		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ий'){
 			$word2 = mb_substr($word1,0,-2,"UTF-8").'ия';
 			$word3 = mb_substr($word1,0,-2,"UTF-8").'иев';
+		}elseif( $word1 =='человек'){
+			$word2 = 'человека';
+			$word3 = 'человек';
+		}elseif( $word1 =='раз'){
+			$word2 = 'раза';
+			$word3 = 'раз';
+		}elseif(mb_substr($word1,-4,null,"UTF-8")=='деец'){
+
+			$word2 = mb_substr($word1,0,-4,"UTF-8").'дейца';
+			$word3 = mb_substr($word1,0,-4,"UTF-8").'дейцев';
+
 		}elseif(mb_substr($word1,-3,null,"UTF-8")=='еец'){
 
 			$word2 = mb_substr($word1,0,-3,"UTF-8").'ейца';
 			$word3 = mb_substr($word1,0,-3,"UTF-8").'йцев';
 
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='аец'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'айца';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'айцев';
+
+		}elseif(mb_substr($word1,-4,null,"UTF-8")=='анец'){
+
+			$word2 = mb_substr($word1,0,-4,"UTF-8").'анца';
+			$word3 = mb_substr($word1,0,-4,"UTF-8").'анцев';
+
 		}elseif(mb_substr($word1,-3,null,"UTF-8")=='нец'){
 
 			$word2 = mb_substr($word1,0,-3,"UTF-8").'нца';
 			$word3 = mb_substr($word1,0,-3,"UTF-8").'нцов';
+
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='оец'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'ойца';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'ойцов';
+
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='дец'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'дца';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'дцов';
 
 		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ец'){
 
@@ -766,6 +797,16 @@ function declOfNum($number, $words=false,$word2=false,$word3=false)
 			$word2 = mb_substr($word1,0,-1,"UTF-8").'ра';
 			$word3 = mb_substr($word1,0,-1,"UTF-8").'ров';
 
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='во'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ва';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'в';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ло'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ла';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'л';
+
 		}elseif(mb_substr($word1,-1,null,"UTF-8")=='о'){
 
 			$word2 = mb_substr($word1,0,-1,"UTF-8").'а';
@@ -775,6 +816,21 @@ function declOfNum($number, $words=false,$word2=false,$word3=false)
 
 			$word2 = mb_substr($word1,0,-1,"UTF-8").'ца';
 			$word3 = mb_substr($word1,0,-1,"UTF-8").'цев';
+
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='век'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'века';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'веков';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ек'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ка';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ков';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ёк'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ька';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ьков';
 
 		}elseif(in_array(mb_substr($word1,-1,null,"UTF-8"),array('б','в','г', 'д', 'ж', 'з', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х',   'ч', 'ш', 'щ' ))){
 
@@ -791,20 +847,100 @@ function declOfNum($number, $words=false,$word2=false,$word3=false)
 			$word2 = mb_substr($word1,0,-2,"UTF-8").'ти';
 			$word3 = mb_substr($word1,0,-2,"UTF-8").'тей';
 
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='ень'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'ня';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'ней';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='нь'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ни';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ней';
+
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='брь'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'бря';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'брей';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='рь'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ри';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'рей';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ль'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ли';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'лей';
+
 		}elseif(mb_substr($word1,-1,null,"UTF-8")=='ь'){
 
 			$word2 = mb_substr($word1,0,-1,"UTF-8").'я';
 			$word3 = mb_substr($word1,0,-1,"UTF-8").'ей';
 
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='цы'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ц';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ц';
+
 		}elseif(mb_substr($word1,-1,null,"UTF-8")=='ы'){
 
-			$word2 = mb_substr($word1,0,-1,"UTF-8").'';
-			$word3 = mb_substr($word1,0,-1,"UTF-8").'';
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'ов';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'ов';
 
 		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ия'){
 
 			$word2 = mb_substr($word1,0,-2,"UTF-8").'ии';
 			$word3 = mb_substr($word1,0,-2,"UTF-8").'ий';
+
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='еля'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'ели';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'ель';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ля'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ли';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'лей';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='я'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'и';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'ь';
+
+		}elseif(mb_substr($word1,-3,null,"UTF-8")=='ька'){
+
+			$word2 = mb_substr($word1,0,-3,"UTF-8").'ьки';
+			$word3 = mb_substr($word1,0,-3,"UTF-8").'ек';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ка'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ки';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'к';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='га'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ги';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'г';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ча'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'чи';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ч';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='жа'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'жи';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ж';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ша'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'ши';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'ш';
+
+		}elseif(mb_substr($word1,-2,null,"UTF-8")=='ща'){
+
+			$word2 = mb_substr($word1,0,-2,"UTF-8").'щи';
+			$word3 = mb_substr($word1,0,-2,"UTF-8").'щ';
 
 		}elseif(mb_substr($word1,-1,null,"UTF-8")=='а'){
 
@@ -815,6 +951,11 @@ function declOfNum($number, $words=false,$word2=false,$word3=false)
 
 			$word2 = mb_substr($word1,0,-1,"UTF-8").'ов';
 			$word3 = mb_substr($word1,0,-1,"UTF-8").'ов';
+
+		}elseif(mb_substr($word1,-1,null,"UTF-8")=='е'){
+
+			$word2 = mb_substr($word1,0,-1,"UTF-8").'я';
+			$word3 = mb_substr($word1,0,-1,"UTF-8").'й';
 
 		}
 		$words_result=array($word1,$word2,$word3);
