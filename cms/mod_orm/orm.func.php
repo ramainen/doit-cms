@@ -137,6 +137,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			'/(^.*)ta$/'=>'$1tum',
 			'/(^.*)ia$/'=>'$1ium',
 			'/(^.*)children$/'=>'$1child',
+			'/(^.*)focuses$/'=>'$1focus',
 			'/(^.*)s$/'=>'$1'
 		);
 		
@@ -192,6 +193,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			'/(^.*)ium$/'=>'$1ia',
 			'/(^.*)response$/'=>'$1responses',
 			'/(^.*)child$/'=>'$1children',
+			'/(^.*)focus$/'=>'$1focuses', //foci?
 			'/(^.*)$/'=>'$1s'
 		);
 		
