@@ -1003,9 +1003,28 @@ function must_be_empty($value,$params)
 function antispam($value,$params)
 {
 	$msg=strtolower($value);
-	if ( strpos( $msg,'<a')!==false  ||  strpos( $msg,'лbных клиентов')!==false ||  strpos( $msg,'лbных клиентoв')!==false ||  strpos( $msg,'пoтенциалbных клиентов')!==false  ||  strpos( $msg,'базу данных потенциальных клиентов')!==false ||  strpos( $msg,'база данных потенциальных клиентов')!==false  ||  strpos( $msg,'база дaнныx пoтенциальных клиентов')!==false  ||  strpos( $msg,'базу дaнныx пoтенциальных клиентов')!==false  ||  strpos( $msg,'потeнциaлbных клиентoв')!==false  ||  strpos( $msg,'клиeнтская бaзa')!==false ||  strpos( $msg,'клиeнтская база')!==false || strpos( $msg,'клиeнтcкие базы')!==false || strpos( $msg,'ские бaзы')!==false || strpos( $msg,'ские базы')!==false ||strpos( $msg,'cкие бaзы')!==false  ||strpos( $msg,'cкие базы')!==false ||strpos( $msg,'скиe бaзы')!==false ||strpos( $msg,'скиe базы')!==false ||strpos( $msg,'cкиe бaзы')!==false ||strpos( $msg,'cкиe базы')!==false ||   strpos( $msg,'клиeнтские бaзы')!==false  ||  strpos( $msg,'клиeнтские базы')!==false || strpos( $msg,'ентсkи')!==false || strpos( $msg,'prodawez')!==false || strpos( $msg,'kлиент')!==false ||  strpos( $msg,'[url')!==false || strpos( $msg,'http:/')!==false || strpos( $msg,'sex')!==false || strpos( $msg,'poker')!==false || strpos($msg,'casino')!==false    )  {
+	
+	//однозначный список стопслов
+	if ( strpos( $msg,'<a')!==false  ||  strpos( $msg,'лbных клиентов')!==false ||  strpos( $msg,'лbных клиентoв')!==false ||  strpos( $msg,'пoтенциалbных клиентов')!==false  ||  strpos( $msg,'базу данных потенциальных клиентов')!==false ||  strpos( $msg,'база данных потенциальных клиентов')!==false  ||  strpos( $msg,'база дaнныx пoтенциальных клиентов')!==false  ||  strpos( $msg,'базу дaнныx пoтенциальных клиентов')!==false  ||  strpos( $msg,'потeнциaлbных клиентoв')!==false  ||  strpos( $msg,'клиeнтская бaзa')!==false ||  strpos( $msg,'клиeнтская база')!==false || strpos( $msg,'клиeнтcкие базы')!==false || strpos( $msg,'ские бaзы')!==false || strpos( $msg,'ские базы')!==false ||strpos( $msg,'cкие бaзы')!==false  ||strpos( $msg,'cкие базы')!==false ||strpos( $msg,'скиe бaзы')!==false ||strpos( $msg,'скиe базы')!==false ||strpos( $msg,'cкиe бaзы')!==false ||strpos( $msg,'cкиe базы')!==false ||   strpos( $msg,'клиeнтские бaзы')!==false  ||  strpos( $msg,'клиeнтские базы')!==false || strpos( $msg,'ентсkи')!==false || strpos( $msg,'prodawez')!==false || strpos( $msg,'kлиент')!==false ||  strpos( $msg,'[url')!==false || strpos( $msg,'sex')!==false || strpos( $msg,'poker')!==false || strpos($msg,'casino')!==false     )  {
 		return false;
 	}
+	
+	//
+	if(substr_count ( $msg,'http:/') >0 && !preg_match('#[а-яА-Я]#imu',$msg)){
+		return false;
+	}
+	
+	foreach(array('здравствуйте','купить','заказать','сколько стоит','ссылк','хотелось бы') as $stopword){
+		if(strpos(mb_strtolower($msg,'UTF-8'),$stopword)!==false){
+			return true;
+		}
+	}
+	
+	if(substr_count ( $msg,'http:/') >2){
+		return false;
+	}
+	
+	
 	return true;
 }
 

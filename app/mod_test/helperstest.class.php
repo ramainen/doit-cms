@@ -550,6 +550,39 @@ class HelpersTest extends Test
 		
 
 	}
+	
+	function test_antispam(){
+		//Проверка всякого рода спам-писем.
+		//Однозначно "хорошие" сообщения
+		$this->assertTrue(antispam('Здравствуйте! Сколько стоит установить окна?'));
+		$this->assertTrue(antispam('http://okna-company.ru Здравствуйте! Это наш сайт. Сколько стоит продвижение сайта?'));
+		$this->assertTrue(antispam('http://okna-company.ru http://okna-company.ru Здравствуйте! Это наш сайт. Сколько стоит продвижение сайта?'));
+
+		$this->assertTrue(antispam('Здравствуйте! Я хочу заказать машину. Мне нравятся следующие: http://agwdfoywbabsdf.com http://foabakqjahafhasdfasd.com http://baydnkankalkaslasls.com Лето Синий Лис Ягнёнок Бесконечность Бытия Обречённость'));
+		
+		//Однозначно "плохие" сообщения
+		$this->assertFalse(antispam('Online Sex [url=http://agwdfoywbabsdf.com]http://agwdfoywbabsdf.com[/url] online casino.'));
+		
+		$this->assertFalse(antispam('http://agwdfoywbabsdf.com http://foabakqjahafhasdfasd.com http://baydnkankalkaslasls.com Лето Синий Лис Ягнёнок Бесконечность Бытия Обречённость'));
+		
+		
+		$this->assertFalse(antispam('Courts are a place where serious business is conducted, and that demands appropriate attire, says Delaware Superior Court Judge William Witham Jr., <a href=http://www.ju-this-site-is-fake-mplightfarmsonline.com/new-air-max-2013-run-this-link-is-fake-ning-shoes-for-men-blue-p-2692.html><b>New Air Max 2013 Running Shoes For Men Blue</b></a>, Between the redesign of its denim collection and the launch of a plus size fashion blog, the company has certainly taken strides to provide all women with the awesome denim options they deserve. Check out some of the photos from the look book below, and head to Fashion To Figure to purchase.锘縜'));
+		
+		
+		//Тут письмо подозрительно, так как только английские символы и ссылка. Если есть ссылка и только английские символы - значит спамер.
+		$this->assertFalse(antispam('Courts are a place where serious business is conducted, and that demands appropriate attire, says Delaware Superior Court Judge William Witham Jr.,  http://www.ju-this-site-is-fake-mplightfarmsonline.com/new-air-max-2013-run-this-link-is-fake-ning-shoes-for-men-blue-p-2692.html><b>New Air Max 2013 Running Shoes For Men Blue , Between the redesign of its denim collection and the launch of a plus size fashion blog, the company has certainly taken strides to provide all women with the awesome denim options they deserve. Check out some of the photos from the look book below, and head to Fashion To Figure to purchase.锘縜'));
+			
+			
+		$this->assertFalse(antispam('Amdimr <a href=\"http://ydufshhyeuao.com/\">ydufshhyeuao</a>, [url=http://abtzmbcevibp.com/]abtzmbcevibp[/url], [link=http://znaragczxwqp.com/]znaragczxwqp[/link], http://bxueqcscjdwv.com/'));
+		
+		
+		
+		
+		
+		
+		
+	}
+	
 }
  
 ?>
