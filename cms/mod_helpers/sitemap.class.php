@@ -3,7 +3,7 @@
 
 class Sitemap extends UniversalSingletoneHelper
 {
-	private $pages=array();
+	protected $pages=array();
 	function init()
 	{
 		 
