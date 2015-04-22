@@ -1710,7 +1710,23 @@ foreach($tmparr as $key=>$subval)
 		
 		return $res;
 	}
+	/* VERSION 2.0 */
+	public $routes=array();
+	function route($adress, $closure){
+		$route = new Route();
+		$route->map($adress, $closure);
+		$this->routes[]=$route;
+		return $route;
+	}
 	
+	function dispatch($level='content'){
+		$accepted_routes = array();
+		foreach($this->routes as $route){
+			
+		}
+	}
+	
+	/* END VERSION 2.0 */
 	function current_version()
 	{
 		static $result = null;
