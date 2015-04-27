@@ -1,7 +1,27 @@
 <?php
+ 
+ 
+d()->route('/news/:url/:url2',function($url,$url2){
+	print "url- ";
+	print $url;
+	print $url2;
+	exit;
+});
 
-d()->route('/news/',function(){
-	print 2+2;
+d()->route('/news/:url+',function($url){
+	print "url+ ";
+	print $url;
+	exit;
+});
+
+
+
+/*
+приоритет задается количеством исчисляемых сивовлоа слеша
+*/
+d()->route('/news/:url*',function($url){
+	print "url* ";
+	print $url;
 	exit;
 });
 

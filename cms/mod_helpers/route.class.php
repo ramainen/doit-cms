@@ -17,7 +17,12 @@ class Route
 		$this->closure=$closure;
 	}
 	public function check($url='/catalog', $method=false, $level="content"){
-		if($url != $this->url){
+		$regex = $this->url;
+		$regex = preg_replace(
+			array('#\:[a-z_][a-zA-Z0-9_]*\+#','#\:[a-z_][a-zA-Z0-9_]*\*#','#\:[a-z_][a-zA-Z0-9_]*#')
+			,array('(.+?)','(.*?)','([^\/]+?)')
+		,$regex);
+		if(!preg_match('#^'.$regex.'$#',$url)){
 			return false;
 		}
 		if($method !== false && $this->method !== false){
@@ -25,7 +30,18 @@ class Route
 				return false;
 			}
 		}
+		
 		return true;
+	}
+	public function dispatch($url){
+		$matches = array();
+		$regex = $this->url;
+		$regex = preg_replace(
+			array('#\:[a-z_][a-zA-Z0-9_]*\+#','#\:[a-z_][a-zA-Z0-9_]*\*#','#\:[a-z_][a-zA-Z0-9_]*#'),array('(.+?)','(.*?)','([^\/]+?)')
+		,$regex);
+		preg_match('#^'.$regex.'$#',$url,$matches);
+		unset($matches[0]);
+		return call_user_func_array($this->closure,$matches);
 	}
 	
 }

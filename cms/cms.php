@@ -1721,9 +1721,16 @@ foreach($tmparr as $key=>$subval)
 	
 	function dispatch($level='content'){
 		$accepted_routes = array();
+		$url=strtok($_SERVER["REQUEST_URI"],'?');
 		foreach($this->routes as $route){
-			
+			if($route->check($url)){
+				$accepted_routes[]=$route;
+			}
 		}
+		if(count($accepted_routes)){
+			$accepted_routes[0]->dispatch($url);
+		}
+		
 	}
 	
 	/* END VERSION 2.0 */
