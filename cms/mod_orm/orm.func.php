@@ -1573,9 +1573,14 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	 * @param $id ID Объекта
 	 * @return int искомый ключ
 	 */
-	function get_cursor_key_by_id($id)
+	function get_cursor_key_by_id($id,$strict=false)
 	{
-		$key=0;
+		if($strict){
+			$key=false;
+		}else{
+			$key=0;
+		}
+		
 		if ($this->_options['queryready']==false) {
 			$this->fetch_data_now();
 		}
@@ -1911,7 +1916,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 						$ids_array=array_keys($ids_array);
 						$this->_objects_cache[$name] =  activerecord_factory_from_table(ActiveRecord::one_to_plural($name))->order('')->where(' '.DB_FIELD_DEL . id . DB_FIELD_DEL. ' IN (?)',$ids_array);
 					}
-					$cursor_key=$this->_objects_cache[$name]->get_cursor_key_by_id($this->_data[$this->_cursor][$name.'_id']);
+					$cursor_key=$this->_objects_cache[$name]->get_cursor_key_by_id($this->_data[$this->_cursor][$name.'_id'],true);
+					if($cursor_key===false){
+						$trash = clone($this->_objects_cache[$name]);
+						return $trash->limit('0')->where('false');
+					}
 					return $this->_objects_cache[$name][$cursor_key];
 				}
 
