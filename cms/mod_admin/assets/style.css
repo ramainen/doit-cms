@@ -141,3 +141,17 @@ height:100%;
 {
 	display:none;
 }
+
+.flyer
+{
+	position:fixed;
+	width:400px;
+	left:50%;
+	top:-50%;
+	margin-left:-200px;
+	transition:top 0.5s;
+}
+.flyer div
+{
+box-shadow:1px 2px 4px gray;
+}

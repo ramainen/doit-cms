@@ -268,7 +268,12 @@ $(".drag-n-drop-target").each(function(){
 	};
 
 	*/
-})
+});
+
+$('.js-ajax-submit').on('click',function(){
+	$('.admin_edit_form').attr('target','save_target');
+});
+
 $(".str_input").pasteImageReader(function(results) {
   var dataURL, filename;
 

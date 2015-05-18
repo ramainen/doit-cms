@@ -45,11 +45,16 @@
 
 		</foreach>
 		
+		<div class="flyer js-iframe-flyer"><div class="alert alert-success"><i class="icon icon-ok"></i> <b>Готово!</b> Элемент добавлен.</div></div>
+		
 		<div class="form-actions">
-			<input type="submit"   value="Отправить" class="btn btn-primary" > 
+			<input type="submit"   value="Сохранить" class="btn btn-primary" > 
+			<?php if(url(4)=='add'){ ?>
+				<input type="submit" name="_save_and_add"  value="Сохранить и добавить ещё" class="btn js-ajax-submit" > 
+			<?php } ?>
 			<a href="#" onclick="window_cancel();return false;" class="btn">Отмена</a>
 		</div>
-
+		<iframe name="save_target" id="save_target" style="display:none;"></iframe>
 
 	</fieldset>
 	{{/form}}

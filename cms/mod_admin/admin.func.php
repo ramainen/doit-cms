@@ -974,7 +974,17 @@ function admin_save_data($params)
 	}
 	*/
 	
-	
+	if(isset($_POST['_save_and_add'])){
+		print '
+		<script>
+			parent.$(".js-iframe-flyer").css("top","20%");
+			setTimeout(function(){
+				parent.$(".js-iframe-flyer").css("top","-50%");
+			},2000);
+			parent.$(".admin_edit_form").removeAttr("target");
+		</script>';
+		exit;
+	}
 
 	if($_POST['admin_command_redirect_close']=='yes') {
 		$tableortype = url(3);
