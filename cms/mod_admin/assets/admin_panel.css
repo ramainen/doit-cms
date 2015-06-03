@@ -80,3 +80,33 @@ ul#admin_main_user_menu>li>ul li
     color:white;
 	
 }
+.adm_icon {
+ display:inline-block !important;
+ vertical-align:middle !important;
+ width:16px !important;
+ height:15px !important;
+ line-height:15px !important;
+ font-size:10px !important;
+ padding:0 !important;
+ margin: 0 !important;
+ border:none !important;
+ position: static !important;
+ border-radius: none !important;
+ background-image: none !important;
+}
+.adm_icon:hover {
+ color:inherit !important;
+ background:none !important;
+ transition:none !important;
+}
+.adm_icon:before, .adm_icon:after { content: none !important; }
+.adm_icon img {
+ padding:0 !important;
+ border:none !important;
+ margin:0 !important;
+ width:16px !important;
+ height:15px !important;
+ line-height:15px !important;
+ font-size:10px !important;
+ box-shadow: none !important;
+}
