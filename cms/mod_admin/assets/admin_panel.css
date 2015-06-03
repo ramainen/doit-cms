@@ -90,7 +90,6 @@ ul#admin_main_user_menu>li>ul li
  padding:0 !important;
  margin: 0 !important;
  border:none !important;
- position: static !important;
  border-radius: none !important;
  background-image: none !important;
 }
@@ -103,7 +102,6 @@ ul#admin_main_user_menu>li>ul li
 .adm_icon img {
  padding:0 !important;
  border:none !important;
- margin:0 !important;
  width:16px !important;
  height:15px !important;
  line-height:15px !important;
