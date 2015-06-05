@@ -5,6 +5,7 @@
  .admin_edit_form .input-xlarge
  {
 	width:500px;
+	
  }
  
 .top_header
@@ -13,7 +14,17 @@ height:50px;
 background:#17395C;
 border-bottom:1px solid white;
 }
-
+.field_edit_dialog.modal
+{
+	width:800px;
+	
+	margin: -350px 0 0 -400px;
+}
+.my-modal-body
+{
+	
+	max-height:700px;
+}
 .admin_header
 
 {

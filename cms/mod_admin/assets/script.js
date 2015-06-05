@@ -61,7 +61,8 @@
 //end jquery image paste plugin
 //////////////////////////////////
 
-
+ var editor ;
+	var textarea ;
 var admin_dropdown_timer;
 $(function () {
 
@@ -90,8 +91,17 @@ $(function () {
 	 function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
 	 );
 	 */
- 
+	if($('#content').length > 0){
+		editor = ace.edit("content");
+		editor.getSession().setMode("ace/mode/ini");
 
+		textarea = $('textarea[name="content"]').hide();
+		editor.getSession().setValue(textarea.val());
+		editor.getSession().on('change', function(){
+			textarea.val(editor.getSession().getValue());
+		});
+	}
+	//editor.getSession().setValue(textarea.val();
 	$('.enable_multiple').bind('click',function(e){
 		$('input[name=_enable_multiple]').val(1)
 		$('.control-group').hide();
@@ -519,7 +529,8 @@ function create_field_template()
 	';urlredirect=/\n' 
 	
 	
-	)
+	);
+	editor.getSession().setValue(textarea.val());
 }
 function show_field_editor()
 {
