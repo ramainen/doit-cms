@@ -552,6 +552,12 @@ foreach($tmparr as $key=>$subval)
 		define('SERVER_NAME',preg_replace('/^www./i','',$_SERVER['SERVER_NAME']));
 		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/sites/'.SERVER_NAME)){
 			$_work_folders[]='sites/'.SERVER_NAME;
+		}else{
+			preg_match('#(^.*?)\.#',SERVER_NAME,$m);
+			$subdomain = ($m[1]);
+			if(file_exists($_SERVER['DOCUMENT_ROOT'].'/sites/'.$subdomain)){
+				$_work_folders[]='sites/'.$subdomain;
+			}
 		}
 		$disabled_modules=array();
 		if(defined('DISABLED_MODULES')){
