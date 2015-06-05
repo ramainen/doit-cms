@@ -1553,7 +1553,7 @@ foreach($tmparr as $key=>$subval)
 		$currentGroup='';
 		$arrayKeys=array();
 		foreach($ini as $row) {
-			$first_symbol=substr($row,0,1);
+			$first_symbol=substr(trim($row),0,1);
 			if($first_symbol==';') continue; //Комментарии строки игнорируются
 			if ($first_symbol=='[') { //Начало новой группы [group]
 				$currentGroup=substr($row,1,-1);
