@@ -1481,7 +1481,7 @@ function admin()
 			$login=d()->admin['editor']['login'][$key];
 			$password=d()->admin['editor']['password'][$key];
 			
-			if($login == $_POST['login'] && $password == md5($_POST['password'])) {
+			if($login == $_POST['login'] && $password === md5($_POST['password'])) {
 				$_SESSION['admin']=$_POST['login'];
 				unset($_SESSION['whitelist']);
 				header('Location: /');
