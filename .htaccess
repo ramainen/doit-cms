@@ -11,6 +11,8 @@ php_flag magic_quotes_runtime off
 RewriteEngine On
 RewriteBase /
 
+RewriteRule ^index$    / [R=301,L]
+
 RewriteRule \.git - [F,L]
 
 RewriteRule  !\.jpg$|\.jpeg$|\.xlsx?$|\.pptx?$|\.docx?$|\.gif$|\.png$|\.bmp$|\.jpeg$|\.zip$|\.tar.gz$|\.swf$|\.pdf$|\.rar$|\.js$|\.css$|\.ico$|^cms/external|^docs\/docs\.php|^cms/mod_admin/imanager|^images/|^yandex|^robots\.txt|^storage/(.*)        index.php   [L]
