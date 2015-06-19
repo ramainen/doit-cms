@@ -534,6 +534,9 @@ function preview($adress,$param1=false,$param2=false )
 		//Создание превью
 		
 		$filename = $_SERVER['DOCUMENT_ROOT'].$adress;
+		if (!is_file($filename)) {
+			return '';
+		}
 		$dest = $_SERVER['DOCUMENT_ROOT'].$preview_adress;
 		
 		$dest_folder = $_SERVER['DOCUMENT_ROOT'].substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs";
