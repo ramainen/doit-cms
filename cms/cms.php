@@ -27,7 +27,7 @@ Copyright (C) 2011 Fakhrutdinov Damir (aka Ainu)
 //error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 error_reporting(0);
 session_start();
-
+mb_internal_encoding("UTF-8");
 
 /**
  * Обработчик ошибок, возникающих при работе функций любого типа (шаблоны, функции и т.д.)
