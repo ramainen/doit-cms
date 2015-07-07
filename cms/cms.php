@@ -334,6 +334,19 @@ foreach($tmparr as $key=>$subval)
 		}   }
 		if ($doit->datapool["override"]!="") { print $doit->{$doit->datapool["override"]}(); } else { ?'.'>';
 
+		// {* comment *}
+		$this->template_patterns[]='#{\*.*?\*}#muis';
+		$this->template_replacements[]='';
+
+		// @ print 2+2;
+		$this->template_patterns[]='#^\s*@((?!import|page|namespace|charset|media|font-face|keyframes|region|supports|document).+)$#mui';
+		$this->template_replacements[]='<?php $1; ?>';
+
+		
+				
+    	
+		
+		
 		// {{{content}}}
 		$this->template_patterns[]='/\{{{([#a-zA-Z0-9_]+)\}}}/';
 		$this->template_replacements[]='<'.'?php print $doit->render("$1"); ?'.'>';
