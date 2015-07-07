@@ -249,6 +249,7 @@ class doitClass
 	private $_prepared_content=array();
 	private $validate_disabled=false;
 	public $langlink='';
+	protected $_closures = array();
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -1280,9 +1281,15 @@ foreach($tmparr as $key=>$subval)
 	 */
 	function __set($name,$value)
 	{
+		unset($this->_closures[$name]);
 		$this->datapool[$name]=$value;
 	}
 
+	function singleton($name,$closure){
+		$this->datapool[$name] = $closure;
+		$this->_closures[$name] = true; //является синглтоном
+	}
+	
 	/**
 	 * Получает из реестра значение переменной либо, при её отстуствии, запускает допольнитмельные функции, такие как
 	 * фабрика классов, фабрика моделей d()->User, и другие, могут быть заданы в ini-файлах
@@ -1301,6 +1308,15 @@ foreach($tmparr as $key=>$subval)
 		}
 		
 		if(isset($this->datapool[$name])) {
+			if( is_object($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)){
+				$closure = $this->datapool[$name];
+				if(isset($this->_closures[$name])){
+					$result = $closure();
+					$this->datapool[$name] = $result;
+					return $result;
+				}
+				return $closure();
+			}
 			return $this->datapool[$name];
 		}
 		
@@ -1735,7 +1751,8 @@ foreach($tmparr as $key=>$subval)
  *
  * @param $class_name Имя класса
  */
-function __autoload($class_name) {
+ 
+ spl_autoload_register(function  ($class_name) {
 
 	$class_name = ltrim($class_name, '\\');
     $fileName  = '';
@@ -1746,12 +1763,14 @@ function __autoload($class_name) {
         $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
     $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
-	$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
+	//$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
 	$lover_class_name=strtolower($class_name);
 	if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. d()->php_files_list[$lover_class_name.'_class'])){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.d()->php_files_list[$lover_class_name.'_class'];
-	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.($fileName))){
-		require $_SERVER['DOCUMENT_ROOT'].'/'.$fileName;
+	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.('vendors'.DIRECTORY_SEPARATOR.$fileName))){
+		require $_SERVER['DOCUMENT_ROOT'].'/'.'vendors'.DIRECTORY_SEPARATOR.$fileName;
+	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/cms/'.('vendor'.DIRECTORY_SEPARATOR.$fileName))){
+		require $_SERVER['DOCUMENT_ROOT'].'/cms/'.'vendor'.DIRECTORY_SEPARATOR.$fileName;
 	}else{
 		if(substr(strtolower($class_name),-10)!='controller'){
 			//Если совсем ничего не найдено, попытка использовать ActiveRecord.
@@ -1759,7 +1778,8 @@ function __autoload($class_name) {
 		}
 	}
 
-}
+});
+
 /**
 * Функция, которая ничего не делает.
 */
