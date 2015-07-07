@@ -339,7 +339,7 @@ foreach($tmparr as $key=>$subval)
 		$this->template_replacements[]='';
 
 		// @ print 2+2;
-		$this->template_patterns[]='#^\s*@((?!import|page|namespace|charset|media|font-face|keyframes|region|supports|document).+)$#mui';
+		$this->template_patterns[]='#^\s*@((?!import|page|namespace|charset|media|font-face|keyframes|-webkit|-moz-|-ms-|-o-|region|supports|document).+)$#mui';
 		$this->template_replacements[]='<?php $1; ?>';
 
 		
@@ -389,8 +389,8 @@ foreach($tmparr as $key=>$subval)
 		$this->template_replacements[]= '<'.'?php print $doit->call("$1", array(d()->$2));  ?'.'>';
 
 		// {{helper 'parame','param2'=>'any'}}
-		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
-		$this->template_replacements[]='<'.'?php print $doit->call("$1",array(array($2))); ?'.'>';
+	##	$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/';
+	##	$this->template_replacements[]='<'.'?php print $doit->call("$1",array(array($2))); ?'.'>';
 
 		// <@helper 'parame' param2 = 'any'>
 		$this->template_patterns[]='/<@([#a-zA-Z0-9_]+)\s+(.*?)>/';
@@ -426,8 +426,8 @@ foreach($tmparr as $key=>$subval)
         $this->template_replacements[]='<'.'?php }  ?'.'>';
 
         // {title}
-		$this->template_patterns[]='/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/';
-		$this->template_replacements[]='<'.'?php print  $doit->$1; ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/';
+	##	$this->template_replacements[]='<'.'?php print  $doit->$1; ?'.'>';
 
 		// {:title}
 		$this->template_patterns[]='/\{:([a-zA-Z0-9\._]+)\}/';
@@ -446,8 +446,8 @@ foreach($tmparr as $key=>$subval)
 //		$this->template_replacements[]='<'.'?php if((is_array($doit->$1) && $doit->$1[\'$2\']) || $doit->$1->$2) { ?'.'>';
 
 		// {page.title}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($doit->$1)) {  print  $doit->$1[\'$2\']; }else{ print  $doit->$1->$2; } ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}/';
+	##	$this->template_replacements[]='<'.'?php if(is_array($doit->$1)) {  print  $doit->$1[\'$2\']; }else{ print  $doit->$1->$2; } ?'.'>';
 
 		//DEPRECATED
 		// {page.title:}
@@ -467,21 +467,21 @@ foreach($tmparr as $key=>$subval)
 //		$this->template_replacements[]='<'.'?php } ?'.'>';
 
 		// {title|h}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $doit->$2($doit->$1); ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
+	##	$this->template_replacements[]='<'.'?php print  $doit->$2($doit->$1); ?'.'>';
 
 
 		// {{.image|preview 'parame','param2'=>'any'}}
-		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\|([#a-zA-Z0-9_]+)\s+(.*?)\}/';
-		$this->template_replacements[]='<'.'?php print $doit->call("$2",array(array($doit->this[\'$1\'], $3))); ?'.'>';
+	##	$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\|([#a-zA-Z0-9_]+)\s+(.*?)\}/';
+	##	$this->template_replacements[]='<'.'?php print $doit->call("$2",array(array($doit->this[\'$1\'], $3))); ?'.'>';
 
 		// {{image|preview 'parame','param2'=>'any'}}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([#a-zA-Z0-9_]+)\s+(.*?)\}/';
-		$this->template_replacements[]='<'.'?php print $doit->call("$2",array(array($doit->$1, $3))); ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\|([#a-zA-Z0-9_]+)\s+(.*?)\}/';
+	##	$this->template_replacements[]='<'.'?php print $doit->call("$2",array(array($doit->$1, $3))); ?'.'>';
 
 		// {{news.image|preview 'parame','param2'=>'any'}}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([#a-zA-Z0-9_]+)\s+(.*?)\}/';
-		$this->template_replacements[]='<'.'?php print $doit->call("$3",array(array($doit->$1[\'$2\'], $4))); ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\|([#a-zA-Z0-9_]+)\s+(.*?)\}/';
+	##	$this->template_replacements[]='<'.'?php print $doit->call("$3",array(array($doit->$1[\'$2\'], $4))); ?'.'>';
 
 
 		// {"userlist"|t}
@@ -493,20 +493,20 @@ foreach($tmparr as $key=>$subval)
 		$this->template_replacements[]='<'.'?php if(is_array($doit->$1)) {  print  $doit->$3($doit->$1[\'$2\']); }else{ print  $doit->$3($doit->$1->$2); } ?'.'>';
 
 		// {page.user.title}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3; ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
+	##	$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3; ?'.'>';
 
 		// {page.user.title|h}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print $doit->$4( $doit->$1->$2->$3); ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
+	##	$this->template_replacements[]='<'.'?php print $doit->$4( $doit->$1->$2->$3); ?'.'>';
 
 		// {page.parent.user.title}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3->$4; ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
+	##	$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3->$4; ?'.'>';
 
 		// {page.parent.user.avatar.url}
-		$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3->$4->$5; ?'.'>';
+	##	$this->template_patterns[]='/\{([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+).([a-zA-Z0-9_]+)\}/';
+	##	$this->template_replacements[]='<'.'?php print  $doit->$1->$2->$3->$4->$5; ?'.'>';
 
 
 
@@ -1530,7 +1530,95 @@ foreach($tmparr as $key=>$subval)
 /* ================================================================================= */
 	function shablonize($_str)
 	{	
-		return  preg_replace($this->template_patterns,$this->template_replacements,str_replace(array("\r\n","\r"),array("\n","\n"),$_str));	
+		
+	
+		$_str   = preg_replace($this->template_patterns,$this->template_replacements,str_replace(array("\r\n","\r"),array("\n","\n"),$_str));	
+		$_str = preg_replace('#{\.(.*?)}#','{this.$1}',$_str);
+		$_str = preg_replace_callback( "#\{((?:[a-z0-9_]+\.)*[a-z0-9_]+)}#mui", function($matches){
+			d()->matches = ($matches);
+			$string = $matches[1]; //user.comments.title
+			$substrings = explode('.',$string);
+			$first = array_shift($substrings);
+			
+			$result = '<?php print $doit->'.$first . implode('',array_map(function($str){
+				return "->".$str."";
+			},$substrings)) . '; ?>';   //$user ['comments']  ['title']
+			return $result;
+		}, $_str);
+			
+		
+		$_str = preg_replace_callback( "#\{((?:[a-z0-9_]+\.)*[a-z0-9_]+)((?:\|[a-z0-9_]+)+)}#mui", function($matches){
+			d()->matches = ($matches);
+			$string = $matches[1]; //user.comments.title
+ 
+			$substrings = explode('.',$string);
+			$first = array_shift($substrings);
+			
+			$result = '  $doit->'.$first . implode('',array_map(function($str){
+				return "->".$str."";
+			},$substrings)) . ' ';   //$user ['comments']  ['title']
+			
+			$functions = $matches[2]; //|h|title|htmlspecialchars
+			$substrings = (explode('|',$functions));
+			array_shift($substrings);
+			$result = '<?php print  ' . array_reduce($substrings, function($all, $item){
+				return '$doit->'.$item.'('. $all .')';
+			}, $result) .  ' ; ?>'; 
+			
+			return $result;
+		}, $_str);
+		
+		$_str = preg_replace_callback( "#\{((?:[a-z0-9_]+\.)*[a-z0-9_]+)((?:\|.*?)+)}#mui", function($matches){
+			d()->matches = ($matches);
+			$string = $matches[1]; //user.comments.title
+ 
+			$substrings = explode('.',$string);
+			$first = array_shift($substrings);
+			
+			$result = '  $doit->'.$first . implode('',array_map(function($str){
+				return "->".$str."";
+			},$substrings)) . ' ';   //$user ['comments']  ['title']
+			
+			$functions = $matches[2]; //|h|title|htmlspecialchars
+			$substrings = (explode('|',$functions));
+			array_shift($substrings);
+			$result = '<?php print  ' . array_reduce($substrings, function($all, $item){
+			
+				preg_match('#([a-z0-9_]+)(\s+.*)?#',$item,$m);
+				if(is_null($m[2])){
+					return '$doit->'.$m[1].'('. $all .')';
+				}else{
+				
+					$attr_params = $m[2]; //'50', '100' '200' user="10"   ===>   '50', '100', '200', 'user'=>"10"
+					
+					$attr_params = preg_replace('#\s*=\s*\\\'(.*?)\\\'#',' => \'$1\' ',$attr_params);
+					$attr_params = preg_replace('#\s*=\s*\\"(.*?)\\"#',' => "$1" ',$attr_params);
+					$attr_params = preg_replace('#([\s\$a-zA-Z0-9\\"\\\']+)=([\s\$a-zA-Z0-9\\"\\\']+)#','$1=>$2',$attr_params);
+					$attr_params = preg_replace('#\s+([a-z0-9_]+?)\s*=>#',' \'$1\' => ',$attr_params);
+					return '$doit->'.$m[1].'(array('. $all .', '. $attr_params .'))';
+				}
+				
+			}, $result) .  ' ; ?>'; 
+			
+			return $result;
+		}, $_str);
+		
+
+		$_str = preg_replace_callback( "/{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/mui", function($matches){
+			//file_put_contents('1.txt',json_encode($matches));
+			$attr_params = ' '.$matches[2];
+			$attr_params = preg_replace('#\s*=\s*\\\'(.*?)\\\'#',' => \'$1\' ',$attr_params);
+			$attr_params = preg_replace('#\s*=\s*\\"(.*?)\\"#',' => "$1" ',$attr_params);
+			$attr_params = preg_replace('#([\s\$a-zA-Z0-9\\"\\\']+)=([\s\$a-zA-Z0-9\\"\\\']+)#','$1=>$2',$attr_params);
+			$attr_params = preg_replace('#\s+([a-z0-9_]+?)\s*=>#',' \'$1\' => ',$attr_params);
+			return '<?php print $doit->call("' .$matches[1] . '",array(array('.$attr_params.')));?>';
+		
+		}, $_str);
+		
+		
+		
+		return $_str;
+		
 	}
 
 	/**
