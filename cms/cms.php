@@ -562,7 +562,7 @@ foreach($tmparr as $key=>$subval)
 		$_files=array();
 		//сначала инициализируются файлы из ./cms, затем из ./app
 		$_work_folders = array('cms','app');
-		
+		$ignore_subfolders = array('.','..','internal','external','fields','vendor');
 		define('SERVER_NAME',preg_replace('/^www./i','',$_SERVER['SERVER_NAME']));
 		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/sites/'.SERVER_NAME)){
 			$_work_folders[]='sites/'.SERVER_NAME;
@@ -577,18 +577,26 @@ foreach($tmparr as $key=>$subval)
 		if(defined('DISABLED_MODULES')){
 			$disabled_modules=explode(',',DISABLED_MODULES);
 		}
+		
+		$simple_folders = array();
+		
 		foreach($_work_folders as $dirname) { 
 			$_files[$dirname]['/']=array();
 			$_handle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname);
 
 			while (false !== ($_file = readdir($_handle))) {
-				 if(substr($_file,0,4)=='mod_' && !in_array(substr($_file,4), $disabled_modules)) {
-					$_subhandle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname.'/'.$_file);
-					$_files[$dirname]['/'.$_file.'/']=array();
-					while (false !== ($_subfile = readdir($_subhandle))) {
-						$_files[$dirname]['/'.$_file.'/'][]=$_subfile;
+				 if(substr($_file,0,4)=='mod_') {
+					if(!in_array(substr($_file,4), $disabled_modules)){
+						$_subhandle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname.'/'.$_file);
+						$_files[$dirname]['/'.$_file.'/']=array();
+						while (false !== ($_subfile = readdir($_subhandle))) {
+							$_files[$dirname]['/'.$_file.'/'][]=$_subfile;
+						}
+						closedir($_subhandle);
 					}
-					closedir($_subhandle);
+				 } elseif (is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname .'/'. $_file) && !in_array($_file, $ignore_subfolders) ){
+					 //Модули 2.0, список директорий
+					 $simple_folders[] = $_file;
 				 } else {
 					$_files[$dirname]['/'][]=$_file;
 				 }
@@ -600,6 +608,7 @@ foreach($tmparr as $key=>$subval)
 		$for_ini=array();
 		$ini_files_dirs=array();
 		$ini_files_local=array();
+		
 		foreach($_work_folders as $dirname) {
 
 			foreach($_files[$dirname] as $_dir => $_subfiles) {
@@ -671,6 +680,11 @@ foreach($tmparr as $key=>$subval)
 			
 		}
 
+		foreach($simple_folders as $folder){
+			//создаём план работы над директориями и их кодом
+			//PHP файлы инклудим
+			//HTML файлы запоминаем
+		}
 
 		foreach($this->for_ini as $value) {
 			$this->load_and_parse_ini_file ($value);
@@ -722,6 +736,51 @@ foreach($tmparr as $key=>$subval)
 		 
 	}
 
+	
+	
+	/* VERSION 2.0 */
+	public $routes=array();
+	function route($adress, $closure){
+		$route = new Route();
+		$route->map($adress, $closure);
+		$this->routes[]=$route;
+		return $route;
+	}
+	
+	function dispatch($level='content'){
+		$accepted_routes = array();
+		$url=strtok($_SERVER["REQUEST_URI"],'?');
+		foreach($this->routes as $route){
+			if($route->check($url)){
+				$accepted_routes[]=$route;
+			}
+		}
+		if(count($accepted_routes)){
+			return $accepted_routes[0]->dispatch($url);
+		}
+		return false;
+	}
+	/*
+		Функция, загружающая контент страницы
+	*/
+	public function content()
+	{
+		//1. (пропускаем) ищем функции (роуты, которые мы можем выполнить, и выполняем их)
+		//3. Передаём дальше в content
+		//d()->router->dispatch();
+		$result = d()->dispatch();
+		if($result === false){
+			return d()->call('content');
+		}
+		return $result;
+		
+		
+	}
+	/* END VERSION 2.0 */
+	
+	
+
+	
 	/**
 	 * Проверяет данные, полученные с формы, учитывая опции валидатора и пользовательские функции. Также проверяет факт
 	 * получения $_POST как такового, например, если обязательных данных нет. В случае ошибки возвращает false.
