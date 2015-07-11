@@ -255,6 +255,7 @@ class doitClass
 	{
 		self::$instance = $this;
 		
+		define ('ROOT',substr( dirname(__FILE__) ,0,-4));
 		
 		
 		//тут описана работа с базой данных

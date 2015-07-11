@@ -1123,3 +1123,8 @@ function transliterate_url($string)
 	return $str;
     
 }
+
+
+d()->singleton('view',function(){
+	return new View;
+});

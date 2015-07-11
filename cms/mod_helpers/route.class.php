@@ -47,7 +47,16 @@ class Route
 		ob_end_clean();
 		if (!is_null($_executionResult)) {
 			$_end = $_executionResult;
+		}else{
+			//null; ob_start ничего не дал, return в контроллере не было
+			//начинаем рулить шаблон
+			if($_end == ''){
+				$_end = d()->view;
+		
+			}
 		}
+		
+		
 		return $_end;
 	}
 	
