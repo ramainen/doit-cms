@@ -250,6 +250,7 @@ class doitClass
 	private $validate_disabled=false;
 	public $langlink='';
 	protected $_closures = array();
+	public static $autoload_folders = array();
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -681,6 +682,8 @@ foreach($tmparr as $key=>$subval)
 			
 		}
 		$autoload_folders = array();
+		
+		
 		foreach($simple_folders as $folder){
 			
 			
@@ -709,10 +712,39 @@ foreach($tmparr as $key=>$subval)
 			$this->load_and_parse_ini_file ($value);
 		}
 		
+		doitClass::$autoload_folders = array_keys($autoload_folders);
+		spl_autoload_register(function  ($class_name) {
+
+			$class_name = ltrim($class_name, '\\');
+			$fileName  = '';
+			$namespace = '';
+			if ($lastNsPos = strripos($class_name, '\\')) {
+				$namespace = substr($class_name, 0, $lastNsPos);
+				$class_name = substr($class_name, $lastNsPos + 1);
+				$fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+			}
+			$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
+			//$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
+			$lover_class_name=strtolower($class_name);
+			
+			foreach (doitClass::$autoload_folders as $path){
+				 
+				
+				if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName  )){
+					require $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName ;
+					return;
+				}	
+				
+			}
+			 
+
+		},true,true);
+		
+		
 		foreach($this->for_include as $value) {
 			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
 		}
-
+		
 		//Отрабатывает роутинг
 		if($this->is_using_route_all){
 
