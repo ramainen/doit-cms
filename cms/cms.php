@@ -597,7 +597,7 @@ foreach($tmparr as $key=>$subval)
 					}
 				 } elseif (is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname .'/'. $_file) && !in_array($_file, $ignore_subfolders) ){
 					 //Модули 2.0, список директорий
-					 $simple_folders[] = $_file;
+					 $simple_folders[] = $dirname.'/'.$_file;
 				 } else {
 					$_files[$dirname]['/'][]=$_file;
 				 }
@@ -680,13 +680,31 @@ foreach($tmparr as $key=>$subval)
 			
 			
 		}
-
+		$autoload_folders = array();
 		foreach($simple_folders as $folder){
+			
+			
+			$_handle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$folder);
+
+			while (false !== ($_file = readdir($_handle))) {
+				//ищем php файлы
+				
+				if (strrchr($_file, '.')=='.php') {
+					$fistrsim = $_file{0};
+					if($fistrsim>='A' && $fistrsim<='Z'){
+						//это класс
+						$autoload_folders[$folder]=true;
+					}else{
+						$this->for_include[$folder.'/'.$_file] = $folder.'/'.$_file;
+					}
+				}
+				
+			}
 			//создаём план работы над директориями и их кодом
 			//PHP файлы инклудим
 			//HTML файлы запоминаем
 		}
-
+		
 		foreach($this->for_ini as $value) {
 			$this->load_and_parse_ini_file ($value);
 		}
