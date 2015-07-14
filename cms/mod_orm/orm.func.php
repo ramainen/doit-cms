@@ -2007,6 +2007,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 					$second_table_column = ActiveRecord::plural_to_one(strtolower($name)).'_id'; //user_id
 					if(isset($many_to_many_table_columns[$first_table_column]) && isset($many_to_many_table_columns[$second_table_column])){
 						//Таблица users_to_groups существует, и нужные столбцы есть в наличии
+						
+						$cache_ids = activerecord_factory_from_table($many_to_many_table)->select($second_table_column)->where("{$first_table_column} =  ?",$this->_data[$this->_cursor]['id'])->fast_all_of($second_table_column);
+						
+						
+						return $_tmpael->where("`id` IN (?)",$cache_ids);
+						//Медленный вариант уходит в Лету
 						return $_tmpael->where("`id` IN (SELECT {$second_table_column} FROM ".et($many_to_many_table)." WHERE {$first_table_column} =  ?)",$this->_data[$this->_cursor]['id']);								
 					}
 				}
