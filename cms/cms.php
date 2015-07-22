@@ -1701,8 +1701,8 @@ foreach($tmparr as $key=>$subval)
 				
 					$attr_params = $m[2]; //'50', '100' '200' user="10"   ===>   '50', '100', '200', 'user'=>"10"
 					
-					$attr_params = preg_replace('#\s*=\s*\\\'(.*?)\\\'#',' => \'$1\' ',$attr_params);
-					$attr_params = preg_replace('#\s*=\s*\\"(.*?)\\"#',' => "$1" ',$attr_params);
+					$attr_params = preg_replace('#\s+=\s+\\\'(.*?)\\\'#',' => \'$1\' ',$attr_params);
+					$attr_params = preg_replace('#\s+=\s+\\"(.*?)\\"#',' => "$1" ',$attr_params);
 					$attr_params = preg_replace('#([\s\$a-zA-Z0-9\\"\\\']+)=([\s\$a-zA-Z0-9\\"\\\']+)#','$1=>$2',$attr_params);
 					$attr_params = preg_replace('#\s+([a-z0-9_]+?)\s*=>#',' \'$1\' => ',$attr_params);
 					return '$doit->'.$m[1].'(array('. $all .', '. $attr_params .'))';
@@ -1717,8 +1717,8 @@ foreach($tmparr as $key=>$subval)
 		$_str = preg_replace_callback( "/{{([#a-zA-Z0-9_]+)\s+(.*?)\}}/mui", function($matches){
 			//file_put_contents('1.txt',json_encode($matches));
 			$attr_params = ' '.$matches[2];
-			$attr_params = preg_replace('#\s*=\s*\\\'(.*?)\\\'#',' => \'$1\' ',$attr_params);
-			$attr_params = preg_replace('#\s*=\s*\\"(.*?)\\"#',' => "$1" ',$attr_params);
+			$attr_params = preg_replace('#\s+=\s+\\\'(.*?)\\\'#',' => \'$1\' ',$attr_params);
+			$attr_params = preg_replace('#\s+=\s+\\"(.*?)\\"#',' => "$1" ',$attr_params);
 			$attr_params = preg_replace('#([\s\$a-zA-Z0-9\\"\\\']+)=([\s\$a-zA-Z0-9\\"\\\']+)#','$1=>$2',$attr_params);
 			$attr_params = preg_replace('#\s+([a-z0-9_]+?)\s*=>#',' \'$1\' => ',$attr_params);
 			return '<?php print $doit->call("' .$matches[1] . '",array(array('.$attr_params.')));?>';
