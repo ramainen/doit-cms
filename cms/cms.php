@@ -1644,7 +1644,7 @@ foreach($tmparr as $key=>$subval)
 	
 		$_str   = preg_replace($this->template_patterns,$this->template_replacements,str_replace(array("\r\n","\r"),array("\n","\n"),$_str));	
 		$_str = preg_replace('#{\.(.*?)}#','{this.$1}',$_str);
-		$_str = preg_replace_callback( "#\{((?:[a-z0-9_]+\.)*[a-z0-9_]+)}#mui", function($matches){
+		$_str = preg_replace_callback( "#\{((?:[a-zA-Z_]+[a-zA-Z0-9_]*?\.)*[a-zA-Z_]+[a-z0-9_]*?)}#mui", function($matches){
 			d()->matches = ($matches);
 			$string = $matches[1]; //user.comments.title
 			$substrings = explode('.',$string);
