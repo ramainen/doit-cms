@@ -447,7 +447,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$param=$args[$i];
 			if(is_array($param)){
 				if(count($param)==0){
-					$param = ' false ';
+					$param = ' null ';
 				}else{
 					if(is_object($param)){
 						$newparam=array();
