@@ -9,6 +9,11 @@ class View
 		return $this;
 	}
 	
+	function partial($path){
+		$this->chosen = $path;
+		return $this;
+	}
+	
 	function __toString(){
 		
 		$url=strtok($_SERVER["REQUEST_URI"],'?');

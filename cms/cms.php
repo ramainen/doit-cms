@@ -381,6 +381,8 @@ foreach($tmparr as $key=>$subval)
 		$this->template_replacements[]='{{test}}>';
 		*/
 
+		$this->template_patterns[]='#\{{([\\\\a-zA-Z0-9_/]+\.html)}}#';
+		$this->template_replacements[]='<'.'?php print $doit->view->partial("$1"); ?'.'>';
 
 		// {{content}}
 		$this->template_patterns[]='/\{{([#a-zA-Z0-9_]+)\}}/';
