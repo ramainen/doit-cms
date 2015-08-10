@@ -34,7 +34,7 @@ class Ajax extends UniversalSingletoneHelper
 		
 		if(isset(d()->datapool['inputs_with_errors']) && count(d()->datapool['inputs_with_errors'])!=0 && isset($_POST['_element'])){
 			$noticed_inputs = array_values(d()->datapool['inputs_with_errors']);
-			$this->response.=  "$('.error').removeClass('error');\n";
+			$this->response.=  "$('.error, .has-error').removeClass('error').removeClass('has-error');\n";
 			if ($_POST['_action'] == htmlspecialchars($_POST['_action'])){
 				//$this->response.=  "var _tmp_form = $('input[value=".$_POST['_action']."]').parents('form');\n";
 				$this->response.=  "var _tmp_form = _current_form[0];\n";
@@ -50,7 +50,7 @@ class Ajax extends UniversalSingletoneHelper
 				}else{
 					$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";
 				}
-				$this->response .=  '$('.$element_name.', _tmp_form).parent().parent().addClass("error");'."\n";
+				$this->response .=  '$('.$element_name.', _tmp_form).parent().parent().addClass("error").addClass("has-error");'."\n";
 				if(isset($_POST['_is_simple_names']) && $_POST['_is_simple_names']=='1'){
 					$first_element[] = "*[name=\"".$input."\"]" ;
 				}else{
@@ -61,7 +61,6 @@ class Ajax extends UniversalSingletoneHelper
 			if ($first_element != ''){
 				$this->response .=  "$($('".implode(', ',$first_element)."',  _tmp_form)[0]).focus();"."\n";
 			}
-			
 		}
 		return $this->response;
 	}
