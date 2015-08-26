@@ -1,7 +1,9 @@
 <?php
 
 d()->singleton('mail',  function(){
-	return new DoitMessage();
+	$message = new DoitMessage();
+	$message->setFrom (array($_SERVER['SERVER_ADMIN'] => $_SERVER['SERVER_ADMIN']));
+	return $message;
 });
 
 /*

@@ -7,14 +7,14 @@ class DoitMessage extends \Swift_Message
 	
 	function setTransport($transport=false){
 		if($transport===false){
-			$transport = \Swift_MailTransport::newInstance();
+			$transport = \Swift_MailTransport::newInstance(null);
 		}
 		$this->current_transport = $transport;
 	}
 	
 	function send(){
 		if($this->current_transport===false){
-			$this->current_transport = \Swift_MailTransport::newInstance();
+			$this->current_transport = \Swift_MailTransport::newInstance(null);
 		}
 		return (\Swift_Mailer::newInstance($this->current_transport)->send($this));
 		
