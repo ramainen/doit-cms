@@ -8,6 +8,11 @@ ul#admin_main_user_menu, ul#admin_main_user_menu li, ul#admin_main_user_menu a, 
 	border:none;
 	
 }
+ul#admin_main_user_menu:before, ul#admin_main_user_menu li:before, ul#admin_main_user_menu a:before, ul#admin_main_user_menu ul:before,
+ul#admin_main_user_menu:after, ul#admin_main_user_menu li:after, ul#admin_main_user_menu a:after, ul#admin_main_user_menu ul:after
+{
+	content: none;
+}
 ul#admin_main_user_menu ul li {
     list-style:none;
 
