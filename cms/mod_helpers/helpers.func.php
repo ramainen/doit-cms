@@ -1125,6 +1125,26 @@ function transliterate_url($string)
 }
 
 
+function url_to_real($url) {
+ $url = "/$url";
+ if (substr($url, -6) === '/index') {
+  $url = substr($url, 0, -5);
+ }
+ return $url;
+}
+
+function url_to_system($url) {
+ if (substr($url, -1) === '/') {
+  $url .= 'index';
+ }
+ if (substr($url, 0, 1) === '/') {
+  $url = substr($url, 1);
+ }
+ return $url;
+}
+
+
+
 d()->singleton('view',function(){
 	return new View;
 });
