@@ -83,7 +83,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	private $_known_columns=array();
 	private $_count_rows = 0;
 	private $_future_data=array();
-	private $_cursor=0;
+	public $_cursor=0;
 	public $current_page=0;
 	public $per_page=10;
 	private $_is_sliced=false;
@@ -1583,21 +1583,22 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}else{
 			$key=0;
 		}
-		
-		if ($this->_options['queryready']==false) {
-			$this->fetch_data_now();
-		}
-		if($this->_get_by_id_cache===false){
-			$this->_get_by_id_cache=array();
-			foreach ($this->_data as $key=>$value){
-				$this->_get_by_id_cache[$value['id']]=$key;
+		if (isset($id)) {
+			if ($this->_options['queryready']==false) {
+				$this->fetch_data_now();
 			}
-			if(isset($this->_get_by_id_cache[$id])){
-				return $this->_get_by_id_cache[$id];
-			}
-		}else{
-			if(isset($this->_get_by_id_cache[$id])){
-				return $this->_get_by_id_cache[$id];
+			if($this->_get_by_id_cache===false){
+				$this->_get_by_id_cache=array();
+				foreach ($this->_data as $key=>$value){
+					$this->_get_by_id_cache[$value['id']]=$key;
+				}
+				if(isset($this->_get_by_id_cache[$id])){
+					return $this->_get_by_id_cache[$id];
+				}
+			}else{
+				if(isset($this->_get_by_id_cache[$id])){
+					return $this->_get_by_id_cache[$id];
+				}
 			}
 		}
 		return $key;
@@ -1914,7 +1915,9 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 						/* кеш собранных массивов */
 						$ids_array=array();
 						foreach($this->_data as $key=>$value){
-							$ids_array[$value[$name.'_id']]=true;
+							if (!empty($value[$name.'_id'])){
+								$ids_array[$value[$name.'_id']]=true;
+							}
 						}
 						$ids_array=array_keys($ids_array);
 						$this->_objects_cache[$name] =  activerecord_factory_from_table(ActiveRecord::one_to_plural($name))->order('')->where(' '.DB_FIELD_DEL . id . DB_FIELD_DEL. ' IN (?)',$ids_array);
