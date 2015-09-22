@@ -545,6 +545,15 @@ class HelpersTest extends Test
 		$this->assertEquals(d()->Date('01 сентября 2014 23:12:12')->to_mysql(), '2014-09-01 23:12:12');
 		$this->assertEquals(d()->Date('02 сентября 2014 23:12')->to_mysql(), '2014-09-02 23:12:00');
 		$this->assertEquals(d()->Date('24 янв 99 23:12')->to_mysql(), '1999-01-24 23:12:00');
+		
+		$this->assertEquals(d()->Date('24 янв 99 23:12')->to_mysql(), '1999-01-24 23:12:00');
+		$this->assertEquals(d()->Date('24 янв 99 3:12')->to_mysql(), '1999-01-24 03:12:00');
+		$this->assertEquals(d()->Date('02 сентября 2014 1:1')->to_mysql(), '2014-09-02 01:01:00');
+		$this->assertEquals(d()->Date('02 сентября 2014 1:1:1')->to_mysql(), '2014-09-02 01:01:01');
+		$this->assertEquals(d()->Date('1 2 2003 1:12:1')->to_mysql(), '2003-02-01 01:12:01');
+		
+		
+		
 		$this->assertEquals(d()->Date('24 янв 99 каравай хлебца')->to_mysql(), '1999-01-24 12:00:00');
 		
 		

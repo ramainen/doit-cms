@@ -170,12 +170,12 @@ class Date extends UniversalHelper
 		$h=12;
 		$m=0;
 		$s=0;
-		if(preg_match('#.*?\s(\d\d):(\d\d):(\d\d)$#',$this->date,$time_matches)){
+		if(preg_match('#.*?\s(\d\d?):(\d\d?):(\d\d?)$#',$this->date,$time_matches)){
 			$h=$time_matches[1];
 			$m=$time_matches[2];
 			$s=$time_matches[3];
 		}
-		if(preg_match('#.*?\s(\d\d):(\d\d)$#',$this->date,$time_matches)){
+		if(preg_match('#.*?\s(\d\d?):(\d\d?)$#',$this->date,$time_matches)){
 			$h=$time_matches[1];
 			$m=$time_matches[2];
 			$s=0;
