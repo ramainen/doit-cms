@@ -1143,6 +1143,16 @@ function url_to_system($url) {
  return $url;
 }
 
+function times($array){
+	if (is_array($array) && isset($array[0]) && isset($array[1])){
+		$res = '';
+		for ($i=1;$i<=(int)$array[0];$i++){
+			$res .= $array[1];
+		}
+		return $res;
+	}
+	return '';
+}
 
 
 d()->singleton('view',function(){
