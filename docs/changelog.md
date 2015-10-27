@@ -1,6 +1,24 @@
 История версий
 ==============
 
+2.1.5
+-----
+
+Рекурсивный итератор <tree> для шаблонизатора.
+
+	<?php  d()->this = d()->Region->where('region_id is null') ;  ?>
+	<select name="region_id">
+		<option value="">-не указано-</option>
+		<tree regions>
+			<option value="{.id}">
+				{level|times "—"} {this.title}
+			</option>
+		</tree>	
+	</select>
+
+
+*27.10.2015*
+
 2.1.4
 -----
 

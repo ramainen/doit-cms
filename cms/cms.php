@@ -345,6 +345,57 @@ foreach($tmparr as $key=>$subval)
 		$this->template_replacements[]='<?php $1; ?>';
 
 		
+		$this->template_patterns[]='/<tree\s+(.*)>/';
+		$this->template_replacements[]='<?php 
+		$passed_tree_elements = array();
+		$child_branch_name = "$1";
+		$call_stack = array();
+		$last_next = true;
+		d()->level = 0;
+		while (true) {
+			if(is_object(d()->this)){
+				$is_valid = d()->this->valid();
+			}else{
+				break;
+			}
+			if($is_valid){
+				if(isset($passed_tree_elements[d()->this["id"]])){
+					break;
+				}
+				$passed_tree_elements[d()->this["id"]]=true;
+			?>';
+
+				
+		$this->template_patterns[]='/<\/tree>/' ;
+		$this->template_replacements[]='<?php 
+											
+			 }
+			
+			if( isset( d()->this[$child_branch_name]) && count(d()->this[$child_branch_name])>0){
+				$call_stack[] = d()->this;
+				d()->this = d()->this[$child_branch_name];
+				d()->level++;
+				continue;
+			}else{
+				if(is_object(d()->this)){
+					if(!d()->this->valid()){
+						if( count($call_stack)>0){
+							d()->this = array_pop($call_stack);
+							d()->level--;
+							d()->this->next();
+							continue;
+						}else {
+							break;
+						}
+					}else{
+						d()->this->next();
+					}
+					continue 1;
+				}else{
+ 					break;
+				}
+			}
+		} ?>';
 				
     	
 		
