@@ -1,6 +1,4 @@
 <?php
-
-
 /*
 TODO: сервер Массовая отправка SocketIO->emit(array(user1,user2,user3))
 TODO: сервер Поддержка групп (SocketIO->register_group('group_id'[, user_id])
@@ -15,7 +13,11 @@ class SocketIO extends UniversalSingletoneHelper
 	function __construct()
 	{
 		//Установка значений по умолчанию
-		$this->url =  'http://cloud.doit-cms.ru'; // Облачный сервер по умолчанию
+		
+		if(!defined('SOCKET_IO_SERVER')){
+			define('SOCKET_IO_SERVER','http://cloud.doit-cms.ru');
+		}
+		$this->url =  SOCKET_IO_SERVER; // Облачный сервер по умолчанию
 		$this->userid  = md5(session_id());
 	}
 	
