@@ -5,6 +5,7 @@ class View
 	protected $chosen=false;
 	
 	function render($path){
+		
 		$this->chosen = $path;
 		return $this;
 	}
@@ -15,19 +16,32 @@ class View
 	}
 	
 	function __toString(){
+		$trys = array();
 		
 		$url=strtok($_SERVER["REQUEST_URI"],'?');
 		$url = str_replace('..','',$url);//система безопасности =)
 		
 		if($this->chosen !== false){
+			
 			$shortfile = $this->chosen;
+			$trys[]  = $shortfile ;
+			if(is_file($tryfile))
+			{
+				return  $this->from_file($shortfile);
+			}
 			$this->chosen=false;
-			return  $this->from_file($shortfile);
+			
+			//Указанно явно варианта недостаточно
 		}
+		
+		//Если не указан явно заданный файл, то проводим автопоиск в соответствии с url-ом
 		
 		//Вариант первый - файл существует
 		$shortfile = $url.'.html';
 		$tryfile = ROOT . '/app'.$shortfile;
+		
+		$trys[] = '/app'.$shortfile;
+		
 		if( strpos($shortfile,'/_')===false && is_file($tryfile))
 		{
 			return  $this->from_file($shortfile);
@@ -37,6 +51,10 @@ class View
 			$try_url = substr($url, 0, -1 );
 			$shortfile = $try_url.'/index.html';
 			$tryfile = ROOT . '/app'.$shortfile;
+			
+			
+			$trys[] = '/app'.$shortfile;
+			
 			if(is_file($tryfile))
 			{
 				return  $this->from_file($shortfile);
@@ -47,14 +65,20 @@ class View
 		$try_url = substr($url, 0, strrpos($url, '/') );
 		$shortfile = $try_url.'/show.html';
 		$tryfile = ROOT . '/app'.$shortfile;
+		
+		$trys[] = '/app'.$shortfile;
+		
 		if(is_file($tryfile))
 		{
 			return  $this->from_file($shortfile);
-		}		
+		}
 		
+ 
+		return  print_error_message(' ','',$errfile ,'','Не удалось найти файл шаблона (проверялись: '.implode(', ',$trys).')' );
 	}
 	
 	function from_file($file){
+
 		$name = str_replace(array('/','.','-','\\'),array('_','_','_','_'),substr($file,1)).'_tpl';
 	//		function get_compiled_code($fragmentname)
 	
