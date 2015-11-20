@@ -1896,6 +1896,9 @@ foreach($tmparr as $key=>$subval)
 					$subject = $currentGroup . '.' . $subject;
 				}
 				$value=ltrim(substr($row,$delimeterPos+1));
+				if(substr($value,0,5) == 'json:'){
+					$value = json_decode(substr($value ,5),true);
+				}
 			}
 			if (strpos($subject,'.')===false) {
 				$res=array_merge_recursive ($res,array($subject=>$value));
