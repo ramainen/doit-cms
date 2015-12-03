@@ -25,10 +25,17 @@ class View
 			
 			$shortfile = $this->chosen;
 			$trys[]  = $shortfile ;
-			if(is_file($tryfile))
+			if(is_file($shortfile))
 			{
 				return  $this->from_file($shortfile);
 			}
+			
+			if(is_file(ROOT . '/app'.$shortfile))
+			{
+				return  $this->from_file($shortfile);
+			}
+			
+			
 			$this->chosen=false;
 			
 			//Указанно явно варианта недостаточно
@@ -74,7 +81,7 @@ class View
 		}
 		
  
-		return  print_error_message(' ','',$errfile ,'','Не удалось найти файл шаблона (проверялись: '.implode(', ',$trys).')' );
+		return  print_error_message(' ','',$errfile ,'','Не удалось найти файл шаблона (проверялись: '.implode(', ',$trys).')'  );
 	}
 	
 	function from_file($file){
