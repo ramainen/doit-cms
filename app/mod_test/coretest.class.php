@@ -44,9 +44,12 @@ class CoreTest extends Test
 	{
 	
 		//регрессионные тесты
-		$this->assertEquals(d()->shablonize('{test}'),'<?php print  $doit->test; ?>');
+		$this->assertEquals(d()->shablonize('{test}'),'<?php print $doit->test; ?>');
 		$this->assertEquals(d()->shablonize('{{test}}'),'<?php print $doit->call("test"); ?>');
-		$this->assertEquals(d()->shablonize('{{test "user"}}'),'<?php print $doit->call("test",array(array("user"))); ?>');
+		$this->assertEquals(d()->shablonize('{{test "user"}}'),'<?php print $doit->call("test",array(array( "user")));?>');
+		$this->assertEquals(d()->shablonize('{{edit "href"=> "/admin/edit/plugins/name?fields=textblock" }}'),'<?php print $doit->call("edit",array(array( "href"=> "/admin/edit/plugins/name?fields=textblock" )));?>');
+		 
+		
 		
 		/*
 		$this->assertEquals(d()->shablonize('{{test user admin les}}'),'<?php print $doit->call("test",array(array(user, admin,	 les))); ?>');

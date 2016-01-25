@@ -1,6 +1,19 @@
 История версий
 ==============
 
+2.2.1
+---
+
+Исправление умного автоподставлятеля символа "=>". Теперь конструкция 
+
+	{{edit "href"=> "/admin/edit/plugins/name?fields=textblock" }}
+
+не превращается в 
+
+	<?php print $doit->call("edit",array(array( "href"=> "/admin/edit/plugins/name?fields=>textblock" )));?>
+
+*25.01.2016*
+
 2.2
 ---
 
