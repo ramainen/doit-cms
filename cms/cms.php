@@ -1491,7 +1491,8 @@ foreach($tmparr as $key=>$subval)
 					$this->datapool[$name] = $result;
 					return $result;
 				}
-				return $closure();
+				$result = $closure();
+				return $result;
 			}
 			return $this->datapool[$name];
 		}
@@ -1499,7 +1500,8 @@ foreach($tmparr as $key=>$subval)
 		//$fistrsim =  ord(substr($name,0,1));
 		//if($fistrsim>64 && $fistrsim<91){
 		if(preg_match('/^[A-Z].+/', $name)) {
-			return new $name();
+			$result = new $name();
+			return $result;
 		}
 
 		//Проверка префиксов для модулей для модулей и расширений
@@ -2032,7 +2034,7 @@ foreach($tmparr as $key=>$subval)
     $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
 	//$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
 	$lover_class_name=strtolower($class_name);
-	if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. d()->php_files_list[$lover_class_name.'_class'])){
+	if(isset(d()->php_files_list[$lover_class_name.'_class']) && is_file($_SERVER['DOCUMENT_ROOT'].'/'. d()->php_files_list[$lover_class_name.'_class'])){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.d()->php_files_list[$lover_class_name.'_class'];
 	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.('vendors'.DIRECTORY_SEPARATOR.$fileName))){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.'vendors'.DIRECTORY_SEPARATOR.$fileName;
