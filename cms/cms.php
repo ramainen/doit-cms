@@ -1241,7 +1241,9 @@ foreach($tmparr as $key=>$subval)
 			//Тут вызываются предопределённые и пользовательские функции
 			ob_start('doit_ob_error_handler');
 			$been_controller=false;
-			if (function_exists($name)) {
+			if(isset($this->datapool[$name]) && is_object($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)) {
+				$_executionResult=call_user_func_array($this->datapool[$name], $arguments);
+			}elseif (function_exists($name)) {
 
 				//Подстановка аргументов из $this->_last_router_rule
 				//$this->_last_router_rule содержит активное правило роутера (например, "/users/")
