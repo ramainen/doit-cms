@@ -745,7 +745,7 @@ foreach($tmparr as $key=>$subval)
 			while (false !== ($_file = readdir($_handle))) {
 				//ищем php файлы
 				
-				if (strrchr($_file, '.')=='.php') {
+				if (strrchr($_file, '.')=='.php' || is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$folder.'/'.$_file)) {
 					$fistrsim = $_file{0};
 					if($fistrsim>='A' && $fistrsim<='Z'){
 						//это класс
