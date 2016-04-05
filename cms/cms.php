@@ -1241,7 +1241,7 @@ foreach($tmparr as $key=>$subval)
 			//Тут вызываются предопределённые и пользовательские функции
 			ob_start('doit_ob_error_handler');
 			$been_controller=false;
-			if(isset($this->datapool[$name]) && is_object($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)) {
+			if(isset($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)) {
 				$_executionResult=call_user_func_array($this->datapool[$name], $arguments);
 			}elseif (function_exists($name)) {
 
