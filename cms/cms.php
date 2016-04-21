@@ -2013,8 +2013,11 @@ foreach($tmparr as $key=>$subval)
 		return $result;
 	}
 }
+	if(file_exists('vendor/autoload.php')){
+		require_once ('vendor/autoload.php');	
+	}
 
-
+	require_once ('cms/vendor/autoload.php');
 /**
  * Автоматический создатель классов и загрузчик классов по спецификации PSR-0
  * Ищет файлы вида class_name.class.php, затем ищет классы в папке vendors по спецификации PSR-0.
@@ -2040,8 +2043,6 @@ foreach($tmparr as $key=>$subval)
 		require $_SERVER['DOCUMENT_ROOT'].'/'.d()->php_files_list[$lover_class_name.'_class'];
 	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.('vendors'.DIRECTORY_SEPARATOR.$fileName))){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.'vendors'.DIRECTORY_SEPARATOR.$fileName;
-	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/cms/'.('vendor'.DIRECTORY_SEPARATOR.$fileName))){
-		require $_SERVER['DOCUMENT_ROOT'].'/cms/'.'vendor'.DIRECTORY_SEPARATOR.$fileName;
 	}else{
 		if(substr(strtolower($class_name),-10)!='controller'){
 			//Если совсем ничего не найдено, попытка использовать ActiveRecord.

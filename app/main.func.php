@@ -7,6 +7,18 @@ function main()
 		header('Location: '.substr($_SERVER['REQUEST_URI'],0,-5));
 		exit;
 	}
+	
+	
+	d()->mail->setSubject('Письмо с сайта');
+	d()->mail->setBody('test', 'text/html');
+ 
+
+	d()->mail->setFrom(array('noreply@mailer.doit-cms.ru' => 'Система оповещения'));
+
+	d()->mail->setTo('ainu.sky@gmail.com');
+	d()->mail->send();
+	
+	
 	d()->content = d()->content();
 	print d()->render('main_tpl');
 }

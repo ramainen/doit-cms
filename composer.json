@@ -1,0 +1,12 @@
+{
+    "name": "ramainen/doit-cms",
+    "description": "Simple and fast framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Damir Fakhrutdinov",
+            "email": "ainu.sky@gmail.com"
+        }
+    ],
+    "require": {}
+}
