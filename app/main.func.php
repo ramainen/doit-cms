@@ -1,9 +1,5 @@
 <?php
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-
-
 function main()
 {
 
