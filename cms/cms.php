@@ -256,6 +256,15 @@ class doitClass
 	public $langlink='';
 	protected $_closures = array();
 	public static $autoload_folders = array();
+	public $current_route = false; //Последний сработавший роут
+
+	public $_current_include_directory = ''; //Путь, в которых лежат функции-кложуры
+	//Автопоиск путей для Кложур
+	public $_closure_current_view_path = false; //Пути, в которых искать вьюшки. Сюда пишутся пути, вызываемые фунциями
+	public $_closure_directories = array(); //Пути, в которых лежат функции-кложуры
+	//Автопоиск путей для роутов
+	public $_router_current_view_path = false; //Пути, в которых искать вьюшки. Сюда пишутся пути, вызываемые роутами
+	public $_router_directories = array(); //Пути, в которых лежат роуты
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -800,6 +809,8 @@ foreach($tmparr as $key=>$subval)
 		
 		
 		foreach($this->for_include as $value) {
+			
+			$this->_current_include_directory = dirname($_SERVER['DOCUMENT_ROOT'].'/'.$value);
 			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
 		}
 		
@@ -852,20 +863,44 @@ foreach($tmparr as $key=>$subval)
 	function route($adress, $closure){
 		$route = new Route();
 		$route->map($adress, $closure);
+		$route->setIncludeDirectory($this->_current_include_directory);
+		$this->routes[]=$route;
+		return $route;
+	}
+	
+	function post($adress, $closure){
+		$route = new Route();
+		$route->map($adress, $closure);
+		$route->method = array('POST');
+		$route->setIncludeDirectory($this->_current_include_directory);
+		$this->routes[]=$route;
+		return $route;
+	}
+	
+	function get($adress, $closure){
+		$route = new Route();
+		$route->map($adress, $closure);
+		$route->method = array('GET');
+		$route->setIncludeDirectory($this->_current_include_directory);
 		$this->routes[]=$route;
 		return $route;
 	}
 	
 	function dispatch($level='content'){
+ 
+		
 		$accepted_routes = array();
 		$url=strtok($_SERVER["REQUEST_URI"],'?');
 		foreach($this->routes as $route){
-			if($route->check($url)){
+			if($route->check($url,$_SERVER['REQUEST_METHOD'])){
 				$accepted_routes[]=$route;
 			}
 		}
 		if(count($accepted_routes)){
-			return $accepted_routes[0]->dispatch($url);
+			$this->current_route = $accepted_routes[0];
+			$result = $accepted_routes[0]->dispatch($url);
+			$this->current_route = false;
+			return $result;
 		}
 		return false;
 	}
@@ -1247,6 +1282,8 @@ foreach($tmparr as $key=>$subval)
 			ob_start('doit_ob_error_handler');
 			$been_controller=false;
 			if(isset($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)) {
+				//Сохраняем путь, в котором был инициирована Closure
+				$this->_closure_current_view_path = $this->_closure_directories[$name];
 				$_executionResult=call_user_func_array($this->datapool[$name], $arguments);
 			}elseif (function_exists($name)) {
 
@@ -1465,11 +1502,15 @@ foreach($tmparr as $key=>$subval)
 	function __set($name,$value)
 	{
 		unset($this->_closures[$name]);
+		if( is_object($value) && ($value instanceof Closure)){
+			$this->_closure_directories[$name] = $this->_current_include_directory;
+		}
 		$this->datapool[$name]=$value;
 	}
 
 	function singleton($name,$closure){
 		$this->datapool[$name] = $closure;
+		$this->_closure_directories[$name] = $this->_current_include_directory;
 		$this->_closures[$name] = true; //является синглтоном
 	}
 	
@@ -1493,11 +1534,12 @@ foreach($tmparr as $key=>$subval)
 		if(isset($this->datapool[$name])) {
 			if( is_object($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)){
 				$closure = $this->datapool[$name];
-				if(isset($this->_closures[$name])){
+				if(isset($this->_closures[$name])){ //синглтон
 					$result = $closure();
 					$this->datapool[$name] = $result;
 					return $result;
 				}
+				//не синглтон, обычный контейнер
 				$result = $closure();
 				return $result;
 			}

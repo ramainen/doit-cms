@@ -27,6 +27,9 @@ DoIt CMS
 Именно этот код и находится в файле index.php.
 
 
+### Лицензия
+
+MIT
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ramainen/doit-cms/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 

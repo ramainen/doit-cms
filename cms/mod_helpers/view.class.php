@@ -5,13 +5,13 @@ class View
 	protected $chosen=false;
 	
 	function render($path){
-		
-		$this->chosen = $path;
+		 
+		$this->chosen = str_replace('..','',$path);//система безопасности =)
 		return $this;
 	}
 	
 	function partial($path){
-		$this->chosen = $path;
+		$this->chosen = str_replace('..','',$path);
 		return $this;
 	}
 	
@@ -19,9 +19,10 @@ class View
 		$trys = array();
 		
 		$url=strtok($_SERVER["REQUEST_URI"],'?');
-		$url = str_replace('..','',$url);//система безопасности =)
-		
+		$url = str_replace('..','',$url);
+		$called_file = false;
 		if($this->chosen !== false){
+			$called_file = $this->chosen;
 			
 			$shortfile = $this->chosen;
 			$trys[]  = $shortfile ;
@@ -80,14 +81,43 @@ class View
 			return  $this->from_file($shortfile);
 		}
 		
- 
+		if($called_file!==false){
+		
+			//вариант четвертый - файл внутри директории, вызов closure
+			$tryfile =d()->_closure_current_view_path . '/'. $called_file;
+			//Вырезаем всё
+			$shortfile = substr($tryfile,strlen(ROOT . '/app'));
+			$trys[] = '/app'.$shortfile;
+			if(is_file($tryfile))
+			{
+				
+				 return  $this->from_file($shortfile);
+			}
+			
+			//вариант пятый - файл внутри директории, вызов route
+			if(d()->current_route != false){
+				$tryfile =d()->current_route->include_directory . '/'. $called_file;
+				//Вырезаем всё
+				$shortfile = substr($tryfile,strlen(ROOT . '/app'));
+				$trys[] = '/app'.$shortfile;
+				if(is_file($tryfile))
+				{
+					 return  $this->from_file($shortfile);
+				}
+				
+			}
+			
+		}
+		
+		
+		
 		return  print_error_message(' ','',$errfile ,'','Не удалось найти файл шаблона (проверялись: '.implode(', ',$trys).')'  );
 	}
 	
 	function from_file($file){
 
 		$name = str_replace(array('/','.','-','\\'),array('_','_','_','_'),substr($file,1)).'_tpl';
-	//		function get_compiled_code($fragmentname)
+	
 	
 		
 		

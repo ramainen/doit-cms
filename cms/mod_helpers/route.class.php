@@ -6,9 +6,16 @@ class Route
 	public  $method = false;
 	public $url='/news/:id+';
 	public $closure=false;
-	
+	public $include_directory = false;
 	public function via($via=false){
+		if(!is_array($via)){
+			$via = array($via);
+		}
 		$this->method=$via;
+	}
+	public function setIncludeDirectory($directory)
+	{
+		$this->include_directory = $directory;
 	}
 	
 	public function map($url,$closure)
