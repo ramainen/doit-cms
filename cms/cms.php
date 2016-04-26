@@ -890,7 +890,7 @@ foreach($tmparr as $key=>$subval)
  
 		
 		$accepted_routes = array();
-		$url=strtok($_SERVER["REQUEST_URI"],'?');
+		$url=urldecode(strtok($_SERVER["REQUEST_URI"],'?'));
 		foreach($this->routes as $route){
 			if($route->check($url,$_SERVER['REQUEST_METHOD'])){
 				$accepted_routes[]=$route;
