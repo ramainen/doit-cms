@@ -7,23 +7,42 @@ class Route
 	public $url='/news/:id+';
 	public $closure=false;
 	public $include_directory = false;
+	public $basename = ''; //Имя папки, в которой мы находимся. Также может быть задано из группы роутов при помощи d()->group
 	public function via($via=false){
 		if(!is_array($via)){
 			$via = array($via);
 		}
 		$this->method=$via;
 	}
-	public function setIncludeDirectory($directory)
+	/*
+		Передает текущую директорию, из которого вызвана. Инициирует автопоиск шаблонов, автогруппы роутов.
+	*/
+	public function initiateAutoFind($directory)
 	{
+		if(doitClass::$instance->_current_route_basename !== false){
+			$this->basename = doitClass::$instance->_current_route_basename;
+		}else{
+			$this->basename = '/' . basename($directory) . '/';	
+		}
 		$this->include_directory = $directory;
 	}
 	
-	public function map($url,$closure)
+	public function map($url,$closure=false)
 	{
+		if($closure===false){
+			$closure = $url;
+			$url = ':param*';
+		}
 		$this->url=$url;
 		$this->closure=$closure;
 	}
+	
 	public function check($url='/catalog', $method=false, $level="content"){
+
+		//Добавляем путь, который начинается с текущей папки, если путь начинается не на ""/"
+		if($this->url{0}!='/'){
+			$this->url = $this->basename . $this->url;
+		}
 		$regex = $this->url;
 		$regex = preg_replace(
 			array('#\:[a-z_][a-zA-Z0-9_]*\+#','#\:[a-z_][a-zA-Z0-9_]*\*#','#\:[a-z_][a-zA-Z0-9_]*#')

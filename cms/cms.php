@@ -265,6 +265,9 @@ class doitClass
 	//Автопоиск путей для роутов
 	public $_router_current_view_path = false; //Пути, в которых искать вьюшки. Сюда пишутся пути, вызываемые роутами
 	public $_router_directories = array(); //Пути, в которых лежат роуты
+	//group
+	public $_current_route_basename=false;
+	
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -811,7 +814,10 @@ foreach($tmparr as $key=>$subval)
 		foreach($this->for_include as $value) {
 			
 			$this->_current_include_directory = dirname($_SERVER['DOCUMENT_ROOT'].'/'.$value);
+			
+			$this->_current_route_basename = false;
 			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
+			$this->_current_route_basename = false;
 		}
 		
 		//Отрабатывает роутинг
@@ -860,30 +866,37 @@ foreach($tmparr as $key=>$subval)
 	
 	/* VERSION 2.0 */
 	public $routes=array();
-	function route($adress, $closure){
+	function route($adress, $closure=false){
 		$route = new Route();
 		$route->map($adress, $closure);
-		$route->setIncludeDirectory($this->_current_include_directory);
+		$route->initiateAutoFind($this->_current_include_directory);
 		$this->routes[]=$route;
 		return $route;
 	}
 	
-	function post($adress, $closure){
+	function post($adress, $closure=false){
 		$route = new Route();
 		$route->map($adress, $closure);
 		$route->method = array('POST');
-		$route->setIncludeDirectory($this->_current_include_directory);
+		$route->initiateAutoFind($this->_current_include_directory);
 		$this->routes[]=$route;
 		return $route;
 	}
 	
-	function get($adress, $closure){
+	function get($adress, $closure=false){
 		$route = new Route();
 		$route->map($adress, $closure);
 		$route->method = array('GET');
-		$route->setIncludeDirectory($this->_current_include_directory);
+		$route->initiateAutoFind($this->_current_include_directory);
 		$this->routes[]=$route;
 		return $route;
+	}
+	
+	function group($url, $closure=false){
+		$this->_current_route_basename = $url;
+		if($closure!==false){
+			$closure();
+		}
 	}
 	
 	function dispatch($level='content'){
