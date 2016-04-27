@@ -1,5 +1,6 @@
 {
     "require": {
-        "swiftmailer/swiftmailer": "5.4.*"
+        "swiftmailer/swiftmailer": "5.4.*",
+        "zendframework/zend-diactoros": "^1.3"
     }
 }

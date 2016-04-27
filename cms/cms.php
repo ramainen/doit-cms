@@ -268,6 +268,8 @@ class doitClass
 	//group
 	public $_current_route_basename=false;
 	
+	public $http_request = false;
+	
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -810,6 +812,17 @@ foreach($tmparr as $key=>$subval)
 
 		},true,true);
 		
+		if(PHP_VERSION_ID > 50400) {
+			$this->http_request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+				$_SERVER,
+				$_GET,
+				$_POST,
+				$_COOKIE,
+				$_FILES
+			);
+			
+			$this->http_response = new Zend\Diactoros\Response();
+		}
 		
 		foreach($this->for_include as $value) {
 			
@@ -842,6 +855,8 @@ foreach($tmparr as $key=>$subval)
 				}
 			}
 		}
+		
+		
 		
 		d()->bootstrap();
 		
