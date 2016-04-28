@@ -1,4 +1,5 @@
 <?php
+$_ENV["s"]=1;
 /*
 DoIt! CMS and VarVar framework
 The MIT License (MIT)
@@ -269,7 +270,8 @@ class doitClass
 	public $_current_route_basename=false;
 	
 	public $http_request = false;
-	
+	public $http_response = false;
+	public $middleware_pipe = false;
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -812,7 +814,7 @@ foreach($tmparr as $key=>$subval)
 
 		},true,true);
 		
-		if(PHP_VERSION_ID > 50400) {
+		if(PHP_VERSION_ID > 50408) {
 			$this->http_request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
 				$_SERVER,
 				$_GET,
@@ -822,6 +824,11 @@ foreach($tmparr as $key=>$subval)
 			);
 			
 			$this->http_response = new Zend\Diactoros\Response();
+			
+			
+			$this->middleware_pipe=new Zend\Stratigility\MiddlewarePipe();
+			
+			
 		}
 		
 		foreach($this->for_include as $value) {
@@ -932,6 +939,40 @@ foreach($tmparr as $key=>$subval)
 		}
 		return false;
 	}
+	function new_pipe()
+	{
+		return new Zend\Stratigility\MiddlewarePipe();
+	}
+	function add($path=false, $middleware = null){
+		/* обёртка для запуска как иконки {{add}}, так и для добавления middleware */
+		if(is_array($path) || $path === false){
+			return d()->call('add',$path);
+		}
+		$this->middleware_pipe->pipe($path, $middleware);
+	}
+	
+	function pipe($path, $middleware = null){
+		$this->middleware_pipe->pipe($path, $middleware);
+	}
+	function write($text){
+		$this->http_response->getBody()->write($text);
+	}
+	/* Функция, стартующая вообще всё. */
+	function main(){
+		
+		if(PHP_VERSION_ID > 50408) {
+			$this->middleware_pipe->pipe(function($request, $response, $next){
+				$response->getBody()->write($this->call('main'));
+			});
+			
+			$pipe = $this->middleware_pipe;
+			$pipe($this->http_request, $this->http_response);
+			 
+			return $this->http_response->getBody();
+		}
+		return $this->call('main');
+	}
+	
 	/*
 		Функция, загружающая контент страницы
 	*/
@@ -2029,7 +2070,7 @@ foreach($tmparr as $key=>$subval)
 	{
 		$this->is_root_func=false;
 		$this->must_be_stopped=false;
-		return d()->main();
+		return d()->call('main');
 	}
 	function prepare_content($function,$content)
 	{
