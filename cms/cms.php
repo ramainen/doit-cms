@@ -946,7 +946,7 @@ foreach($tmparr as $key=>$subval)
 	function add($path=false, $middleware = null){
 		/* обёртка для запуска как иконки {{add}}, так и для добавления middleware */
 		if(is_array($path) || $path === false){
-			return d()->call('add',$path);
+			return d()->call('add',array($path));
 		}
 		$this->middleware_pipe->pipe($path, $middleware);
 	}
