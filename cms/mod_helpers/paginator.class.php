@@ -179,15 +179,14 @@ class Paginator extends UniversalHelper
 	}
 	
 	public function drawPageInAdress($url,$value){
+		if($value === 0){
+			return  $url;
+		}
 		if(strpos($url,'?')===false){
-			$result = $url.'?page='.$value;
-			if(substr($result,-7)=='?page=0'){
-				return  $url;
-			}
 			return $url.'?page='.$value;
 		}else{
 			if(strpos($url,'?')==strlen($url)-1){
-				return $url.'page='.$value;	
+				return $url.'page='.$value; 
 			}
 			return $url.'&page='.$value;
 		}
