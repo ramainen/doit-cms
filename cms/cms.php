@@ -1,22 +1,28 @@
 <?php
+$_ENV["s"]=1;
 /*
 DoIt! CMS and VarVar framework
-Copyright (C) 2011 Fakhrutdinov Damir (aka Ainu)
+The MIT License (MIT)
 
-*      This program is free software; you can redistribute it and/or modify
-*      it under the terms of the GNU General Public License as published by
-*      the Free Software Foundation; either version 2 of the License, or
-*      (at your option) any later version.
-*      
-*      This program is distributed in the hope that it will be useful,
-*      but WITHOUT ANY WARRANTY; without even the implied warranty of
-*      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*      GNU General Public License for more details.
-*      
-*      You should have received a copy of the GNU General Public License
-*      along with this program; if not, write to the Free Software
-*      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-*      MA 02110-1301, USA.
+Copyright (c) 2011-2016 Damir Fakhrutdinov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 0.19 Скаффолдинг, ArrayAccess, обработка ошибок, мультиязычность, оптимизация скорости 28.12.2011
 0.11 ActiveRecord и foreach для объектов 07.08.2011
@@ -251,6 +257,21 @@ class doitClass
 	public $langlink='';
 	protected $_closures = array();
 	public static $autoload_folders = array();
+	public $current_route = false; //Последний сработавший роут
+
+	public $_current_include_directory = ''; //Путь, в которых лежат функции-кложуры
+	//Автопоиск путей для Кложур
+	public $_closure_current_view_path = false; //Пути, в которых искать вьюшки. Сюда пишутся пути, вызываемые фунциями
+	public $_closure_directories = array(); //Пути, в которых лежат функции-кложуры
+	//Автопоиск путей для роутов
+	public $_router_current_view_path = false; //Пути, в которых искать вьюшки. Сюда пишутся пути, вызываемые роутами
+	public $_router_directories = array(); //Пути, в которых лежат роуты
+	//group
+	public $_current_route_basename=false;
+	
+	public $http_request = false;
+	public $http_response = false;
+	public $middleware_pipe = false;
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -793,9 +814,30 @@ foreach($tmparr as $key=>$subval)
 
 		},true,true);
 		
+		if(PHP_VERSION_ID > 50408) {
+			$this->http_request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+				$_SERVER,
+				$_GET,
+				$_POST,
+				$_COOKIE,
+				$_FILES
+			);
+			
+			$this->http_response = new Zend\Diactoros\Response();
+			
+			
+			$this->middleware_pipe=new Zend\Stratigility\MiddlewarePipe();
+			
+			
+		}
 		
 		foreach($this->for_include as $value) {
+			
+			$this->_current_include_directory = dirname($_SERVER['DOCUMENT_ROOT'].'/'.$value);
+			
+			$this->_current_route_basename = false;
 			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
+			$this->_current_route_basename = false;
 		}
 		
 		//Отрабатывает роутинг
@@ -821,6 +863,8 @@ foreach($tmparr as $key=>$subval)
 			}
 		}
 		
+		
+		
 		d()->bootstrap();
 		
 		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static') && strpos($_SERVER['REQUEST_URI'],'..')===false && $_SERVER['REQUEST_URI'] !='/'    && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI']) && is_file($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI']) ){
@@ -844,26 +888,91 @@ foreach($tmparr as $key=>$subval)
 	
 	/* VERSION 2.0 */
 	public $routes=array();
-	function route($adress, $closure){
+	function route($adress, $closure=false){
 		$route = new Route();
 		$route->map($adress, $closure);
+		$route->initiateAutoFind($this->_current_include_directory);
 		$this->routes[]=$route;
 		return $route;
 	}
 	
+	function post($adress, $closure=false){
+		$route = new Route();
+		$route->map($adress, $closure);
+		$route->method = array('POST');
+		$route->initiateAutoFind($this->_current_include_directory);
+		$this->routes[]=$route;
+		return $route;
+	}
+	
+	function get($adress, $closure=false){
+		$route = new Route();
+		$route->map($adress, $closure);
+		$route->method = array('GET');
+		$route->initiateAutoFind($this->_current_include_directory);
+		$this->routes[]=$route;
+		return $route;
+	}
+	
+	function group($url, $closure=false){
+		$this->_current_route_basename = $url;
+		if($closure!==false){
+			$closure();
+		}
+	}
+	
 	function dispatch($level='content'){
+ 
+		
 		$accepted_routes = array();
-		$url=strtok($_SERVER["REQUEST_URI"],'?');
+		$url=urldecode(strtok($_SERVER["REQUEST_URI"],'?'));
 		foreach($this->routes as $route){
-			if($route->check($url)){
+			if($route->check($url,$_SERVER['REQUEST_METHOD'])){
 				$accepted_routes[]=$route;
 			}
 		}
 		if(count($accepted_routes)){
-			return $accepted_routes[0]->dispatch($url);
+			$this->current_route = $accepted_routes[0];
+			$result = $accepted_routes[0]->dispatch($url);
+			$this->current_route = false;
+			return $result;
 		}
 		return false;
 	}
+	function new_pipe()
+	{
+		return new Zend\Stratigility\MiddlewarePipe();
+	}
+	function add($path=false, $middleware = null){
+		/* обёртка для запуска как иконки {{add}}, так и для добавления middleware */
+		if(is_array($path) || $path === false){
+			return d()->call('add',array($path));
+		}
+		$this->middleware_pipe->pipe($path, $middleware);
+	}
+	
+	function pipe($path, $middleware = null){
+		$this->middleware_pipe->pipe($path, $middleware);
+	}
+	function write($text){
+		$this->http_response->getBody()->write($text);
+	}
+	/* Функция, стартующая вообще всё. */
+	function main(){
+		
+		if(PHP_VERSION_ID > 50408) {
+			$this->middleware_pipe->pipe(function($request, $response, $next){
+				$response->getBody()->write($this->call('main'));
+			});
+			
+			$pipe = $this->middleware_pipe;
+			$pipe($this->http_request, $this->http_response);
+			 
+			return $this->http_response->getBody();
+		}
+		return $this->call('main');
+	}
+	
 	/*
 		Функция, загружающая контент страницы
 	*/
@@ -1242,6 +1351,8 @@ foreach($tmparr as $key=>$subval)
 			ob_start('doit_ob_error_handler');
 			$been_controller=false;
 			if(isset($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)) {
+				//Сохраняем путь, в котором был инициирована Closure
+				$this->_closure_current_view_path = $this->_closure_directories[$name];
 				$_executionResult=call_user_func_array($this->datapool[$name], $arguments);
 			}elseif (function_exists($name)) {
 
@@ -1460,11 +1571,15 @@ foreach($tmparr as $key=>$subval)
 	function __set($name,$value)
 	{
 		unset($this->_closures[$name]);
+		if( is_object($value) && ($value instanceof Closure)){
+			$this->_closure_directories[$name] = $this->_current_include_directory;
+		}
 		$this->datapool[$name]=$value;
 	}
 
 	function singleton($name,$closure){
 		$this->datapool[$name] = $closure;
+		$this->_closure_directories[$name] = $this->_current_include_directory;
 		$this->_closures[$name] = true; //является синглтоном
 	}
 	
@@ -1488,11 +1603,12 @@ foreach($tmparr as $key=>$subval)
 		if(isset($this->datapool[$name])) {
 			if( is_object($this->datapool[$name]) && ($this->datapool[$name] instanceof Closure)){
 				$closure = $this->datapool[$name];
-				if(isset($this->_closures[$name])){
+				if(isset($this->_closures[$name])){ //синглтон
 					$result = $closure();
 					$this->datapool[$name] = $result;
 					return $result;
 				}
+				//не синглтон, обычный контейнер
 				$result = $closure();
 				return $result;
 			}
@@ -1954,7 +2070,7 @@ foreach($tmparr as $key=>$subval)
 	{
 		$this->is_root_func=false;
 		$this->must_be_stopped=false;
-		return d()->main();
+		return d()->call('main');
 	}
 	function prepare_content($function,$content)
 	{
@@ -2013,8 +2129,11 @@ foreach($tmparr as $key=>$subval)
 		return $result;
 	}
 }
+	if(file_exists('vendor/autoload.php')){
+		require_once ('vendor/autoload.php');	
+	}
 
-
+	require_once ('cms/vendor/autoload.php');
 /**
  * Автоматический создатель классов и загрузчик классов по спецификации PSR-0
  * Ищет файлы вида class_name.class.php, затем ищет классы в папке vendors по спецификации PSR-0.
@@ -2040,8 +2159,6 @@ foreach($tmparr as $key=>$subval)
 		require $_SERVER['DOCUMENT_ROOT'].'/'.d()->php_files_list[$lover_class_name.'_class'];
 	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.('vendors'.DIRECTORY_SEPARATOR.$fileName))){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.'vendors'.DIRECTORY_SEPARATOR.$fileName;
-	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/cms/'.('vendor'.DIRECTORY_SEPARATOR.$fileName))){
-		require $_SERVER['DOCUMENT_ROOT'].'/cms/'.'vendor'.DIRECTORY_SEPARATOR.$fileName;
 	}else{
 		if(substr(strtolower($class_name),-10)!='controller'){
 			//Если совсем ничего не найдено, попытка использовать ActiveRecord.

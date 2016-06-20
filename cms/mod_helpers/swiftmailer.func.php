@@ -1,6 +1,7 @@
 <?php
 
 d()->singleton('mail',  function(){
+	_swiftmailer_init();
 	$message = new DoitMessage();
 	$message->setFrom (array($_SERVER['SERVER_ADMIN'] => $_SERVER['SERVER_ADMIN']));
 	return $message;

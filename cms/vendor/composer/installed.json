@@ -1,0 +1,260 @@
+[
+    {
+        "name": "swiftmailer/swiftmailer",
+        "version": "v5.4.1",
+        "version_normalized": "5.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/swiftmailer/swiftmailer.git",
+            "reference": "0697e6aa65c83edf97bb0f23d8763f94e3f11421"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/0697e6aa65c83edf97bb0f23d8763f94e3f11421",
+            "reference": "0697e6aa65c83edf97bb0f23d8763f94e3f11421",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "mockery/mockery": "~0.9.1,<0.9.4"
+        },
+        "time": "2015-06-06 14:19:39",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.4-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "lib/swift_required.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Chris Corbyn"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Swiftmailer, free feature-rich PHP mailer",
+        "homepage": "http://swiftmailer.org",
+        "keywords": [
+            "email",
+            "mail",
+            "mailer"
+        ]
+    },
+    {
+        "name": "psr/http-message",
+        "version": "1.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/php-fig/http-message.git",
+            "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/php-fig/http-message/zipball/85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
+            "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2015-05-04 20:22:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Psr\\Http\\Message\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "PHP-FIG",
+                "homepage": "http://www.php-fig.org/"
+            }
+        ],
+        "description": "Common interface for HTTP messages",
+        "keywords": [
+            "http",
+            "http-message",
+            "psr",
+            "psr-7",
+            "request",
+            "response"
+        ]
+    },
+    {
+        "name": "zendframework/zend-diactoros",
+        "version": "1.3.5",
+        "version_normalized": "1.3.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/zend-diactoros.git",
+            "reference": "b1d59735b672865dbeb930805029c24f226e3e77"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/b1d59735b672865dbeb930805029c24f226e3e77",
+            "reference": "b1d59735b672865dbeb930805029c24f226e3e77",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^5.4 || ^7.0",
+            "psr/http-message": "~1.0"
+        },
+        "provide": {
+            "psr/http-message-implementation": "~1.0.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.6",
+            "squizlabs/php_codesniffer": "^2.3.1"
+        },
+        "time": "2016-03-17 18:02:05",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3-dev",
+                "dev-develop": "1.4-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Zend\\Diactoros\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "description": "PSR HTTP Message implementations",
+        "homepage": "https://github.com/zendframework/zend-diactoros",
+        "keywords": [
+            "http",
+            "psr",
+            "psr-7"
+        ]
+    },
+    {
+        "name": "zendframework/zend-escaper",
+        "version": "2.5.1",
+        "version_normalized": "2.5.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/zend-escaper.git",
+            "reference": "a4b227d8a477f4e7e9073f8e0a7ae7dbd3104a73"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/zend-escaper/zipball/a4b227d8a477f4e7e9073f8e0a7ae7dbd3104a73",
+            "reference": "a4b227d8a477f4e7e9073f8e0a7ae7dbd3104a73",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.23"
+        },
+        "require-dev": {
+            "fabpot/php-cs-fixer": "1.7.*",
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2015-06-03 14:05:37",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.5-dev",
+                "dev-develop": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Zend\\Escaper\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "homepage": "https://github.com/zendframework/zend-escaper",
+        "keywords": [
+            "escaper",
+            "zf2"
+        ]
+    },
+    {
+        "name": "zendframework/zend-stratigility",
+        "version": "1.2.1",
+        "version_normalized": "1.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/zend-stratigility.git",
+            "reference": "b78388f096f669f9a9f15dabe5fa73c4d9fd9a09"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/zend-stratigility/zipball/b78388f096f669f9a9f15dabe5fa73c4d9fd9a09",
+            "reference": "b78388f096f669f9a9f15dabe5fa73c4d9fd9a09",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^5.4.8 || ^7.0",
+            "psr/http-message": "~1.0.0",
+            "zendframework/zend-escaper": "~2.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.7",
+            "squizlabs/php_codesniffer": "^2.3.1",
+            "zendframework/zend-diactoros": "~1.0"
+        },
+        "suggest": {
+            "psr/http-message-implementation": "Please install a psr/http-message-implementation to consume Stratigility; e.g., zendframework/zend-diactoros"
+        },
+        "time": "2016-03-24 22:10:30",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.2-dev",
+                "dev-develop": "1.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Zend\\Stratigility\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "Middleware for PHP",
+        "homepage": "https://github.com/zendframework/zend-stratigility",
+        "keywords": [
+            "http",
+            "middleware",
+            "psr-7"
+        ]
+    }
+]

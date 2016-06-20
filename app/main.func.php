@@ -1,4 +1,5 @@
 <?php
+
 function main()
 {
 
@@ -7,6 +8,7 @@ function main()
 		header('Location: '.substr($_SERVER['REQUEST_URI'],0,-5));
 		exit;
 	}
+
 	d()->content = d()->content();
 	print d()->render('main_tpl');
 }
