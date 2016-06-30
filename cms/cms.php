@@ -2133,7 +2133,7 @@ foreach($tmparr as $key=>$subval)
 		require_once ('vendor/autoload.php');	
 	}
 
-	require_once ('cms/vendor/autoload.php');
+	require_once ($_SERVER['DOCUMENT_ROOT'].'/cms/vendor/autoload.php');
 /**
  * Автоматический создатель классов и загрузчик классов по спецификации PSR-0
  * Ищет файлы вида class_name.class.php, затем ищет классы в папке vendors по спецификации PSR-0.
