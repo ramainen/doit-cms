@@ -1,5 +1,5 @@
 <?php
-$_ENV["s"]=1;
+
 /*
 DoIt! CMS and VarVar framework
 The MIT License (MIT)
@@ -272,6 +272,7 @@ class doitClass
 	public $http_request = false;
 	public $http_response = false;
 	public $middleware_pipe = false;
+	public $events_pool = array();
 /* ================================================================================= */	
 	function __construct()
 	{
@@ -2119,7 +2120,27 @@ foreach($tmparr as $key=>$subval)
 		
 		return $res;
 	}
-	
+
+	function on($event, $function){
+		if(!isset($this->events_pool[$event])){
+			$this->events_pool[$event]=array();
+		}
+		$this->events_pool[$event][] = $function;
+	}
+
+	function emit($event,$data){
+		if(isset($this->events_pool[$event])){
+			$result=true;
+			foreach($this->events_pool[$event] as $callback){
+				if($result !== false){
+					$result = call_user_func_array($callback,array($data,$event));
+				}else{
+					return false;
+				}
+			}
+		}
+	}
+
 	function current_version()
 	{
 		static $result = null;
