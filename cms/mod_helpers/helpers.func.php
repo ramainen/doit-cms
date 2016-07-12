@@ -518,12 +518,16 @@ function preview($adress,$param1=false,$param2=false )
 	if(!in_array($ext,array('.gif','.jpg','.png','.jpeg'))){
 		return '';
 	}
+	$not_resize_hash = '';
+	if($orig_params['not_resize']){
+		$not_resize_hash = '_nrs_';
+	}
 	if(is_array($orig_params) && isset($orig_params['watermark'])){
 		$is_watermark = true;
-		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview_watermark". md5($orig_params['watermark'].$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1)) . $ext;
+		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview_watermark".$not_resize_hash. md5($orig_params['watermark'].$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1)) . $ext;
 	}else{
 		$is_watermark = false;
-		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$watermark_suffix.$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1);
+		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$not_resize_hash.$watermark_suffix.$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1);
 	}
 	
 	
@@ -570,21 +574,30 @@ function preview($adress,$param1=false,$param2=false )
 		}
 
 		list($org_width, $org_height) = getimagesize($filename);
+		$nch_org_width = $org_width;
+		$nch_org_height = $org_height;
+		
 		$xoffset = 0;
 		$yoffset = 0;
 	
 		if (strpos($height, 'in') !== false AND strpos($width, 'in') !== false) {
 			$height_temp = substr($height, 2);
 			$width_temp = substr($width, 2);
-			$h_index = ($org_height / $height_temp);
-			$w_index = ($org_width / $width_temp);
 			
-			$index = $h_index;
-			if ($h_index < $w_index) {
-				$index = $w_index;
+			if($org_width<=$width_temp &&  $org_height<=$height_temp && $orig_params['not_resize']){
+				$height= $org_height;
+				$width= $org_width;
+			}else {
+				$h_index = ($org_height / $height_temp);
+				$w_index = ($org_width / $width_temp);
+				
+				$index = $h_index;
+				if ($h_index < $w_index) {
+					$index = $w_index;
+				}
+				$width = round($org_width / $index);
+				$height = round($org_height / $index);
 			}
-			$width = round($org_width / $index);
-			$height = round($org_height / $index);
 		} else {
 			if (strpos($height, 'in' === 0)) {
 				$height = substr($height, 2);
@@ -619,7 +632,15 @@ function preview($adress,$param1=false,$param2=false )
 			$xoffset=$dx;
 			$yoffset=$dy;
 		}
-
+		
+		if($org_height <= $height &&  $org_width <= $width && $orig_params['not_resize']){
+			$height= $nch_org_height;
+			$width= $nch_org_width;
+			$xoffset=0;
+			$yoffset=0;
+			$org_height= $nch_org_height;
+			$org_width= $nch_org_width;
+		}
 		$img_n=imagecreatetruecolor ($width, $height);
 		imagealphablending($img_n, false);
 		imagesavealpha($img_n, true);
