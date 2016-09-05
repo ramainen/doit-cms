@@ -1594,8 +1594,8 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			}
 			if($this->_get_by_id_cache===false){
 				$this->_get_by_id_cache=array();
-				foreach ($this->_data as $key=>$value){
-					$this->_get_by_id_cache[$value['id']]=$key;
+				foreach ($this->_data as $k=>$value){
+					$this->_get_by_id_cache[$value['id']]=$k;
 				}
 				if(isset($this->_get_by_id_cache[$id])){
 					return $this->_get_by_id_cache[$id];
