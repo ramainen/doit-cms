@@ -1897,7 +1897,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				return $this->_data[$this->_cursor][$name];
 			}
 
-			if(!isset(doitClass::$instance->datapool['_known_fields'][$this->_options['table']][$name])){
+			if(!in_array($name , doitClass::$instance->datapool['_known_fields'][$this->_options['table']])){
 
 
 				//Item.user          //Получение связанного объекта
