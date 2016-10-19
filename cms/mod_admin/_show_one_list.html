@@ -21,6 +21,12 @@
 		<?php foreach(d()->datapool['admin']['columns'] as $col_name => $col_title){
 
 			print '<th>';
+			
+			$as_substr= strpos($col_name,'_as_');
+			if($as_substr!==false) {
+				$col_name = substr($col_name,0,$as_substr);
+				
+			}
 			if(in_array($col_name,d()->available_columns)){
 				print  '<a href="?sort_field=' . h($col_name);
 				if(!isset($_GET['sort_direction']) || $_GET['sort_direction']=='asc'){

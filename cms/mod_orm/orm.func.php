@@ -1688,6 +1688,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			return $this->{$second_word}->all_of($first_word);
 		}
 		
+		$as_substr= strpos($name,'_as_');
+		if($as_substr!==false) {
+		
+			$first_word = substr($name,0,$as_substr);
+			$second_word = substr($name,$as_substr+4);
+			return $this->show_as($first_word, $second_word);
+		}
 		//Item.expand_all_to_pages
 		//DEPRECATED: в дальнейшем будет удалена
 		if (substr($name,0,14)=='expand_all_to_') {
@@ -1770,6 +1777,11 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		return activerecord_factory_from_table($what)->where('id IN (?)', $results);
 
+	}
+	
+	function show_as($first_word, $second_word){
+		$second_word='as_'.$second_word;
+		return doitClass::$instance->{$second_word}($this->{$first_word},$first_word,$this);
 	}
 	function linked($tablename=false){
 
