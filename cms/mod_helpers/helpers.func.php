@@ -1182,10 +1182,10 @@ d()->singleton('view',function(){
 
 
 
-d()->or_is_empty=function($arr=array()){
+function or_is_empty($arr=array()){
 	$val  = $arr[0];
 	$new_val = $arr[1];
-	if(!!$val){
+	if(!$val){
 		return $new_val;
 	}
 	return $val;
