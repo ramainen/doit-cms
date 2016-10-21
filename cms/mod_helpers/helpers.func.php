@@ -1179,3 +1179,13 @@ function times($array){
 d()->singleton('view',function(){
 	return new View;
 });
+
+
+function or_is_empty($arr=array()){
+	$val  = $arr[0];
+	$new_val = $arr[1];
+	if(!!$val){
+		return $new_val;
+	}
+	return $val;
+};
