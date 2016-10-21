@@ -1181,7 +1181,8 @@ d()->singleton('view',function(){
 });
 
 
-function or_is_empty($arr=array()){
+
+d()->or_is_empty=function($arr=array()){
 	$val  = $arr[0];
 	$new_val = $arr[1];
 	if(!!$val){
