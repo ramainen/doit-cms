@@ -2,7 +2,9 @@
   <label class="control-label"  >{title}</label>
   <div class="controls">
 	 
-	<textarea  name="{name}" class="ui-widget-content ui-corner-all span3" style="height:200px;width:500px;">{value|h}</textarea>
+	<textarea  name="{name}" class="ui-widget-content ui-corner-all span3 js-admin-big" data-type="<?php print h(d()->field_params[3]); ?>" style="height:200px;width:500px;">{value|h}</textarea>
+	<div   class="form-control input-md js-aceeditor"  style="height: 300px;display:none;" ></div>
+	
   </div>
 </div>
 

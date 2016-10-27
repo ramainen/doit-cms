@@ -101,6 +101,25 @@ $(function () {
 			textarea.val(editor.getSession().getValue());
 		});
 	}
+	
+	
+	$('.js-admin-big').each(function(){
+		if($(this).data('type')!==''){
+			$(this).parent().find('.js-aceeditor').show();
+			var $textarea = $(this).hide();
+			var edit = ace.edit($(this).parent().find('.js-aceeditor')[0]);
+			edit.getSession().setMode("ace/mode/" + $(this).data('type'));
+
+			//textarea = $('textarea[name="content"]').hide();
+			edit.getSession().setValue($(this).val());
+			edit.getSession().on('change', function(){
+			 
+				$textarea.val(edit.getSession().getValue());
+			});
+		}
+		
+	})
+	
 	//editor.getSession().setValue(textarea.val();
 	$('.enable_multiple').bind('click',function(e){
 		$('input[name=_enable_multiple]').val(1)
@@ -526,8 +545,9 @@ function create_field_template()
  
 	'\n'+
 	';[admin]\n'+
-	';urlredirect=/\n' 
-	
+	';urlredirect=/\n' +
+	';list.sort_field=created_at\n'+
+	';list.sort_direction=desc\n'
 	
 	);
 	editor.getSession().setValue(textarea.val());
