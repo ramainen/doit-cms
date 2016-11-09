@@ -40,6 +40,23 @@ class CoreTest extends Test
 		{{helper d()->client, 'user', d()->admin,'user'=> d()->list }}
 	
 	*/
+	
+	function test_advanced_syntaxer(){
+		$this->assertEquals(d()->compile_advanced_chain(array('test')),'$_c_tmp=$doit->test');
+		$this->assertEquals(d()->compile_advanced_chain(array('test','test2')),'$_c_tmp=(is_object($_c_tmp=$doit->test)?$_c_tmp->test2:$_c_tmp["test2"])');
+		$this->assertEquals(d()->compile_advanced_chain(array('a','b','c')),'$_c_tmp=(is_object($_c_tmp=(is_object($_c_tmp=$doit->a)?$_c_tmp->b:$_c_tmp["b"]))?$_c_tmp->c:$_c_tmp["c"])');
+		/*
+		(is_object( 
+	$tmp =(is_object(
+		$tmp =(is_object(
+			...
+		) ?    $tmp->x : $tmp['x'])  
+	) ?    $tmp->a : $tmp['a'])  
+) ?    $tmp->b :  $tmp['b'])
+		
+		*/
+	}
+	
 	function test_simple_syntaxis()
 	{
 	

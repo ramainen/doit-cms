@@ -1822,11 +1822,13 @@ foreach($tmparr as $key=>$subval)
 			d()->matches = ($matches);
 			$string = $matches[1]; //user.comments.title
 			$substrings = explode('.',$string);
-			$first = array_shift($substrings);
 			
+			$result = '<?php print '.$this->compile_advanced_chain($substrings). '; ?>';
+			/*
+			$first = array_shift($substrings);
 			$result = '<?php print $doit->'.$first . implode('',array_map(function($str){
 				return "->".$str."";
-			},$substrings)) . '; ?>';   //$user ['comments']  ['title']
+			},$substrings)) . '; ?>';   //$user ['comments']  ['title']*/
 			return $result;
 		}, $_str);
 			
@@ -1836,11 +1838,16 @@ foreach($tmparr as $key=>$subval)
 			$string = $matches[1]; //user.comments.title
  
 			$substrings = explode('.',$string);
+			
+			
+			$result = '  '.$this->compile_advanced_chain($substrings);
+			/*
 			$first = array_shift($substrings);
 			
 			$result = '  $doit->'.$first . implode('',array_map(function($str){
 				return "->".$str."";
 			},$substrings)) . ' ';   //$user ['comments']  ['title']
+			*/
 			
 			$functions = $matches[2]; //|h|title|htmlspecialchars
 			$substrings = (explode('|',$functions));
@@ -1857,12 +1864,16 @@ foreach($tmparr as $key=>$subval)
 			$string = $matches[1]; //user.comments.title
  
 			$substrings = explode('.',$string);
-			$first = array_shift($substrings);
 			
+			
+			$result = '  '.$this->compile_advanced_chain($substrings);
+			
+			/*
+			$first = array_shift($substrings);
 			$result = '  $doit->'.$first . implode('',array_map(function($str){
 				return "['".$str."']";
 			},$substrings)) . ' ';   //$user ['comments']  ['title']
-			
+			*/
 			$functions = $matches[2]; //|h|title|htmlspecialchars
 			$substrings = (explode('|',$functions));
 			array_shift($substrings);
@@ -1905,6 +1916,24 @@ foreach($tmparr as $key=>$subval)
 		
 	}
 
+	
+	function compile_advanced_chain($arr){
+		
+		$str='';
+		foreach($arr as $key=>$value){
+			if($key==0){
+				$str = '$_c_tmp=$doit->'.$value.'';
+			}else{
+				$str = '$_c_tmp=(is_object('.$str.')?$_c_tmp->'.$value.':$_c_tmp["'.$value.'"])';
+			}
+			
+		}
+		return $str;
+		
+	}
+	
+	
+	
 	/**
 	 * Выводит значение переменной, либо, при её отсуствии, запускает соотвествующую одноимённую функцию
 	 * Таким образом, если запускать d()->render('content') вместо d()->content(), можно заранее в коде переопределить
