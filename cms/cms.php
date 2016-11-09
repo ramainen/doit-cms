@@ -1825,7 +1825,7 @@ foreach($tmparr as $key=>$subval)
 			$first = array_shift($substrings);
 			
 			$result = '<?php print $doit->'.$first . implode('',array_map(function($str){
-				return "['".$str."']";
+				return "->".$str."";
 			},$substrings)) . '; ?>';   //$user ['comments']  ['title']
 			return $result;
 		}, $_str);
@@ -1839,7 +1839,7 @@ foreach($tmparr as $key=>$subval)
 			$first = array_shift($substrings);
 			
 			$result = '  $doit->'.$first . implode('',array_map(function($str){
-				return "['".$str."']";
+				return "->".$str."";
 			},$substrings)) . ' ';   //$user ['comments']  ['title']
 			
 			$functions = $matches[2]; //|h|title|htmlspecialchars
