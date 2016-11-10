@@ -21,6 +21,13 @@ d()->as_object_title=function($value, $field, $object){
 	return '';
 };
 
+d()->as_fast_title=function($value, $field, $object){
+	if(substr($field,-3)=='_id'){
+		return $object[substr($field,0,-3)]['title'];
+	}
+	return '';
+};
+
 d()->as_preview=function($value, $field, $object){
 	if($value==''){
 		return '';
