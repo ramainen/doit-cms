@@ -90,6 +90,6 @@ class Admin_usersController
 		}else{
 			d()->user = d()->Admin_user->limit(0);
 		}
-		print d()->view;
+		print d()->view();
 	}
 }
