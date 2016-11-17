@@ -238,6 +238,7 @@ class doitClass
 	private $for_ini=array(); //Массив файлов для последующей загрузки
 	private $url_parts=array(); //Фрагменты url, разделённые знаком '/'
 	private $url_string=''; //Сформированная строка URL без GET параметров
+	private $url_string_raw=''; //Сформированная строка URL без GET параметров и index
 	private $call_chain=array(); //Цепь вызовов
 	private $call_chain_start=array(); //Текущая функция, корень цепочки
 	private $call_chain_current_link=array(); //Текущий элемент цепочки
@@ -626,11 +627,12 @@ foreach($tmparr as $key=>$subval)
 		if($_where_question_sign !== false) {
 			$_tmpurl = substr($_tmpurl, 0, $_where_question_sign); 
 		}
-		
+		$this->url_string_raw = $_tmpurl;
 		//приписывание в конце слешей index
 		if(substr($_tmpurl,-1)=='/') {
 			$_tmpurl=$_tmpurl."index";
 		}
+		
 		$this->url_string = $_tmpurl;
 		
 		//сохранение фрагментов url
@@ -844,7 +846,7 @@ foreach($tmparr as $key=>$subval)
 		//Отрабатывает роутинг
 		if($this->is_using_route_all){
 
-			$url = $_SERVER['REQUEST_URI'];
+			$url = $this->url_string;
 			$uparts = array();
 			preg_match_all('#\/([0-9a-zA-Z_]+)\/.*#',$url,$uparts);
 			$upart_found=false;
@@ -868,9 +870,9 @@ foreach($tmparr as $key=>$subval)
 		
 		d()->bootstrap();
 		
-		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static') && strpos($_SERVER['REQUEST_URI'],'..')===false && $_SERVER['REQUEST_URI'] !='/'    && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI']) && is_file($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI']) ){
+		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static') && strpos($this->url_string,'..')===false && $this->url_string !='/'    && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/static'.$this->url_string) && is_file($_SERVER['DOCUMENT_ROOT'].'/app/static'.$this->url_string) ){
 			
-			$this->compiled_fragments['doit_open_static_file'] = $this->shablonize(file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/static'.$_SERVER['REQUEST_URI']));
+			$this->compiled_fragments['doit_open_static_file'] = $this->shablonize(file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/static'.$this->url_string));
 			$this->_prepared_content['main'] = $this->compile_and_run_template('doit_open_static_file');
 		}
 		
