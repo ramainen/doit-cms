@@ -968,6 +968,11 @@ foreach($tmparr as $key=>$subval)
 				$response->getBody()->write($this->call('main'));
 			});
 			
+			$this->middleware_pipe->pipe(function ($err, $request, $response, $next) {
+				print print_error_message('Выброшено исключение','','' ,$err->getMessage(),'Исключение' );
+				exit;
+			});
+			
 			$pipe = $this->middleware_pipe;
 			$pipe($this->http_request, $this->http_response);
 			 
