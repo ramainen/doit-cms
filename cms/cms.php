@@ -1652,6 +1652,10 @@ foreach($tmparr as $key=>$subval)
 
 
 	public function __isset($name) {
+		if (isset($this->ini_database[$name])) {
+   			$this->load_and_parse_ini_file($this->ini_database[$name]);
+     			unset($this->ini_database[$name]);
+  		}
 		return isset($this->datapool[$name]);
 	}
 	 
