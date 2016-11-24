@@ -839,7 +839,10 @@ foreach($tmparr as $key=>$subval)
 			$this->_current_include_directory = dirname($_SERVER['DOCUMENT_ROOT'].'/'.$value);
 			
 			$this->_current_route_basename = false;
-			include($_SERVER['DOCUMENT_ROOT'].'/'.$value);
+			
+			if(is_file($_SERVER['DOCUMENT_ROOT'].'/'.$value)){
+				include($_SERVER['DOCUMENT_ROOT'].'/'.$value);	
+			}
 			$this->_current_route_basename = false;
 		}
 		
