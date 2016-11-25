@@ -550,27 +550,41 @@ function preview($adress,$param1=false,$param2=false )
 		}
 		
 		$format = strtolower(substr(strrchr($filename,"."),1));
-		switch($format) {
-			case 'gif' :
-				$type ="gif";
-				$img = ImageCreateFromGif($filename);
+		switch ($format) {
+			case 'gif':
+				$type = "gif";
 				break;
-			case 'png' :
-				$type ="png";
-				$img = ImageCreateFromPng($filename);
-				imageSaveAlpha($img, true);
+			case 'png':
+				$type = "png";
 				break;
-			case 'jpg' :
-				$type ="jpg";
-				$img = ImageCreateFromJpeg($filename);
+			case 'jpg':
+				$type = "jpg";
 				break;
-			case 'jpeg' :
-				$type ="jpg";
-				$img = ImageCreateFromJpeg($filename);
+			case 'jpeg':
+				$type = "jpg";
 				break;
-			default :
+			default:
 				return false;
 				break;
+		}
+		if ($file_dimensions = getimagesize($filename)) {
+			$file_type = strtolower($file_dimensions['mime']);
+			switch ($file_type) {
+				case 'image/gif':
+					$img = ImageCreateFromGif($filename);
+					break;
+				case 'image/png':
+					$img = ImageCreateFromPng($filename);
+					imageSaveAlpha($img, true);
+					break;
+				case 'image/jpeg':
+				case 'image/pjpeg':
+					$img = ImageCreateFromJpeg($filename);
+					break;
+			}
+		}
+		if (empty($img)) {
+			return false;
 		}
 
 		list($org_width, $org_height) = getimagesize($filename);
