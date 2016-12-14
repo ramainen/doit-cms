@@ -12,6 +12,8 @@ if($_SERVER["SERVER_ADDR"]=='127.0.0.1' || $_SERVER["SERVER_ADDR"]=='192.168.0.1
 	define('DB_PASSWORD','');
 }
 
+
+$_ENV["DOIT_OPTIMIZE_IMAGES"] = true;
 //define('MULTISITE',true);
 
 /*

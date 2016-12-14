@@ -685,6 +685,13 @@ function preview($adress,$param1=false,$param2=false )
 		} elseif($type=="bmp") {
 			imagewbmp($img_n, $dest);
 		}
+		
+		if(isset($_ENV["DOIT_OPTIMIZE_IMAGES"]) && $_ENV["DOIT_OPTIMIZE_IMAGES"]==true){
+			$factory = new \ImageOptimizer\OptimizerFactory();
+			$optimizer = $factory->get();
+			$res = $optimizer->optimize($dest);
+		}
+		
 		chmod($dest, 0777);
 	}
 	return $preview_adress;
