@@ -687,9 +687,32 @@ function preview($adress,$param1=false,$param2=false )
 		}
 		
 		if(isset($_ENV["DOIT_OPTIMIZE_IMAGES"]) && $_ENV["DOIT_OPTIMIZE_IMAGES"]==true){
-			$factory = new \ImageOptimizer\OptimizerFactory();
-			$optimizer = $factory->get();
-			$res = $optimizer->optimize($dest);
+			if(isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"])){
+				if($type=="jpg" && isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]) && isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]['JPG'])){
+					$path = $_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]['JPG'];
+					$path = str_replace("#SOURCE#", escapeshellarg ($dest),$path );
+					$path = str_replace("#DEST#",escapeshellarg ($dest.'.tmp'),$path );
+					
+					exec ($path);
+					if(is_file($dest.'.tmp') && filesize($dest.'.tmp')!=0){
+						unlink($dest);
+						rename($dest.'.tmp', $dest);
+					}
+				}elseif($type=="png" && isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]) && isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]['PNG'])){
+					$path = $_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]['PNG'];
+					$path = str_replace("#SOURCE#", escapeshellarg ($dest),$path );
+					$path = str_replace("#DEST#",escapeshellarg ($dest.'.tmp'),$path );
+					exec ($path);
+					if(is_file($dest.'.tmp') && filesize($dest.'.tmp')!=0){
+						unlink($dest);
+						rename($dest.'.tmp', $dest);
+					}
+				}
+			}else{
+				$factory = new \ImageOptimizer\OptimizerFactory();
+				$optimizer = $factory->get();
+				$res = $optimizer->optimize($dest);
+			}
 		}
 		
 		chmod($dest, 0777);

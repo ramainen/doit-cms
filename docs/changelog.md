@@ -1,5 +1,23 @@
 История версий
 ==============
+2.7.2
+-----
+
+Расширенные опции для оптимизатора изображений (на случай, если необходимо максимальное сжатие). Например, для JPG разница в 75%.
+
+Для использования необходимо установить mozjpeg(https://mozjpeg.codelove.de/binaries.html) и pngquant(https://pngquant.org/), и настроить пути к ним в config.php
+
+Пример (на примере Windows):
+
+	$_ENV["DOIT_OPTIMIZE_IMAGES"] = true;
+	$_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]=array(
+		'PNG'=>'pngquant --quality=60-90 - < #SOURCE# > #DEST#',
+		'JPG'=>'E:\OpenServer\modules\php\PHP-5.6\ext\cjpeg -quality 70 #SOURCE# > #DEST#',
+	);
+
+Допустимо использовать другие инструменты.
+	
+*15.12.2016*
 
 2.7.1
 -----
