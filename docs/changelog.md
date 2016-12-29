@@ -1,5 +1,12 @@
 История версий
 ==============
+2.7.3
+-----
+
+Исправлена ошибка `admin_authorisation : Using $this when not in object context`.
+
+*29.12.2016*
+
 2.7.2
 -----
 

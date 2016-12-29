@@ -1829,7 +1829,7 @@ foreach($tmparr as $key=>$subval)
 	function shablonize($_str)
 	{	
 		
-	
+
 		$_str   = preg_replace($this->template_patterns,$this->template_replacements,str_replace(array("\r\n","\r"),array("\n","\n"),$_str));	
 		$_str = preg_replace('#{\.(.*?)}#','{this.$1}',$_str);
 		$_str = preg_replace_callback( "#\{((?:[a-zA-Z_]+[a-zA-Z0-9_]*?\.)*[a-zA-Z_]+[a-z0-9_]*?)}#mui", function($matches){
@@ -1837,7 +1837,7 @@ foreach($tmparr as $key=>$subval)
 			$string = $matches[1]; //user.comments.title
 			$substrings = explode('.',$string);
 			
-			$result = '<?php print '.$this->compile_advanced_chain($substrings). '; ?>';
+			$result = '<?php print '.doitClass::$instance->compile_advanced_chain($substrings). '; ?>';
 			/*
 			$first = array_shift($substrings);
 			$result = '<?php print $doit->'.$first . implode('',array_map(function($str){
@@ -1854,7 +1854,7 @@ foreach($tmparr as $key=>$subval)
 			$substrings = explode('.',$string);
 			
 			
-			$result = '  '.$this->compile_advanced_chain($substrings);
+			$result = '  '.doitClass::$instance->compile_advanced_chain($substrings);
 			/*
 			$first = array_shift($substrings);
 			
@@ -1880,7 +1880,7 @@ foreach($tmparr as $key=>$subval)
 			$substrings = explode('.',$string);
 			
 			
-			$result = '  '.$this->compile_advanced_chain($substrings);
+			$result = '  '.doitClass::$instance->compile_advanced_chain($substrings);
 			
 			/*
 			$first = array_shift($substrings);
