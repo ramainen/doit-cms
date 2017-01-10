@@ -1,0 +1,62 @@
+<script>
+	$(function(){
+		
+		$('.js-do-url-translit').on('click',function(){
+			$.post( "/admin/urltranslit", {
+				title: $('input[name="data[<?php print d()->field_params[3]; ?>]"]').val(),
+				table : <?php print json_encode(url(3)) ?>,
+				field : <?php print json_encode(d()->field_params[1]) ?>,
+				id : <?php print json_encode(url(4)) ?>,
+			}, function( data ) {
+			  $('input[name="data[<?php print d()->field_params[1]; ?>]"]').val(data)
+			});
+		})
+		
+		$('.js-do-auto-url-translit').on('click',function(){
+			setTimeout(function(){
+				if($('.js-do-auto-url-translit').hasClass('active')){
+					$('.js-do-url-translit').addClass('disabled')
+					$('.js-do-url-translit').click();
+				}else{
+					$('.js-do-url-translit').removeClass('disabled')
+				}
+			},100)
+		});
+		var do_translit_timer;
+		$('input[name="data[<?php print d()->field_params[3]; ?>]"]').on('change keyup keypress',function(){
+			var _t = $(this)
+			clearTimeout(do_translit_timer)
+			do_translit_timer = setTimeout(function(){
+				if($('.js-do-auto-url-translit').hasClass('active')){
+					$('.js-do-url-translit').click();
+				}
+			},300)
+		})
+		$('input[name="data[<?php print d()->field_params[1]; ?>]"]').on('change keyup',function(){
+			$('.js-do-auto-url-translit').removeClass('active')
+			$('.js-do-url-translit').removeClass('disabled')
+		});
+		if($('input[name="data[<?php print d()->field_params[1]; ?>]"]').val() == ''){
+			$('.js-do-auto-url-translit').addClass('active')
+			$('.js-do-url-translit').addClass('disabled')
+		}
+	});
+
+</script>
+
+<div class="control-group">
+  <label class="control-label"  >{title}</label>
+  <div class="controls">
+	<div class="btn-group">
+	<input type="text"  name="{name}" value="{value|h}" class="input-xlarge"  >
+	
+
+	<a href="javascript:void(0)" class="btn js-do-url-translit">Транслит</a>
+	<a href="javascript:void(0)" data-toggle="button" class="btn js-do-auto-url-translit">Авто</a>
+	</div>
+	<span class="help-inline"><?php print d()->field_params[4]; ?></span>
+	
+  </div>
+</div>
+
+ 
