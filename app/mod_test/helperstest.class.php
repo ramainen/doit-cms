@@ -29,6 +29,19 @@ class HelpersTest extends Test
 		$this->assertTrue(d()->valid_email('a@a.ru'));
 	}
 	
+	function test_transliterate_url()
+	{
+		
+		
+		$this->assertEquals('dveri-okna-skobyanye-izdeliya',d()->transliterate_url('Двери, окна, скобяные изделия')); 
+		$this->assertEquals('komnata',d()->transliterate_url('Комната')); 
+		$this->assertEquals('komnata-komnat',d()->transliterate_url('Комната-комнат')); 
+		$this->assertEquals('komnata-komnat',d()->transliterate_url('Комната комнат')); 
+		$this->assertEquals('komnata-komnat',d()->transliterate_url('Комната, комнат')); 
+		$this->assertEquals('komnata-komnat',d()->transliterate_url(',Комната, комнат,')); 
+		$this->assertEquals('komnata-komnat',d()->transliterate_url('Комната, , , - , ,комнат')); 
+	}
+	
 	function test_declOfNum()
 	{
 		$this->assertEquals(d()->declOfNum(4,array('попугай','попугая','попугаев')),'попугая');

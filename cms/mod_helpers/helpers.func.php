@@ -1184,7 +1184,7 @@ function transliterate_url($string)
 
 	$str = preg_replace('~[^-a-z0-9_]+~u', '-', $str);
 	$str = trim($str, "-");
-
+	$str = preg_replace('~\-\-+~', '-', $str);
 	return $str;
     
 }
