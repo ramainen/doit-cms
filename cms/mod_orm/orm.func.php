@@ -829,12 +829,35 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				die('<br>Это всё, что мы знаем.');
 			}
 			*/
-			
-			$this->_data =  $db_result ->fetchAll(PDO::FETCH_ASSOC);
-			
-			if($db_result!==false){
-				ActiveRecord::$_queries_cache[$_sql] = $this->_data;
+			if ($db_result === false) {
+				$parent_function = d()->_active_function();
+				if (d()->db->errorCode() != 0) {
+					$db_err = d()->db->errorInfo();
+					$_message = '<br>Также зафиксирована ошибка базы данных:<br>' . $db_err[2] . ' (' . $db_err[1] . ')';
+					if (iam('developer')) { 
+						if ($db_err[1] == '1146'){
+							$_message .= '<br> Создать таблицу <b>' . h(d()->bad_table) . '</b>? <form method="get" action="/admin/scaffold/new" style="display:inline;" target="_blank"><input type="submit" value="Создать"><input type="hidden" name="table" value="' . h(d()->bad_table) . '"></form> ';
+						}
+						if ($db_err[1] == '1054') {
+							$_column_name = array();
+							if (preg_match_all("/Unknown\scolumn\s\'(.*?)\'/", $db_err[2], $_column_name) == 1) {
+								$_column_name = $_column_name[1][0];
+								$_message .= '<br> Создать столбец <b>' . h($_column_name) . '</b> в таблице ' . h(d()->bad_table) . '? <form method="post" action="/admin/scaffold/create_column" style="display:inline;" target="_blank"><input type="submit" value="Создать"><input type="hidden" name="table" value="' . h(d()->bad_table) . '"><input type="hidden" name="column" value="' . h($_column_name) . '"></form> ';
+							}
+						}
+						$_message .= '<br> Провести обработку схемы? <form method="get" action="/admin/scaffold/update_scheme" style="display:inline;" target="_blank"><input type="submit" value="Провести"></form><br>';
+					}
+				}
+				print '<div style="padding:20px;border:1px solid red;background:white;color:black;">Ошибка при выполнении функции ' . $parent_function . $_message;
+				if (iam('developer')) {
+					print '<pre>' . $_sql . '</pre>';
+				}
+				print '</div>';
+				exit;
 			}
+			
+			$this->_data = $db_result->fetchAll(PDO::FETCH_ASSOC);
+			ActiveRecord::$_queries_cache[$_sql] = $this->_data;
 			
 		}
 		
