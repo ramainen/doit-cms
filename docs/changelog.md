@@ -1,5 +1,21 @@
 История версий
 ==============
+
+2.7.5
+-----
+
+Трейт Tree для работы с деревьями внутри ActiveRecord.
+
+	class Category extends ActiveRecord
+	{
+		use Tree;
+	}
+
+Добавляет методы для определения наддерева и поддерева: `subtree_ids()`, `subtree`, `suptree_ids`, `suptree`.
+
+*17.04.2017*
+
+
 2.7.4
 -----
 
