@@ -105,6 +105,7 @@ ul#admin_main_user_menu>li>ul li
 }
 .adm_icon:before, .adm_icon:after { content: none !important; }
 .adm_icon img {
+ margin:0 !important;
  padding:0 !important;
  border:none !important;
  width:16px !important;
