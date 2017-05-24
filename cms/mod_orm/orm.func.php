@@ -79,6 +79,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	public static $_queries_cache=array();
 	public static $_columns_cache=array();
 	public $_options;
+	public $_clones=array();
 	public $_data;
 	public $is_model=false;
 	private $_get_by_id_cache = false;
@@ -418,6 +419,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$this->_options['new']=true;
 			$this->_future_data = array();
 			return $this;
+		}
+		if($name == 'clone'){
+			if(isset($arguments[0])){
+				return $this->clone_copy($arguments[0]);
+			}else{
+				return $this->clone_copy();
+			}
 		}
 		return $this;
 	}
@@ -1656,6 +1664,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$this->_future_data = array();
 			return $this;
 		}
+		
+		//Item.clone
+		if ($name=='clone') { 
+			return $this->clone_copy();
+		}
+		
+		
 		//Item.expand_to_page
 		//DEPRECATED: в дальнейшем будет удалена
 		/*
@@ -1673,6 +1688,10 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 
 		if (substr($name,0,4)=='all_') {
 			return $this->all_of(substr($name,4));
+		}
+		
+		if (substr($name,0,6)=='clone_') {
+			return $this->clone_copy(substr($name,6));
 		}
 		
 		if (substr($name,0,3)=='to_') {
@@ -1881,7 +1900,30 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			die('Произошла непредвиденная ошибка. Использование truncate без подтверждения запрещено. Возможно, это ошибка.');
 		}
 	}
-
+	
+	function clone_copy($name=NULL){
+		if(is_null($name)){
+			return clone $this;
+		}
+		if (isset ($this->_clones[$name])){
+			return $this->_clones[$name];
+		}
+		$this->_clones[$name] = clone $this;
+		return $this->_clones[$name];
+	}
+	
+	function copy($name=NULL){
+		if(is_null($name)){
+			return clone $this;
+		}
+		if (isset ($this->_clones[$name])){
+			return $this->_clones[$name];
+		}
+		$this->_clones[$name] = clone $this;
+		return $this->_clones[$name];
+	}
+ 
+	
 	/* 
 	Получение переменных напрямую
 	В случае необходимости получения в модели непосредственно значения переменной

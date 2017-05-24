@@ -1,6 +1,44 @@
 История версий
 ==============
 
+2.7.6
+-----
+
+Добавлен метод `clone` у ActiveRecord. Возвращает клон объекта, либо сохраняет именованный клон и возвращает его.
+	
+Алиасы: `copy()`, `clone_copy()`.
+	
+Использование:
+	
+	<?php
+	d()->objects_list = d()->Object->order('sort DESC');
+	d()->objects_list->copy; //Клон объекта
+	d()->objects_list->copy(); //Клон объекта
+	d()->objects_list->clone; //Клон объекта
+	d()->objects_list->clone(); //Клон объекта
+	
+	d()->objects_list->clone_f2->where('user_id = 1');
+	d()->objects_list->clone_f2; //Сохранённый клон под именем f2
+	d()->objects_list->clone("f2"); //Сохранённый клон под именем f2
+	d()->objects_list->copy("f2"); //Сохранённый клон под именем f2
+
+Использование на практике:
+
+	<?php 
+	//Старый вариант
+	$dp = clone d()->objects_list;
+	$ss = $dp->select('user_id')->group('user_id')->fast_all_of('user_id');
+	d()->user_list = d()->User->where('id IN (?)', $ss);
+	foreach (d()->user_list){ /* ... */ }
+	
+	//Новый вариант
+	d()->objects_list->clone_for_users->select('user_id');
+	foreach (d()->objects_list->clone_for_users->_users){ /* ... */ }
+
+
+*24.05.2017*
+
+
 2.7.5
 -----
 
