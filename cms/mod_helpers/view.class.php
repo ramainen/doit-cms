@@ -12,7 +12,7 @@ class View
 	
 	function partial($path){
 		$this->chosen = str_replace('..','',$path);
-		return $this;
+		return $this."";
 	}
 	
 	function __toString(){
