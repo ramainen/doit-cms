@@ -10,7 +10,7 @@
 
 	d()->users->select('id');
 	d()->users->and_select('min(price) as price');
-	d()->users->select('user_id, category_id');
+	d()->users->and_select('user_id, category_id');
 	//Будет преобразовано в SELECT id, min(price) as price, user_id, category_id
 
 
