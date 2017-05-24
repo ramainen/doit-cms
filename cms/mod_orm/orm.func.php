@@ -1910,23 +1910,33 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	
 	function clone_copy($name=NULL){
 		if(is_null($name)){
-			return clone $this;
+			$clone =  clone $this;
+			$clone->_clones=array();
+			return $clone;
 		}
 		if (isset ($this->_clones[$name])){
 			return $this->_clones[$name];
 		}
-		$this->_clones[$name] = clone $this;
+		$clone =  clone $this;
+		$clone->_clones=array();
+			
+		$this->_clones[$name] = $clone;
 		return $this->_clones[$name];
 	}
 	
 	function copy($name=NULL){
 		if(is_null($name)){
-			return clone $this;
+			$clone =  clone $this;
+			$clone->_clones=array();
+			return $clone;
 		}
 		if (isset ($this->_clones[$name])){
 			return $this->_clones[$name];
 		}
-		$this->_clones[$name] = clone $this;
+		$clone =  clone $this;
+		$clone->_clones=array();
+			
+		$this->_clones[$name] = $clone;
 		return $this->_clones[$name];
 	}
  
