@@ -1,6 +1,22 @@
 История версий
 ==============
 
+2.7.6.1
+-------
+
+Добавлен метод `and_select()` у ActiveRecord. Добавляет дополнительный параметр к полю SELECT запроса. Параметр является обязательным. Предварительный вызов `select()` обязателен, иначе запрос будет вида `SELECT * , user_id`.
+
+Например:
+
+	d()->users->select('id');
+	d()->users->and_select('min(price) as price');
+	d()->users->select('user_id, category_id');
+	//Будет преобразовано в SELECT id, min(price) as price, user_id, category_id
+
+
+*24.05.2017*
+
+
 2.7.6
 -----
 

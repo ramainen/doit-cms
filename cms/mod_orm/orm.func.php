@@ -596,6 +596,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this;
 	}
 	
+	public function and_select($select)
+	{
+		$this->_options['queryready']=false;
+		$this->_options['select'] = $this->_options['select'] . ' , '. $select;
+		return $this;
+	}
+	
 	//Общее количество строк в таблице
 	function all_rows_count()
 	{
