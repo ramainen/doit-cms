@@ -1545,3 +1545,10 @@ function form_row($field=array())
 	}
 	return d()->call('admin_'.$field['type']);
 }
+
+function admin_utils_phpinfo(){
+	if(iam('developer')){
+		phpinfo();
+		exit;
+	}
+}
