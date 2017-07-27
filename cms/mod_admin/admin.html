@@ -200,16 +200,13 @@ $filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\'
 <footer>
 <div class="container_12" >
 <div class="row">
-<div class="span6" >
+ 
+<div class="span12" style="text-align:right;">
+<hr>
 <?php if(iam('developer')){ ?>
 	<small>DB: <b><?=h(DB_NAME)?></b>, DR: <b><?=h($_SERVER['DOCUMENT_ROOT'])?></b>, <a href="/admin/utils/phpinfo" target="_blank">phpinfo</a></small>
 
 <?php } ?>
-&nbsp;
-</div>
-<div class="span6" style="text-align:right;">
-<hr>
-
 <?php
 if(iam('developer')){
 	print 'ver. '.file_get_contents($_SERVER['DOCUMENT_ROOT'].'/cms/VERSION.txt');
