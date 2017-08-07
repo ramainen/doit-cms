@@ -303,9 +303,10 @@ class doitClass
 			//Создание заголовки для подавления ошибок и доступа к скаффолдингу
 			$this->db=new PDODummy();
 		}
-		
-		
+
 		// Массив для шаблонизатора
+		$this->template_patterns[]='#([^a-zA-Z01-9\)\]\"\\\'\-\+\/])\~([a-zA-Z])#';
+		$this->template_replacements[]='$1d()->$2';
 		
 		// <foreach users as user>
 		$this->template_patterns[]=	'/<foreach\s+(.*?)\s+as\s+([a-zA-Z0-9_]+)>/';
