@@ -1322,6 +1322,28 @@ function admin_scaffold_new()
 
 
 
+function admin_scaffold_list_of_plugins()
+{
+	if(!iam('developer')){ 
+		return 'Устанавливать расширения могут только разработчики';
+	}
+	set_time_limit(0);
+	if(d()->validate('admin_scaffold_list_of_plugins')) {
+		
+		$plugins=$_POST['modules'];
+		
+		d()->message='Процесс установки проведён';
+		
+		
+		d()->PluginInstaller->download_and_install_pack($plugins);
+		
+		//d()->PluginInstaller->install($plugin);
+	}
+	//d()->plugins_list = d()->PluginInstaller->get_list();
+	
+	print d()->view();
+}
+
 function admin_scaffold_install_plugin()
 {
 	if(!iam('developer')){ 

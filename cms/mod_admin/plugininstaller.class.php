@@ -89,6 +89,31 @@ class PluginInstaller extends UniversalSingletoneHelper
 		unlink($dir.'.zip');
 	}
 	
+	function download_and_install_pack($plugins){
+		
+		$url = 'http://plugins.doit-cms.ru/2.0/dl.php?';
+		$urls=array();
+		foreach($plugins as $value){
+			$urls[]= 'modules[]='.$value;
+		}
+		$url.= implode('&', $urls);
+		$result=$_SERVER['DOCUMENT_ROOT'].'/'.$this->tmp_folder.'/tmp_plugins.zip';
+		 
+		file_put_contents($result,file_get_contents($url));
+		
+		
+		
+		$zip = new ZipArchive;
+		if ($zip->open($result) === TRUE) {
+			$zip->extractTo($_SERVER['DOCUMENT_ROOT'].'/app');
+			$zip->close();
+		}
+			
+		 unlink($result);
+		
+		
+	}
+	
 	
 	function download($file_name)
 	{

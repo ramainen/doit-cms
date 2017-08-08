@@ -1,0 +1,118 @@
+ 
+
+<h1>Скаффолдинг: Установка плагина</h1>
+
+<?php if(d()->message){ ?>
+
+
+<div class="modal" id="message_modal">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Результаты</h3>
+  </div>
+  <div class="modal-body">
+    <p>{message}</p>
+  </div>
+  <div class="modal-footer">
+    <a href="/" class="btn" >OK</a>
+    
+  </div>
+</div>
+<script>
+$(function(){
+	$('#message_modal').modal()
+})
+</script>
+<?php }else {  ?>
+
+<div class="row">
+<div class="span12" >
+<div class="row"> 
+	<style>
+	 
+	 
+	pre
+	{
+		line-height: 1.5em;
+		background-color: #F6F6F6;
+		overflow: auto;
+		border: #CCC solid 1px;
+	}
+	code
+	{
+		 font-size: 1.2em; 
+	}
+	.styled-checkbox{
+	    transform: scale(2);
+		position: relative;
+		top: 20px;
+		left: 16px;
+	}
+	.styled-description h1:first-child {
+		display:none;
+	}
+	 
+	</style>
+	
+	<script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+	<link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/railscasts.min.css">
+	
+	<script>
+
+ 
+</script>
+
+<script src="/cms/external/markdown-js/marked.min.js"></script>
+<script>
+$(function(){
+
+
+
+	var url = 'http://plugins.doit-cms.ru/2.0/list.php';
+	$.ajax({
+	 url: url
+	}).done(function(data){
+		$('.js-wait-please').hide();
+		$('.js-done-show').show();
+		for (key in data){
+			var description = marked(data[key]['description']);
+			var name =  (data[key]['name']);
+			var title =  (data[key]['title']);
+			$('<div><div class="row"><div class="span1 " ><label style="float:right;" class="checkbox"><input name="modules[]" value="'+ name +'" id="chk'+key+'" type="checkbox" class="styled-checkbox"></label></div><div class="span10 "><label for="chk'+key+'"><h1>'+title+'</h1></label><div class="styled-description">' + description +'</div></div></div><hr></div>').appendTo('.js-plugins-list-container');
+		}
+		
+		//$('pre code:contains("d()->")').addClass('language-php')
+		hljs.configure({'languages':['php','javascript','html','ini']})
+		hljs.initHighlighting.called = false;
+		hljs.initHighlighting();
+			
+	});
+})
+</script>
+
+<div class="js-wait-please container">
+<div class="row">
+<div class="span12" >
+	Подождите, идёт загрузка доступных модулей... <img src="/cms/internal/gfx/ajax-loader.gif" alt="загрузка...">
+</div>
+</div>
+</div>
+
+<div class="js-done-show" style="display:none;">
+	{{form 'admin_scaffold_list_of_plugins'}}
+	<div class="js-plugins-list-container" >
+	
+	</div>
+	<div class="form-actions">
+		<input type="submit" value="Установить" class="btn btn-primary">
+		 
+	</div>
+	{{/form}}
+</div>
+ 
+
+	</div>
+	<a href="/admin/scaffold/install_plugin_old">Открыть старый интерфейс</a>
+</div>
+</div>
+<?php } ?>
