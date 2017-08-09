@@ -35,4 +35,26 @@ d()->as_preview=function($value, $field, $object){
 	return '<img src="'.d()->preview(array($value,'100','100')).'" alt="" />';
 };
 
+d()->as_date_day=function($value, $field, $object){
+	if($value==''){
+		return '';
+	}
+	return d()->Date($value)->day;
+};
+
+d()->as_date_mm_yyyy=function($value, $field, $object){
+	if($value==''){
+		return '';
+	}
+	return d()->Date($value)->to_mm_yyyy();
+};
+
+d()->as_date_ru_month=function($value, $field, $object){
+	if($value==''){
+		return '';
+	}
+	return d()->Date($value)->ru_month;
+};
+
+
 

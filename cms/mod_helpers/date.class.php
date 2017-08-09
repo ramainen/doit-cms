@@ -204,6 +204,15 @@ class Date extends UniversalHelper
 		}
 		return date('d.m.Y',$this->stamp);
 	}
+	
+	function to_mm_yyyy()
+	{
+		if($this->stamp == false){
+			return '';
+		}
+		return date('m.Y',$this->stamp);
+	}
+	
 	function to_russian()
 	{
 		return $this->ru_user();
