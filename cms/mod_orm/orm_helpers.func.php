@@ -56,5 +56,13 @@ d()->as_date_ru_month=function($value, $field, $object){
 	return d()->Date($value)->ru_month;
 };
 
+d()->as_admin_check_mark = function($value, $field, $object) {
+  if (iam()) {
+    return $value
+        ? '<span style="color:#3c3;font-weight:bold;font-size:1.5em;line-height:1em;vertical-align:middle;">☑️</span>'
+        : '<span style="color:#c33;font-weight:bold;font-size:1.5em;line-height:1em;vertical-align:middle;">☒</span>';
+  }
+  return '';
+};
 
 
