@@ -217,7 +217,7 @@ function form ($params=array())
 	}
 	
 	if(isset($params['ajax']) && $params['ajax']==true) {
-		$attr .= ' onsubmit="window._current_form=$(this);$.ajax({\'type\':\'post\',\'url\': $(this).attr(\'action\')?$(this).attr(\'action\'):document.location.href ,\'data\':$(this).serialize(),\'success\':function(recieved_data){eval(recieved_data)}});return false;" ';
+		$attr .= ' onsubmit="window._current_form=$(this);$(this).find(\'.js-disabled\').attr(\'disabled\',true);$.ajax({\'type\':\'post\',\'url\': $(this).attr(\'action\')?$(this).attr(\'action\'):document.location.href ,\'data\':$(this).serialize(),\'success\':function(recieved_data){window._current_form.find(\'.js-disabled\').attr(\'disabled\',false);eval(recieved_data)}});return false;" ';
 		
 	}
 	
