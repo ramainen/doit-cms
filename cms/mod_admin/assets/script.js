@@ -385,7 +385,7 @@ $(".str_input").pasteImageReader(function(results) {
 										if (evt.lengthComputable) {
 											var percentComplete = evt.loaded / evt.total;
 											$target_progressbar.show();
-											$target_progressbar_div.css({'width': Math.round( percentComplete * 100)  + '%'})
+											$target_progressbar_div.css({'width': Math.round( percentComplete * 600)  + 'px'})
 											if (percentComplete==1){
 												$target_progressbar.addClass('progress-warning');
 											}
