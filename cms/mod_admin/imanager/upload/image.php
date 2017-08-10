@@ -252,8 +252,9 @@ class tinyimages {
 					}
 				$source = DIR.$this->folder.'/'.$name.'.'.$ext;
  
-				if(! @copy($_FILES['Filedata']['tmp_name'], $source)) {
-					//print "error4";
+				if(! copy($_FILES['Filedata']['tmp_name'], $source)) {
+					print "error4";
+					exit;
 				}
 				if(true) {
 

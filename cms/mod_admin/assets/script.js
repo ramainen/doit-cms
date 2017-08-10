@@ -367,6 +367,12 @@ $(".str_input").pasteImageReader(function(results) {
 			    	multple_current++;
 			    	if ($this[0].files[multple_current]){
 			    		
+						$target_progressbar.removeClass('progress-success');
+						$target_progressbar.removeClass('progress-danger');
+						$target_progressbar.removeClass('progress-warning');
+						$target_progressbar.addClass('active');
+						
+						
 			    		file = $this[0].files[multple_current];
 						var data = new FormData();
 						data.append('Filedata', file);
@@ -380,13 +386,18 @@ $(".str_input").pasteImageReader(function(results) {
 											var percentComplete = evt.loaded / evt.total;
 											$target_progressbar.show();
 											$target_progressbar_div.css({'width': Math.round( percentComplete * 100)  + '%'})
+											if (percentComplete==1){
+												$target_progressbar.addClass('progress-warning');
+											}
 										}
 									}, false);
 									xhr.addEventListener("progress", function(evt){
 										if (evt.lengthComputable) {
 											var percentComplete = evt.loaded / evt.total;
 											if (percentComplete==1){
-												$target_progressbar.hide();
+												$target_progressbar.addClass('progress-success');
+												$target_progressbar.removeClass('progress-warning');
+												$target_progressbar.removeClass('active');
 											}
 										}
 									}, false);
@@ -402,6 +413,17 @@ $(".str_input").pasteImageReader(function(results) {
 						    
 						        if(data=='error2'){
 						    		alert('неверный тип файла');
+									$target_progressbar.removeClass('progress-success');
+									$target_progressbar.removeClass('progress-warning');
+									$target_progressbar.addClass('progress-danger');
+									$target_progressbar.removeClass('active');
+						    	}else if(data=='error4'){
+						    		alert('Нет прав на запись в директорию загрузки');
+									$target_progressbar.removeClass('progress-success');
+									$target_progressbar.removeClass('progress-warning');
+									$target_progressbar.addClass('progress-danger');
+									$target_progressbar.removeClass('active');
+									
 						    	}else{
 						    		multiple_files.push(data)
 						    		
