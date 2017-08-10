@@ -82,7 +82,12 @@ class Validator
 		}
 		return $this;
 	}
- 
+	
+	public function __callStatic($name, $param)
+	{
+		return Validator::create($_POST[$name], $name);
+	}
+	
 	 public  static function add_notice($text, $element=false)
 	 {
 	 	//if (get_called_class()==get_class() &&   !is_null($this) ){
