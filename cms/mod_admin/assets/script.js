@@ -347,6 +347,8 @@ $(".str_input").pasteImageReader(function(results) {
 			
 			var multiple_files = [];
 		    var $targetfile =$(this).parent().parent().find('.str_input') 
+		    var $target_progressbar =$(this).parent().parent().find('.js-progress-bar') 
+		    var $target_progressbar_div = $target_progressbar.find('div') 
 			 
 		    var file;
 			
@@ -369,7 +371,28 @@ $(".str_input").pasteImageReader(function(results) {
 						var data = new FormData();
 						data.append('Filedata', file);
 					    $.ajax({
-					        url: url,
+					        xhr: function()
+								{
+									var xhr = new window.XMLHttpRequest();
+									// прогресс загрузки на сервер
+									xhr.upload.addEventListener("progress", function(evt){
+										if (evt.lengthComputable) {
+											var percentComplete = evt.loaded / evt.total;
+											$target_progressbar.show();
+											$target_progressbar_div.css({'width': Math.round( percentComplete * 100)  + '%'})
+										}
+									}, false);
+									xhr.addEventListener("progress", function(evt){
+										if (evt.lengthComputable) {
+											var percentComplete = evt.loaded / evt.total;
+											if (percentComplete==1){
+												$target_progressbar.hide();
+											}
+										}
+									}, false);
+									return xhr;
+								},
+							url: url,
 					        data: data,
 		   					cache: false,
 						    contentType: false,
