@@ -2225,7 +2225,7 @@ foreach($tmparr as $key=>$subval)
 	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.('vendors'.DIRECTORY_SEPARATOR.$fileName))){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.'vendors'.DIRECTORY_SEPARATOR.$fileName;
 	}else{
-		if(substr(strtolower($class_name),-10)!='controller'){
+		if(substr(strtolower($class_name),-10)!='controller' && $class_name{0}>='A' && $class_name{0}<='Z'){
 			//Если совсем ничего не найдено, попытка использовать ActiveRecord.
 			eval ("class ".$class_name." extends ActiveRecord {}");	
 		}
