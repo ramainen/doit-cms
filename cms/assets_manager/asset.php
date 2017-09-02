@@ -8,11 +8,15 @@ d()->singleton('assets',function(){
 
 function stylesheets($params){
 	
+	$mtime = true;
 	$suffix = '.compiled.css';
 	$files=array();
 	$minify=false;
 	$concat=false;
 	$is_another_files=false;
+	if($params['mtime'] === false){
+		$mtime = false;
+	}
 	if($params['minify']==true || $params['min']==true || $params['optimise']==true || $params['optimize']==true){
 		$minify=true;
 		$suffix = '.compiled.min.css';
@@ -127,8 +131,14 @@ function stylesheets($params){
 	}
 	
 	$result = '';
-	foreach ($files as $file){
-		$result .= '<link rel="stylesheet" type="text/css" href="'.$file.'" />';
+	if($mtime){
+		foreach ($files as $file){
+			$result .= '<link rel="stylesheet" type="text/css" href="'.$file.'?'.  filemtime($_SERVER['DOCUMENT_ROOT'].$file) .'" />';
+		}
+	}else{
+		foreach ($files as $file){
+			$result .= '<link rel="stylesheet" type="text/css" href="'.$file.'" />';
+		}
 	}
 	return $result ;
 	
