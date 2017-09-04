@@ -115,7 +115,6 @@
 	{{stylesheets '/css/style.less', 'minify'=>true}}
 
 *27.08.2017*
->>>>>>> 8a85e2ca243d62489b8b893c247ff0c086cff19d
 
 2.9.4
 -----
