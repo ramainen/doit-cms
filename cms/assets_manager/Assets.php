@@ -3,7 +3,9 @@
 
 class Assets
 {
-	
+	public $scss_compiler=false;
+	public $less_compiler=false;
+	public $minifier=false;
 	function compile_postcss($data)
 	{
 		if( $curl = curl_init() ) {
@@ -17,5 +19,32 @@ class Assets
 		}
 		return false;
 	}
-		
+	function compile_scss($data)
+	{
+		if($this->scss_compiler === false){
+			$this->init_scss();
+		}
+		return $this->scss_compiler->compile($data);
+		//TODO: $scss->setImportPaths("...path.../stylesheets/");
+		 
+	}	
+	function compile_less($data)
+	{
+		if($this->less_compiler === false){
+			$this->init_less();
+		}
+		return $this->less_compiler->compile($data);
+		 
+	}	
+	function init_scss(){
+		$this->scss_compiler = new \Leafo\ScssPhp\Compiler();
+	}
+	function init_less(){
+		$this->less_compiler = new lessc();
+	}
+	function minify($data){
+		$this->minifier =new \MatthiasMullie\Minify\CSS($sourcePath);
+		$this->minifier->add($data);
+		return $this->minifier->minify();
+	}
 }
