@@ -15,7 +15,9 @@
 
 	$_modelname = $_first_letter.substr($_modelname,1);
 	d()->list_of_rows =  new $_modelname ();
-
+	if(isset(d()->field_params[4])){
+		d()->list_of_rows = d()->list_of_rows[d()->field_params[4]];
+	}
   ?>
  
 <script>

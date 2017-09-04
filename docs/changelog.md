@@ -1,6 +1,37 @@
 История версий
 ==============
 
+2.9.7.3
+-------
+
+В элемент управления `connected_checkboxes` и `checkboxes` добавлен новый необязательный параметр (четвёртый в `connected_checkboxes` и  третий в `checkboxes`). В него передается имя метода класса, который будет запрошен у соответствующей таблицы перед выводом списка, для фильтрации данных. Например, для таблицы `users`, при указанном параметре `activated` для построения списка галочек будут использоваться данные из списка d()->User->activated;
+
+Внимание: классы `Table_Safe` не используются, используется обычный ActiveRecord.
+
+Пример:
+
+	<?php
+	class Filial extends ActiveRecord {
+		function limites(){
+			return $this->limit(2);
+		}
+	}
+	
+	class Scriptstep extends ActiveRecord {
+		function onlyquestions(){
+			return $this->only('question');
+		}
+	}
+
+
+	[admin.fields]
+	small  title "Название"
+	checkboxes to_filials "Филиалы"  limites
+	connected_checkboxes connected_question_id_in_script_questions "Следующие вопросы" scriptsteps onlyquestions
+
+
+*04.08.2017*
+
 2.9.7.2
 -------
 
