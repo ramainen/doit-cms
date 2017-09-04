@@ -1819,6 +1819,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$column = ActiveRecord::plural_to_one(strtolower(substr($name,3))).'_id';
 			$current_column = $this->_options['plural_to_one']."_id";
 			if(isset($this->_data[0])){
+				d()->bad_table = et($many_to_many_table );
 				$result = doitClass::$instance->db->query("SELECT " . DB_FIELD_DEL . $column . DB_FIELD_DEL . " FROM ".et($many_to_many_table )." WHERE ". DB_FIELD_DEL . $current_column . DB_FIELD_DEL ." = ". e($this->_data[$this->_cursor]['id']))->fetchAll(PDO::FETCH_COLUMN);
 				return implode(',',$result);
 			}else{
@@ -1836,6 +1837,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 			$column = substr($many_to_many_tables[0],10); 
 			$current_column = $this->_options['plural_to_one']."_id";
 			if(isset($this->_data[0])){
+				d()->bad_table = et($many_to_many_table );
 				$result = doitClass::$instance->db->query("SELECT " . DB_FIELD_DEL . $column . DB_FIELD_DEL . " FROM ".et($many_to_many_table )." WHERE ". DB_FIELD_DEL . $current_column . DB_FIELD_DEL ." = ". e($this->_data[$this->_cursor]['id']))->fetchAll(PDO::FETCH_COLUMN);
 				return implode(',',$result);
 			}else{
