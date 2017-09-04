@@ -1,6 +1,40 @@
 История версий
 ==============
 
+2.9.7.1
+-------
+
+Элемент управления для системы администрирования `connected_checkboxes` для вывода "галочек" для списка соединенной таблицы. Имеет обязательный для указания параметр (четвёртый). 
+
+Нужен только для вывода свойства `title` из выбранной таблицы.
+
+Примеры:
+
+	;scriptsteps
+	[admin.fields]
+	small title "Название"
+	connected_checkboxes connected_question_id_in_script_questions "Связанные ответы" scriptsteps
+
+	;users
+	[admin.fields]
+	small title "Название"
+	connected_checkboxes friend_id_in_users_friends "Друзья" users
+
+	;products
+	[admin.fields]
+	small title "Название"
+	connected_checkboxes connected_similar_product_id_in_similars "Рекомендуемые товары" products
+
+Для использования элемента управления не обязательно использовать запись `connected_*_in_*`. Система работает и с обыкновенным текстовым полем, просто записывая в базу данных id через запятую.
+
+	;products
+	[admin.fields]
+	small title "Название"
+	connected_checkboxes regionslist "Регионы" regions
+	connected_checkboxes just_title "ID категорий" categories
+	
+*04.08.2017*
+
 2.9.7
 -----
 
