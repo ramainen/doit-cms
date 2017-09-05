@@ -19,15 +19,18 @@ class Assets
 		}
 		return false;
 	}
-	function compile_scss($data)
+	function compile_scss($data, $path='')
 	{
 		if($this->scss_compiler === false){
 			$this->init_scss();
 		}
+		if($path!=''){
+			$this->scss_compiler->setImportPaths($path.'/');
+		}
 		return $this->scss_compiler->compile($data);
 		//TODO: $scss->setImportPaths("...path.../stylesheets/");
 		 
-	}	
+	}
 	function compile_less($data)
 	{
 		if($this->less_compiler === false){

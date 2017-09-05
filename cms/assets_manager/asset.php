@@ -55,12 +55,12 @@ function stylesheets($params){
 				if($minify){
 					file_put_contents(
 						$_SERVER['DOCUMENT_ROOT'].$file.$suffix, //куда записываем
-						d()->assets->minify(d()->assets->compile_scss(file_get_contents($_SERVER['DOCUMENT_ROOT'].$file))) //исходный файл
+						d()->assets->minify(d()->assets->compile_scss(file_get_contents($_SERVER['DOCUMENT_ROOT'].$file)), dirname ($_SERVER['DOCUMENT_ROOT'].$file)) //исходный файл
 					);
 				}else{
 					file_put_contents(
 						$_SERVER['DOCUMENT_ROOT'].$file.$suffix, //куда записываем
-						d()->assets->compile_scss(file_get_contents($_SERVER['DOCUMENT_ROOT'].$file)) //исходный файл
+						d()->assets->compile_scss(file_get_contents($_SERVER['DOCUMENT_ROOT'].$file), dirname ($_SERVER['DOCUMENT_ROOT'].$file)) //исходный файл
 					);	
 				}
 				
