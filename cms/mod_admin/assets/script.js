@@ -626,8 +626,8 @@ function show_field_editor()
 function window_cancel()
 {
 	if(window.opener){
-		 window.open('','_self','');window.close();
+		window.open('','_self','');window.close();
 	} else {
-		history.history.go(-1);
+		window.history.go(-1);
 	}
 }
