@@ -641,7 +641,11 @@ foreach($tmparr as $key=>$subval)
 		
 		$_files=array();
 		//сначала инициализируются файлы из ./cms, затем из ./app
-		$_work_folders = array('cms','app');
+		if(isset($_ENV['APP_DIRS']) && $_ENV['APP_DIRS']!=''){
+			$_work_folders = array_map('trim', explode(',', $_ENV['APP_DIRS']));
+		}else{
+			$_work_folders = array('cms','app');
+		}
 		$ignore_subfolders = array('.','..','internal','external','fields','vendor');
 		define('SERVER_NAME',preg_replace('/^www./i','',$_SERVER['SERVER_NAME']));
 		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/sites/'.SERVER_NAME)){
