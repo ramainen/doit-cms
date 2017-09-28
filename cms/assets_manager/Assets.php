@@ -50,4 +50,9 @@ class Assets
 		$this->minifier->add($data);
 		return $this->minifier->minify();
 	}
+	function minifyjs($data){
+		$this->minifierjs =new \MatthiasMullie\Minify\JS($sourcePath);
+		$this->minifierjs->add($data);
+		return $this->minifierjs->minify();
+	}
 }

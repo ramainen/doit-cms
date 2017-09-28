@@ -146,3 +146,109 @@ function stylesheets($params){
 	return $result ;
 	
 }
+
+
+function javascripts($params){
+	
+	$mtime = true;
+	$suffix = '.minified.js';
+	$files=array();
+	$minify=false;
+	$concat=false;
+	$is_another_files=false;
+	if($params['mtime'] === false){
+		$mtime = false;
+	}
+	if($params['minify']==true || $params['min']==true || $params['optimise']==true || $params['optimize']==true){
+		$minify=true;
+		$suffix = '.minified.js';
+	}
+	if($params['concat']==true || $params['optimise']==true || $params['optimize']==true || isset($params['to'])){
+		$concat=true;
+	}
+	$reconcat=false;
+	if(isset($params['to'])){
+		$concat_file = $params['to'];
+		if( $concat_file{0}!='/'){
+			$concat_file = '/js/'.$concat_file;
+		}
+	}else{
+		$concat_file = '';
+		foreach ($params as $key=>$file){
+			if(!is_numeric($key)){
+				continue;
+			}
+			$concat_file .= $file;
+		}
+		$concat_file = '/js/'.md5($concat_file).'.js';
+	}
+	foreach ($params as $key=>$file){
+	
+		if(!is_numeric($key)){
+			continue;
+		}
+		if( $file{0}!='/'){
+			$file = '/js/'.$file;
+		}
+		 
+		if(substr($file,-3)=='.js'){
+			if($minify){
+
+				if(!file_exists($_SERVER['DOCUMENT_ROOT'].$file.$suffix) || filemtime($_SERVER['DOCUMENT_ROOT'].$file ) > filemtime($_SERVER['DOCUMENT_ROOT'].$file.$suffix) || $is_another_files){
+					$reconcat=true;
+					file_put_contents(
+						$_SERVER['DOCUMENT_ROOT'].$file.$suffix, //куда записываем
+						d()->assets->minifyjs( file_get_contents($_SERVER['DOCUMENT_ROOT'].$file)) //исходный файл
+					);
+				 
+					chmod($_SERVER['DOCUMENT_ROOT'].$file.$suffix, 0777);
+					
+				}
+				$files[]=$file.$suffix;
+			}else{
+				if($concat){
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].$concat_file) || filemtime($_SERVER['DOCUMENT_ROOT'].$file ) > filemtime($_SERVER['DOCUMENT_ROOT'].$concat_file) ){
+						$reconcat=true;
+					}	 
+				}
+				
+				
+				
+				$files[]=$file;
+			}
+		}
+		
+	}
+	
+	if($concat){
+		$concated='';
+		if(!file_exists($_SERVER['DOCUMENT_ROOT'].$concat_file)){
+			$reconcat=true;
+		}
+		if($reconcat){
+			foreach ($files as $file){
+				$concated.=file_get_contents($_SERVER['DOCUMENT_ROOT'].$file);
+			}
+			file_put_contents(
+				$_SERVER['DOCUMENT_ROOT'].$concat_file, //куда записываем
+				$concated //исходный файл
+			);
+					 
+			chmod($_SERVER['DOCUMENT_ROOT'].$concat_file, 0777);
+		}
+		$files = array($concat_file);
+	}
+	
+	$result = '';
+	if($mtime){
+		foreach ($files as $file){
+			$result .= ' <script type="text/javascript" src="'.$file.'?'.  filemtime($_SERVER['DOCUMENT_ROOT'].$file) .'"></script>';
+		}
+	}else{
+		foreach ($files as $file){
+			$result .= '<script type="text/javascript" src="'.$file.'"></script>';
+		}
+	}
+	return $result ;
+	
+}
