@@ -982,8 +982,12 @@ foreach($tmparr as $key=>$subval)
 			});
 			
 			$pipe = $this->middleware_pipe;
-			$pipe($this->http_request, $this->http_response);
-			 
+			$this->http_response = $pipe($this->http_request, $this->http_response);
+			foreach ($this->http_response->getHeaders() as $name => $values) {
+				foreach ($values as $value) {
+					header(sprintf('%s: %s', $name, $value), false);
+				}
+			}
 			return $this->http_response->getBody();
 		}
 		return $this->call('main');
