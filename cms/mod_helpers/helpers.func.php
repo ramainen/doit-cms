@@ -567,6 +567,7 @@ function preview($adress,$param1=false,$param2=false )
 				return false;
 				break;
 		}
+		$changed_rotation = false;
 		if ($file_dimensions = getimagesize($filename)) {
 			$file_type = strtolower($file_dimensions['mime']);
 			switch ($file_type) {
@@ -586,12 +587,14 @@ function preview($adress,$param1=false,$param2=false )
 							switch($exif['Orientation']) {
 							case 8:
 								$img = imagerotate($img,90,0);
+								$changed_rotation=true;
 								break;
 							case 3:
 								$img = imagerotate($img,180,0);
 								break;
 							case 6:
 								$img = imagerotate($img,-90,0);
+								$changed_rotation=true;
 								break;
 							}
 						}
@@ -604,6 +607,12 @@ function preview($adress,$param1=false,$param2=false )
 		}
 
 		list($org_width, $org_height) = getimagesize($filename);
+		
+		if($changed_rotation){
+			$tmp_width = $org_width;
+			$org_width = $org_height;
+			$org_height = $tmp_width;
+		}
 		$nch_org_width = $org_width;
 		$nch_org_height = $org_height;
 		
