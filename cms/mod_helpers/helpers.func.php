@@ -580,6 +580,22 @@ function preview($adress,$param1=false,$param2=false )
 				case 'image/jpeg':
 				case 'image/pjpeg':
 					$img = ImageCreateFromJpeg($filename);
+					if(function_exists("exif_read_data")){
+						$exif = exif_read_data($filename);
+						if(!empty($exif['Orientation'])) {
+							switch($exif['Orientation']) {
+							case 8:
+								$img = imagerotate($img,90,0);
+								break;
+							case 3:
+								$img = imagerotate($img,180,0);
+								break;
+							case 6:
+								$img = imagerotate($img,-90,0);
+								break;
+							}
+						}
+					}
 					break;
 			}
 		}
