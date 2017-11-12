@@ -1666,6 +1666,14 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	{
 		return json_encode($this->to_array);
 	}
+	function to_json_by_id()
+	{
+		$result = array();
+		foreach ($this->to_array as $value){
+			$result[$value['id']] = $value;
+		}
+		return json_encode($result);
+	}
 	function __set($name,$value)
 	{	
 		if(method_exists($this,'set_'.$name)) {
