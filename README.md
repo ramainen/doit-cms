@@ -31,5 +31,6 @@ DoIt CMS
 
 MIT
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ramainen/doit-cms/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+### Поддержка
 
+Вопросы можно задавать в Issues или в группе Telegram https://t.me/doit_cms.
