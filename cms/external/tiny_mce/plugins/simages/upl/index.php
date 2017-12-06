@@ -41,7 +41,8 @@
 	 if($is_magic){
 		 return md5_file($file);
 	 }
-	 $ext = strtolower( substr($filename,strrpos($filename,'.')+1) );
+	 //$ext = strtolower( substr($filename,strrpos($filename,'.')+1) );
+	 $ext = mb_strtolower(end(explode(".", $filename)), 'UTF-8' );
 	 $filename = substr($filename,0, strrpos($filename,'.')) ;
 	 $new_filename =  transliterate_file_name($filename);
 	 //Проверка, если файл уже существует
@@ -223,7 +224,8 @@ header("Content-Type: text/html; charset=Windows-1251");
 				$result['error'] = $error;
 			}
 			else {
-				$ext = strtolower( substr($filename,strrpos($filename,'.')+1) );
+				//$ext = strtolower( substr($filename,strrpos($filename,'.')+1) );
+				$ext = mb_strtolower(end(explode(".", $filename)), 'UTF-8' );
 				$name = findname($file,$our_folder,$filename,$is_magic);
 				$source = $our_folder.'/'.$name.'.'.$ext;
 				
