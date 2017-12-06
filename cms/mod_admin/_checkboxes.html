@@ -1,5 +1,11 @@
 <?php $table = (substr(d()->field_params[1],3));
   
+  
+	if(isset(d()->field_params[3]){
+		$table = d()->field_params[3];
+	}
+	
+	
 	$_modelname=ActiveRecord::plural_to_one(strtolower($table));
 
 	$_first_letter=strtoupper(substr($_modelname,0,1));
@@ -7,8 +13,8 @@
 	$_modelname = $_first_letter.substr($_modelname,1);
 	d()->list_of_rows =  new $_modelname ();
 
-	if(isset(d()->field_params[3])){
-		d()->list_of_rows = d()->list_of_rows[d()->field_params[3]];
+	if(isset(d()->field_params[4])){
+		d()->list_of_rows = d()->list_of_rows[d()->field_params[4]];
 	}
 	
   ?>
