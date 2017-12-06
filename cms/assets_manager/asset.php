@@ -227,7 +227,7 @@ function javascripts($params){
 		}
 		if($reconcat){
 			foreach ($files as $file){
-				$concated.=file_get_contents($_SERVER['DOCUMENT_ROOT'].$file);
+				$concated.=file_get_contents($_SERVER['DOCUMENT_ROOT'].$file).';';
 			}
 			file_put_contents(
 				$_SERVER['DOCUMENT_ROOT'].$concat_file, //куда записываем

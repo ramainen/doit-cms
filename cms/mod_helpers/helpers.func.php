@@ -523,6 +523,17 @@ function preview($adress,$param1=false,$param2=false )
 		$not_resize_hash = '_nrs_';
 	}
 	if(is_array($orig_params) && isset($orig_params['watermark'])){
+		$watermark_opacity = 100;
+		$watermark_position = 'center';
+		if(is_array($orig_params['watermark'])){
+			if(isset($orig_params['watermark'][2])){
+				$watermark_opacity = $orig_params['watermark'][2];
+			}
+			if(isset($orig_params['watermark'][1])){
+				$watermark_position = $orig_params['watermark'][1];
+			}
+			$orig_params['watermark'] = $orig_params['watermark'][0];
+		}
 		$is_watermark = true;
 		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview_watermark".$not_resize_hash. md5($orig_params['watermark'].$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1)) . $ext;
 	}else{
@@ -696,9 +707,11 @@ function preview($adress,$param1=false,$param2=false )
 			imageSaveAlpha($imgwater, true);
 			imagealphablending($img_n, false);
 			imageSaveAlpha($img_n, true);
-			$watermark = new Watermark_creator();
-
-			$img_n=$watermark->create($img_n,$imgwater,100);
+			//Устаревший вариант
+			//$watermark = new Watermark_creator();
+			//$img_n=$watermark->create($img_n,$imgwater,100);
+			$watermark = new Watermark_creator_universal();
+			$img_n=$watermark->create($img_n,$imgwater, $watermark_opacity, $watermark_position);
 		}
 		
 		if($type=="gif") {
