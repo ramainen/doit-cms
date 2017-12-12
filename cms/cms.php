@@ -977,7 +977,17 @@ foreach($tmparr as $key=>$subval)
 			});
 			
 			$this->middleware_pipe->pipe(function ($err, $request, $response, $next) {
-				print print_error_message('Выброшено исключение','','' ,$err->getMessage(),'Исключение' );
+				if(iam('developer')){
+					$trace = $err->getTrace();
+					$result .= '<br>Trace:<br>';
+					foreach($trace as $val){
+						$result .=  $val['file'] .':'. $val['line']. '<br />';
+					}
+					$result .= '<br />';
+					print print_error_message('Выброшено исключение',$err->getLine(),$err->getFile() ,$err->getMessage()."<br>".$result,'Исключение' );
+				}else{
+					print print_error_message('Выброшено исключение',' ',' ' ,$err->getMessage(),'Исключение' );
+				}
 				exit;
 			});
 			
