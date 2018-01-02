@@ -667,7 +667,9 @@ foreach($tmparr as $key=>$subval)
 		foreach($_work_folders as $dirname) { 
 			$_files[$dirname]['/']=array();
 			$_handle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname);
-
+			if (!$_handle) {
+				continue;
+			}
 			while (false !== ($_file = readdir($_handle))) {
 				 if(substr($_file,0,4)=='mod_') {
 					if(!in_array(substr($_file,4), $disabled_modules)){
