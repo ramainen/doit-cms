@@ -68,7 +68,7 @@ class Watermark_creator_universal{
 		$image_height = imagesy($main_img_obj);		
 		if($position == 'repeat'){
 			for ($x = 0; $x<=$image_width; $x += $water_width){
-				for ($y = 0; $y<=$image_width; $y += $water_width){
+				for ($y = 0; $y<=$image_height; $y += $water_height){
 					$water_position_x = $x;
 					$water_position_y = $y;
 					imagecopy($main_img_obj, $watermark_img_obj, $water_position_x, $water_position_y , $water_part_x, $water_part_y, $water_width, $water_height);
