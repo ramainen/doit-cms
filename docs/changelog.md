@@ -16,9 +16,12 @@
 
 Пункт 3: возможность указать любой кастомный шаблон для пагинации.
 
+	<?php
 	d()->Paginator->custom_template("/app/components/custom_pagination.html")->generate($list);
 
+
 Содержимое файла "custom_pagination.html" с описанием данных:
+
 
 	@ if (  ~paginator_left !== '') {
 		<a href="{paginator_left|h}" class="control prev">Назад</a>
