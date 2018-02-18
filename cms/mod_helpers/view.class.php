@@ -21,10 +21,14 @@ class View
 		$url=strtok($_SERVER["REQUEST_URI"],'?');
 		$url = str_replace('..','',$url);
 		$called_file = false;
+		
+		
+
 		if($this->chosen !== false){
 			$called_file = $this->chosen;
 			
 			$shortfile = $this->chosen;
+			
 			$trys[]  = $shortfile ;
 			if(is_file($shortfile))
 			{
@@ -36,6 +40,10 @@ class View
 				return  $this->from_file($shortfile);
 			}
 			
+			if(is_file(ROOT .  $shortfile))
+			{
+				return  $this->from_file($shortfile, true);
+			}
 			
 			$this->chosen=false;
 			
@@ -82,7 +90,7 @@ class View
 		}
 		
 		if($called_file!==false){
-		
+			
 			//вариант четвертый - файл внутри директории, вызов closure
 			$tryfile =d()->_closure_current_view_path . '/'. $called_file;
 			//Вырезаем всё
@@ -114,7 +122,7 @@ class View
 		return  print_error_message(' ','',$errfile ,'','Не удалось найти файл шаблона (проверялись: '.implode(', ',$trys).')'  );
 	}
 	
-	function from_file($file){
+	function from_file($file, $global=false){
 
 		$name = str_replace(array('/','.','-','\\'),array('_','_','_','_'),substr($file,1)).'_tpl';
 	
@@ -127,7 +135,12 @@ class View
 		if(!function_exists($name)){
 			
 			ob_start(); //Подавление стандартного вывода ошибок Parse Error
-			$code = d()->shablonize(file_get_contents(ROOT . '/app'.$file));
+			if($global){
+				$code = d()->shablonize(file_get_contents(ROOT . $file));
+			}else{
+				$code = d()->shablonize(file_get_contents(ROOT . '/app'.$file));	
+			}
+			
 			$result=eval('function '.$name.'(){ $doit=d(); ?'.'>'.$code.'<'.'?php ;} ');
 			ob_end_clean();
 			if ( $result === false && ( $error = error_get_last() ) ) {

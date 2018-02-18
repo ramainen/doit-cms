@@ -1,6 +1,68 @@
 История версий
 ==============
 
+2.10
+----
+
+Пункт 1: исправлена ошибка зависания в одном из случае при отсуствии шаблона.
+
+Теперь если в пути указана папка app, зависание не происходит (например, `d()->view->partial("/app/components/custom_pagination.html");`);
+
+*Внимание!* Изменен приоритет и механизм поиска файла шаблонизатором. Теперь если указать "/app", поиск будет работать. Т.е. шаблонизатор ищет файлы не только в папке app в одном из случаев.
+
+Пункт 2: две автогенерируемые переменные `d()->paginator_current` и `d()->paginator_count`, содержащие номер страницы и количество соотвественно. Пример:
+
+	<div>Страница {paginator_current} из {paginator_count} </div>
+
+Пункт 3: возможность указать любой кастомный шаблон для пагинации.
+
+	d()->Paginator->custom_template("/app/components/custom_pagination.html")->generate($list);
+
+	Содержимое файла "custom_pagination.html" с описанием данных:
+
+	@ if (  ~paginator_left !== '') {
+		<a href="{paginator_left|h}" class="control prev">Назад</a>
+	@ }
+
+	<ul class="pagination">
+		<foreach paginator_list>
+			<?php /*
+				//Доступны следующие данные:
+				d()->paginator_left;// - ссылка на предыдущю страницу или пустая строка
+				d()->paginator_left;// - ссылка на следующую страницу или пустая строка
+				d()->paginator_current;// - номер страницы (страница X из 10)
+				d()->paginator_count;// - количество страниц (страница 2 из X)
+				
+				d()->this['type'];//"EMPTY" - многоточие, "ACTIVE" - текущая страница,"LINK" - не текущая страница
+				d()->this['is_link'];//true - ссылка на страницу, false - многоточие
+				d()->this['is_active'];//true - текущая страница активна, false - многоточие или не текущая страница
+				d()->this['link'];//ссылка на страницу или пустота для многоточия
+				d()->this['title'];//номер текущей страницы или "..." для многоточия
+			*/ ?>
+			
+			@ if (d()->this['type']=="LINK") {
+				<li><a href="{.link}">{.title}</a></li>
+			@ } 
+			
+			@ if (d()->this['type']=="ACTIVE") {
+				<li><a class="active" href="{.link}">{.title}</a></li>
+			@ } 
+			
+			@ if (d()->this['type']=="EMPTY") {
+				<li class="disabled"><a href="#">...</a></li>
+			@ } 
+			
+		</foreach>	
+	</ul>
+
+	@ if (  ~paginator_right !== '') {
+		<a href="{paginator_right|h}" class="control next">вперед</a>
+	@ }
+	 
+	{paginator_current} из {paginator_count} 
+
+*18.02.2018*
+
 2.9.12.2
 --------
 

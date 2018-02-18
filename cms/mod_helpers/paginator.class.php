@@ -32,6 +32,14 @@ class Paginator extends UniversalHelper
 	public $active='active';
 	private $_is_bootstrap=false;
 	private $_is_bootstrap3=false;
+	private $_is_custom=false;
+	public $template="";
+	public function custom_template($template)
+	{
+		$this->template=$template;
+		$this->_is_custom=true;
+		return $this;
+	}
 	
 	public function setActive($active)
 	{
@@ -76,6 +84,8 @@ class Paginator extends UniversalHelper
 		$result='';
 		$allowed_pages=$this->getPagesArray($allcount,$current);
 		$old_step=$allowed_pages[0]; //Виртуальный прошлый шаг
+		d()->paginator_count = $allcount;
+		d()->paginator_current = $current+1;
 		
 		if($this->_is_bootstrap){
 			foreach ($allowed_pages as $i){
@@ -142,6 +152,54 @@ class Paginator extends UniversalHelper
 			}
 			$result = str_replace('&','&amp;',$result);
 			return '<ul class="pagination">'.$result.'</ul>';
+		}elseif($this->_is_custom){
+
+		
+			if($current > 0){
+				d()->paginator_left = $this->drawPageInAdress($all_url,$current-1);
+			}
+			
+			if($current < $allowed_pages[count($allowed_pages)-1]){
+				d()->paginator_right = $this->drawPageInAdress($all_url,$current+1);
+			}
+			
+
+			$list = array();
+			foreach ($allowed_pages as $i){
+				$i++;
+				
+				if (($i-$old_step)>1) {
+					$list[]=array(
+						"type"=>"EMPTY",
+						"is_link"=>false,
+						"is_active"=>false,
+						"link"=>"",
+						"title"=>"..."
+					);
+				}
+				$current_url=$this->drawPageInAdress($all_url,$i-1);
+				if($i-1==$current){
+					$list[]=array(
+						"type"=>"ACTIVE",
+						"is_link"=>true,
+						"is_active"=>true,
+						"link"=> str_replace('&','&amp;',$current_url),
+						"title"=>$i
+					);					
+				}else{
+					$list[]=array(
+						"type"=>"LINK",
+						"is_link"=>true,
+						"is_active"=>false,
+						"link"=> str_replace('&','&amp;',$current_url),
+						"title"=>$i
+					);					
+				}
+				$old_step = $i;
+			}
+			d()->paginator_list = d()->Model($list);
+			$result = d()->view->partial($this->template);
+			return  $result;
 		}else{
 	
 			foreach ($allowed_pages as $i){
