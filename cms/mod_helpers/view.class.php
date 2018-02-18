@@ -23,7 +23,7 @@ class View
 		$called_file = false;
 		
 		
-
+		$old_chosen = $this->chosen;
 		if($this->chosen !== false){
 			$called_file = $this->chosen;
 			
@@ -37,6 +37,8 @@ class View
 			
 			if(is_file(ROOT . '/app'.$shortfile))
 			{
+				
+ 
 				return  $this->from_file($shortfile);
 			}
 			
@@ -77,18 +79,20 @@ class View
 			}	
 		}
 		
-		//Вариант третий - show.html
-		$try_url = substr($url, 0, strrpos($url, '/') );
-		$shortfile = $try_url.'/show.html';
-		$tryfile = ROOT . '/app'.$shortfile;
 		
-		$trys[] = '/app'.$shortfile;
-		
-		if(is_file($tryfile))
-		{
-			return  $this->from_file($shortfile);
+		if($old_chosen!==false && $old_chosen{0} != "/" ){
+			//Вариант третий - show.html
+			$try_url = substr($url, 0, strrpos($url, '/') );
+			$shortfile = $try_url.'/show.html';
+			$tryfile = ROOT . '/app'.$shortfile;
+			
+			$trys[] = '/app'.$shortfile;
+			
+			if(is_file($tryfile))
+			{
+				return  $this->from_file($shortfile);
+			}
 		}
-		
 		if($called_file!==false){
 			
 			//вариант четвертый - файл внутри директории, вызов closure
@@ -126,7 +130,11 @@ class View
 
 		$name = str_replace(array('/','.','-','\\'),array('_','_','_','_'),substr($file,1)).'_tpl';
 	
-	
+	if($file == '/app/products/show.html'){
+		
+		print "NMO";
+		exit;
+	}
 		
 		
 		
