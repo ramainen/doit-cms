@@ -1,7 +1,7 @@
 <?php
 error_reporting(0);
 header("Content-Type: text/plain; charset=utf-8");
-
+require_once($_SERVER['DOCUMENT_ROOT'].'/config.php');
 
  function transliterate_file_name($string)
 {
@@ -147,7 +147,12 @@ class tinyimages {
                                         
                                 exit();
 			} else
-			if (!preg_match('/\.(mp3|zip|txt|flv|doc|rtf|swf|docx|xlsx|xml|ies|pdf|zip|rar|xls|jpg|gif|png|jpeg|pptx?)$/i', $_FILES['Filedata']['name']) ) {
+				
+			$match_string = '/\.(mp3|zip|txt|flv|doc|rtf|swf|docx|xlsx|xml|ies|pdf|zip|rar|xls|jpg|gif|png|jpeg|pptx?)$/i';
+			if(isset($_ENV['DOIT_UPLOAD_EXTENSIONS']) && $_ENV['DOIT_UPLOAD_EXTENSIONS']!=""){
+				$match_string = '/\.(mp3|zip|txt|flv|doc|rtf|swf|docx|xlsx|xml|ies|pdf|zip|rar|xls|jpg|gif|png|jpeg|pptx?|'.$_ENV['DOIT_UPLOAD_EXTENSIONS'].')$/i';
+			}
+			if (!preg_match($match_string, $_FILES['Filedata']['name']) ) {
 				print "ERROR_Invalid_filetype";
                                 exit();
 			} else  {
