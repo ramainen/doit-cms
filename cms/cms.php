@@ -807,6 +807,7 @@ foreach($tmparr as $key=>$subval)
 				$class_name = substr($class_name, $lastNsPos + 1);
 				$fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
 			}
+			$fileName_simple = $fileName .  $class_name . '.php';
 			$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class_name) . '.php';
 			//$fileName = 'vendors'.DIRECTORY_SEPARATOR.$fileName;
 			$lover_class_name=strtolower($class_name);
@@ -816,6 +817,10 @@ foreach($tmparr as $key=>$subval)
 				
 				if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName  )){
 					require $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName ;
+					return;
+				}
+				if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName_simple  )){
+					require $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName_simple ;
 					return;
 				}	
 				

@@ -1,6 +1,51 @@
 История версий
 ==============
 
+2.11
+------
+
+Теперь в простых директориях (без `mod_`) автолоадер также ищет файлы с подчеркиваниями внутри имени файла, в том числе с двойными. Файлы с стандартной `PSR-0` схемой загрузки по прежнему поддерживаются и имеют приоритет.
+
+Пример:
+
+`/app/bonjorno/Uber__Buber_Class.php`:
+
+	<?php
+	class Uber__Buber_Class {
+		function yes(){
+			return 'Uber__Buber_Class';
+		}
+	}
+
+`/app/bonjorno/Uber_Class.php`:
+
+	<?php
+	class Uber_Class {
+		function yes(){
+			return 'Uber_Class';
+		}
+	}
+
+
+`/app/bonjorno/routes.php`:
+
+
+	<?php
+	print d()->Uber__Buber_Class->yes();
+	print "\n";
+	print d()->Uber_Class->yes();
+	exit;
+
+
+Вывод:
+
+	Uber__Buber_Class
+	Uber_Class
+
+
+*25.02.2018*
+
+
 2.10.2
 ------
 
