@@ -681,8 +681,9 @@ foreach($tmparr as $key=>$subval)
 						closedir($_subhandle);
 					}
 				 } elseif (is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname .'/'. $_file) && !in_array($_file, $ignore_subfolders) ){
-					 //Модули 2.0, список директорий
-					 $simple_folders[] = $dirname.'/'.$_file;
+					//Модули 2.0, список директорий
+					$simple_folders[] = $dirname.'/'.$_file;
+					doitClass::_fill_simple_folders_subdirectories($dirname.'/'.$_file, $simple_folders);
 				 } else {
 					$_files[$dirname]['/'][]=$_file;
 				 }
@@ -1579,6 +1580,21 @@ foreach($tmparr as $key=>$subval)
 		return 	$this->call($name, $arguments);
 	}
 
+	public static function _fill_simple_folders_subdirectories($path, &$simple_folders){
+		
+		$_handle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$path);
+		if (!$_handle) {
+			return;
+		}
+		while (false !== ($_file = readdir($_handle))) {
+			 if ($_file{0}=="+" && is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$path .'/'. $_file)  ) {
+				$simple_folders[] = $path.'/'.$_file;
+				doitClass::_fill_simple_folders_subdirectories($path.'/'.$_file, $simple_folders); 
+			 }
+		}
+		closedir($_handle);
+		
+	}
 
 	/**
 	 * Фабрика экземпляров контроллеров
