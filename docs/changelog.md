@@ -14,10 +14,10 @@
 	/app
 		/pages
 		/import
-			+/source1
-			+/source2
+			/+source1
+			/+source2
 				/import.php
-			+/source3
+			/+source3
 				/import.php
 				/ImportClass/ImportCore.php
 			
