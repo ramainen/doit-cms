@@ -1272,3 +1272,12 @@ function or_is_empty($arr=array()){
 	}
 	return $val;
 };
+
+d()->page_not_found = function() {
+	ob_end_clean();
+	header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found'); 
+	header('Status: 404 Not Found');
+	d()->content = d()->error_404_tpl();
+	print d()->main_tpl();
+	exit;
+};
