@@ -50,19 +50,23 @@ class View
 			$this->chosen=false;
 			
 			//Указанно явно варианта недостаточно
+			
 		}
 		
 		//Если не указан явно заданный файл, то проводим автопоиск в соответствии с url-ом
 		
 		//Вариант первый - файл существует
-		$shortfile = $url.'.html';
-		$tryfile = ROOT . '/app'.$shortfile;
-		
-		$trys[] = '/app'.$shortfile;
-		
-		if( strpos($shortfile,'/_')===false && is_file($tryfile))
-		{
-			return  $this->from_file($shortfile);
+		if($old_chosen!==false && $old_chosen{0} != "/" ){
+			$shortfile = $url.'.html';
+			$tryfile = ROOT . '/app'.$shortfile;
+			
+			$trys[] = '/app'.$shortfile;
+			
+			if( strpos($shortfile,'/_')===false && is_file($tryfile))
+			{
+				return  $this->from_file($shortfile);
+			}
+			
 		}
 		//Вариант третий - index.html
 		if(substr($url,-1)=='/'){
@@ -82,6 +86,19 @@ class View
 		
 		if($old_chosen!==false && $old_chosen{0} != "/" ){
 			//Вариант третий - show.html
+			$try_url = substr($url, 0, strrpos($url, '/') );
+			$shortfile = $try_url.'/show.html';
+			$tryfile = ROOT . '/app'.$shortfile;
+			
+			$trys[] = '/app'.$shortfile;
+			
+			if(is_file($tryfile))
+			{
+				return  $this->from_file($shortfile);
+			}
+		}
+		
+		if($called_file===false && $old_chosen===false){
 			$try_url = substr($url, 0, strrpos($url, '/') );
 			$shortfile = $try_url.'/show.html';
 			$tryfile = ROOT . '/app'.$shortfile;
