@@ -598,6 +598,27 @@ foreach($tmparr as $key=>$subval)
 		$this->template_patterns[]='/\{=(.+)\}/';
 		$this->template_replacements[]='<'.'?php print  $1; ?'.'>';
 		
+		
+		//ПРедварительная инициализация ядра Zend
+		require_once('cms/vendor/zendframework/zend-diactoros/src/ServerRequestFactory.php');
+		require_once('cms/vendor/zendframework/zend-diactoros/src/ServerRequest.php');
+		require_once('cms/vendor/zendframework/zend-diactoros/src/Uri.php');
+		require_once('cms/vendor/zendframework/zend-diactoros/src/PhpInputStream.php');
+		require_once('cms/vendor/zendframework/zend-diactoros/src/HeaderSecurity.php');
+		require_once('cms/vendor/zendframework/zend-diactoros/src/Response.php');
+		
+		require_once('cms/vendor/zendframework/zend-stratigility/src/MiddlewarePipe.php');
+		require_once('cms/vendor/zendframework/zend-stratigility/src/Route.php');
+		require_once('cms/vendor/zendframework/zend-stratigility/src/Http/Request.php');
+		require_once('cms/vendor/zendframework/zend-stratigility/src/Http/Response.php');
+		require_once('cms/vendor/zendframework/zend-stratigility/src/FinalHandler.php');
+		require_once('cms/vendor/zendframework/zend-stratigility/src/Next.php');
+		require_once('cms/vendor/zendframework/zend-stratigility/src/Dispatch.php');
+		require_once('cms/vendor/zendframework/zend-stratigility/src/Utils.php');
+		
+		require_once('cms/mod_helpers/route.class.php');
+		
+		
 		//Обрезка GET-параметров
 		$_tmpurl=urldecode($_SERVER['REQUEST_URI']);
 		
@@ -817,16 +838,18 @@ foreach($tmparr as $key=>$subval)
 				 
 				
 				if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName  )){
+				//	print $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName ."<br>"; 
 					require $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName ;
 					return;
 				}
 				if(is_file($_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName_simple  )){
+				//	print $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName ."<br>"; 
 					require $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName_simple ;
 					return;
 				}	
 				
 			}
-			 
+			 //print $_SERVER['DOCUMENT_ROOT'].'/'. $path . '/'.$fileName ."<br>"; exit;
 
 		},true,true);
 		
