@@ -1285,22 +1285,22 @@ d()->page_not_found = function() {
 
 
 d()->convert_phone = function($phone) {
-	$phone =  preg_replace(['#^8#', '#[^0-9]#'], ['7', '',], $phone);
+	$phone =  preg_replace(array('#^8#', '#[^0-9]#'), array('7', ''), $phone);
 	return preg_replace('#^([123456890])#','7$1', $phone);
 };
 
 d()->convert_phone_clean = function($phone) {
-	$phone =  preg_replace(['#^8#', '#[^0-9]#', '#^7#'], ['7', '', ''], $phone);
+	$phone =  preg_replace(array('#^8#', '#[^0-9]#', '#^7#'), array('7', '', ''), $phone);
 	return   $phone ;
 };
 
 d()->convert_phone_plus = function($phone) {
-	$phone =  preg_replace(['#^8#', '#[^0-9]#'], ['7', ''], $phone);
+	$phone =  preg_replace(array('#^8#', '#[^0-9]#'), array('7', ''), $phone);
 	return preg_replace('#^([123456890])#','+7$1', $phone);
 };
 
 d()->convert_phone_human = function($phone) {
-	$orig_phone = preg_replace(['#^8#', '#[^0-9]#', '#^7#'], ['', '', ''], $phone);
+	$orig_phone = preg_replace(array('#^8#', '#[^0-9]#', '#^7#'), array('', '', ''), $phone);
 	return '+7('.substr($orig_phone,0,3).') '.substr($orig_phone,3,3).'-'.substr($orig_phone,6,2).'-'.substr($orig_phone,8,2).'';
 };
 
