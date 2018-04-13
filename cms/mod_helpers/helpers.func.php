@@ -217,7 +217,7 @@ function form ($params=array())
 	}
 	
 	if(isset($params['ajax']) && $params['ajax']==true) {
-		$attr .= ' onsubmit="window._current_form=$(this);$(this).find(\'.js-disabled\').attr(\'disabled\',true);$.ajax({\'type\':\'post\',\'url\': $(this).attr(\'action\')?$(this).attr(\'action\'):document.location.href ,\'data\':$(this).serialize(),\'success\':function(recieved_data){window._current_form.find(\'.js-disabled\').attr(\'disabled\',false);eval(recieved_data)}});return false;" ';
+		$attr .= ' onsubmit="window._current_form=jQuery(this);jQuery(this).find(\'.js-disabled\').attr(\'disabled\',true);jQuery.ajax({\'type\':\'post\',\'url\': jQuery(this).attr(\'action\')?jQuery(this).attr(\'action\'):document.location.href ,\'data\':jQuery(this).serialize(),\'success\':function(recieved_data){window._current_form.find(\'.js-disabled\').attr(\'disabled\',false);eval(recieved_data)}});return false;" ';
 		
 	}
 	
@@ -364,7 +364,7 @@ function notice($params=array())
 function jquery_notice(){
 	if(isset(d()->datapool['inputs_with_errors']) && count(d()->datapool['inputs_with_errors'])!=0 && isset($_POST['_element'])){
 	$noticed_inputs = array_values(d()->datapool['inputs_with_errors']);
-	$response.=  "$('.error').removeClass('error');\n";
+	$response.=  "jQuery('.error').removeClass('error');\n";
 	foreach($noticed_inputs as $key=>$input){
 		if(isset($_POST['_is_simple_names']) && $_POST['_is_simple_names']=='1'){
 			$element_name = "'*[name=\"".$input."\"]'";
@@ -372,9 +372,9 @@ function jquery_notice(){
 			$element_name = "'*[name=\"".$_POST['_element'].'['.$input.']'."\"]'";	
 		}
 		
-		$response .=  '$('.$element_name.').parent().parent().addClass("error");'."\n";
+		$response .=  'jQuery('.$element_name.').parent().parent().addClass("error");'."\n";
 	}
-	print "\n<script>".'$(function(){'.$response.'});'."</script>\n";
+	print "\n<script>".'jQuery(function(){'.$response.'});'."</script>\n";
 }
 }
 
