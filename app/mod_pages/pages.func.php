@@ -4,7 +4,7 @@
 */
 class PagesController
 {
-	function show($url)
+	function show()
 	{
 		$url = url();
 		d()->this = d()->Page->find_by_url($url);
