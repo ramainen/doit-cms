@@ -369,4 +369,32 @@ class Date extends UniversalHelper
  
 	}
 	
+	function when_time($to=false)
+	{
+		if($to===false){
+			$to=time();
+		}
+		return $this->ru_when_time($to);
+	}
+	
+	function ru_when_time($to=false)
+	{
+
+		if($to===false){
+			$to=time();
+		}
+
+		$timediff = $to - $this->stamp;    
+		$timediff  = $timediff/(60 *60 );
+		
+		if($timediff  <  24) {
+			$time = date("H:i",$this->stamp);
+		} else {
+			$time = date("d.m.y",$this->stamp);
+		}
+		return $time; 
+ 
+	}
+	
+	
 }
