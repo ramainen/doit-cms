@@ -1073,6 +1073,12 @@ function declOfNum($number, $words=false,$word2=false,$word3=false)
 
 function userdate($date)
 {
+	if(is_array($date)){
+		if (isset($date[1])){
+			return date($date[1], d()->Date($date[0])->stamp);
+		}
+		return d()->Date($date[0])->user();
+	}
 	return d()->Date($date)->user();
 }
 function userdate_mini($date)
