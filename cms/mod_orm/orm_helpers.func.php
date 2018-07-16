@@ -42,6 +42,13 @@ d()->as_date_day=function($value, $field, $object){
 	return d()->Date($value)->day;
 };
 
+d()->as_date_year=function($value, $field, $object){
+	if($value==''){
+		return '';
+	}
+	return d()->Date($value)->year;
+};
+
 d()->as_date_mm_yyyy=function($value, $field, $object){
 	if($value==''){
 		return '';
