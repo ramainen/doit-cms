@@ -1,6 +1,6 @@
 <?php
 error_reporting(0);
-header("Content-Type: text/plain; charset=utf-8");
+header("Content-Type: text/html; charset=utf-8");
 require_once($_SERVER['DOCUMENT_ROOT'].'/config.php');
 
  function transliterate_file_name($string)
@@ -117,9 +117,9 @@ class tinyimages {
 			$strlen1 = strlen($realpath1);
 			$strlen2 = strlen($realpath2);
 
-			if($strlen1 > $strlen2) { page404(); exit(); }
+			if($strlen1 > $strlen2) { page404(); return; }
 			for($i=0;$i<$strlen1;$i++) {
-				if($realpath1[$i] != $realpath2[$i]) { page404(); exit(); }
+				if($realpath1[$i] != $realpath2[$i]) { page404(); return; }
 			}
 		}
 
@@ -140,12 +140,12 @@ class tinyimages {
 
 			if (!is_uploaded_file($file)) {
 				print "error1";
-                                exit();
+                              return;
 			} else
 			if (false ) {
 					print "error2";
                                         
-                                exit();
+                             return;
 			} else
 				
 			$match_string = '/\.(mp3|zip|txt|flv|doc|rtf|swf|docx|xlsx|xml|ies|pdf|zip|rar|xls|jpg|gif|png|jpeg|pptx?)$/i';
@@ -154,7 +154,7 @@ class tinyimages {
 			}
 			if (!preg_match($match_string, $_FILES['Filedata']['name']) ) {
 				print "ERROR_Invalid_filetype";
-                                exit();
+                               return;
 			} else  {
 				
 				$newadress="/storage";
@@ -192,7 +192,7 @@ class tinyimages {
 
 
 		 
-		exit();
+		return;
 	}
  
 
@@ -200,6 +200,21 @@ class tinyimages {
 	
 }
 
- 
+ ob_start();
 $images = new tinyimages();
 $images->UploadFiles();
+$res = ob_get_contents();
+ob_end_clean();
+// window.parent.document.getElementById(getURLParam('element')).value=urfilename;
+//document.location.href=document.location.href;
+if(isset($_GET['m']) && $_GET['m']=='new'){ ?>
+	<script>
+		window.parent.parent.document.getElementById(window.parent.getURLParam('element')).value=<?=json_encode($res)?>;
+		window.parent.document.location = window.parent.document.location;
+	</script>
+<?php
+	
+}else{
+	print $res;
+}
+exit;
