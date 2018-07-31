@@ -320,24 +320,24 @@ class Date extends UniversalHelper
 		}
 		return $this->ru_when($to);
 	}
-	//Предупреждение: не оттестировано, пока не работает
+	
 	function ru_ago($to=false)
 	{
 		if($to===false){
 			$to=time();
 		}
-		$timediff = $to - mktime(23,00,00,(int)$this->month, (int)$this->day, (int)$this->year);    
+		$timediff = $to - $this->stamp;    
 		$timediff = intval($timediff); 
 		if($timediff < 60)   
-		  $time = "$timediff секунд назад";  
+		  $time = "$timediff ". declOfNum($timediff, 'секунда', 'секунды', 'секунд') ." назад";  
 		else if(($timediff = intval($timediff/60)) < 60)   
-		  $time = "$timediff минут назад";  
+		  $time = "$timediff ". declOfNum($timediff, 'минута', 'минуты', 'минут') ." назад";  
 		else if(($timediff = intval($timediff/60)) < 24)   
-		   $time = "$timediff часов назад";  
+		   $time = "$timediff ". declOfNum($timediff, 'час', 'часа', 'часов') ." назад";  
 		else if(($timediff = intval($timediff/24)) < 14)   
-		   $time = "$timediff дней назад";  
+		   $time = "$timediff ". declOfNum($timediff, 'день', 'дня', 'дней') ." назад";  
 		else if(($weeks= intval($timediff/7)) < 4)   
-		  $time = "$weeks недели назад";  
+		  $time = "$weeks ". declOfNum($timediff, 'неделя', 'недели', 'недель') ." назад";  
 		else if(($months= intval($timediff/30.4)) )   
 		   $time = "$months ". declOfNum($months,array('месяц','месяца','месяцев')). " назад";  
 		return $time; 
