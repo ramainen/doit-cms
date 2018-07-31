@@ -147,14 +147,7 @@ class View
 
 		$name = str_replace(array('/','.','-','\\'),array('_','_','_','_'),substr($file,1)).'_tpl';
 	
-	if($file == '/app/products/show.html'){
-		
-		print "NMO";
-		exit;
-	}
-		
-		
-		
+	
 
 
 		if(!function_exists($name)){
