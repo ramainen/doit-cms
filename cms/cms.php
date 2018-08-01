@@ -2213,7 +2213,7 @@ foreach($tmparr as $key=>$subval)
 		$this->events_pool[$event][] = $function;
 	}
 
-	function emit($event,$data){
+	function emit($event, $data=array()){
 		if(isset($this->events_pool[$event])){
 			$result=true;
 			foreach($this->events_pool[$event] as $callback){
