@@ -396,6 +396,13 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		return $this;
 	}
 	
+	public function f($id)
+	{
+		$this->_options['id']=(int)$id;
+		$this->find_by('id',(int)$id);
+		return $this;
+	}
+	
 	public function find_by($by,$what)
 	{
 		$this->_options['queryready']=false;
