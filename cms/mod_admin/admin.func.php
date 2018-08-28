@@ -338,6 +338,14 @@ function admin_show_one_list($table,$id1,$id2)
 	}
 	//модель для опасного запроса к списку сущностей
 	d()->_list_safe_data=true; //Если переопределяем, то safe пропадает,
+	/*
+	[admin.titles]
+list_title = Текстовые страницы
+	*/
+	if(isset(d()->datapool['admin']['titles']['list_title']) && d()->datapool['admin']['titles']['list_title'] !=''){
+		d()->curr_title=d()->datapool['admin']['titles']['list_title'];
+	}
+	//d()->curr_title='Список объектов из таблицы '.url(3);
 	
 	$model_suffix = '_safe';
 	if(empty($_GET['sort'])){

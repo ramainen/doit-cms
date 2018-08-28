@@ -581,6 +581,9 @@ function create_field_template()
 	';list=yes\n'+
 	';edit=yes\n'+
 	
+	'\n'+
+	';[admin.titles]\n'+
+	';list_title = Название списка\n'+
  
 	'\n'+
 	';[admin.columns]\n'+
