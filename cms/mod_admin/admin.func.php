@@ -1464,13 +1464,15 @@ function admin_generate_scheme()
 	}
 	
 	set_time_limit(0);
-	header("Content-Disposition: attachment; filename=schema.ini");
-
-	header("Content-Type: application/octet-stream");
-	header("Content-transfer-encoding: binary");
+	if(!isset($_GET['save']) && $_GET['save'] != '1'){
+		header("Content-Disposition: attachment; filename=schema.ini");
+		header("Content-Type: application/octet-stream");
+		header("Content-transfer-encoding: binary");
+	}
 	$tables = d()->db->query('SHOW TABLES')->fetchAll();
+	$result = "";
 	foreach ($tables as $row){
-		print "[schema.{$row[0]}]\r\n";
+		$result.= "[schema.{$row[0]}]\r\n";
 		
 		$columns = d()->db->query('SHOW COLUMNS FROM '.DB_FIELD_DEL.$row[0].DB_FIELD_DEL)->fetchAll();
 		$printed_array=array();
@@ -1481,8 +1483,20 @@ function admin_generate_scheme()
 		}
 		sort($printed_array);
 		foreach ($printed_array as $column){
-			print "{$column}\r\n";
+			$result.= "{$column}\r\n";
 		}
+	}
+	if(!isset($_GET['save']) && $_GET['save'] != '1'){
+		print $result;	
+		
+	}else{
+		$try = file_put_contents($_SERVER['DOCUMENT_ROOT'].'/app/schema.ini',$result);
+		if($try ===false){
+			header('Location: /admin/scaffold/migrate_scheme?done=0');
+		}else{
+			header('Location: /admin/scaffold/migrate_scheme?done=1');
+		}
+		exit;
 	}
 	//d()->Scaffold->update_scheme();
 	//print d()->view();

@@ -5,7 +5,16 @@
 <p>На данной странице можно сохранить файл со схемой текущей базы данных для восстановления структуры базы данных до состояния, описанного в схеме.</p>
 <p>Данная процедура может понадобиться при обновлении и переносе кода на другой сервер.</p>
 
+<?php if(isset($_GET['done']) && $_GET['done']=='1'){ ?>
+	<div class="alert alert-success"><b>Успешно.</b> Файл схемы сохранен по адресу /app/schema.ini.</div>	
+<?php } ?>
 
-<a href="/admin/scaffold/generate_scheme" class="btn btn-primary">Сгенерировать файл схемы</a>
+<?php if(isset($_GET['done']) && $_GET['done']=='0'){ ?>
+	<div class="alert alert-danger"><b>Ошибка.</b> Не удалось сохранить файл /app/schema.ini. Проверьте права на запись.</div>	
+<?php } ?>
+
+<a href="/admin/scaffold/generate_scheme" class="btn btn-secondary">Сгенерировать и скачать файл схемы</a>
+
+<a href="/admin/scaffold/generate_scheme?save=1" class="btn btn-primary">Сгенерировать и сохранить файл схемы</a>
 
 </div>
