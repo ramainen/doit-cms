@@ -1,16 +1,15 @@
 <?php
 
-if($_SERVER["SERVER_ADDR"]=='127.0.0.1' || $_SERVER["SERVER_ADDR"]=='192.168.0.1') {
-  define('DB_HOST','127.0.0.1');
+ 
+  define('DB_HOST','192.168.1.136');
 	define('DB_NAME','varvar');
 	define('DB_USER','root');
 	define('DB_PASSWORD','');
-} else {
-	define('DB_HOST','localhost');
-	define('DB_NAME','varvar');
-	define('DB_USER','root');
-	define('DB_PASSWORD','');
-}
+ 
+
+$_ENV['DOIT_UPLOAD_EXTENSIONS'] = 'css|rar';
+
+//define('DB_PRODUCTION',true);
 
 /*
 //Образец код настройки

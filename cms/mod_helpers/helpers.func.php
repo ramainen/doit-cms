@@ -755,6 +755,14 @@ function preview($adress,$param1=false,$param2=false )
 		
 		chmod($dest, 0777);
 	}
+	
+	if($orig_params['inline']){
+		$path = $_SERVER['DOCUMENT_ROOT'] . $preview_adress;
+		$type = pathinfo($path, PATHINFO_EXTENSION);
+		return 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($path));
+	}
+	
+		
 	return $preview_adress;
 }
 
