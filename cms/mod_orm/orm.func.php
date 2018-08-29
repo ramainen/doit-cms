@@ -1279,7 +1279,15 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		ActiveRecord::$_queries_cache = array();
 		return $this;
 	}
-
+	
+	public function save_and_load()
+	{
+		$this->save();
+		$class = get_class($this);
+		$result = new $class;
+		return $result->find_by('id', $this->insert_id ? $this->insert_id : $this->id);
+	}
+	
 	public function create($params=array())  //Crud - Create
 	{
 		//Более быстрый вариант $this->new
