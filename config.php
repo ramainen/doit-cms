@@ -1,7 +1,7 @@
 <?php
 
  
-  define('DB_HOST','192.168.1.136');
+	define('DB_HOST','localhost');
 	define('DB_NAME','varvar');
 	define('DB_USER','root');
 	define('DB_PASSWORD','');
