@@ -539,7 +539,7 @@ foreach($tmparr as $key=>$subval)
 
 		// {.title|h}
 		$this->template_patterns[]='/\{\.([a-zA-Z0-9_]+)\|([a-zA-Z0-9_]+)\}/';
-		$this->template_replacements[]='<'.'?php if(is_array($doit->this)) {  print  $2($doit->this[\'$1\']); }else{ print  $2($doit->this->$1); } ?'.'>';
+		$this->template_replacements[]='<'.'?php if(is_array($doit->this)) {  print  $doit->$2($doit->this[\'$1\']); }else{ print  $doit->$2($doit->this->$1); } ?'.'>';
 		
 		// </if> //DEPRECATED
 //		$this->template_patterns[]='/\<\/if\>/';
