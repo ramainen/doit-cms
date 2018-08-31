@@ -1279,6 +1279,12 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		ActiveRecord::$_queries_cache = array();
 		return $this;
 	}
+	//Синоним id_or_insert_id
+	public function ioi()
+	{
+		return $this->insert_id ? $this->insert_id : $this->id;
+	}
+	
 	public function id_or_insert_id()
 	{
 		return $this->insert_id ? $this->insert_id : $this->id;

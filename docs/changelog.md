@@ -4,12 +4,17 @@
 2.12.6.1
 --------
 
-Метод `ActiveRecord->id_or_insert_id`. Для нового элемента возвращает `insert_id`, для существующего - `id`. Например:
+Метод `ActiveRecord->id_or_insert_id`. Для нового элемента возвращает `insert_id`, для существующего - `id`.
+
+Короткий синоним: `ioi`
+
+Например:
 
 	$news = d()->News->new;
 	$news->title="Новая запись";
 	$news->save();
 	$id = $news->id_or_insert_id;
+	$id = $news->ioi; //Короткий синоним
 
 
 *31.08.2018*
