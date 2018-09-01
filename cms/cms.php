@@ -647,6 +647,7 @@ foreach($tmparr as $key=>$subval)
 			$_work_folders = array('cms','app');
 		}
 		$ignore_subfolders = array('.','..','internal','external','fields','vendor');
+		
 		define('SERVER_NAME',preg_replace('/^www./i','',$_SERVER['SERVER_NAME']));
 		if(file_exists($_SERVER['DOCUMENT_ROOT'].'/sites/'.SERVER_NAME)){
 			$_work_folders[]='sites/'.SERVER_NAME;
@@ -664,14 +665,27 @@ foreach($tmparr as $key=>$subval)
 		
 		$simple_folders = array();
 		
-		foreach($_work_folders as $dirname) { 
+		foreach($_work_folders as $dirname) {
+			
+			$current_ignore_subfolders = $ignore_subfolders;
+			
+			
 			$_files[$dirname]['/']=array();
 			$_handle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname);
 			if (!$_handle) {
 				continue;
 			}
 			while (false !== ($_file = readdir($_handle))) {
-				 if(substr($_file,0,4)=='mod_') {
+				if($dirname =='cms'){
+					if(isset($_ENV['DOIT_ADMIN_VERSION']) && $_ENV['DOIT_ADMIN_VERSION']=='2' && $_file == 'mod_admin'){
+						continue;
+					}
+					if((!isset($_ENV['DOIT_ADMIN_VERSION']) || $_ENV['DOIT_ADMIN_VERSION']!='2') && $_file == 'admin'){
+						continue;
+					}
+					
+				}
+				if(substr($_file,0,4)=='mod_') {
 					if(!in_array(substr($_file,4), $disabled_modules)){
 						$_subhandle = opendir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname.'/'.$_file);
 						$_files[$dirname]['/'.$_file.'/']=array();
@@ -680,13 +694,13 @@ foreach($tmparr as $key=>$subval)
 						}
 						closedir($_subhandle);
 					}
-				 } elseif (is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname .'/'. $_file) && !in_array($_file, $ignore_subfolders) ){
+				} elseif (is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$dirname .'/'. $_file) && !in_array($_file, $ignore_subfolders) ){
 					//Модули 2.0, список директорий
 					$simple_folders[] = $dirname.'/'.$_file;
 					doitClass::_fill_simple_folders_subdirectories($dirname.'/'.$_file, $simple_folders);
-				 } else {
+				} else {
 					$_files[$dirname]['/'][]=$_file;
-				 }
+				}
 			}
 			closedir($_handle);
 		}
