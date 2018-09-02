@@ -25,4 +25,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-die('В процессе разработки. Если вы видите это сообщение, установите $_ENV[\'DOIT_ADMIN_VERSION\']=\'1\' или уберите это значение.');
+//die('В процессе разработки. Если вы видите это сообщение, установите $_ENV[\'DOIT_ADMIN_VERSION\']=\'1\' или уберите это значение.');
+
+
+d()->datapool['urls'][]=array('/admin', 'main', 'admin_root_route');
+d()->datapool['urls'][]=array('/admin/login', 'main', 'admin_login_route');
+
+d()->admin_root_route = function(){
+	//d()->content = d()->content();
+	print d()->view->render('/cms/admin/templates/login.html');
+	exit;
+	
+};
+//Авторизация
+d()->admin_login_route = function(){
+	if(AJAX){
+		print "$('.js-alert').show();";
+		exit;
+	}
+	header('Location: /admin');
+	exit;
+	
+};
+
+
+d()->route('/admin', function(){
+	
+	
+	
+});
