@@ -30,24 +30,59 @@ SOFTWARE.
 
 d()->datapool['urls'][]=array('/admin', 'main', 'admin_root_route');
 d()->datapool['urls'][]=array('/admin/login', 'main', 'admin_login_route');
+d()->datapool['urls'][]=array('/admin/logout', 'main', 'admin_logout_route');
 
 d()->admin_root_route = function(){
-	//d()->content = d()->content();
-	print d()->view->render('/cms/admin/templates/login.html');
-	exit;
-	
+	//
+	if(!iam()){
+		print d()->view->render('/cms/admin/templates/login.html');
+		exit;
+	}
+	d()->content = d()->content();
+	return d()->view->partial('/cms/admin/templates/main.html');
 };
 //Авторизация
 d()->admin_login_route = function(){
-	if(AJAX){
-		print "$('.js-alert').show();";
+	if(!AJAX){
+		header('Location: /admin');
 		exit;
 	}
-	header('Location: /admin');
-	exit;
 	
+	if(d()->validate('/admin/login')){
+		if(!is_array(d()->admin['editor']['login']) && !is_array(d()->admin['editor']['password'] )){
+			d()->datapool['admin']['editor']['login']=array(d()->admin['editor']['login'],array());
+			d()->datapool['admin']['editor']['password']=array(d()->admin['editor']['password'],array());
+		}
+		foreach(d()->admin['editor']['login'] as $key=>$value){
+			$login=d()->admin['editor']['login'][$key];
+			$password=d()->admin['editor']['password'][$key];
+			
+			if($login == $_POST['login'] && $password === md5($_POST['password'])) {
+				$_SESSION['admin']=$_POST['login'];
+				unset($_SESSION['is_additional_admin']);
+				print 'if(location.pathname== "/admin") { location.href= "/";} else {location=location};';
+				exit();
+			}
+		}
+		if($_POST['login']!='admin' && $_POST['login']!='developer' && $_POST['login']!='' && $_POST['login']!='developer' && isset(d()->admin['users']) && isset(d()->admin['users']['enabled']) && d()->admin['users']['enabled']=='yes'){
+			$user = d()->Admin_user->where('login = ? and password = ?',$_POST['login'],md5($_POST['password']));
+			if(!$user->is_empty){
+				$_SESSION['admin']=$_POST['login'];
+				$_SESSION['is_additional_admin']=true;
+				print 'if(location.pathname== "/admin") {location.href= "/";} else {location=location;};';
+				exit();
+			}
+		}
+	}
+	print "$('.js-alert').show();";
+	exit;
 };
-
+d()->admin_logout_route = function(){
+	unset($_SESSION['is_additional_admin']);
+	unset($_SESSION['admin']);
+	header('Location: /');
+	exit;
+};
 
 d()->route('/admin', function(){
 	
