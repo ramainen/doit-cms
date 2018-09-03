@@ -2,15 +2,28 @@
 <html lang="ru">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
 		<title>Панель администрирования</title>
 		<link href="/cms/admin/assets/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/cms/admin/assets/css/main.css" rel="stylesheet">
 		<script src="/cms/admin/assets/js/jquery-3.3.1.min.js"></script>
 		<script src="/cms/admin/assets/js/jquery-migrate-1.4.1.min.js"></script>
+			<script src="/cms/external/ace/ace.js"></script>
 		 
 	</head>
 	<body>
-	<div class="container">
+	<nav class="sidebar">
+		v.m.
+	</nav>
+	<nav class="menubar">
+		тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню 
+		тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню 
+		 
+	</nav>
+	<section>
+
+
+	<div class="container-fluid">
 		<div class="row">
 			<div class="col">
 				Добро пожаловать <a href="/admin/logout">Выход</a>
@@ -45,19 +58,20 @@
 							});
 					  })
 					</script>
-					<script src="/cms/external/tinymce4/tinymce.min.js"></script>
+					<script src="/cms/external/tinymce4/tinymce.min.js"></script> 
 					 <script>
 					 window.tmp_tinymce_editor = false;
 					 $(function(){
 						tinymce.init({
 							  selector: '.js-tinymce4',
-							  height: 300,
-							  width:1000,
+							  height: 300,   toolbar_item_size: "small",
+							  width:940,
 							  theme: 'modern',
 							  language: 'ru',
-							  plugins: 'save paste  custom_modules    code searchreplace autolink     visualblocks visualchars fullscreen image link media template  table charmap hr pagebreak nonbreaking anchor toc   advlist lists textcolor imagetools contextmenu colorpicker textpattern help',
-		  toolbar1: 'save code custom_modules | undo redo | fullscreen  formatselect   bold italic strikethrough charmap   forecolor backcolor | link simages image insert | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
+							  plugins: 'save paste   custom_modules    code searchreplace autolink     visualblocks visualchars fullscreen image link media template  table charmap hr pagebreak nonbreaking anchor toc   advlist lists textcolor imagetools contextmenu colorpicker textpattern help',
+		  toolbar1: 'save code   custom_modules | undo redo | fullscreen  formatselect   bold italic strikethrough charmap   forecolor backcolor | link simages image insert | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
 							remove_trailing_brs: false,
+							menubar: false,
 							  templates: [ ],
 							  content_css: [ ],
 							  branding: false,
@@ -86,5 +100,7 @@
 			</div>
 		</div>
 	 </div>
+	 
+	 	</section>
 	</body>
 </html>

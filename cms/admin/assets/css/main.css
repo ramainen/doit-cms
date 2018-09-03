@@ -1,0 +1,36 @@
+.sidebar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 80px;
+	height: 100%;
+	text-align: left;
+	background: #004D47;
+	color: #fff;
+	z-index: 999;
+	overflow-y: auto;  
+}
+.menubar {
+	position: fixed;
+	top: 0;
+	left: 80px;
+	width: 218px;
+	height: 100%;
+	text-align: left;
+	background: white;
+	color: #000;
+	box-shadow: 1px 1px 1px rgba(0,0,0,0.16);
+	z-index: 1000;
+	overflow-y: auto;  
+}
+
+section {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: calc(100% - 298px);
+	min-height:100vh;
+	background-color: #DBDBDB;
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
