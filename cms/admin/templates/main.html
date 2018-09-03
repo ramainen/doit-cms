@@ -15,6 +15,69 @@
 			<div class="col">
 				Добро пожаловать <a href="/admin/logout">Выход</a>
 				 
+				 
+				 <div class="control-group">
+					  <label class="control-label"  >{title}</label>
+					  <div class="controls">
+						 <form method="POST" action="/admin/var_dump">
+							<textarea  name="xx" class="js-tinymce4 ui-widget-content ui-corner-all" style="width:500px;">sdas dasd asd</textarea>
+							<input type="submit">
+						</form>
+					  </div>
+					</div>
+				   
+				   <div style="display:none;">
+
+						<iframe name="tinymce_file_upload_iframe" ></iframe>
+
+						<form enctype="multipart/form-data" class="js-tinymce-file-upload-form" target="tinymce_file_upload_iframe" method="POST" action="/admin/tinymce-file-upload" >
+						<input class="js-tinymce-file-upload" accept="image/jpeg,image/png,image/gif" name="image" type="file" /> 
+						<input name="base64" id="base64"  value="" type="hidden" /> 
+						</form>
+					</div>
+					<script type="text/javascript">
+					$(function(){
+							$('.js-tinymce-file-upload').on('change',function(){
+								if ($(this).val()!=''){
+									$('.js-tinymce-file-upload-form').submit();     
+								} 
+								$('.js-tinymce-file-upload').val('');
+							});
+					  })
+					</script>
+					<script src="/cms/external/tinymce4/tinymce.min.js"></script>
+					 <script>
+					 window.tmp_tinymce_editor = false;
+					 $(function(){
+						tinymce.init({
+							  selector: '.js-tinymce4',
+							  height: 300,
+							  width:1000,
+							  theme: 'modern',
+							  language: 'ru',
+							  plugins: 'print preview fullpage   searchreplace autolink directionality   visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount     imagetools      contextmenu colorpicker textpattern help',
+		  toolbar1: 'formatselect | bold italic strikethrough  forecolor backcolor | link simages image | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
+		 
+							  templates: [ ],
+							  content_css: [ ],
+							  
+								setup: function (editor) {
+									editor.addButton('simages', {
+										icon: 'image',
+										image: '/cms/internal/gfx/image-add.gif',
+										onclick: function () {
+											window.tmp_tinymce_editor = editor;
+											$('.js-tinymce-file-upload').trigger('click');
+										}
+									});
+								 } 
+						 
+						 });
+
+					 });
+					 </script>
+				 
+				 
 				 <div class="alert alert-info">
 				 
 					В процессе разработки. Если вы видите это сообщение, установите $_ENV['DOIT_ADMIN_VERSION']='1' или уберите переменную $_ENV['DOIT_ADMIN_VERSION'] вообще.
