@@ -55,12 +55,13 @@
 							  width:1000,
 							  theme: 'modern',
 							  language: 'ru',
-							  plugins: 'print preview fullpage   searchreplace autolink directionality   visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount     imagetools      contextmenu colorpicker textpattern help',
-		  toolbar1: 'formatselect | bold italic strikethrough  forecolor backcolor | link simages image | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
-		 
+							  plugins: 'save paste      code searchreplace autolink     visualblocks visualchars fullscreen image link media template  table charmap hr pagebreak nonbreaking anchor toc   advlist lists textcolor imagetools contextmenu colorpicker textpattern help',
+		  toolbar1: 'save code  | undo redo | fullscreen  formatselect   bold italic strikethrough charmap   forecolor backcolor | link simages image insert | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
+							remove_trailing_brs: false,
 							  templates: [ ],
 							  content_css: [ ],
-							  
+							  branding: false,
+							  elementpath: false,
 								setup: function (editor) {
 									editor.addButton('simages', {
 										icon: 'image',
