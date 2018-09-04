@@ -12,35 +12,83 @@
 		 
 	</head>
 	<body>
+	<div class="menuheader">
+		 
+	</div>
 	<nav class="sidebar">
-		v.m.
+		<a href="#" class="admin-menu-icon active">
+			<img src="/cms/external/svg_icons/icon-content.svg" alt="">
+			<span>Контент</span>
+		</a>
+		
+		<a href="#" class="admin-menu-icon">
+			<img src="/cms/external/svg_icons/icon-settings.svg" alt="">
+			<span>Настройки</span>
+		</a>
+		
+		<a href="#" class="admin-menu-icon">
+			<img src="/cms/external/svg_icons/icon-developer.svg" alt="">
+			<span>Разработка</span>
+		</a>
+		
+		<a href="#" class="admin-menu-icon">
+			<img src="/cms/external/svg_icons/icon-logs.svg" alt="">
+			<span>Логи</span>
+		</a>
+		
+		<a href="/admin/logout" class="admin-menu-icon last-icon">
+			<img src="/cms/external/svg_icons/icon-exit.svg" alt="">
+			<span>Выход</span>
+		</a>
+		
+		
 	</nav>
 	<nav class="menubar">
-		тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню 
-		тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню тутм еню 
-		 
+		<a href="" class="admin-menu-element active">Текстовые страницы</a>
+		<a href="" class="admin-menu-element">Рубрики</a>
+		<div class="admin-menu-elements-group">
+			<a href="" class="admin-menu-element with-plus js-admin-menu-element">Каталог</a>
+			<a href="" class="admin-menu-subelement">Характеристики</a>
+			<a href="" class="admin-menu-subelement">Категории</a>
+			<a href="" class="admin-menu-subelement active">Импорт</a>
+			
+		</div>
+		<a href="" class="admin-menu-element">Опции</a>
+	 	 
 	</nav>
 	<section>
-
-
+	<header>
+		 
+	</header>
+	<div class="admin-page-subheader">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-9">
+					<h1 class="display-4">Сервисные центры</h1>
+					<div class="subheader">Управление и настройка сервисных центров</div>
+				</div>
+				<div class="col-3">
+					<div class="admin-top-right-panel">
+						<a href="" class="btn btn-primary btn-lg">Сохранить</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col">
-				Добро пожаловать <a href="/admin/logout">Выход</a>
+				
 				 
 				 
-				 <div class="control-group">
-					  <label class="control-label"  >{title}</label>
-					  <div class="controls">
+				 
 						 <form method="POST" action="/admin/var_dump">
 							<textarea  name="xx" class="js-tinymce4 ui-widget-content ui-corner-all" style="width:500px;">sdas dasd asd</textarea>
 							<input type="submit">
 						</form>
-					  </div>
-					</div>
+					 
 				   
 				   <div style="display:none;">
-
 						<iframe name="tinymce_file_upload_iframe" ></iframe>
 
 						<form enctype="multipart/form-data" class="js-tinymce-file-upload-form" target="tinymce_file_upload_iframe" method="POST" action="/admin/tinymce-file-upload" >
@@ -50,6 +98,11 @@
 					</div>
 					<script type="text/javascript">
 					$(function(){
+					
+					$('.js-admin-menu-element').on('click',function(){
+						$(this).parent().toggleClass('active');
+						return false;
+					});
 							$('.js-tinymce-file-upload').on('change',function(){
 								if ($(this).val()!=''){
 									$('.js-tinymce-file-upload-form').submit();     
@@ -68,13 +121,20 @@
 							  width:940,
 							  theme: 'modern',
 							  language: 'ru',
-							  plugins: 'save paste   custom_modules    code searchreplace autolink     visualblocks visualchars fullscreen image link media template  table charmap hr pagebreak nonbreaking anchor toc   advlist lists textcolor imagetools contextmenu colorpicker textpattern help',
-		  toolbar1: 'save code   custom_modules | undo redo | fullscreen  formatselect   bold italic strikethrough charmap   forecolor backcolor | link simages image insert | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
+							  paste_data_images: true,
+							  plugins: 'save paste   custom_modules    code searchreplace autolink     visualblocks visualchars image link media template  table charmap hr pagebreak nonbreaking anchor toc   advlist lists textcolor imagetools contextmenu colorpicker textpattern help',
+		  toolbar1: 'save code   custom_modules | undo redo |  formatselect   bold italic strikethrough charmap   forecolor backcolor | link simages image insert | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
 							remove_trailing_brs: false,
 							menubar: false,
 							  templates: [ ],
 							  content_css: [ ],
 							  branding: false,
+							  
+							   images_upload_url: '/admin/tinymce-file-upload',
+							  images_upload_base_path: '',
+							  images_upload_credentials: true,
+							  
+  
 							  elementpath: false,
 								setup: function (editor) {
 									editor.addButton('simages', {
@@ -88,7 +148,7 @@
 								 } 
 						 
 						 });
-
+							 
 					 });
 					 </script>
 				 
