@@ -73,94 +73,165 @@
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col">
-				
-				 
-				 
-				 
-						 <form method="POST" action="/admin/var_dump">
-							<textarea  name="xx" class="js-tinymce4 ui-widget-content ui-corner-all" style="width:500px;">sdas dasd asd</textarea>
-							<input type="submit">
-						</form>
-					 
-				   
-				   <div style="display:none;">
-						<iframe name="tinymce_file_upload_iframe" ></iframe>
-
-						<form enctype="multipart/form-data" class="js-tinymce-file-upload-form" target="tinymce_file_upload_iframe" method="POST" action="/admin/tinymce-file-upload" >
-						<input class="js-tinymce-file-upload" accept="image/jpeg,image/png,image/gif" name="image" type="file" /> 
-						<input name="base64" id="base64"  value="" type="hidden" /> 
-						</form>
-					</div>
-					<script type="text/javascript">
-					$(function(){
-					
-					$('.js-admin-menu-element').on('click',function(){
-						$(this).parent().toggleClass('active');
-						return false;
-					});
-							$('.js-tinymce-file-upload').on('change',function(){
-								if ($(this).val()!=''){
-									$('.js-tinymce-file-upload-form').submit();     
-								} 
-								$('.js-tinymce-file-upload').val('');
-							});
-					  })
-					</script>
-					<script src="/cms/external/tinymce4/tinymce.min.js"></script> 
-					 <script>
-					 window.tmp_tinymce_editor = false;
-					 $(function(){
-						tinymce.init({
-							  selector: '.js-tinymce4',
-							  height: 300,   toolbar_item_size: "small",
-							  width:940,
-							  theme: 'modern',
-							  language: 'ru',
-							  paste_data_images: true,
-							  plugins: 'save paste   custom_modules    code searchreplace autolink     visualblocks visualchars image link media template  table charmap hr pagebreak nonbreaking anchor toc   advlist lists textcolor imagetools contextmenu colorpicker textpattern help',
-		  toolbar1: 'save code   custom_modules | undo redo |  formatselect   bold italic strikethrough charmap   forecolor backcolor | link simages image insert | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
-							remove_trailing_brs: false,
-							menubar: false,
-							  templates: [ ],
-							  content_css: [ ],
-							  branding: false,
-							  
-							   images_upload_url: '/admin/tinymce-file-upload',
-							  images_upload_base_path: '',
-							  images_upload_credentials: true,
-							  
-  
-							  elementpath: false,
-								setup: function (editor) {
-									editor.addButton('simages', {
-										icon: 'image',
-										image: '/cms/internal/gfx/image-add.gif',
-										onclick: function () {
-											window.tmp_tinymce_editor = editor;
-											$('.js-tinymce-file-upload').trigger('click');
-										}
-									});
-								 } 
-						 
-						 });
-							 
-					 });
-					 </script>
-				 
-				 
-				 <div class="alert alert-info">
-				 
-					В процессе разработки. Если вы видите это сообщение, установите $_ENV['DOIT_ADMIN_VERSION']='1' или уберите переменную $_ENV['DOIT_ADMIN_VERSION'] вообще.
-				 </div>
+			<div class="row">
+				<div class="col-9">
+						<nav class="admin-horisontal-menu">
+							<a href="" class="admin-h-menu-element">Просмотр</a>
+							<a href="" class="admin-h-menu-element active">Редактирование</a>
+							<a href="" class="admin-h-menu-element">Удалить</a>
+							<a href="" class="admin-h-menu-element">История</a>
+							<a href="" class="admin-h-menu-element disabled-link">Админство</a>
+						</nav>
+				</div>
 			</div>
 		</div>
+	</div>
+	
+	
+	<div class="main-admin-content">
+		
+		
+			
+	 
+		<div class="content-submenu  ">
+			 
+			<div class="admin-content-horisontal-menu">
+				<a href="" class="admin-content-h-menu-element">Общие данные</a>
+				<a href="" class="admin-content-h-menu-element active">Характеристики</a>
+				<a href="" class="admin-content-h-menu-element">Параметры SEO</a>
+				<a href="" class="admin-content-h-menu-element">Импорт</a>
+			
+			</div>
+		</div >
+		 
+		<div class="container-fluid main-admin-elements">
+		<form method="POST" action="/admin/var_dump">
+			   <div style="display:none;">
+							<iframe name="tinymce_file_upload_iframe" ></iframe>
+
+							<form enctype="multipart/form-data" class="js-tinymce-file-upload-form" target="tinymce_file_upload_iframe" method="POST" action="/admin/tinymce-file-upload" >
+							<input class="js-tinymce-file-upload" accept="image/jpeg,image/png,image/gif" name="image" type="file" /> 
+							<input name="base64" id="base64"  value="" type="hidden" /> 
+							</form>
+						</div>
+			
+			<div class="row form-group">
+				
+				<label class="col-2 col-form-label">Имя</label>
+				<div class="col-10">
+					 <input type="text" class="form-control"  placeholder="Любое имя">
+				</div>
+			</div>
+			
+			
+			<div class="row form-group">
+				
+				<label class="col-2 col-form-label">Адрес</label>
+				<div class="col-10">
+					 <input type="text" class="form-control"  placeholder="">
+					  <small   class="form-text text-muted">Может быть любым числом от 1 до 10.</small>
+				</div>
+			</div>
+			
+			
+			<div class="row form-group">
+				
+				<label class="col-2 col-form-label">Текст</label>
+				<div class="col-10">
+					<textarea  name="xx" class="js-tinymce4 ui-widget-content ui-corner-all" style="width:500px;">sdas dasd asd</textarea>
+				</div>
+			</div>
+				
+				
+			
+			<div class="row form-group">
+				
+				
+				<div class="col-2">
+					
+				</div>
+				<div class="col-10">
+						<button type="submit" class="btn btn-primary">Сохранить</button>
+						<input type="reset" class="btn btn-secondary" value="Очистить">
+						<button type="submit" class="btn btn-secondary">Отмена</button>
+				</div>
+			</div>			
+				
+			<div class="row">
+				<div class="col">
+					
+					 <div class="alert alert-info">
+					 
+						В процессе разработки. Если вы видите это сообщение, установите $_ENV['DOIT_ADMIN_VERSION']='1' или уберите переменную $_ENV['DOIT_ADMIN_VERSION'] вообще.
+					 </div>
+				</div>
+			</div>
+			
+			</form>
+		 </div>
 	 </div>
 	 
 	 	</section>
+		
+		
+		
+			<script type="text/javascript">
+						$(function(){
+						
+						$('.js-admin-menu-element').on('click',function(){
+							$(this).parent().toggleClass('active');
+							return false;
+						});
+								$('.js-tinymce-file-upload').on('change',function(){
+									if ($(this).val()!=''){
+										$('.js-tinymce-file-upload-form').submit();     
+									} 
+									$('.js-tinymce-file-upload').val('');
+								});
+						  })
+						</script>
+						<script src="/cms/external/tinymce4/tinymce.min.js"></script> 
+						 <script>
+						 window.tmp_tinymce_editor = false;
+						 $(function(){
+							tinymce.init({
+								  selector: '.js-tinymce4',
+								  height: 300,   toolbar_item_size: "small",
+								  width:750,
+								  theme: 'modern',
+								  language: 'ru',
+								  paste_data_images: true,
+								  plugins: 'save paste   custom_modules    code searchreplace autolink     visualblocks visualchars image link media template  table charmap hr pagebreak nonbreaking anchor toc   advlist lists textcolor imagetools contextmenu colorpicker textpattern help',
+			  toolbar1: 'save code   custom_modules | undo redo |  formatselect   bold italic strikethrough charmap   forecolor backcolor | link simages image insert | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat',
+								remove_trailing_brs: false,
+								menubar: false,
+								  templates: [ ],
+								  content_css: [ ],
+								  branding: false,
+								  
+								   images_upload_url: '/admin/tinymce-file-upload',
+								  images_upload_base_path: '',
+								  images_upload_credentials: true,
+								  
+	  
+								  elementpath: false,
+									setup: function (editor) {
+										editor.addButton('simages', {
+											icon: 'image',
+											image: '/cms/internal/gfx/image-add.gif',
+											onclick: function () {
+												window.tmp_tinymce_editor = editor;
+												$('.js-tinymce-file-upload').trigger('click');
+											}
+										});
+									 } 
+							 
+							 });
+								 
+						 });
+						 </script>
+					 
+					 
+					 
 	</body>
 </html>

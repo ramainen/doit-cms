@@ -150,7 +150,6 @@ section {
 }
 .admin-page-subheader {
 	background:white;
-	height:125px;
 	box-shadow: 0 1px 1px rgba(0,0,0,0.16);
 }
 .admin-page-subheader h1 {
@@ -166,4 +165,67 @@ section {
 	text-align:right;
 	padding-top:10px;
 	padding-right:20px;
+}
+.admin-horisontal-menu{
+	margin-top:24px;
+}
+.admin-h-menu-element, .admin-h-menu-element:active, .admin-h-menu-element:hover {
+	color:#161616;
+	text-decoration:none;
+}
+.admin-h-menu-element {
+	font-size:14px;
+	line-height:32px;
+	display:inline-block;
+	padding-left:7px;
+	padding-right:7px;
+	margin-right:9px;
+	
+}
+.admin-h-menu-element.active {
+	box-shadow: inset 0 -3px 0 0 #00DCCD;
+}
+.admin-h-menu-element:hover {
+	background:#eef9f8;
+}
+
+.admin-content-h-menu-element, .admin-content-h-menu-element:active, .admin-content-h-menu-element:hover {
+	color:#161616;
+	text-decoration:none;
+}
+.admin-content-h-menu-element {
+	font-size:15px;
+	line-height:45px;
+	display:inline-block;
+	padding-left:23px;
+	padding-right:23px;
+
+}
+.admin-content-h-menu-element.active {
+	box-shadow: inset 0 -3px 0 0 #00DCCD;
+}
+.admin-content-h-menu-element:hover {
+	background:#EFFCF5;
+}
+
+
+.disabled-link {
+	opacity:0.4;
+	pointer-events: none;
+}
+.main-admin-content {
+	background:white;
+	border:1px solid #A5A5A5;
+	border-radius:2px;
+	margin-left:10px;
+	margin-top:17px;
+	margin-right:10px;
+ 
+}
+.content-submenu{
+	height:45px;
+	background:#F3F3F3;
+}
+.main-admin-elements{
+	padding-top:32px;
 }
