@@ -3,6 +3,7 @@ header {
 	color: #fff;
 	height:40px;
 	display:block;
+	display:none;
 	width:100%;
 }
 .menuheader {
@@ -83,6 +84,7 @@ header {
 .sidebar {
 	position: fixed;
 	top: 40px;
+	top: 0;
 	left: 0;
 	width: 80px;
 	bottom:0;
@@ -127,6 +129,7 @@ header {
 .menubar {
 	position: fixed;
 	top:  40px;
+	top:  0;
 	left: 80px;
 	width: 218px;
 	height: 100%;
@@ -228,4 +231,6 @@ section {
 }
 .main-admin-elements{
 	padding-top:32px;
+	width:935px;
+	margin:0;
 }
