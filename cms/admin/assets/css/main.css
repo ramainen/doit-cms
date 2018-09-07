@@ -234,3 +234,18 @@ section {
 	width:935px;
 	margin:0;
 }
+
+.image-elements-on-hover{
+	display:none;
+}
+.image-elements-element:hover .image-elements-on-hover{
+	display:block;
+}
+ 
+.admin-cards-container.card-columns{
+	    column-gap: 0;
+}
+
+.admin-cards-container.card-columns .card{
+	    margin-bottom:0;
+}
