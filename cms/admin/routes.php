@@ -90,14 +90,14 @@ d()->route('/admin/var_dump', function(){
 	var_dump($_POST);
 	exit;
 });
-d()->route('/admin/edit/:url', function(){
+d()->route('/admin/edit/:table/:id', function($table,$id){
 	
-	
+	return d()->view->partial('/cms/admin/templates/edit.html');
 	
 });
 d()->route('/admin', function(){
 	
-	
+	return d()->view->partial('/cms/admin/templates/empty.html');
 	
 });
 
@@ -205,4 +205,7 @@ d()->route('/admin/tinymce-file-upload', function(){
 
 
 
-d()->route('/admin/:u*', function(){ }); //Костыль для 404
+d()->route('/admin/:u*', function(){
+
+	return d()->view->partial('/cms/admin/templates/empty.html');
+}); //Костыль для 404
