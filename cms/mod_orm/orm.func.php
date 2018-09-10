@@ -94,7 +94,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	public $per_page=10;
 	private $_is_sliced=false;
 	private $_revinded=0;
-	private $_count=0;
+	public $_count=0;
 	private $_must_revind=false;
 	private $_slice_size=5;
 	private $_objects_cache=array();
