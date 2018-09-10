@@ -249,3 +249,11 @@ section {
 .admin-cards-container.card-columns .card{
 	    margin-bottom:0;
 }
+.subheader_legend{
+	min-height: 45px;
+	padding-top:10px;
+	padding-bottom:5px;
+	margin-bottom:5px;
+   /* background: #F3F3F3;*/
+	box-shadow: inset 4px 0 0 0 #00DCCD;
+}
