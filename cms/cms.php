@@ -2052,6 +2052,7 @@ foreach($tmparr as $key=>$subval)
 		$res=array();
 		$currentGroup='';
 		$arrayKeys=array();
+		$cache_block = false;
 		foreach($ini as $row) {
 			$first_symbol=substr(trim($row),0,1);
 			if($first_symbol==';') continue; //Комментарии строки игнорируются
@@ -2059,6 +2060,16 @@ foreach($tmparr as $key=>$subval)
 				$currentGroup=substr($row,1,-1);
 				continue;
 			}
+			if ($first_symbol=='{') { //Начало новой группы {
+				$cache_block = true;
+				continue;
+			}
+			if ($first_symbol=='}') { //Начало новой группы {
+				$cache_block = false;
+				$arrayKeys[$currentGroup]++;
+				continue;
+			}
+			
 			$delimeterPos=strpos($row,'=');
 			if($delimeterPos===false) {
 				//Если тип строки - неименованный массив, разделённый пробелами
@@ -2110,7 +2121,54 @@ foreach($tmparr as $key=>$subval)
 				$value=array($arrayKeys[$currentGroup]=>$value);
 				$arrayKeys[$currentGroup]++; //Генерация номера элемента массива, массив нельзя перемешивать с обычными данными
 				
-			} else {
+			} elseif ($cache_block) { //Активирован режим фигурных скобок
+				
+				
+				$subject=$currentGroup;
+					
+				if (!isset($arrayKeys[$currentGroup])) {
+					$arrayKeys[$currentGroup]=0;
+				}
+				
+				$subject_key=  trim(substr($row,0,$delimeterPos));
+ 
+				$value=ltrim(substr($row,$delimeterPos+1));
+				if(substr($value,0,5) == 'json:'){
+					$value = json_decode(substr($value ,5),true);
+				}
+				
+				if (strpos($subject_key,'.')===false) {
+					$value=array($arrayKeys[$currentGroup]=> array($subject_key=>$value));
+				} else {
+					$tmpvalue=$value;
+					$tmparr=array_reverse(explode('.',$subject_key));
+					foreach($tmparr as $subSubject) {
+						$tmpvalue=array($subSubject=>$tmpvalue);
+					}
+					 
+					$value=array($arrayKeys[$currentGroup]=>  $tmpvalue);
+					 
+					
+				}
+				
+				
+				
+				
+				//Если встречаются числовые теги, делается replace вместо merge
+				if (strpos($subject,'.')===false) {
+					$res=array_replace_recursive ($res,array($subject=>$value));
+				} else {
+					$tmpvalue=$value;
+					$tmparr=array_reverse(explode('.',$subject));
+					foreach($tmparr as $subSubject) {
+						$tmpvalue=array($subSubject=>$tmpvalue);
+					}
+					$res=array_replace_recursive ($res,$tmpvalue);
+				}
+				
+				continue;
+				
+			}else {
 				$subject= rtrim(substr($row,0,$delimeterPos));
 				if ($currentGroup!='') {
 					$subject = $currentGroup . '.' . $subject;

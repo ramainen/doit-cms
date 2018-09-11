@@ -38,6 +38,12 @@
 $(function(){
 
 	$('pre code:contains("d()->")').addClass('language-php')
+	var regex = new RegExp(";[а-яА-Я]"); 
+	$("pre code").filter(function () {
+		if( regex.test($(this).text())){
+			$(this).addClass('language-ini')
+		}		
+	});
 hljs.configure({'languages':['php','javascript','html','ini']})
 hljs.initHighlightingOnLoad();
 
