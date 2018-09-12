@@ -790,8 +790,8 @@ foreach($tmparr as $key=>$subval)
 
 			while (false !== ($_file = readdir($_handle))) {
 				//ищем php файлы
-				
-				if (strrchr($_file, '.')=='.php' || is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$folder.'/'.$_file)) {
+				$extension = strrchr($_file, '.');
+				if ($extension=='.php' || is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$folder.'/'.$_file)) {
 					$fistrsim = $_file{0};
 					if($fistrsim>='A' && $fistrsim<='Z'){
 						//это класс
@@ -799,14 +799,46 @@ foreach($tmparr as $key=>$subval)
 					}else{
 						$this->for_include[$folder.'/'.$_file] = $folder.'/'.$_file;
 					}
+				}elseif ($extension=='.ini') {
+					//Правила, срабатывающие в любом случае, инициализация опций системы  и плагинов
+					if (substr($_file,-8)=='init.ini') {
+						//Если имя файла оканчивается на .init.ini, инициализировать его сразу
+						$this->for_ini[$folder.'/'.$_file]=($folder.'/'.$_file);
+					} else {
+						//При первом запросе адрес сбрасывается в false для предотвращения последующего чтения
+						//Хранит адрес ini-файла, запускаемого перед определённой функцией //DEPRECATED
+
+						$_dir_file=($folder.'/'.$_file);
+
+						
+						//Реалзация приоритетов: одноимённый файл из папки app переопределит тотже из папки cms
+						if(isset($ini_files_dirs[$_dir_file])){
+							foreach($this->ini_database as $_key=> $_ininame){
+								foreach($_ininame as $key=>$value){
+									if($value==$ini_files_dirs[$_dir_file]){
+										unset($this->ini_database[$_key][$key]);
+									}
+								}
+							}
+						}
+						$ini_files_dirs[$_dir_file]=$folder.'/'.$_file;
+						if(isset($this->ini_database[substr($_file,0,-4)])){
+							$this->ini_database[substr($_file,0,-4)][]=$folder.'/'.$_file;
+						}else{
+							$this->ini_database[substr($_file,0,-4)]=array($folder.'/'.$_file);
+						}
+					}
+					continue;
 				}
+				
+				
 				
 			}
 			//создаём план работы над директориями и их кодом
 			//PHP файлы инклудим
 			//HTML файлы запоминаем
+			
 		}
-		
 		foreach($this->for_ini as $value) {
 			$this->load_and_parse_ini_file ($value);
 		}
