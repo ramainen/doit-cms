@@ -1669,6 +1669,7 @@ foreach($tmparr as $key=>$subval)
 	 */
 	function __set($name,$value)
 	{
+		
 		unset($this->_closures[$name]);
 		if( is_object($value) && ($value instanceof Closure)){
 			$this->_closure_directories[$name] = $this->_current_include_directory;
