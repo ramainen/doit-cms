@@ -45,22 +45,66 @@
 	</nav>
 	<nav class="menubar">
 	 
-		<?php foreach (d()->admin['menu']['content'] as $menu){
-			if(isset($menu[0])){
-				$menu['link']="/admin/list/{$menu[0]}/";
-				$menu['title']=$menu[1];
+		<?php
+
+		$menues = d()->admin['menu']['content'];
+		$menues_keys = array();
+		foreach ($menues as $key=>$menu){
+			if(!empty($menu['id'])){
+				$menues_keys['id'] = $key;
 			}
-			if(empty($menu['link'])){
+			
+			if(isset($menu[0])){
+				if(substr($menu[0],0,1) == "/"){
+					$menu['link']=$menu[0];
+				}else{
+					$menu['link']="/admin/list/{$menu[0]}/";
+				}
+				$menu['title']=$menu[1];
+				
+				$menues[$key] = $menu;
+			}
+		}
+		foreach ($menues as $key=>$menu){
+			if(!empty($menu['parent_id'])){
+				$menues[$menues_keys['id']]["submenues"][] = $menu;
+			}
+
+		}
+		foreach ($menues as $menu){
+			/*if(isset($menu[0])){
+				if(substr($menu[0],0,1) == "/"){
+					$menu['link']=$menu[0];
+				}else{
+					$menu['link']="/admin/list/{$menu[0]}/";
+				}
+				$menu['title']=$menu[1];
+			}*/
+			if(empty($menu['title'])){
+				continue;
+			}
+			if(!empty($menu['parent_id'])){
 				continue;
 			}
 			d()->menu_item = $menu;
-		?>
-		<a href="{menu_item.link}" class="admin-menu-element">{menu_item.title}</a>
+			if(!empty($menu['id'])){ ?>
+				<div class="admin-menu-elements-group">
+					<a href="{menu_item.link}" class="admin-menu-element with-plus js-admin-menu-element">{menu_item.title}</a>
+					<foreach menu_item['submenues']>
+						<a href="{this.link}" class="admin-menu-subelement">{this.title}</a>
+					</foreach>
+					
+				</div>
+			<?php }else { ?>
+			
+			
+				<a href="{menu_item.link}" class="admin-menu-element">{menu_item.title}</a>
+			<?php } ?>
 
 	 	 <?php } ?>
 		 
 		 	
-		<a href="" class="admin-menu-element active">Текстовые страницы</a>
+		<a href="" class="admin-menu-element active">[FAKE]Текстовые страницы</a>
 		<a href="" class="admin-menu-element">Рубрики</a>
 		<div class="admin-menu-elements-group">
 			<a href="" class="admin-menu-element with-plus js-admin-menu-element">Каталог</a>
