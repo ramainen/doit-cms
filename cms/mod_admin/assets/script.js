@@ -391,16 +391,6 @@ $(".str_input").pasteImageReader(function(results) {
 											}
 										}
 									}, false);
-									xhr.addEventListener("progress", function(evt){
-										if (evt.lengthComputable) {
-											var percentComplete = evt.loaded / evt.total;
-											if (percentComplete==1){
-												$target_progressbar.addClass('progress-success');
-												$target_progressbar.removeClass('progress-warning');
-												$target_progressbar.removeClass('active');
-											}
-										}
-									}, false);
 									return xhr;
 								},
 							url: url,
@@ -435,6 +425,9 @@ $(".str_input").pasteImageReader(function(results) {
 						        	if(multiple_files.length>0){
 						        		$targetfile.val(multiple_files.join(';'))
 						        	}
+									$target_progressbar.addClass('progress-success');
+									$target_progressbar.removeClass('progress-warning');
+									$target_progressbar.removeClass('active');
 						        	btn.button('reset')
 						        	$this.replaceWith($this.clone());
 					    		}
