@@ -460,8 +460,8 @@ function path_to($params)
 
 function preview($adress,$param1=false,$param2=false )
 {	
-	$orig_params = $adress;
 	if(is_array($adress)){
+		$orig_params = $adress;
 		if(isset($adress['height']) || isset($adress[2])){
 			if(isset($adress['width'])){
 				$width=$adress['width'];
@@ -491,6 +491,7 @@ function preview($adress,$param1=false,$param2=false )
 		}
 		//Массив значений
 	}else{
+		$orig_params = array();
 		if($param2===false){
 			//обычная превью
 			$num=1;
