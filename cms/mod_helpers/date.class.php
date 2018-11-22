@@ -337,7 +337,7 @@ class Date extends UniversalHelper
 		else if(($timediff = intval($timediff/24)) < 14)   
 		   $time = "$timediff ". declOfNum($timediff, 'день', 'дня', 'дней') ." назад";  
 		else if(($weeks= intval($timediff/7)) < 4)   
-		  $time = "$weeks ". declOfNum($timediff, 'неделя', 'недели', 'недель') ." назад";  
+		  $time = "$weeks ". declOfNum($weeks, 'неделя', 'недели', 'недель') ." назад";  
 		else if(($months= intval($timediff/30.4)) )   
 		   $time = "$months ". declOfNum($months,array('месяц','месяца','месяцев')). " назад";  
 		return $time; 
