@@ -162,7 +162,7 @@ class Mail extends UniversalSingletoneHelper
 			}else{
 				$data = chunk_split(base64_encode(file_get_contents($adr)));
 			}
-			$email_message .= "--{$mime_boundary}\n"."Content-Type: application/octet-stream;\n"." name=\"".$this->options['file_name']."\"\n"."Content-Transfer-Encoding: base64\n\n".$data."\n\n"."--{$mime_boundary}--\n"; 
+			$email_message .= "--{$mime_boundary}\n"."Content-Type: application/octet-stream;\n"." name=\"".$this->options['file_name'][count($this->options['file_name']) - 1]."\"\n"."Content-Transfer-Encoding: base64\n\n".$data."\n\n"."--{$mime_boundary}--\n"; 
 			 
 			
 			
