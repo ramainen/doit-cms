@@ -144,50 +144,28 @@ class View
 	}
 	
 	function from_file($file, $global=false){
-
 		$name = str_replace(array('/','.','-','\\'),array('_','_','_','_'),substr($file,1)).'_tpl';
-	
-	
-
-
 		if(!function_exists($name)){
-			
 			ob_start(); //Подавление стандартного вывода ошибок Parse Error
 			if($global){
 				$code = d()->shablonize(file_get_contents(ROOT . $file));
 			}else{
 				$code = d()->shablonize(file_get_contents(ROOT . '/app'.$file));	
 			}
-			
 			$result=eval('function '.$name.'(){ $doit=d(); ?'.'>'.$code.'<'.'?php ;} ');
 			ob_end_clean();
 			if ( $result === false && ( $error = error_get_last() ) ) {
  				$lines = explode("\n",'function '.$name.'(){ $doit=d(); ?'.'>'.$code.'<'.'?php ;} ');
-				$file = $this->fragmentslist[$name];
 				return print_error_message( $lines [$error['line']-1],$error['line'],$file,$error['message'],'Ошибка при обработке шаблона',true);
-			} else {
-				ob_start();
-				$result =  call_user_func($name);
-				$_end = ob_get_contents();
-				ob_end_clean();
-				if (!is_null($result)) {
-					$_end = $result;
-				}
-				return $_end;
 			}
-
-
-		}else{
-			ob_start();
-			$result =  call_user_func($name);
-			$_end = ob_get_contents();
-			ob_end_clean();
-			if (!is_null($result)) {
-				$_end = $result;
-			}
-			return $_end;
 		}
-
-	
+		ob_start();
+		$result =  call_user_func($name);
+		$_end = ob_get_contents();
+		ob_end_clean();
+		if (!is_null($result)) {
+			$_end = $result;
+		}
+		return $_end;
 	}
 }
