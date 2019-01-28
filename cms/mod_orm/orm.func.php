@@ -2292,6 +2292,26 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 	}
 	
+	function stub()
+	{
+		$this->_options['queryready'] = true;
+		$this->_data = [];
+		$this->_count = 0;
+		return $this;
+	}
+
+	function fetch_column($field, $order = '')
+	{
+		if ($field === 'id') {
+			$this->select('`id`');
+		} else {
+			$this->select('distinct `' . et($field) . '`');
+		}
+		if (isset($order)) {
+			$this->order($order);
+		}
+		return $this->fast_all_of($field);
+	}
 
 }
 
