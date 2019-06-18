@@ -2294,6 +2294,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 	
 	function stub()
 	{
+		$this->where('false');
 		$this->_options['queryready'] = true;
 		$this->_data = [];
 		$this->_count = 0;
