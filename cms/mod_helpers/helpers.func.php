@@ -1310,8 +1310,9 @@ d()->convert_phone_clean = function($phone) {
 };
 
 d()->convert_phone_plus = function($phone) {
-	$phone =  preg_replace(array('#^8#', '#[^0-9]#'), array('7', ''), $phone);
-	return preg_replace('#^([123456890])#','+7$1', $phone);
+	$phone = preg_replace(array('#^8#', '#[^0-9]#'), array('7', ''), $phone);
+	$phone = preg_replace('#^([123456890])#','7$1', $phone);
+	return '+' . $phone;
 };
 
 d()->convert_phone_human = function($phone) {
