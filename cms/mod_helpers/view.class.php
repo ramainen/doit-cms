@@ -144,7 +144,7 @@ class View
 	}
 	
 	function from_file($file, $global=false){
-		$name = str_replace(array('/','.','-','\\'),array('_','_','_','_'),substr($file,1)).'_tpl';
+		$name = str_replace(array('/','.','-','\\','+'),array('_','_','_','_','_'),substr($file,1)).'_tpl';
 		if(!function_exists($name)){
 			ob_start(); //Подавление стандартного вывода ошибок Parse Error
 			if($global){
