@@ -460,8 +460,8 @@ function path_to($params)
 
 function preview($adress,$param1=false,$param2=false )
 {	
-	$orig_params = $adress;
 	if(is_array($adress)){
+		$orig_params = $adress;
 		if(isset($adress['height']) || isset($adress[2])){
 			if(isset($adress['width'])){
 				$width=$adress['width'];
@@ -491,6 +491,7 @@ function preview($adress,$param1=false,$param2=false )
 		}
 		//Массив значений
 	}else{
+		$orig_params = array();
 		if($param2===false){
 			//обычная превью
 			$num=1;
@@ -1112,7 +1113,7 @@ function valid_email($value,$params)
 	return ( 1 == preg_match(
 		'/^[-a-z0-9\!\#\$\%\&\'\*\+\/\=\?\^\_\`\{\|\}\~]+(?:\.[-a-z0-9!' .
 			'\#\$\%\&\'\*\+\/\=\?\^\_\`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?\.)*'.
-			'(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$/' ,$value));
+			'(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|agency|[a-z][a-z])$/' ,$value));
 }
 
 function must_be_empty($value,$params)
@@ -1309,8 +1310,9 @@ d()->convert_phone_clean = function($phone) {
 };
 
 d()->convert_phone_plus = function($phone) {
-	$phone =  preg_replace(array('#^8#', '#[^0-9]#'), array('7', ''), $phone);
-	return preg_replace('#^([123456890])#','+7$1', $phone);
+	$phone = preg_replace(array('#^8#', '#[^0-9]#'), array('7', ''), $phone);
+	$phone = preg_replace('#^([123456890])#','7$1', $phone);
+	return '+' . $phone;
 };
 
 d()->convert_phone_human = function($phone) {

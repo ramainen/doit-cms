@@ -1167,7 +1167,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				foreach($this->_future_data as $key => $value) {
 					$fields[]=" ".DB_FIELD_DEL . $key . DB_FIELD_DEL." ";
 					
-					if(SQL_NULL === $value || (substr($key,-3)=='_id' && $value==='')){
+					if(SQL_NULL === $value || (substr($key,-3)=='_id' && !$value && $value !== '0' && $value !== 0)){
 						$values[]=" NULL ";
 					}else{
 						$values[]=" ". doitClass::$instance->db->quote ($value)." ";
@@ -1192,7 +1192,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 				$attributes=array();
 				foreach($this->_future_data as $key => $value) {
 
-					if(SQL_NULL === $value  || (substr($key,-3)=='_id' && $value==='')){
+					if(SQL_NULL === $value  || (substr($key,-3)=='_id' && !$value && $value !== '0' && $value !== 0)){
 						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = NULL ";
 					}else{
 						$attributes[]=" ". DB_FIELD_DEL . $key. DB_FIELD_DEL ." = ". doitClass::$instance->db->quote($value)." ";
@@ -2292,6 +2292,27 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 	}
 	
+	function stub()
+	{
+		$this->where('false');
+		$this->_options['queryready'] = true;
+		$this->_data = [];
+		$this->_count = 0;
+		return $this;
+	}
+
+	function fetch_column($field, $order = '')
+	{
+		if ($field === 'id') {
+			$this->select('`id`');
+		} else {
+			$this->select('distinct `' . et($field) . '`');
+		}
+		if (isset($order)) {
+			$this->order($order);
+		}
+		return $this->fast_all_of($field);
+	}
 
 }
 
