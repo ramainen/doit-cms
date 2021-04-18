@@ -35,6 +35,9 @@ class PhonevalidatorTest extends Test
 		$this->assertEquals(d()->convert_phone_clean('+7(904) 764-09-61'),'9047640961');
 		
 		$this->assertEquals(d()->convert_phone_plus('+7(904) 764-09-61'),'+79047640961');
+		$this->assertEquals(d()->convert_phone_plus('9047640961'),'+79047640961');
+		$this->assertEquals(d()->convert_phone_plus('89047640961'),'+79047640961');
+		$this->assertEquals(d()->convert_phone_plus('79047640961'),'+79047640961');
 		
 		
 		$this->assertEquals(d()->validate_phone('+79047640961'),true);
