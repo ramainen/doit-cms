@@ -1831,7 +1831,7 @@ abstract class ActiveRecord implements ArrayAccess, Iterator, Countable //extend
 		}
 		*/
 		
-		if($name{0}=='_'){
+		if($name[0]=='_'){
 			if (substr($name,0,5)=='_all_') {
 				return $this->all_linked(substr($name,5));
 			}			

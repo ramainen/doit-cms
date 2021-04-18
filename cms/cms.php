@@ -792,7 +792,7 @@ foreach($tmparr as $key=>$subval)
 				//ищем php файлы
 				$extension = strrchr($_file, '.');
 				if ($extension=='.php' || is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$folder.'/'.$_file)) {
-					$fistrsim = $_file{0};
+					$fistrsim = $_file[0];
 					if($fistrsim>='A' && $fistrsim<='Z'){
 						//это класс
 						$autoload_folders[$folder]=true;
@@ -1368,7 +1368,7 @@ foreach($tmparr as $key=>$subval)
 	public function call($name, $arguments=array())
 	{
 		
-		$fistrsim = $name{0};
+		$fistrsim = $name[0];
 		if($fistrsim>='A' && $fistrsim<='Z'){
 			return new $name($arguments);
 		}
@@ -1633,7 +1633,7 @@ foreach($tmparr as $key=>$subval)
 			return;
 		}
 		while (false !== ($_file = readdir($_handle))) {
-			 if ($_file{0}=="+" && is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$path .'/'. $_file)  ) {
+			 if ($_file[0]=="+" && is_dir($_SERVER['DOCUMENT_ROOT'].'/'.$path .'/'. $_file)  ) {
 				$simple_folders[] = $path.'/'.$_file;
 				doitClass::_fill_simple_folders_subdirectories($path.'/'.$_file, $simple_folders); 
 			 }
@@ -1896,7 +1896,7 @@ foreach($tmparr as $key=>$subval)
 				$_requri==$value[0]
 				|| substr($_requri,0,$strlen_value_0)==$value[0] 
 				|| preg_match('/^'.str_replace('\/\/','\/.+?\/',str_replace('/','\/',preg_quote($value[0]))).'.*/',$_requri)
-				|| ($value[0]{0} === '^' &&  preg_match('#' . $value[0] . '#',$_requri))
+				|| ($value[0][0] === '^' &&  preg_match('#' . $value[0] . '#',$_requri))
 				)) {
 					$matched=$value;
 					$longest_url=$value[0];
@@ -2371,7 +2371,7 @@ foreach($tmparr as $key=>$subval)
 	}elseif(is_file($_SERVER['DOCUMENT_ROOT'].'/'.('vendors'.DIRECTORY_SEPARATOR.$fileName))){
 		require $_SERVER['DOCUMENT_ROOT'].'/'.'vendors'.DIRECTORY_SEPARATOR.$fileName;
 	}else{
-		if(substr(strtolower($class_name),-10)!='controller' && $class_name{0}>='A' && $class_name{0}<='Z'){
+		if(substr(strtolower($class_name),-10)!='controller' && $class_name[0]>='A' && $class_name[0]<='Z'){
 			//Если совсем ничего не найдено, попытка использовать ActiveRecord.
 			eval ("class ".$class_name." extends ActiveRecord {}");	
 		}

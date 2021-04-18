@@ -27,7 +27,7 @@ function stylesheets($params){
 	$reconcat=false;
 	if(isset($params['to'])){
 		$concat_file = $params['to'];
-		if( $concat_file{0}!='/'){
+		if( $concat_file[0]!='/'){
 			$concat_file = '/css/'.$concat_file;
 		}
 	}else{
@@ -45,7 +45,7 @@ function stylesheets($params){
 		if(!is_numeric($key)){
 			continue;
 		}
-		if( $file{0}!='/'){
+		if( $file[0]!='/'){
 			$file = '/css/'.$file;
 		}
 		 
@@ -169,7 +169,7 @@ function javascripts($params){
 	$reconcat=false;
 	if(isset($params['to'])){
 		$concat_file = $params['to'];
-		if( $concat_file{0}!='/'){
+		if( $concat_file[0]!='/'){
 			$concat_file = '/js/'.$concat_file;
 		}
 	}else{
@@ -187,7 +187,7 @@ function javascripts($params){
 		if(!is_numeric($key)){
 			continue;
 		}
-		if( $file{0}!='/'){
+		if( $file[0]!='/'){
 			$file = '/js/'.$file;
 		}
 		 

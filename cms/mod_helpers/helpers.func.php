@@ -1188,7 +1188,7 @@ function container($param)
 function route($url='/',$what=false,$to=false)
 {
 	static $anonymous_functions_count = 0;
-	if($what==false && $url{0} != '^' && $url{0} != '/'){
+	if($what==false && $url[0] != '^' && $url[0] != '/'){
 		//route('/news/index', 'content', 'news#index');
 		$what = 'content';
 		$to = $url.'#';

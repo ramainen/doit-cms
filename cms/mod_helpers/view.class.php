@@ -56,7 +56,7 @@ class View
 		//Если не указан явно заданный файл, то проводим автопоиск в соответствии с url-ом
 		
 		//Вариант первый - файл существует
-		if($old_chosen!==false && $old_chosen{0} != "/" ){
+		if($old_chosen!==false && $old_chosen[0] != "/" ){
 			$shortfile = $url.'.html';
 			$tryfile = ROOT . '/app'.$shortfile;
 			
@@ -84,7 +84,7 @@ class View
 		}
 		
 		
-		if($old_chosen!==false && $old_chosen{0} != "/" ){
+		if($old_chosen!==false && $old_chosen[0] != "/" ){
 			//Вариант третий - show.html
 			$try_url = substr($url, 0, strrpos($url, '/') );
 			$shortfile = $try_url.'/show.html';
