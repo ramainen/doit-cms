@@ -51,19 +51,19 @@ function edit($params=false){
 	}
 
 	if(isset($params['href'])) {
-		print '<a href="'.$params['href'] . $addition_params .'"  style="display:inline;" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
-	
+		print '<a href="'.$params['href'] . $addition_params .'"  style="display:inline;" onclick="window.open(this.href);return false;"  target="_blank" '.$attr. ' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
+
 		if($need_add_button){
 			d()->admin_add_panel_button('/admin/edit/'.$params['href'] . $addition_params,$panel_button_title);
 		}
 	}elseif(is_string($params[0]) && strpos($params[0],'/')!==false){
-		print '<a href="/admin/edit/'.$params[0] . $addition_params .'"  style="display:inline;" onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  target="_blank" '.$attr.' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
+		print '<a href="/admin/edit/'.$params[0] . $addition_params .'"  style="display:inline;" onclick="window.open(this.href);return false;"  target="_blank" '.$attr. ' ><img style="border:none;"  src="/cms/internal/gfx/edit.png"></a>';
 	
 		if($need_add_button){
 			d()->admin_add_panel_button('/admin/edit/'.$params[0] . $addition_params,$panel_button_title);
 		}
 	}else{
-		print '<a href="/admin/edit/'.$obj_table.'/'.$obj_id. $addition_params .'"  style="display:inline;" target="_blank" '.$attr.' onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
+		print '<a href="/admin/edit/'.$obj_table.'/'.$obj_id. $addition_params .'"  style="display:inline;" target="_blank" '.$attr. ' onclick="window.open(this.href);return false;" ><img style="border:none;" src="/cms/internal/gfx/edit.png"></a>';
 	
 		if($need_add_button){
 			d()->admin_add_panel_button('/admin/edit/'.$obj_table.'/'.$obj_id. $addition_params,$panel_button_title);
@@ -130,7 +130,7 @@ function delete($params=false){
 	}
 		
 
-	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/delete/'.$obj_table.'/'.$obj_id.'"  style="display:inline;" target="_blank" '.$attr.'><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
+	print '<a onclick="window.open(this.href);return false;"  href="/admin/delete/'.$obj_table.'/'.$obj_id.'"  style="display:inline;" target="_blank" '.$attr. '><img style="border:none;" src="/cms/internal/gfx/delete.png"></a>';
 }
 
 function add($params){
@@ -191,7 +191,7 @@ function add($params){
 	if($need_add_button){
 		d()->admin_add_panel_button('/admin/edit/'.$params[0].'/add'.$params_string,$panel_button_title);
 	}
-	print '<a onclick="if (jQuery.browser.opera && parseInt(jQuery.browser.version) >= 12){window.open(this.href);return false;}"  href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
+	print '<a onclick="window.open(this.href);return false;"  href="/admin/edit/'.$params[0].'/add'.$params_string.'" '.$attr. '  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/add.png"></a>';
 }
 
 function sort_icon($params=false){
@@ -273,7 +273,7 @@ function sort_icon($params=false){
 		$href = '/admin/list/'.$params[0].''.$params_string;
 	}
 	
-	print '<a href="'.$href.'" '.$attr.'  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
+	print '<a href="'.$href.'" '.$attr. '  style="display:inline;" target="_blank" ><img style="border:none;" src="/cms/internal/gfx/sort.png"></a>';
 }
 
 function admin_add_panel_button($url,$title){
@@ -1090,7 +1090,7 @@ function admin_scaffold_new()
 		d()->table_name = $_GET['table'];
 	}
 	if(d()->validate('admin_scaffold_create')){
-		
+
 		$result_messages='';
 		
 		$table=d()->params['name'];
@@ -1099,12 +1099,12 @@ function admin_scaffold_new()
 		$model = $_first_letter.substr($one_element,1);
 		$_first_letter_controller=strtoupper(substr($table,0,1));
 		$controller_name = $_first_letter_controller.substr($table,1);
-		
+
 		include('cms/mod_admin/scaffold_templates/scaffold_templates.php');
 		foreach($scaffold_templates as $scaffold_name=>$scaffold_value){
 			$scaffold_templates[$scaffold_name]=str_replace(array('#table#','#one_element#','#model#','#controller_name#'),array($table,$one_element,$model,$controller_name),$scaffold_value);
 		}
-		
+
 		//Создание таблицы
 		if(d()->params['create_table']=='yes') {
 		
@@ -1129,9 +1129,9 @@ function admin_scaffold_new()
 				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
-		
-		
-			
+
+
+
 		
 		//Создание файла с контроллером
 		if((d()->params['create_show']=='yes' || d()->params['create_list']=='yes') && !file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
@@ -1147,7 +1147,7 @@ function admin_scaffold_new()
 				$result_messages .=  "<span style='color:#B01414'>неудачно</span><br>";
 			}
 		}
-		
+
 		//Создание функций в функциональном стиле
 		if(d()->params['create_type']=='func'){
 		
@@ -1166,7 +1166,7 @@ function admin_scaffold_new()
 					}
 				}
 			}
-			
+
 			if((d()->params['create_list']=='yes') && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
 				
 				$check=file_get_contents($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php');
@@ -1183,8 +1183,8 @@ function admin_scaffold_new()
 				}
 			}
 		}else{
-			
-			
+
+
 			//ООП подход
 			if((d()->params['create_show']=='yes' || d()->params['create_list']=='yes') && file_exists($_SERVER['DOCUMENT_ROOT'].'/app/mod_'.$table.'/'.$table.'.func.php')) {
 				

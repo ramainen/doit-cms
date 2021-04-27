@@ -72,8 +72,8 @@
 		} ?>
 		 
 		 
-		<td><a href="/admin/edit/{curr_table}/{.id}" class="btn btn-mini">Править</a> {.addbuttons}
-		<a href="/admin/delete/{curr_table}/{.id}" target="_blank"   class="btn btn-danger btn-mini"   ><i class="icon-remove icon-white"></i></a>
+		<td><a href="/admin/edit/{curr_table}/{.id}" onclick="window.open(this.href);return false;" class="btn btn-mini">Править</a> {.addbuttons}
+		<a href="/admin/delete/{curr_table}/{.id}" onclick="window.open(this.href);return false;" target="_blank"   class="btn btn-danger btn-mini"   ><i class="icon-remove icon-white"></i></a>
 		 
 		</td>
 	</tr>
