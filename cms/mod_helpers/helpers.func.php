@@ -516,7 +516,7 @@ function preview($adress,$param1=false,$param2=false )
 		return '';
 	}
 	$ext=strtolower(strrchr($adress, '.'));
-	if(!in_array($ext,array('.gif','.jpg','.png','.jpeg'))){
+	if(!in_array($ext,array('.gif','.jpg','.png','.jpeg', '.webp'))){
 		return '';
 	}
 	$not_resize_hash = '';
@@ -541,26 +541,26 @@ function preview($adress,$param1=false,$param2=false )
 		$is_watermark = false;
 		$preview_adress = substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs/preview".$not_resize_hash.$watermark_suffix.$width.'x'.$height."_" . substr($adress, strrpos($adress, "/") + 1);
 	}
-	
-	
-	
+
+
+
 	//генерирование изображения при его отсуствии
 	if(!file_exists($_SERVER['DOCUMENT_ROOT'].$preview_adress)){
-		
+
 		//Создание превью
-		
+
 		$filename = $_SERVER['DOCUMENT_ROOT'].$adress;
 		if (!is_file($filename)) {
 			return '';
 		}
 		$dest = $_SERVER['DOCUMENT_ROOT'].$preview_adress;
-		
+
 		$dest_folder = $_SERVER['DOCUMENT_ROOT'].substr($adress, 0, strrpos($adress, "/") + 1) . ".thumbs";
 		if(!file_exists($dest_folder)){
 			mkdir($dest_folder);
 			chmod($dest_folder, 0777);
 		}
-		
+
 		$format = strtolower(substr(strrchr($filename,"."),1));
 		switch ($format) {
 			case 'gif':
@@ -575,6 +575,9 @@ function preview($adress,$param1=false,$param2=false )
 			case 'jpeg':
 				$type = "jpg";
 				break;
+			case 'webp':
+				$type = "webp";
+				break;
 			default:
 				return false;
 				break;
@@ -585,6 +588,9 @@ function preview($adress,$param1=false,$param2=false )
 			switch ($file_type) {
 				case 'image/gif':
 					$img = ImageCreateFromGif($filename);
+					break;
+				case 'image/webp':
+					$img = ImageCreateFromWebp($filename);
 					break;
 				case 'image/png':
 					$img = ImageCreateFromPng($filename);
@@ -597,17 +603,17 @@ function preview($adress,$param1=false,$param2=false )
 						$exif = exif_read_data($filename);
 						if(!empty($exif['Orientation'])) {
 							switch($exif['Orientation']) {
-							case 8:
-								$img = imagerotate($img,90,0);
-								$changed_rotation=true;
-								break;
-							case 3:
-								$img = imagerotate($img,180,0);
-								break;
-							case 6:
-								$img = imagerotate($img,-90,0);
-								$changed_rotation=true;
-								break;
+								case 8:
+									$img = imagerotate($img,90,0);
+									$changed_rotation=true;
+									break;
+								case 3:
+									$img = imagerotate($img,180,0);
+									break;
+								case 6:
+									$img = imagerotate($img,-90,0);
+									$changed_rotation=true;
+									break;
 							}
 						}
 					}
@@ -619,7 +625,7 @@ function preview($adress,$param1=false,$param2=false )
 		}
 
 		list($org_width, $org_height) = getimagesize($filename);
-		
+
 		if($changed_rotation){
 			$tmp_width = $org_width;
 			$org_width = $org_height;
@@ -627,21 +633,21 @@ function preview($adress,$param1=false,$param2=false )
 		}
 		$nch_org_width = $org_width;
 		$nch_org_height = $org_height;
-		
+
 		$xoffset = 0;
 		$yoffset = 0;
-	
+
 		if (strpos($height, 'in') !== false AND strpos($width, 'in') !== false) {
 			$height_temp = substr($height, 2);
 			$width_temp = substr($width, 2);
-			
+
 			if($org_width<=$width_temp &&  $org_height<=$height_temp && $orig_params['not_resize']){
 				$height= $org_height;
 				$width= $org_width;
 			}else {
 				$h_index = ($org_height / $height_temp);
 				$w_index = ($org_width / $width_temp);
-				
+
 				$index = $h_index;
 				if ($h_index < $w_index) {
 					$index = $w_index;
@@ -683,7 +689,7 @@ function preview($adress,$param1=false,$param2=false )
 			$xoffset=$dx;
 			$yoffset=$dy;
 		}
-		
+
 		if($org_height <= $height &&  $org_width <= $width && $orig_params['not_resize']){
 			$height= $nch_org_height;
 			$width= $nch_org_width;
@@ -698,9 +704,9 @@ function preview($adress,$param1=false,$param2=false )
 		$black = imagecolorallocate($img_n, 0, 0, 0);
 		$black2 = imagecolorallocate($img, 0, 0, 0);
 		imageSaveAlpha($img, true);
-		
+
 		imagecopyresampled($img_n, $img, 0, 0, $xoffset, $yoffset, $width, $height, $org_width, $org_height);
-  
+
 		/* watermark*/
 		if($is_watermark){
 			$imgwater = ImageCreateFromPng($_SERVER['DOCUMENT_ROOT']. $orig_params['watermark']  );
@@ -714,7 +720,7 @@ function preview($adress,$param1=false,$param2=false )
 			$watermark = new Watermark_creator_universal();
 			$img_n=$watermark->create($img_n,$imgwater, $watermark_opacity, $watermark_position);
 		}
-		
+
 		if($type=="gif") {
 			imagegif($img_n, $dest);
 		} elseif($type=="jpg") {
@@ -723,15 +729,17 @@ function preview($adress,$param1=false,$param2=false )
 			imagepng($img_n, $dest);
 		} elseif($type=="bmp") {
 			imagewbmp($img_n, $dest);
+		} elseif ($type == "webp") {
+			imagewebp($img_n, $dest, 100);  // 100 - это качество изображения, аналогично JPEG
 		}
-		
+
 		if(isset($_ENV["DOIT_OPTIMIZE_IMAGES"]) && $_ENV["DOIT_OPTIMIZE_IMAGES"]==true){
 			if(isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"])){
 				if($type=="jpg" && isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]) && isset($_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]['JPG'])){
 					$path = $_ENV["DOIT_OPTIMIZE_IMAGES_EXTEND"]['JPG'];
 					$path = str_replace("#SOURCE#", escapeshellarg ($dest),$path );
 					$path = str_replace("#DEST#",escapeshellarg ($dest.'.tmp'),$path );
-					
+
 					exec ($path);
 					if(is_file($dest.'.tmp') && filesize($dest.'.tmp')!=0){
 						unlink($dest);
@@ -753,17 +761,17 @@ function preview($adress,$param1=false,$param2=false )
 				$res = $optimizer->optimize($dest);
 			}
 		}
-		
+
 		chmod($dest, 0777);
 	}
-	
+
 	if($orig_params['inline']){
 		$path = $_SERVER['DOCUMENT_ROOT'] . $preview_adress;
 		$type = pathinfo($path, PATHINFO_EXTENSION);
 		return 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($path));
 	}
-	
-		
+
+
 	return $preview_adress;
 }
 
